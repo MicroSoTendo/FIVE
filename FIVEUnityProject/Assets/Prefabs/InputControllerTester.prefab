@@ -107,6 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ClickedMaterial: {fileID: 2100000, guid: a782e52a02058e040b99eaafbe7da2fd, type: 2}
+  UnClickedMaterial: {fileID: 2100000, guid: a153259949379f844acf8456cbdd0473, type: 2}
 --- !u!54 &5282302701273964589
 Rigidbody:
   m_ObjectHideFlags: 0
