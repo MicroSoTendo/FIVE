@@ -4,18 +4,46 @@ using UnityEngine;
 
 public class InputContoller : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private List<GameObject> selectedTroops;
+
     void Start()
     {
-        
+        selectedTroops = new List<GameObject>();   
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log(Input.mousePosition);
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+            RaycastHit hitInfo;
+            Ray mouseToWorld = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(mouseToWorld, out hitInfo))
+            {
+                Transform objectHit = hitInfo.transform;
+
+                Debug.Log(objectHit.gameObject.name);
+
+                if (objectHit.gameObject.name == "InputControllerTester")
+                {
+                    selectedTroops.Add(objectHit.gameObject);
+                    InputControlTest inputControlTest = objectHit.gameObject.GetComponent<InputControlTest>();
+                    inputControlTest.OnSelect();
+                }
+                else if (objectHit.gameObject.name == "Plane")
+                {
+                    foreach (GameObject selectedTroop in selectedTroops)
+                    {
+                        InputControlTest inputControlTest = selectedTroop.gameObject.GetComponent<InputControlTest>();
+
+                        Vector3 objective = new Vector3(hitInfo.point.x, hitInfo.point.y + 0.5f, hitInfo.point.z);
+                        inputControlTest.OnMove(objective);
+                    }
+                }
+            }
         }
     }
 }
