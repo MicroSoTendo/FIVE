@@ -8,7 +8,8 @@ namespace Assets.Script.EventSystem
 {
     internal enum EventTypes
     {
-        ButtonClicked
+        ButtonClicked,
+        OnTriggerEnter
     }
 
 }
