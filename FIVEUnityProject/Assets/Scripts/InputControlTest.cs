@@ -5,10 +5,12 @@ using UnityEngine;
 public class InputControlTest : MonoBehaviour
 {
     public Material ClickedMaterial;
+    public Material UnClickedMaterial;
 
     private Renderer ObjectRenderer;
     private Rigidbody rb;
-
+    private Vector3 currTarget;
+    private Vector3 velocity;
     private float speed = 10f;
 
     void Start()
@@ -19,18 +21,25 @@ public class InputControlTest : MonoBehaviour
 
     void Update()
     {
-        
+        if (Vector3.Distance(currTarget, transform.position) > Constants.floatPrecision)
+        {
+            transform.Translate(velocity * speed * Time.deltaTime);
+        }
     }
 
     public void OnSelect()
     {
         ObjectRenderer.material = ClickedMaterial;
-        Debug.Log("Clicked");
     }
 
-    public void OnMove(Vector3 position)
+    public void DeSelect()
     {
-        //rb.MovePosition(position * speed);
-        rb.MovePosition(position);
+        ObjectRenderer.material = UnClickedMaterial;
+    }
+
+    public void Move(Vector3 target)
+    {
+        currTarget = target;
+        velocity = Vector3.Normalize(target - transform.position);
     }
 }

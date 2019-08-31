@@ -8,39 +8,51 @@ public class InputContoller : MonoBehaviour
 
     void Start()
     {
-        selectedTroops = new List<GameObject>();   
+        selectedTroops = new List<GameObject>();
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
             Vector3 mousePosition = Input.mousePosition;
             mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
             RaycastHit hitInfo;
             Ray mouseToWorld = Camera.main.ScreenPointToRay(Input.mousePosition);
-
             if (Physics.Raycast(mouseToWorld, out hitInfo))
             {
                 Transform objectHit = hitInfo.transform;
-
-                Debug.Log(objectHit.gameObject.name);
-
-                if (objectHit.gameObject.name == "InputControllerTester")
+                if (Input.GetMouseButton(0))
                 {
-                    selectedTroops.Add(objectHit.gameObject);
-                    InputControlTest inputControlTest = objectHit.gameObject.GetComponent<InputControlTest>();
-                    inputControlTest.OnSelect();
+                    if (Input.GetKey("left ctrl"))
+                    {
+                        Debug.Log("Ctrl");
+                    }
+                    else
+                    {
+                        foreach (GameObject selectedTroop in selectedTroops)
+                        {
+                            selectedTroop.GetComponent<InputControlTest>().DeSelect();
+                        }
+                        selectedTroops.Clear();
+                    }
+
+                    if (objectHit.gameObject.name.StartsWith("InputControllerTester"))
+                    {
+                        selectedTroops.Add(objectHit.gameObject);
+                        InputControlTest inputControlTest = objectHit.gameObject.GetComponent<InputControlTest>();
+                        inputControlTest.OnSelect();
+                    }
                 }
-                else if (objectHit.gameObject.name == "Plane")
+                else if (Input.GetMouseButton(1))
                 {
                     foreach (GameObject selectedTroop in selectedTroops)
                     {
                         InputControlTest inputControlTest = selectedTroop.gameObject.GetComponent<InputControlTest>();
 
                         Vector3 objective = new Vector3(hitInfo.point.x, hitInfo.point.y + 0.5f, hitInfo.point.z);
-                        inputControlTest.OnMove(objective);
+                        inputControlTest.Move(objective);
                     }
                 }
             }
