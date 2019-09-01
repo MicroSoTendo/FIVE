@@ -1,84 +1,138 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
-using Debug = UnityEngine.Debug;
+using UnityEngine.Assertions;
 
-namespace Assets.Script.EventSystem
+namespace Assets.Scripts.EventSystem
 {
-    internal sealed class EventSystem
+    public sealed class EventSystem
     {
-        private readonly EventHandler[] listOfHandlers = new EventHandler[Enum.GetNames(typeof(EventTypes)).Length];
-        private readonly Queue<(EventTypes eventTypes, object sender, EventArgs eventArgs)> requestsQueue = new Queue<(EventTypes eventTypes, object sender, EventArgs eventArgs)>();
-        private static EventSystem Instance { get; } = new EventSystem();
-
-        public static void Subscribe(EventTypes eventTypes, EventHandler del)
+        public enum RunningMode
         {
-            Instance.listOfHandlers[(uint)eventTypes] += del;
+            Coroutine,
+            Update,
+            Asynchronous
+        }
+
+
+
+        private static EventSystem Instance { get; } = new EventSystem();
+        private readonly EventHandler[] listOfHandlers;
+        private readonly ConcurrentQueue<(EventTypes eventTypes, object sender, EventArgs eventArgs)> requestsQueue;
+        private RunningMode runningMode;
+        private bool initialized = false;
+        private int asynchronousTimeOut;
+        public static void Initialize(EventSystemWrapper root, RunningMode mode = RunningMode.Coroutine, int asynchronousTimeOut = 16)
+        {
+            Assert.IsFalse(Instance.initialized);
+            Instance.runningMode = mode;
+            switch (mode)
+            {
+                case RunningMode.Coroutine:
+                    root.StartCoroutine(Instance.EventSystemCoroutine());
+                    break;
+                case RunningMode.Asynchronous:
+                    root.OnUpdate += async () =>
+                    {
+                        await Instance.RunAsync();
+                    };
+                    root.gameObject.AddComponent<MainThreadEventDispatcher>();
+                    Instance.asynchronousTimeOut = asynchronousTimeOut;
+                    break;
+                case RunningMode.Update:
+                    root.OnUpdate += Instance.RunOnce;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            Instance.initialized = true;
+        }
+
+        private EventSystem()
+        {
+            listOfHandlers = new EventHandler[Enum.GetNames(typeof(EventTypes)).Length];
+            requestsQueue = new ConcurrentQueue<(EventTypes eventTypes, object sender, EventArgs eventArgs)>();
+        }
+
+        public static void Subscribe(EventTypes eventTypes, EventHandler del, bool requiresMainThread = true)
+        {
+            Assert.IsTrue(Instance.initialized);
+            switch (Instance.runningMode)
+            {
+                case RunningMode.Coroutine:
+                case RunningMode.Update:
+                case RunningMode.Asynchronous when !requiresMainThread:
+                    Instance.listOfHandlers[(uint)eventTypes] += del;
+                    break;
+                case RunningMode.Asynchronous:
+                    Instance.listOfHandlers[(uint)eventTypes] += (s, a) => { MainThreadEventDispatcher.ScheduleEvent(del, s, a); };
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static void Subscribe<T>(EventTypes eventTypes, EventHandler del, bool requiresMainThread = true)
+        {
+            void DetermineType(object sender, EventArgs eventArgs)
+            {
+                if (sender is T) del?.Invoke(sender, eventArgs);
+            }
+            Subscribe(eventTypes, DetermineType, requiresMainThread);
         }
 
         public static EventHandler GetHandlers(EventTypes eventTypes)
         {
+            Assert.IsTrue(Instance.initialized);
             return Instance.listOfHandlers[(int)eventTypes];
         }
 
         public static void RaiseEvent(EventTypes eventTypes, object sender, EventArgs eventArgs)
         {
+            Assert.IsTrue(Instance.initialized);
             Instance.requestsQueue.Enqueue((eventTypes, sender, eventArgs));
         }
 
-        public static IEnumerator EventSystemCoroutine()
+        public static void RaiseEventImmediately(EventTypes eventTypes, object sender, EventArgs eventArgs)
+        {
+            Assert.IsTrue(Instance.initialized);
+            Instance.listOfHandlers[(uint)eventTypes]?.Invoke(sender, eventArgs);
+        }
+
+        private void RunOnce()
+        {
+            while (requestsQueue.Count > 0)
+            {
+                requestsQueue.TryDequeue(out var result);
+                RaiseEventImmediately(result.eventTypes, result.sender, result.eventArgs);
+            }
+        }
+
+        private IEnumerator EventSystemCoroutine()
         {
             while (true)
             {
-                while (Instance.requestsQueue.Count != 0)
-                {
-                    var (eventTypes, sender, eventArgs) = Instance.requestsQueue.Dequeue();
-                    var del = Instance.listOfHandlers[(uint)eventTypes];
-                    del?.Invoke(sender, eventArgs);
-                }
-                Instance.requestsQueue.Clear();
+                RunOnce();
                 yield return null;
             }
         }
-        public static void RunOnce()
-        {
-            foreach (var valueTuple in Instance.requestsQueue)
-            {
-                var (eventTypes, sender, eventArgs) = valueTuple;
-                var del = Instance.listOfHandlers[(uint)eventTypes];
-                del?.Invoke(sender, eventArgs);
-            }
-            Instance.requestsQueue.Clear();
-        }
 
-        public static async Task RunAsync()
+        private async Task RunAsync()
         {
-            //TODO: Broken now
-            void Function()
+            var tasks = new Task[Instance.requestsQueue.Count];
+            var i = 0;
+            while (requestsQueue.Count > 0)
             {
-                while (true)
+                requestsQueue.TryDequeue(out var result);
+                tasks[i++] = Task.Run(() =>
                 {
-                    foreach (var valueTuple in Instance.requestsQueue)
-                    {
-                        var (eventTypes, sender, eventArgs) = valueTuple;
-
-                        void TryInvokeHandlers()
-                        {
-                            Instance.listOfHandlers[(uint)eventTypes]?.Invoke(sender, eventArgs);
-                        }
-
-                        //TODO: parametrize time
-                        var cts = new CancellationTokenSource(2);
-                        Task.Run(TryInvokeHandlers, cts.Token);
-                    }
-                }
+                    RaiseEventImmediately(result.eventTypes, result.sender, result.eventArgs);
+                }, new CancellationTokenSource(asynchronousTimeOut).Token);
             }
-
-            await Task.Run(Function, new CancellationTokenSource(33).Token);
+            await Task.WhenAll(tasks);
         }
 
     }

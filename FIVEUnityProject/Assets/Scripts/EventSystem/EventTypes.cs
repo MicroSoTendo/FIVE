@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Assets.Script.EventSystem
+﻿namespace Assets.Scripts.EventSystem
 {
-    internal enum EventTypes
+    public enum EventTypes
     {
-        ButtonClicked,
         OnTriggerEnter
     }
-
 }
