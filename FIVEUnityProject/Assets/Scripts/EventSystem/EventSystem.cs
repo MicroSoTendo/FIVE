@@ -125,12 +125,12 @@ namespace Assets.Scripts.EventSystem
             while (requestsQueue.Count > 0)
             {
                 requestsQueue.TryDequeue(out var result);
-                var token = new CancellationTokenSource(asynchronousTimeOut);
-                tokenSources[i++] = token;
+                var tokenSource = new CancellationTokenSource(asynchronousTimeOut);
+                tokenSources[i] = tokenSource;
                 tasks[i++] = Task.Run(() =>
                 {
                     RaiseEventImmediately(result.eventTypes, result.sender, result.eventArgs);
-                }, token.Token);
+                }, tokenSource.Token);
             }
             await Task.WhenAll(tasks);
             foreach (var cancellationTokenSource in tokenSources)
