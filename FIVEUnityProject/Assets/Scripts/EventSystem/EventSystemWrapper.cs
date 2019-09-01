@@ -25,14 +25,25 @@ namespace Assets.Scripts.EventSystem
     [CustomEditor(typeof(EventSystemWrapper))]
     public class EventSystemWrapperEditor : Editor
     {
+        public SerializedProperty RunningModeProperty;
+        public SerializedProperty AsynchronousTimeOutProperty;
+
+        public void OnEnable()
+        {
+            RunningModeProperty = serializedObject.FindProperty("RunningMode");
+            AsynchronousTimeOutProperty = serializedObject.FindProperty("AsynchronousTimeOut");
+        }
         public override void OnInspectorGUI()
         {
-            var script = target as EventSystemWrapper;
-            script.RunningMode = (EventSystem.RunningMode)EditorGUILayout.EnumPopup("Running Mode", script.RunningMode);
-            if (script.RunningMode == EventSystem.RunningMode.Asynchronous)
+            serializedObject.Update();
+            EditorGUILayout.PropertyField(RunningModeProperty);
+            var mode = (EventSystem.RunningMode) RunningModeProperty.enumValueIndex;
+            if (mode == EventSystem.RunningMode.Asynchronous)
             {
-                script.AsynchronousTimeOut = EditorGUILayout.IntField("Asynchronous Time Out", script.AsynchronousTimeOut);
+                EditorGUILayout.PropertyField(AsynchronousTimeOutProperty, new GUIContent("Asynchronous Time Out"));
             }
+
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }
