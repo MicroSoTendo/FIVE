@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine.Assertions;
@@ -16,8 +15,6 @@ namespace Assets.Scripts.EventSystem
             Update,
             Asynchronous
         }
-
-
 
         private static EventSystem Instance { get; } = new EventSystem();
         private readonly EventHandler[] listOfHandlers;
@@ -122,17 +119,24 @@ namespace Assets.Scripts.EventSystem
 
         private async Task RunAsync()
         {
-            var tasks = new Task[Instance.requestsQueue.Count];
+            var tasks = new Task[requestsQueue.Count];
+            var tokenSources = new CancellationTokenSource[requestsQueue.Count];
             var i = 0;
             while (requestsQueue.Count > 0)
             {
                 requestsQueue.TryDequeue(out var result);
+                var token = new CancellationTokenSource(asynchronousTimeOut);
+                tokenSources[i++] = token;
                 tasks[i++] = Task.Run(() =>
                 {
                     RaiseEventImmediately(result.eventTypes, result.sender, result.eventArgs);
-                }, new CancellationTokenSource(asynchronousTimeOut).Token);
+                }, token.Token);
             }
             await Task.WhenAll(tasks);
+            foreach (var cancellationTokenSource in tokenSources)
+            {
+                cancellationTokenSource.Dispose();
+            }
         }
 
     }
