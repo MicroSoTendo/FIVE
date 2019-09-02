@@ -36,7 +36,7 @@ namespace Assets.Scripts.EventSystem
                     {
                         await Instance.RunAsync();
                     };
-                    root.gameObject.AddComponent<MainThreadEventDispatcher>();
+                    root.gameObject.AddComponent<MainThreadDispatcher>();
                     Instance.asynchronousTimeOut = asynchronousTimeOut;
                     break;
                 case RunningMode.Update:
@@ -65,7 +65,10 @@ namespace Assets.Scripts.EventSystem
                     Instance.listOfHandlers[(uint)eventTypes] += del;
                     break;
                 case RunningMode.Asynchronous:
-                    Instance.listOfHandlers[(uint)eventTypes] += (s, a) => { MainThreadEventDispatcher.ScheduleEvent(del, s, a); };
+                    Instance.listOfHandlers[(uint)eventTypes] += (s, a) =>
+                        {
+                            MainThreadDispatcher.Schedule(delegate { del(s, a); });
+                        };
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
