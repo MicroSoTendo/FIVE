@@ -12,10 +12,16 @@ public class GroundController : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        var s = (float)col / (float)size;
+        transform.localScale = new Vector3(s, 1f, s);
+
         vertices = new Vector3[col * col];
         triangles = new int[size * size * 2 * 3];
 
-        Random.InitState(0);
+        var pos = transform.position;
+        var seed = (int)pos.x ^ (int)pos.y ^ (int)pos.z;
+        Random.InitState(seed);
+
         GenerateVertices();
         GenerateTriangles();
 
@@ -31,9 +37,12 @@ public class GroundController : MonoBehaviour
 
     private void GenerateVertices()
     {
-        for (var i = 0; i < col * col; i++)
+        for (var x = 0; x < col; x++)
         {
-            vertices[i] = new Vector3(i / col, 0f, i % col);
+            for (var y = 0; y < col; y++)
+            {
+                vertices[x * col + y] = new Vector3(x, 0f, y);
+            }
         }
 
         var samplesize = col / 4;
@@ -53,6 +62,20 @@ public class GroundController : MonoBehaviour
 
             samplesize /= 2;
             scale /= 2f;
+        }
+
+        // FIXME
+        {
+            for (var x = 0; x < col; x++)
+            {
+                vertices[x * col].y = 0.5f;
+                vertices[x * col + size].y = 0.5f;
+            }
+            for (var y = 0; y < col; y++)
+            {
+                vertices[y].y = 0.5f;
+                vertices[size * col + y].y = 0.5f;
+            }
         }
     }
 
