@@ -18,6 +18,18 @@ namespace Assets.Scripts.EventSystem
             Asynchronous
         }
 
+        public struct Recipient
+        {
+            public EventTypes EventTypes { get; }
+            public EventHandler Handler { get; }
+
+            public Recipient(EventTypes eventTypes, EventHandler handler)
+            {
+                Handler = handler;
+                EventTypes = eventTypes;
+            }
+        }
+
         private static EventSystem Instance { get; } = new EventSystem();
         private readonly EventHandler[] listOfHandlers;
         private readonly ConcurrentQueue<Action> requestsQueue;
@@ -45,7 +57,7 @@ namespace Assets.Scripts.EventSystem
         private static void Initialize()
         {
             if (Instance.initialized) return;
-            SetRunningMode(RunningMode.Coroutine);
+            SetRunningMode(RunningMode.Coroutine); //Default mode = Coroutine
             Instance.initialized = true;
         }
 
@@ -74,7 +86,7 @@ namespace Assets.Scripts.EventSystem
             Instance.runningMode = newMode;
         }
 
-        public static void Subscribe(EventTypes eventTypes, EventHandler handler, bool requiresMainThread = true)
+        public static Recipient Subscribe(EventTypes eventTypes, EventHandler handler, bool requiresMainThread = true)
         {
             Assert.IsTrue(Instance.initialized);
             switch (Instance.runningMode)
@@ -84,42 +96,32 @@ namespace Assets.Scripts.EventSystem
                 case RunningMode.Update:
                 case RunningMode.Asynchronous when !requiresMainThread:
                     Instance.listOfHandlers[(uint)eventTypes] += handler;
-                    break;
+                    return new Recipient(eventTypes, handler);
                 case RunningMode.Asynchronous:
-                    Instance.listOfHandlers[(uint)eventTypes] += (s, a) => { MainThreadDispatcher.Schedule(delegate { handler(s, a); }); };
-                    break;
+                    void WrappedHandler(object s, EventArgs a)
+                    {
+                        MainThreadDispatcher.Schedule(delegate { handler(s, a); });
+                    }
+                    Instance.listOfHandlers[(uint)eventTypes] += WrappedHandler;
+                    return new Recipient(eventTypes, WrappedHandler);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public static void Unsubscribe(EventTypes eventTypes, EventHandler handler, bool requiresMainThread = true)
-        {
-            Assert.IsTrue(Instance.initialized);
-            switch (Instance.runningMode)
-            {
-                case RunningMode.Inactive:
-                case RunningMode.Coroutine:
-                case RunningMode.Update:
-                case RunningMode.Asynchronous when !requiresMainThread:
-                    Instance.listOfHandlers[(uint)eventTypes] -= handler;
-                    break;
-                case RunningMode.Asynchronous:
-                    //TODO: Fix asynchronous mode unsubscribe
-                    //Instance.listOfHandlers[(uint)eventTypes] -= (s, a) => { MainThreadDispatcher.Schedule(delegate { handler(s, a); }); };
-                    throw new NotImplementedException();
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        public static void Subscribe<T>(EventTypes eventTypes, EventHandler handler, bool requiresMainThread = true)
+        public static Recipient Subscribe<T>(EventTypes eventTypes, EventHandler handler, bool requiresMainThread = true)
         {
             void DetermineType(object sender, EventArgs eventArgs)
             {
                 if (sender is T) handler?.Invoke(sender, eventArgs);
             }
-            Subscribe(eventTypes, DetermineType, requiresMainThread);
+            return Subscribe(eventTypes, DetermineType, requiresMainThread);
+        }
+
+        public static void Unsubscribe(Recipient recipient)
+        {
+            Assert.IsTrue(Instance.initialized);
+            Instance.listOfHandlers[(uint)recipient.EventTypes] -= recipient.Handler;
         }
 
         public static EventHandler GetHandlers(EventTypes eventTypes)
@@ -131,7 +133,7 @@ namespace Assets.Scripts.EventSystem
         public static void RaiseEvent(EventTypes eventTypes, object sender, EventArgs eventArgs)
         {
             Assert.IsTrue(Instance.initialized);
-            Debug.Log(nameof(RaiseEvent));
+            Debug.Log(nameof(RaiseEvent) + eventTypes + sender);
             Instance.requestsQueue.Enqueue(delegate { Instance.listOfHandlers[(uint) eventTypes](sender, eventArgs); });
         }
 
