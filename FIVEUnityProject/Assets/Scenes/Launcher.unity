@@ -535,3 +535,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundPrefab: {fileID: 3043827937652548093, guid: 7c94dbf7c0f3e5d4597c81b0f36e9bf0,
     type: 3}
+  gameCharacterPrefab: {fileID: 1528915638184230, guid: 8e0f285c21cdcf14e8d5c06c57ba936b,
+    type: 3}

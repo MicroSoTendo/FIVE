@@ -4,5 +4,6 @@
     {
         OnTriggerEnter,
         OnButtonClicked,
+        OnStartUpLoadingFinished,
     }
 }
