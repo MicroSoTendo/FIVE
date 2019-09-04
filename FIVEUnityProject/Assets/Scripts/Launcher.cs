@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.EventSystem;
+using Assets.Scripts.UI;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -9,17 +12,41 @@ namespace Assets.Scripts
     {
         // Start is called before the first frame update
         public GameObject groundPrefab;
+        public GameObject gameCharacterPrefab;
+
 
         private Canvas canvas;
         private CameraController cameraController;
+        private GameObject mainCamera;
         private bool instantiated;
-        void Start()
+
+        private GameObject gameCharacter;
+
+        private Queue<Action> loadingTasks;
+        private LoadingSplashScreen loadingSplashScreenScreen;
+        public Texture texture;
+        void Awake()
         {
+
             canvas = GetComponentInChildren<Canvas>();
-            cameraController = GameObject.Find("Main Camera").GetComponent<CameraController>();
+            mainCamera = GameObject.Find("Main Camera");
+            cameraController = mainCamera.GetComponent<CameraController>();
             cameraController.enabled = false;
             instantiated = false;
             EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
+
+
+            loadingTasks = new Queue<Action>();
+            var loadingGui = gameObject.AddComponent<LoadingSplashScreen.LoadingGUI>();
+            loadingGui.OnGuiAction = () =>
+            {
+                GUI.DrawTexture(new Rect(10, 10, 60, 60), texture, ScaleMode.ScaleToFit, true, 10.0F);
+            };
+            loadingSplashScreenScreen = new LoadingSplashScreen(loadingTasks, loadingGui);
+        }
+        IEnumerator Start()
+        {
+            return loadingSplashScreenScreen.OnTransitioning();
         }
 
         private void OnButtonClicked(object sender, EventArgs e)
@@ -38,6 +65,13 @@ namespace Assets.Scripts
                     if (!instantiated)
                     {
                         Instantiate(groundPrefab);
+                        gameCharacter = Instantiate(gameCharacterPrefab);
+                        gameCharacter.transform.position = new Vector3(64, 1, 64);
+                        var eye = GameObject.Find("eyeDome");
+                        mainCamera.transform.parent =eye.transform;
+                        mainCamera.transform.localPosition = new Vector3(0,0,0);
+                        mainCamera.transform.localRotation = Quaternion.Euler(0,0,0);
+                        //mainCamera.transform.rotation = Quaternion.AngleAxis(5f, Vector3.right);
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
                     }
