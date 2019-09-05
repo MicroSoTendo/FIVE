@@ -7,8 +7,11 @@ public class InputControlTest : MonoBehaviour
     //public Material ClickedMaterial;
     //public Material UnClickedMaterial;
 
-    private Renderer ObjectRenderer;
-    private Rigidbody rb;
+    //private Renderer ObjectRenderer;
+    //private Rigidbody rb;
+
+    private CharacterController cc;
+
     private Vector3 currTarget;
     private Vector3 velocity;
     private float speed = 10f;
@@ -16,14 +19,16 @@ public class InputControlTest : MonoBehaviour
     void Start()
     {
         //ObjectRenderer = GetComponent<Renderer>();
-        rb = GetComponent<Rigidbody>();
+        //rb = GetComponent<Rigidbody>();
+        cc = gameObject.GetComponent<CharacterController>();
     }
 
     void Update()
     {
-        if (Vector3.Distance(currTarget, transform.position) > Constants.floatPrecision)
+        if (Vector3.Distance(currTarget, transform.position) > Constants.floatPrecision && cc)
         {
-            transform.Translate(velocity * speed * Time.deltaTime);
+            //transform.Translate(velocity * speed * Time.deltaTime);
+            cc.SimpleMove(velocity);
         }
     }
 

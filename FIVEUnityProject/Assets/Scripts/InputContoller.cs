@@ -58,7 +58,7 @@ public class InputContoller : MonoBehaviour
                         }
                         else
                         {
-                            objective = new Vector3(hitInfo.point.x, hitInfo.point.y + 0.5f, hitInfo.point.z);
+                            objective = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
                         }
                         inputControlTest.Move(objective);
                     }
