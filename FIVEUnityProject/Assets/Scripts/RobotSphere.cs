@@ -27,7 +27,6 @@ public class RobotSphere : MonoBehaviour
         fpsCamera.transform.parent = eye.transform;
         fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
         fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        fpsCamera.tag = "MainCamera";
     }
 
     private void Start()
@@ -40,10 +39,5 @@ public class RobotSphere : MonoBehaviour
     {
         animator.Update(currState);
         fpsController.Update();
-    }
-
-    public void activateCamera()
-    {
-        fpsCamera.enabled = true;
     }
 }
