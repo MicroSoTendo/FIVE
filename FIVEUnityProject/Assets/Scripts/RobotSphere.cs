@@ -15,21 +15,34 @@ public class RobotSphere : MonoBehaviour
     private RobotFreeAnim animator;
     private FpsController fpsController;
 
+    private Camera fpsCamera;
+
+    private void Awake()
+    {
+        
+        // Setup initial FPS Camera
+        fpsCamera = GameObject.Find("CameraManager").GetComponent<CameraManager>().NewCamera(gameObject.name + "Camera");
+        var eye = GameObject.Find("eyeDome");
+        fpsCamera.transform.parent = eye.transform;
+        fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
+        fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
+    }
+
     void Start()
     {
         animator = new RobotFreeAnim(gameObject);
         fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
 
-        // Setup initial FPS Camera
-        var eye = GameObject.Find("eyeDome");
-        Camera.main.transform.parent = eye.transform;
-        Camera.main.transform.localPosition = new Vector3(0, 0, 0);
-        Camera.main.transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
 
     void Update()
     {
         animator.Update(currState);
         fpsController.Update();
+    }
+
+    public void activateCamera()
+    {
+        fpsCamera.enabled = true;
     }
 }
