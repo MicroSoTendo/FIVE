@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class InputControlTest : MonoBehaviour
 {
-    public Material ClickedMaterial;
-    public Material UnClickedMaterial;
+    //public Material ClickedMaterial;
+    //public Material UnClickedMaterial;
 
     private Renderer ObjectRenderer;
     private Rigidbody rb;
@@ -15,7 +15,7 @@ public class InputControlTest : MonoBehaviour
 
     void Start()
     {
-        ObjectRenderer = GetComponent<Renderer>();
+        //ObjectRenderer = GetComponent<Renderer>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -29,12 +29,12 @@ public class InputControlTest : MonoBehaviour
 
     public void OnSelect()
     {
-        ObjectRenderer.material = ClickedMaterial;
+        //ObjectRenderer.material = ClickedMaterial;
     }
 
     public void DeSelect()
     {
-        ObjectRenderer.material = UnClickedMaterial;
+        //ObjectRenderer.material = UnClickedMaterial;
     }
 
     public void Move(Vector3 target)
