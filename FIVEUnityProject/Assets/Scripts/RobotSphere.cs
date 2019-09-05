@@ -8,9 +8,17 @@ public class RobotSphere : MonoBehaviour
 
     ControllerState currState = ControllerState.FPS;
 
+    // Script References
+    private RobotFreeAnim animator;
+    private FpsController fpsController;
+
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<RobotFreeAnim>();
+        fpsController = new FpsController(GetComponent<CharacterController>());
+
+        // Setup initial FPS Camera
         var eye = GameObject.Find("eyeDome");
         Camera.main.transform.parent = eye.transform;
         Camera.main.transform.localPosition = new Vector3(0, 0, 0);
@@ -20,6 +28,6 @@ public class RobotSphere : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        fpsController.Update();
     }
 }
