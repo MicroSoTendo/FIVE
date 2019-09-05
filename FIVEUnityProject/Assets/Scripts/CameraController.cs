@@ -7,25 +7,25 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    class CameraController : MonoBehaviour
+    internal class CameraController : MonoBehaviour
     {
         private void Update()
         {
             if (Input.GetKey(KeyCode.W))
             {
-                transform.Translate(new Vector3(0, 0, 1));
+                transform.Translate(new Vector3(0, 0, 2));
             }
             if (Input.GetKey(KeyCode.S))
             {
-                transform.Translate(new Vector3(0, 0, -1));
+                transform.Translate(new Vector3(0, 0, -2));
             }
             if (Input.GetKey(KeyCode.A))
             {
-                transform.Translate(new Vector3(-1, 0, 0));
+                transform.Rotate(0f, 2f, 0f);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                transform.Translate(new Vector3(1, 0, 0));
+                transform.Rotate(0f, -2f, 0f);
             }
         }
     }
