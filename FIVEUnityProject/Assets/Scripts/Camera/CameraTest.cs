@@ -11,10 +11,12 @@ public class CameraTest : MonoBehaviour
     void OnMouseOver()
     {
         this.GetComponent<Renderer>().material.color = Color.red;
+        CameraPosition.Instance.position = this.transform;
     }
 
     void OnMouseExit()
     {
         this.GetComponent<Renderer>().material.color = col;
+        CameraPosition.Instance.position = null;
     }
 }
