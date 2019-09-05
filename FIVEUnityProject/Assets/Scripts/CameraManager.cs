@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public static CameraManager Instance { get; } = new CameraManager();
-
     public Camera CameraPrefab;
 
     private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
