@@ -33,7 +33,7 @@ public class RtsContoller : MonoBehaviour
                     {
                         foreach (GameObject selectedTroop in selectedTroops)
                         {
-                            selectedTroop.GetComponent<InputControlTest>().DeSelect();
+                            selectedTroop.GetComponent<RtsControlUnit>().DeSelect();
                         }
                         selectedTroops.Clear();
                     }
@@ -41,7 +41,7 @@ public class RtsContoller : MonoBehaviour
                     if (objectHit.gameObject.name.StartsWith("robotSphere"))
                     {
                         selectedTroops.Add(objectHit.gameObject);
-                        InputControlTest inputControlTest = objectHit.gameObject.GetComponent<InputControlTest>();
+                        RtsControlUnit inputControlTest = objectHit.gameObject.GetComponent<RtsControlUnit>();
                         inputControlTest.OnSelect();
                     }
                 }
@@ -49,7 +49,7 @@ public class RtsContoller : MonoBehaviour
                 {
                     foreach (GameObject selectedTroop in selectedTroops)
                     {
-                        InputControlTest inputControlTest = selectedTroop.gameObject.GetComponent<InputControlTest>();
+                        RtsControlUnit inputControlTest = selectedTroop.gameObject.GetComponent<RtsControlUnit>();
 
                         Vector3 objective;
                         if (hitInfo.transform.gameObject.name.StartsWith("robotSphere"))
