@@ -14,10 +14,7 @@ namespace Assets.Scripts
         public GameObject groundPrefab;
         public GameObject gameCharacterPrefab;
 
-
         private Canvas canvas;
-        private CameraController cameraController;
-        private GameObject mainCamera;
         private bool instantiated;
 
         private GameObject gameCharacter;
@@ -39,7 +36,6 @@ namespace Assets.Scripts
         {
             EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
             canvas = GetComponentInChildren<Canvas>();
-            mainCamera = GameObject.Find("Main Camera");
             return loadingSplashScreenScreen.OnTransitioning();
         }
 
@@ -60,11 +56,6 @@ namespace Assets.Scripts
                     {
                         Instantiate(groundPrefab);
                         gameCharacter = Instantiate(gameCharacterPrefab, new Vector3(64, 1, 64), Quaternion.Euler(0, 0, 0));
-                        var eye = GameObject.Find("eyeDome");
-                        mainCamera.transform.parent = eye.transform;
-                        mainCamera.transform.localPosition = new Vector3(0, 0, 0);
-                        mainCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                        //mainCamera.transform.rotation = Quaternion.AngleAxis(5f, Vector3.right);
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
                         Destroy(canvas.gameObject.GetComponent<Image>());
@@ -74,9 +65,7 @@ namespace Assets.Scripts
                     break;
                 default:
                     break;
-
             }
-
         }
 
         // Update is called once per frame
