@@ -162,7 +162,7 @@ namespace Assets.Scripts.UI
 
         #endregion
 
-        public StartUpScreen(Queue<Action> loadingLoadingTasks) : base(loadingLoadingTasks)
+        public StartUpScreen(Queue<Action> loadingLoadingTasks, int numberOfDummyTasks = 2000, int dummyTaskDuration = 2) : base(loadingLoadingTasks)
         {
             Action[] splashScreenActions = {
                 GetCanvas, InstantiateTSS, SetUpTSSPositionAndBar, InstantiateCharacters, InstantiateSymbols,  SetUpInitialPositions, SetUpTargetPositions,
@@ -203,12 +203,12 @@ namespace Assets.Scripts.UI
             }
 
             //Dummy task for testing purpose
-            for (int i = 0; i < 2000; i++)
+            for (int i = 0; i < numberOfDummyTasks; i++)
             {
                 //var str = i.ToString();
                 newQueue.Enqueue(() =>
                 {
-                    var t= Task.Delay(2);
+                    var t= Task.Delay(dummyTaskDuration);
                     while (!t.IsCompleted)
                     {
                         //Debug.Log("Dummy" + str);
