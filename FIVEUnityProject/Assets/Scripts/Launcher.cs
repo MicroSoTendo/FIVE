@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.EventSystem;
+using Assets.Scripts.UI;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.EventSystem;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -8,24 +11,43 @@ namespace Assets.Scripts
     public class Launcher : MonoBehaviour
     {
         // Start is called before the first frame update
-        public GameObject groundPrefab;
+        public GameObject gameCharacterPrefab;
 
         private Canvas canvas;
-        private CameraController cameraController;
         private bool instantiated;
-        void Start()
+
+        private GameObject gameCharacter;
+
+        private Queue<Action> loadingTasks;
+        private StartUpScreen loadingSplashScreenScreen;
+
+        private void Awake()
         {
-            canvas = GetComponentInChildren<Canvas>();
-            cameraController = GameObject.Find("Main Camera").GetComponent<CameraController>();
-            cameraController.enabled = false;
             instantiated = false;
+            loadingTasks = new Queue<Action>();
+            loadingTasks.Enqueue(() =>
+            {
+                var MainMenu = new GameObject("Main Menu");
+                MainMenu.AddComponent<UILoader>();
+            });
+            loadingSplashScreenScreen = new StartUpScreen(loadingTasks, numberOfDummyTasks: 10, dummyTaskDuration: 2);
+        }
+
+        private IEnumerator Start()
+        {
             EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
+            canvas = GetComponentInChildren<Canvas>();
+            return loadingSplashScreenScreen.OnTransitioning();
         }
 
         private void OnButtonClicked(object sender, EventArgs e)
         {
             var go = sender as Button;
-            if (go == null) return;
+            if (go == null)
+            {
+                return;
+            }
+
             switch (go.name)
             {
                 case "ExitButton":
@@ -34,31 +56,30 @@ namespace Assets.Scripts
 #endif
                     Application.Quit(0);
                     break;
+
                 case "StartButton":
                     if (!instantiated)
                     {
-                        Instantiate(groundPrefab);
+                        gameCharacter = Instantiate(gameCharacterPrefab, new Vector3(64, 1, 64), Quaternion.Euler(0, 0, 0));
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
+                        Destroy(canvas.gameObject.GetComponent<Image>());
                     }
 
                     canvas.gameObject.SetActive(false);
-                    cameraController.enabled = true;
                     break;
+
                 default:
                     break;
-
             }
-
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 canvas.gameObject.SetActive(!canvas.gameObject.activeSelf);
-                cameraController.enabled = !cameraController.enabled;
             }
         }
     }
