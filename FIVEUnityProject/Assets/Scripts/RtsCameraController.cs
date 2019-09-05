@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts
 {
-    internal class CameraController : MonoBehaviour
+    internal class RtsCameraController : MonoBehaviour
     {
         private void Update()
         {
