@@ -11,7 +11,6 @@ namespace Assets.Scripts
     public class Launcher : MonoBehaviour
     {
         // Start is called before the first frame update
-        public GameObject groundPrefab;
         public GameObject gameCharacterPrefab;
 
         private Canvas canvas;
@@ -21,7 +20,8 @@ namespace Assets.Scripts
 
         private Queue<Action> loadingTasks;
         private StartUpScreen loadingSplashScreenScreen;
-        void Awake()
+
+        private void Awake()
         {
             instantiated = false;
             loadingTasks = new Queue<Action>();
@@ -32,7 +32,8 @@ namespace Assets.Scripts
             });
             loadingSplashScreenScreen = new StartUpScreen(loadingTasks, numberOfDummyTasks: 10, dummyTaskDuration: 2);
         }
-        IEnumerator Start()
+
+        private IEnumerator Start()
         {
             EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
             canvas = GetComponentInChildren<Canvas>();
@@ -51,10 +52,10 @@ namespace Assets.Scripts
 #endif
                     Application.Quit(0);
                     break;
+
                 case "StartButton":
                     if (!instantiated)
                     {
-                        Instantiate(groundPrefab);
                         gameCharacter = Instantiate(gameCharacterPrefab, new Vector3(64, 1, 64), Quaternion.Euler(0, 0, 0));
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
@@ -63,13 +64,14 @@ namespace Assets.Scripts
 
                     canvas.gameObject.SetActive(false);
                     break;
+
                 default:
                     break;
             }
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
