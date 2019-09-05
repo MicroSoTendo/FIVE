@@ -30,7 +30,7 @@ namespace Assets.Scripts
                 var MainMenu = new GameObject("Main Menu");
                 MainMenu.AddComponent<UILoader>();
             });
-            loadingSplashScreenScreen = new StartUpScreen(loadingTasks);
+            loadingSplashScreenScreen = new StartUpScreen(loadingTasks, numberOfDummyTasks: 10, dummyTaskDuration: 2);
         }
         IEnumerator Start()
         {
