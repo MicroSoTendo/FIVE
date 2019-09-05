@@ -14,7 +14,6 @@ namespace Assets.Scripts
         public GameObject groundPrefab;
         public GameObject gameCharacterPrefab;
 
-
         private Canvas canvas;
         private CameraController cameraController;
         private GameObject mainCamera;
@@ -25,13 +24,13 @@ namespace Assets.Scripts
         private Queue<Action> loadingTasks;
         private LoadingSplashScreen loadingSplashScreenScreen;
         public Texture texture;
+
         void Awake()
         {
-
             canvas = GetComponentInChildren<Canvas>();
             mainCamera = GameObject.Find("Main Camera");
             cameraController = mainCamera.GetComponent<CameraController>();
-            cameraController.enabled = false;
+            // cameraController.enabled = false;
             instantiated = false;
             EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
 
@@ -65,25 +64,18 @@ namespace Assets.Scripts
                     if (!instantiated)
                     {
                         Instantiate(groundPrefab);
-                        gameCharacter = Instantiate(gameCharacterPrefab);
-                        gameCharacter.transform.position = new Vector3(64, 1, 64);
+                        gameCharacter = Instantiate(gameCharacterPrefab, new Vector3(64, 1, 64), Quaternion.identity);
                         var eye = GameObject.Find("eyeDome");
-                        mainCamera.transform.parent =eye.transform;
-                        mainCamera.transform.localPosition = new Vector3(0,0,0);
-                        mainCamera.transform.localRotation = Quaternion.Euler(0,0,0);
-                        //mainCamera.transform.rotation = Quaternion.AngleAxis(5f, Vector3.right);
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
                     }
 
                     canvas.gameObject.SetActive(false);
-                    cameraController.enabled = true;
+                    //cameraController.enabled = true;
                     break;
                 default:
                     break;
-
             }
-
         }
 
         // Update is called once per frame

@@ -38,7 +38,7 @@ public class InputContoller : MonoBehaviour
                         selectedTroops.Clear();
                     }
 
-                    if (objectHit.gameObject.name.StartsWith("InputControllerTester"))
+                    if (objectHit.gameObject.name.StartsWith("robotSphere"))
                     {
                         selectedTroops.Add(objectHit.gameObject);
                         InputControlTest inputControlTest = objectHit.gameObject.GetComponent<InputControlTest>();
@@ -51,7 +51,15 @@ public class InputContoller : MonoBehaviour
                     {
                         InputControlTest inputControlTest = selectedTroop.gameObject.GetComponent<InputControlTest>();
 
-                        Vector3 objective = new Vector3(hitInfo.point.x, hitInfo.point.y + 0.5f, hitInfo.point.z);
+                        Vector3 objective;
+                        if (hitInfo.transform.gameObject.name.StartsWith("robotSphere"))
+                        {
+                            objective = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
+                        }
+                        else
+                        {
+                            objective = new Vector3(hitInfo.point.x, hitInfo.point.y + 0.5f, hitInfo.point.z);
+                        }
                         inputControlTest.Move(objective);
                     }
                 }
