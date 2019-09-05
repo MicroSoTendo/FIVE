@@ -9,16 +9,31 @@ public class UILoader : MonoBehaviour
 {
     private Canvas canvas;
     public GameObject menuButtonPrefab;
-    void Start()
+    IEnumerator Start()
     {
-        canvas = GetComponentInChildren<Canvas>();
-        InstantiateNewButton("Start", new Vector3(0,40,0));
-        InstantiateNewButton("Continue", new Vector3(0,0,0));
-        InstantiateNewButton("Setting", new Vector3(0,-40,0));
-        InstantiateNewButton("Exit", new Vector3(0,-80,0));
+        yield return new WaitForSeconds(2f);
+        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        var image = GameObject.Find("Canvas").GetComponent<Image>();
+        image.sprite = Resources.Load<Sprite>("UI/background");
+        if (menuButtonPrefab == null)
+        {
+            menuButtonPrefab = Resources.Load<GameObject>("UI/Prefab/MenuButton");
+        }
+
+        var y = menuButtonPrefab.GetComponent<RectTransform>().sizeDelta.y;
+        List<GameObject> list = new List<GameObject>()
+        {
+            InstantiateNewButton("Start", new Vector3(0, y*1.25f, 0)),
+            InstantiateNewButton("Continue", new Vector3(0, 0, 0)),
+            InstantiateNewButton("Setting", new Vector3(0, -y*1.25f, 0)),
+            InstantiateNewButton("Exit", new Vector3(0,-y*2.5f, 0))
+        };
+
+
+        yield return null;
     }
 
-    private void InstantiateNewButton(string displayName, Vector3 position)
+    private GameObject InstantiateNewButton(string displayName, Vector3 position)
     {
         var buttonGameObject = Instantiate(menuButtonPrefab, canvas.transform);
         buttonGameObject.transform.localPosition = position;
@@ -26,6 +41,7 @@ public class UILoader : MonoBehaviour
         var button = buttonGameObject.GetComponent<Button>();
         button.GetComponentInChildren<Text>().text = displayName;
         button.onClick.AddListener(delegate { EventSystem.RaiseEvent(EventTypes.OnButtonClicked, button, EventArgs.Empty); });
+        return buttonGameObject;
     }
 
 
