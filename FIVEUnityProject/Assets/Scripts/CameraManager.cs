@@ -20,6 +20,14 @@ public class CameraManager : MonoBehaviour
         return Cameras[id];
     }
 
+    private void Start()
+    {
+        var cam = NewCamera("deep_space");
+        cam.transform.position = new Vector3(0f, 25f, 0f);
+        cam.transform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.forward);
+        cam.enabled = true;
+    }
+
     public void Update()
     {
         if (Input.GetKeyUp(KeyCode.C))
