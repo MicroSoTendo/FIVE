@@ -40,6 +40,7 @@ namespace Assets.Scripts
             return loadingSplashScreenScreen.OnTransitioning();
         }
 
+        private Vector3 exitBottonPosition;
         private void OnButtonClicked(object sender, EventArgs e)
         {
             var go = sender as Button;
@@ -63,12 +64,27 @@ namespace Assets.Scripts
                         gameCharacter = Instantiate(gameCharacterPrefab, new Vector3(64, 1, 64), Quaternion.Euler(0, 0, 0));
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
-                        Destroy(canvas.gameObject.GetComponent<Image>());
+                        var exitButton = GameObject.Find("ExitButton");
+                        exitBottonPosition = exitButton.transform.localPosition;
+                        var returnButton = GameObject.Find("Main Menu").GetComponent<UILoader>()
+                            .InstantiateNewButton("Return To Home", exitBottonPosition).GetComponent<Button>();
+                        returnButton.onClick.AddListener(delegate { EventSystem.EventSystem.RaiseEvent(EventTypes.OnButtonClicked, returnButton, EventArgs.Empty); }); ;
+                        exitButton.transform.localPosition = new Vector3(exitBottonPosition.x, exitBottonPosition.y * 1.5f, 0);
+                        canvas.gameObject.GetComponent<Image>().CrossFadeAlpha(0, 1, false);
                     }
 
                     canvas.gameObject.SetActive(false);
                     break;
-
+                case "Return To HomeButton":
+                    GameObject.Find("Main Camera").transform.parent = null;
+                    GameObject.Find("StartButton").GetComponentInChildren<Text>().text = "Start";
+                    var po = GameObject.Find("ExitButton").transform.localPosition;
+                    GameObject.Find("ExitButton").transform.localPosition = exitBottonPosition;
+                    Destroy(GameObject.Find("Return To HomeButton"));
+                    Destroy(gameCharacter);
+                    canvas.gameObject.GetComponent<Image>().CrossFadeAlpha(1, 2, false);
+                    instantiated = false;
+                    break;
                 default:
                     break;
             }
