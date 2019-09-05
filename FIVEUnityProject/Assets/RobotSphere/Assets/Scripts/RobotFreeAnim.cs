@@ -26,7 +26,6 @@ public class RobotFreeAnim : MonoBehaviour {
 		// Walk
 		if (Input.GetKey(KeyCode.W))
 		{
-            transform.Translate(transform.forward);
 			anim.SetBool("Walk_Anim", true);
 		}
 		else if (Input.GetKeyUp(KeyCode.W))
