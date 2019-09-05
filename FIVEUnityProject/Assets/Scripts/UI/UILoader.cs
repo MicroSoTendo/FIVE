@@ -33,7 +33,7 @@ public class UILoader : MonoBehaviour
         yield return null;
     }
 
-    private GameObject InstantiateNewButton(string displayName, Vector3 position)
+    public GameObject InstantiateNewButton(string displayName, Vector3 position)
     {
         var buttonGameObject = Instantiate(menuButtonPrefab, canvas.transform);
         buttonGameObject.transform.localPosition = position;
