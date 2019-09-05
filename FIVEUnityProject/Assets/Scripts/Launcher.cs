@@ -40,6 +40,7 @@ namespace Assets.Scripts
         }
 
         private Vector3 exitBottonPosition;
+
         private void OnButtonClicked(object sender, EventArgs e)
         {
             var go = sender as Button;
@@ -73,8 +74,8 @@ namespace Assets.Scripts
                     }
 
                     canvas.gameObject.SetActive(false);
-                    gameCharacter.GetComponent<RobotSphere>().activateCamera();
                     break;
+
                 case "Return To HomeButton":
                     GameObject.Find("Main Camera").transform.parent = null;
                     GameObject.Find("StartButton").GetComponentInChildren<Text>().text = "Start";
@@ -85,6 +86,7 @@ namespace Assets.Scripts
                     canvas.gameObject.GetComponent<Image>().CrossFadeAlpha(1, 2, false);
                     instantiated = false;
                     break;
+
                 default:
                     break;
             }

@@ -23,7 +23,7 @@ public class CameraManager : MonoBehaviour
     private void Start()
     {
         var cam = NewCamera("deep_space");
-        cam.transform.position = new Vector3(0f, 25f, 0f);
+        cam.transform.position = new Vector3(64f, 30f, 64f);
         cam.transform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.forward);
         cam.enabled = true;
     }
