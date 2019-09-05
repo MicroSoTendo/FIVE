@@ -18,8 +18,8 @@ public class CameraMove : MonoBehaviour
     }
     void Update()
     {
-        float distCovered = (Time.time - startTime) * speed;
-        float fracJourney = distCovered / journeyLength;
+        var distCovered = (Time.time - startTime) * speed;
+        var fracJourney = distCovered / journeyLength;
         transform.position = Vector3.Lerp(startMarker.position, endMarker.position, fracJourney);
     }
 }
