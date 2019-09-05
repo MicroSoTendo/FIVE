@@ -17,7 +17,6 @@ public class RobotSphere : MonoBehaviour
 
     void Start()
     {
-        //animator = GetComponent<RobotFreeAnim>();
         animator = new RobotFreeAnim(gameObject);
         fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
 
