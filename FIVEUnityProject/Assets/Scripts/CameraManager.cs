@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CameraManager : MonoBehaviour
 {
@@ -17,5 +18,17 @@ public class CameraManager : MonoBehaviour
     public Camera GetCamera(string id)
     {
         return Cameras[id];
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            foreach (var c in Cameras)
+            {
+                c.Value.enabled = false;
+            }
+            Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
+        }
     }
 }
