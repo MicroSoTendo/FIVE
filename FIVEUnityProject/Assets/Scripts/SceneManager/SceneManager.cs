@@ -9,19 +9,25 @@ public class SceneManager : MonoBehaviour
     private GameObject Camera;
     private readonly Dictionary<(int, int), AreaData> Areas = new Dictionary<(int, int), AreaData>();
 
-    private void Start() => Camera = GameObject.FindGameObjectWithTag("MainCamera");
-
     private void Update()
     {
-        if (Time.frameCount % 60 == 0)
+        if (Camera == null)
         {
-            var x = (int)Camera.transform.position.x / AreaData.size;
-            var y = (int)Camera.transform.position.z / AreaData.size;
-            for (var i = -1; i <= 1; i++)
+            Camera = GameObject.FindGameObjectWithTag("MainCamera");
+        }
+
+        if (Camera != null)
+        {
+            if (Time.frameCount % 60 == 0)
             {
-                for (var j = -1; j <= 1; j++)
+                var x = (int)Camera.transform.position.x / AreaData.size;
+                var y = (int)Camera.transform.position.z / AreaData.size;
+                for (var i = -1; i <= 1; i++)
                 {
-                    LoadArea(x + i, y + j);
+                    for (var j = -1; j <= 1; j++)
+                    {
+                        LoadArea(x + i, y + j);
+                    }
                 }
             }
         }
