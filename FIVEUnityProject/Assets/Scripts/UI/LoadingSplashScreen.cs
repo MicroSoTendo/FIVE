@@ -1,72 +1,33 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.UI
 {
-    public class LoadingSplashScreen : SplashScreen
+    public abstract class LoadingSplashScreen : SplashScreen
     {
+        protected Queue<Action> loadingTasks;
+        protected int totalTasks;
+        protected int finishedTasks;
 
-
-        public class LoadingGUI : MonoBehaviour
+        protected LoadingSplashScreen(Queue<Action> loadingLoadingTasks)
         {
-
-            public Action OnGuiAction;
-            private float progress;
-            /// <summary>
-            /// </summary>
-            /// <param name="newProgress">range from 0 to 1</param>
-            public void SetProgress(float newProgress)
-            {
-                progress = newProgress;
-            }
-
-            void OnGUI()
-            {
-                OnGuiAction();
-            }
-        }
-        public class Wrap { }
-        public class Wrap<T> : Wrap
-        {
-            public T _()
-            {
-                return default;
-            }
-        }
-
-        private readonly Queue<Action> loadingTasks;
-        private readonly int totalTasks;
-
-        private bool isFinished = false;
-
-        Wrap<Action<Wrap>> _ = new Wrap<Action<Wrap>>();
-        private LoadingGUI loadingGui;
-        public LoadingSplashScreen(Queue<Action> loadingLoadingTasks, LoadingGUI loadingGuiBehaviour)
-        {
-            this.loadingTasks = loadingLoadingTasks;
+            loadingTasks = loadingLoadingTasks;
             totalTasks = loadingLoadingTasks.Count;
-            loadingGui = loadingGuiBehaviour;
+            finishedTasks = 0;
         }
-
-        private bool IsFinished() => isFinished;
+        protected abstract void UpdateLoadingProgressBar();
         public override IEnumerator OnTransitioning()
         {
-            for (int i = 0; i < totalTasks; i++)
+            while (loadingTasks.Count > 0)
             {
-                loadingTasks.Dequeue()();
-                loadingGui.SetProgress((float)loadingTasks.Count / totalTasks);
-                yield return new WaitUntil(IsFinished);
+                var action = loadingTasks.Dequeue();
+                action();
+                finishedTasks++;
+                UpdateLoadingProgressBar();
+                yield return null;
             }
-
-            isFinished = true;
-            yield return new WaitUntil(IsFinished);
         }
-
-
     }
 }
