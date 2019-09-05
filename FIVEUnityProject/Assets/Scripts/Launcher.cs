@@ -10,7 +10,6 @@ namespace Assets.Scripts
 {
     public class Launcher : MonoBehaviour
     {
-        // Start is called before the first frame update
         public GameObject gameCharacterPrefab;
 
         private Canvas canvas;
@@ -30,7 +29,7 @@ namespace Assets.Scripts
                 var MainMenu = new GameObject("Main Menu");
                 MainMenu.AddComponent<UILoader>();
             });
-            loadingSplashScreenScreen = new StartUpScreen(loadingTasks, numberOfDummyTasks: 10, dummyTaskDuration: 2);
+            loadingSplashScreenScreen = new StartUpScreen(loadingTasks, numberOfDummyTasks: 200, dummyTaskDuration: 2);
         }
 
         private IEnumerator Start()
@@ -74,6 +73,7 @@ namespace Assets.Scripts
                     }
 
                     canvas.gameObject.SetActive(false);
+                    gameCharacter.GetComponent<RobotSphere>().activateCamera();
                     break;
                 case "Return To HomeButton":
                     GameObject.Find("Main Camera").transform.parent = null;
