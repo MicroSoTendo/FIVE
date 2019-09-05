@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.EventSystem;
+using Assets.Scripts.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.EventSystem;
-using Assets.Scripts.UI;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -43,7 +43,11 @@ namespace Assets.Scripts
         private void OnButtonClicked(object sender, EventArgs e)
         {
             var go = sender as Button;
-            if (go == null) return;
+            if (go == null)
+            {
+                return;
+            }
+
             switch (go.name)
             {
                 case "ExitButton":
