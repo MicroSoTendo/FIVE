@@ -19,10 +19,6 @@ public class RobotFreeAnim : MonoBehaviour {
 	{
 		CheckKey();
 		gameObject.transform.eulerAngles = rot;
-
-
-        //float xAxisValue = Input.GetAxis("Horizontal");
-        //float zAxisValue = Input.GetAxis("Vertical");
     }
 
 	void CheckKey()
@@ -30,6 +26,7 @@ public class RobotFreeAnim : MonoBehaviour {
 		// Walk
 		if (Input.GetKey(KeyCode.W))
 		{
+            transform.Translate(transform.forward);
 			anim.SetBool("Walk_Anim", true);
 		}
 		else if (Input.GetKeyUp(KeyCode.W))
