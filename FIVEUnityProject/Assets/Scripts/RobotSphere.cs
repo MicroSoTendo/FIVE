@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class RobotSphere : MonoBehaviour
 {
-    enum ControllerState { FPS, RTS, };
+    public enum RobotState { Idle, Walk, Jump, Open, };
 
-    ControllerState currState = ControllerState.FPS;
+    enum ControllerOp { FPS, RTS, };
+
+    ControllerOp currOp = ControllerOp.FPS;
+    public RobotState currState = RobotState.Idle;
 
     // Script References
     private RobotFreeAnim animator;
     private FpsController fpsController;
 
-    // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<RobotFreeAnim>();
-        fpsController = new FpsController(GetComponent<CharacterController>());
+        //animator = GetComponent<RobotFreeAnim>();
+        animator = new RobotFreeAnim(gameObject);
+        fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
 
         // Setup initial FPS Camera
         var eye = GameObject.Find("eyeDome");
@@ -25,9 +28,9 @@ public class RobotSphere : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
 
-    // Update is called once per frame
     void Update()
     {
+        animator.Update(currState);
         fpsController.Update();
     }
 }
