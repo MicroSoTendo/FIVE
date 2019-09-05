@@ -23,29 +23,23 @@ namespace Assets.Scripts
         private GameObject gameCharacter;
 
         private Queue<Action> loadingTasks;
-        private LoadingSplashScreen loadingSplashScreenScreen;
-        public Texture texture;
+        private StartUpScreen loadingSplashScreenScreen;
         void Awake()
         {
-
-            canvas = GetComponentInChildren<Canvas>();
-            mainCamera = GameObject.Find("Main Camera");
-            cameraController = mainCamera.GetComponent<CameraController>();
-            cameraController.enabled = false;
             instantiated = false;
-            EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
-
-
             loadingTasks = new Queue<Action>();
-            var loadingGui = gameObject.AddComponent<LoadingSplashScreen.LoadingGUI>();
-            loadingGui.OnGuiAction = () =>
+            loadingTasks.Enqueue(() =>
             {
-                GUI.DrawTexture(new Rect(10, 10, 60, 60), texture, ScaleMode.ScaleToFit, true, 10.0F);
-            };
-            loadingSplashScreenScreen = new LoadingSplashScreen(loadingTasks, loadingGui);
+                var MainMenu = new GameObject("Main Menu");
+                MainMenu.AddComponent<UILoader>();
+            });
+            loadingSplashScreenScreen = new StartUpScreen(loadingTasks);
         }
         IEnumerator Start()
         {
+            EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
+            canvas = GetComponentInChildren<Canvas>();
+            mainCamera = GameObject.Find("Main Camera");
             return loadingSplashScreenScreen.OnTransitioning();
         }
 
@@ -65,19 +59,18 @@ namespace Assets.Scripts
                     if (!instantiated)
                     {
                         Instantiate(groundPrefab);
-                        gameCharacter = Instantiate(gameCharacterPrefab);
-                        gameCharacter.transform.position = new Vector3(64, 1, 64);
+                        gameCharacter = Instantiate(gameCharacterPrefab, new Vector3(64, 1, 64), Quaternion.Euler(0, 0, 0));
                         var eye = GameObject.Find("eyeDome");
-                        mainCamera.transform.parent =eye.transform;
-                        mainCamera.transform.localPosition = new Vector3(0,0,0);
-                        mainCamera.transform.localRotation = Quaternion.Euler(0,0,0);
+                        mainCamera.transform.parent = eye.transform;
+                        mainCamera.transform.localPosition = new Vector3(0, 0, 0);
+                        mainCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
                         //mainCamera.transform.rotation = Quaternion.AngleAxis(5f, Vector3.right);
                         instantiated = true;
                         go.GetComponentInChildren<Text>().text = "Resume";
+                        Destroy(canvas.gameObject.GetComponent<Image>());
                     }
 
                     canvas.gameObject.SetActive(false);
-                    cameraController.enabled = true;
                     break;
                 default:
                     break;
@@ -92,7 +85,6 @@ namespace Assets.Scripts
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 canvas.gameObject.SetActive(!canvas.gameObject.activeSelf);
-                cameraController.enabled = !cameraController.enabled;
             }
         }
     }
