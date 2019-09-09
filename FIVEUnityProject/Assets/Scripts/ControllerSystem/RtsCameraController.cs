@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts
+namespace FIVE.ControllerSystem
 {
     internal class RtsCameraController : MonoBehaviour
     {

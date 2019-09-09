@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Assets.Scripts.UI
+namespace FIVE.UI
 {
     public abstract class SplashScreen
     {

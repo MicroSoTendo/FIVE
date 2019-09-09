@@ -1,33 +1,36 @@
 ﻿using UnityEngine;
 
-[ExecuteInEditMode]
-public class RobotFreeAnim
+namespace FIVE
 {
-    private GameObject gameObject;
-
-    Animator anim;
-
-    public RobotFreeAnim(GameObject gameObject)
+    public class RobotFreeAnim
     {
-        this.gameObject = gameObject;
-        anim = gameObject.GetComponent<Animator>();
-    }
+        private GameObject gameObject;
 
-    // Update is called once per frame
-    public void Update(RobotSphere.RobotState currState)
-    {
-        UpdateAnim(currState);
-    }
+        Animator anim;
 
-    void UpdateAnim(RobotSphere.RobotState currState)
-    {
-        if (currState == RobotSphere.RobotState.Idle)
+        public RobotFreeAnim(GameObject gameObject)
         {
-            anim.SetBool("Walk_Anim", false);
+            this.gameObject = gameObject;
+            anim = gameObject.GetComponent<Animator>();
         }
-        else if (currState == RobotSphere.RobotState.Walk)
+
+        // Update is called once per frame
+        public void Update(RobotSphere.RobotState currState)
         {
-            anim.SetBool("Walk_Anim", true);
+            UpdateAnim(currState);
+        }
+
+        void UpdateAnim(RobotSphere.RobotState currState)
+        {
+            if (currState == RobotSphere.RobotState.Idle)
+            {
+                anim.SetBool("Walk_Anim", false);
+            }
+            else if (currState == RobotSphere.RobotState.Walk)
+            {
+                anim.SetBool("Walk_Anim", true);
+            }
         }
     }
+
 }

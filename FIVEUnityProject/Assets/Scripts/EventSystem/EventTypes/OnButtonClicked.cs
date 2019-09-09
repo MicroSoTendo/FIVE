@@ -1,4 +1,4 @@
-namespace Assets.Scripts.EventSystem.EventTypes
+namespace FIVE.EventSystem.EventTypes
 {
     public class OnButtonClicked : IEventType
     {

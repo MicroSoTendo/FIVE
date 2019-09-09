@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 1027401578}
   - component: {fileID: 1027401579}
   m_Layer: 0
-  m_Name: SceneManager
+  m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -555,5 +555,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ab5254118a2caf41be9962bcfd8e823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameCharacterPrefab: {fileID: 1528915638184230, guid: 8e0f285c21cdcf14e8d5c06c57ba936b,
-    type: 3}
+  InfranstructuresOnAwake: []
+  InfranstructuresOnStart: []
