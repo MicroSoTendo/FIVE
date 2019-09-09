@@ -14,23 +14,20 @@ namespace FIVE
 
         private void Awake()
         {
-            EventManager.RaiseEvent<OnLauncherAwake>(this, EventArgs.Empty);
+            this.RaiseEvent<OnLauncherAwake>(EventArgs.Empty);
             InfranstructuresOnAwake.ForEach(v => Instantiate(v));
         }
 
         private IEnumerator Start()
         {
-            EventSystem.EventManager.RaiseEvent<OnLauncherStart>(this, EventArgs.Empty);
-            foreach(var prefab in InfranstructuresOnStart)
+            this.RaiseEvent<OnLauncherStart>(EventArgs.Empty);
+            foreach (var prefab in InfranstructuresOnStart)
             {
                 Instantiate(prefab);
                 yield return null;
             }
-        }
-
-        private void Update()
-        {
-            EventSystem.EventManager.RaiseEvent<OnLauncherUpdate>(this, EventArgs.Empty);
+            Destroy(this);
+            this.RaiseEvent<OnLauncherDestroyed>(EventArgs.Empty);
         }
     }
 }
