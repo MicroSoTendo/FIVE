@@ -12,28 +12,25 @@ namespace FIVE.UI
     {
         private Canvas canvas;
         public GameObject menuButtonPrefab;
-        IEnumerator Start()
+        void Start()
         {
-            yield return new WaitForSeconds(2f);
-            canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
-            var image = GameObject.Find("Canvas").GetComponent<Image>();
-            image.sprite = Resources.Load<Sprite>("UI/background");
+            canvas = GetComponentInChildren<Canvas>();
+            var image = canvas.gameObject.AddComponent<Image>();
+            image.sprite = Resources.Load<Sprite>("Graphics/UI/background");
             if (menuButtonPrefab == null)
             {
-                menuButtonPrefab = Resources.Load<GameObject>("UI/Prefab/MenuButton");
+                menuButtonPrefab = Resources.Load<GameObject>("EntityPrefabs/MenuButton");
             }
 
             var y = menuButtonPrefab.GetComponent<RectTransform>().sizeDelta.y;
             List<GameObject> list = new List<GameObject>()
-        {
-            InstantiateNewButton("Start", new Vector3(0, y*1.25f, 0)),
-            InstantiateNewButton("Continue", new Vector3(0, 0, 0)),
-            InstantiateNewButton("Setting", new Vector3(0, -y*1.25f, 0)),
-            InstantiateNewButton("Exit", new Vector3(0,-y*2.5f, 0))
-        };
+            {
+                InstantiateNewButton("Start", new Vector3(0, y*1.25f, 0)),
+                InstantiateNewButton("Continue", new Vector3(0, 0, 0)),
+                InstantiateNewButton("Setting", new Vector3(0, -y*1.25f, 0)),
+                InstantiateNewButton("Exit", new Vector3(0,-y*2.5f, 0))
+            };
 
-
-            yield return null;
         }
 
         public GameObject InstantiateNewButton(string displayName, Vector3 position)
@@ -43,7 +40,7 @@ namespace FIVE.UI
             buttonGameObject.name = displayName + "Button";
             var button = buttonGameObject.GetComponent<Button>();
             button.GetComponentInChildren<Text>().text = displayName;
-            button.onClick.AddListener(async () => { await EventManager.RaiseEventAsync<OnButtonClicked>(button, EventArgs.Empty); });
+            button.onClick.AddListener(async () => { await button.RaiseEventAsync<OnButtonClicked>(EventArgs.Empty); });
             //Or
             //button.onClick.AddListener(() => { EventSystem.RaiseEvent<OnButtonClicked>(button, EventArgs.Empty); });
             return buttonGameObject;
