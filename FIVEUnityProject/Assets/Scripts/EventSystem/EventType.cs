@@ -1,5 +1,7 @@
-
-public interface IEventType
+namespace FIVE
 {
+    public interface IEventType
+    {
 
+    }
 }

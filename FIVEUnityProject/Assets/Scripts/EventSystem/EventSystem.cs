@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Assets.Scripts.EventSystem
+namespace FIVE.EventSystem
 {
-    public sealed class EventSystem
+    public sealed class EventManager
     {
-        private static EventSystem Instance { get; } = new EventSystem();
+        private static EventManager Instance { get; } = new EventManager();
         private readonly ConcurrentDictionary<Type, HandlerList<HandlerNode>> typedHandlerNodes;
         private readonly ConcurrentQueue<Action> scheduledAsync = new ConcurrentQueue<Action>();
         private readonly ConcurrentQueue<Action> scheduledMainThread = new ConcurrentQueue<Action>();
@@ -21,7 +20,7 @@ namespace Assets.Scripts.EventSystem
         private bool initialized;
         private Coroutine coroutine;
         private Task asyncTask;
-        private EventSystem()
+        private EventManager()
         {
             var mainThreadDispatcther = new GameObject(nameof(MainThreadDispatcher));
             dispatcher = mainThreadDispatcther.AddComponent<MainThreadDispatcher>();

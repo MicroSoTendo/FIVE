@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using UnityEngine;
 
-namespace Assets.Scripts.EventSystem
+namespace FIVE.EventSystem
 {
     internal sealed class MainThreadDispatcher : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.SceneManager
+namespace FIVE.SceneSystem
 {
     internal class AreaData
     {
