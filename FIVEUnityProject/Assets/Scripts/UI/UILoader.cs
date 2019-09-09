@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.EventSystem;
 using UnityEngine.UI;
+using Assets.Scripts.EventSystem.EventTypes;
 
 public class UILoader : MonoBehaviour
 {
@@ -40,7 +41,9 @@ public class UILoader : MonoBehaviour
         buttonGameObject.name = displayName + "Button";
         var button = buttonGameObject.GetComponent<Button>();
         button.GetComponentInChildren<Text>().text = displayName;
-        button.onClick.AddListener(delegate { EventSystem.RaiseEvent(EventTypes.OnButtonClicked, button, EventArgs.Empty); });
+        button.onClick.AddListener(async () => { await EventSystem.RaiseEventAsync<OnButtonClicked>(button, EventArgs.Empty); });
+        //Or
+        //button.onClick.AddListener(() => { EventSystem.RaiseEvent<OnButtonClicked>(button, EventArgs.Empty); });
         return buttonGameObject;
     }
 

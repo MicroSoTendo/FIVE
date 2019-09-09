@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.EventSystem;
+﻿using Assets.Scripts.EventSystem.EventTypes;
 using Assets.Scripts.UI;
 using System;
 using System.Collections;
@@ -34,7 +34,7 @@ namespace Assets.Scripts
 
         private IEnumerator Start()
         {
-            EventSystem.EventSystem.Subscribe(EventTypes.OnButtonClicked, OnButtonClicked);
+            EventSystem.EventSystem.Subscribe<OnButtonClicked>(OnButtonClicked);
             canvas = GetComponentInChildren<Canvas>();
             return loadingSplashScreenScreen.OnTransitioning();
         }
@@ -68,7 +68,12 @@ namespace Assets.Scripts
                         exitBottonPosition = exitButton.transform.localPosition;
                         var returnButton = GameObject.Find("Main Menu").GetComponent<UILoader>()
                             .InstantiateNewButton("Return To Home", exitBottonPosition).GetComponent<Button>();
-                        returnButton.onClick.AddListener(delegate { EventSystem.EventSystem.RaiseEvent(EventTypes.OnButtonClicked, returnButton, EventArgs.Empty); }); ;
+                        returnButton.onClick.AddListener(
+                            async () =>
+                            { 
+                                await EventSystem.EventSystem.RaiseEventAsync<OnButtonClicked>(returnButton, EventArgs.Empty); 
+                            }
+                        );
                         exitButton.transform.localPosition = new Vector3(exitBottonPosition.x, exitBottonPosition.y * 1.5f, 0);
                         canvas.gameObject.GetComponent<Image>().CrossFadeAlpha(0, 1, false);
                     }
