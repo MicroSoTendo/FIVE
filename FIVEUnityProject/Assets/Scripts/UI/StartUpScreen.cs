@@ -10,41 +10,19 @@ namespace FIVE.UI
     public class StartUpScreen : LoadingSplashScreen
     {
         #region Private Fields
-        GameObject Wally;
-        GameObject Gen;
-        GameObject Yu;
-        GameObject Laurence;
-        GameObject Wen;
+        private GameObject Wally, Gen, Yu, Laurence, Wen;
 
-        GameObject QuestionMark;
-        GameObject ExclamationMark;
-        GameObject LaurenceMark;
+        private Vector3 genTarget, wallyTarget, laurenceTarget, wenTarget, yuTarget;
+        private GameObject QuestionMark, ExclamationMark, LaurenceMark;
 
-        GameObject TBoundary;
-        GameObject TColor;
-        GameObject S1Boundary;
-        GameObject S1Color;
-        GameObject S2Boundary;
-        GameObject S2Color;
+        private GameObject TBoundary, TColor, S1Boundary, S1Color, S2Boundary, S2Color;
 
         private GameObject canvas;
-        private float width;
-        private float height;
-        private float unitWidth;
-        private Vector3 genTarget;
-        private Vector3 wallyTarget;
-        private Vector3 laurenceTarget;
-        private Vector3 wenTarget;
-        private Vector3 yuTarget;
-        private MoveInAnimation genmtt;
-        private MoveInAnimation wallymtt;
-        private MoveInAnimation laurencemtt;
-        private MoveInAnimation wenmtt;
-        private MoveInAnimation yumtt;
+        private float width, height, unitWidth;
+        private MoveInAnimation genmtt, wallymtt, laurencemtt, wenmtt, yumtt;
 
         #endregion
 
-        #region Animation Methods
         private void GetCanvas()
         {
             canvas = GameObject.Find("Canvas");
@@ -54,6 +32,7 @@ namespace FIVE.UI
             canvas.AddComponent<Image>().sprite = Resources.Load<Sprite>("UI/WhiteBackground");
         }
 
+        #region Animation Methods
         private void InstantiateCharacters()
         {
             Wally = InitLogoHelper(nameof(Wally), canvas, unitWidth);
