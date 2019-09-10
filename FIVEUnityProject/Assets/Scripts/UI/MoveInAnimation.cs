@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Threading;
 using UnityEngine;
-namespace Assets.Scripts.UI
+
+namespace FIVE.UI
 {
     public class MoveInAnimation : MonoBehaviour
     {

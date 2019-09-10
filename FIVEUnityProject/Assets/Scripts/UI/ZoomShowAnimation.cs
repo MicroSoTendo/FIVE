@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.Scripts.UI
+namespace FIVE.UI
 {
     public class ZoomShowAnimation : MonoBehaviour
     {

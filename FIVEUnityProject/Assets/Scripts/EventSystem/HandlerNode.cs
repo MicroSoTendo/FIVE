@@ -1,6 +1,6 @@
 using System;
 
-namespace Assets.Scripts.EventSystem
+namespace FIVE.EventSystem
 {
     public class HandlerNode : IEquatable<HandlerNode>
     {
