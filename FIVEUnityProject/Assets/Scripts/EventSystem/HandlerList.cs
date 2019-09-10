@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.EventSystem
+namespace FIVE.EventSystem
 {
     public class HandlerList<T> where T : HandlerNode
     {

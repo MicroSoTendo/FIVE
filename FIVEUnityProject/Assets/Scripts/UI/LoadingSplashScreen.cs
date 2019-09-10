@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.UI
+namespace FIVE.UI
 {
     public abstract class LoadingSplashScreen : SplashScreen
     {

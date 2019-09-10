@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Assets.Scripts.EventSystem;
+using FIVE.EventSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.UI
+namespace FIVE.UI
 {
     public class StartUpScreen : LoadingSplashScreen
     {
