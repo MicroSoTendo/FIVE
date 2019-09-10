@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace FIVE
 {
-    public class Launcher : MonoBehaviour
+    public class MainLoader : MonoBehaviour
     {
         public List<GameObject> InfranstructuresOnAwake;
         public List<GameObject> InfranstructuresOnStart;
