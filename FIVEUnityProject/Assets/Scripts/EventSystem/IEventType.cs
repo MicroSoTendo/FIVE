@@ -7,6 +7,6 @@
 
     public interface IEventType<T> : IEventType
     {
-
+        T TypeHolder { get; }
     }
 }

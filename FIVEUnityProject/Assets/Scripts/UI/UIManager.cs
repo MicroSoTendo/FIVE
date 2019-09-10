@@ -11,12 +11,18 @@ namespace FIVE.UI
     public class UIManager : MonoBehaviour
     {
         private Canvas canvas;
+        private Image backgroundImage;
         public GameObject menuButtonPrefab;
-        void Start()
+
+        private void Awake() 
         {
             canvas = GetComponentInChildren<Canvas>();
-            var image = canvas.gameObject.AddComponent<Image>();
-            image.sprite = Resources.Load<Sprite>("Graphics/UI/background");
+            backgroundImage = canvas.gameObject.AddComponent<Image>();
+        }
+
+        void Start()
+        {
+            backgroundImage.sprite = Resources.Load<Sprite>("Graphics/UI/background");
             if (menuButtonPrefab == null)
             {
                 menuButtonPrefab = Resources.Load<GameObject>("EntityPrefabs/MenuButton");
