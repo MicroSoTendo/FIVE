@@ -10,13 +10,18 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        private Canvas canvas;
+        private GameObject canvas;
         private Image backgroundImage;
         public GameObject menuButtonPrefab;
 
-        private void Awake() 
+        private void Awake()
         {
-            canvas = GetComponentInChildren<Canvas>();
+            canvas = new GameObject("Canvas");
+            var canvasComponent = canvas.AddComponent<Canvas>();
+            canvasComponent.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.AddComponent<CanvasScaler>();
+            canvas.AddComponent<GraphicRaycaster>();
+
             backgroundImage = canvas.gameObject.AddComponent<Image>();
         }
 
@@ -41,7 +46,7 @@ namespace FIVE.UI
 
         public GameObject InstantiateNewButton(string displayName, Vector3 position)
         {
-            var buttonGameObject = Instantiate(menuButtonPrefab, canvas.transform);
+            var buttonGameObject = Instantiate(menuButtonPrefab, canvas.GetComponent<Canvas>().transform);
             buttonGameObject.transform.localPosition = position;
             buttonGameObject.name = displayName + "Button";
             var button = buttonGameObject.GetComponent<Button>();
