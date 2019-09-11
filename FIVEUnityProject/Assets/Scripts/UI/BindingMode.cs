@@ -9,7 +9,4 @@ namespace FIVE.UI
         OneWayToSource,
         TwoWay,
     }
-    public class Binding<TSource, TTarget>
-    {
-    }
 }
