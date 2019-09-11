@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Canvas name="StartupMenuView">
+    <Button name = "SinglePlayerButton" prefab = "EntityPrefabs/MenuButton"/>
+    <Button name = "MultiplayerButton" prefab = "EntityPrefabs/MenuButton"/>
+    <Button name = "OptionsButton" prefab = "EntityPrefabs/MenuButton"/>
+    <Button name = "ExitGameButton" prefab = "EntityPrefabs/MenuButton"/>
+</Canvas>
