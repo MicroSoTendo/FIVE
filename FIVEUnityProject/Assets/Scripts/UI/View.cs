@@ -3,60 +3,75 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace FIVE.UI
 {
-    public abstract class View<TView, TViewModel>
-        where TView : View<TView, TViewModel>, new()
-        where TViewModel : ViewModel<TView, TViewModel>
+    public abstract class View
     {
-        private static Dictionary<string, View<TView, TViewModel>> cachedViews = new Dictionary<string, View<TView, TViewModel>>();
-
-        public static T Create<T>() where T : View<TView, TViewModel>, new()
-        {
-            T newView = new T();
-            //TODO: Xml or 3rd layout packages
-            var fileName = typeof(T).Name + "Layout.xml";
-            if (cachedViews.ContainsKey(fileName))
-            {
-                //TODO: Load from cache
-            }
-            var xmlFile = Resources.Load<TextAsset>($"UI/{fileName}");
-            XmlDocument document = new XmlDocument();
-            document.LoadXml(xmlFile.text);
-            foreach (var keyValuePair in newView.nameToUIElement)
-            {
-                var name = keyValuePair.Key;
-                var uiElement = keyValuePair.Value;
-                //TODO: Deserialize config from xml to UIElements
-            }
-            return newView;
-        }
-
         public RenderMode RenderMode { get; set; }
         protected GameObject parent;
         protected Canvas canvas;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
-        protected Dictionary<string, MonoBehaviour> nameToUIElement;
+        protected Dictionary<string, GameObject> nameToUIElementGO;
 
+        protected XmlDocument viewXml;
         protected View()
         {
             parent = new GameObject();
+            parent.name = GetType().Name;
             canvas = parent.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasScaler = parent.AddComponent<CanvasScaler>();
             graphicRaycaster = parent.AddComponent<GraphicRaycaster>();
+            nameToUIElementGO = new Dictionary<string, GameObject>();
+
+            var pathToXml = $"UI/{GetType().Name}";// + ".xml";
+            var xmlFile = Resources.Load<TextAsset>(pathToXml);
+            viewXml = new XmlDocument();
+            viewXml.LoadXml(xmlFile.text);
         }
 
         protected T AddUIElement<T>(string name = "") where T : MonoBehaviour
         {
-            var newUIElement = parent.AddComponent<T>();
+            if (name.Length != 0)
+            {
+                var xmlNode = viewXml.SelectNodes($"/Canvas/Button[@name='{name}']")?[0];
+                var prefabAttribute = xmlNode?.Attributes?["prefab"];
+                var prefabPath = prefabAttribute?.InnerText;
+                var prefab = Resources.Load<GameObject>(prefabPath);
+                var go = Object.Instantiate(prefab, canvas.transform);
+                nameToUIElementGO.Add(name, go);
+                return go.GetComponent<T>();
+            }
+            var newUIElementGO = new GameObject();
+            newUIElementGO.transform.parent = canvas.transform;
+            var newUIElement = newUIElementGO.AddComponent<T>();
             if (name.Length == 0)
             {
-                name = typeof(T) + newUIElement.GetInstanceID().ToString();
+                name = typeof(T) + newUIElementGO.GetInstanceID().ToString();
             }
-            nameToUIElement.Add(name, newUIElement);
+            newUIElementGO.name = name;
+            nameToUIElementGO.Add(name, newUIElementGO);
             return newUIElement;
+        }
+
+    }
+    public abstract class View<TView, TViewModel> : View
+        where TView : View<TView, TViewModel>, new()
+        where TViewModel : ViewModel<TView, TViewModel>
+    {
+        private static Dictionary<Type, View> cachedViews = new Dictionary<Type, View>();
+        public static T Create<T>() where T : View<TView, TViewModel>, new()
+        {
+            return new T();
+            T newView = new T();
+            if (cachedViews.ContainsKey(typeof(T)))
+            {
+                return cachedViews[typeof(T)] as T;
+            }
+            return newView;
         }
 
         private static void SetAttributesFromXml<T>(XmlDocument xmlDocument, T uiElement) where T : MonoBehaviour

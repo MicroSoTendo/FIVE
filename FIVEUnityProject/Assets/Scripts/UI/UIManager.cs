@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using FIVE.EventSystem.EventTypes;
 using FIVE.EventSystem;
+using FIVE.UI.StartupMenu;
 
 namespace FIVE.UI
 {
@@ -14,8 +14,12 @@ namespace FIVE.UI
         private Image backgroundImage;
         public GameObject menuButtonPrefab;
 
+        private ViewModel viewModel;
+
         private void Awake()
         {
+            viewModel = new StartupMenuViewModel();
+            return;
             canvas = new GameObject("Canvas");
             var canvasComponent = canvas.AddComponent<Canvas>();
             canvasComponent.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -27,6 +31,7 @@ namespace FIVE.UI
 
         void Start()
         {
+            return;
             backgroundImage.sprite = Resources.Load<Sprite>("Graphics/UI/background");
             if (menuButtonPrefab == null)
             {

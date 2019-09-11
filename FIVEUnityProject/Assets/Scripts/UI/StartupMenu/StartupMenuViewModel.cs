@@ -1,22 +1,25 @@
 using System;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace FIVE.UI.StartupMenu
 {
     public class StartupMenuViewModel : ViewModel<StartupMenuView, StartupMenuViewModel>
     {
-        public StartupMenuViewModel() : base()
+
+        public StartupMenuViewModel()
         {
-            binder.Bind(View => View.SinglePlayerButton.onClick).
-            To(ViewModel => ViewModel.OnSinglePlayerButtonClicked);
+            binder.Bind(view => view.SinglePlayerButton.onClick).
+            To(viewModel => viewModel.OnSinglePlayerButtonClicked());
             
-            binder.Bind(View => View.MultiplayerButton.onClick).
-            To(ViewModel => ViewModel.OnMultiPlayerButtonClicked);
+            binder.Bind(view => view.MultiplayerButton.onClick).
+            To(viewModel => viewModel.OnMultiPlayerButtonClicked());
             
-            binder.Bind(View => View.OptionsButton.onClick).
-            To(ViewModel => ViewModel.OnMultiPlayerButtonClicked);
+            binder.Bind(view => view.OptionsButton.onClick).
+            To(viewModel => viewModel.OnMultiPlayerButtonClicked());
             
-            binder.Bind(View => View.ExitGameButton.onClick).
-            To(ViewModel => ViewModel.OnMultiPlayerButtonClicked);
+            binder.Bind(view => view.ExitGameButton.onClick).
+            To(viewModel => viewModel.OnMultiPlayerButtonClicked());
         }
 
         private void OnSinglePlayerButtonClicked()
