@@ -42,6 +42,12 @@ namespace FIVE.UI
                 var prefabPath = prefabAttribute?.InnerText;
                 var prefab = Resources.Load<GameObject>(prefabPath);
                 var go = Object.Instantiate(prefab, canvas.transform);
+                var positionAttribute = xmlNode?.Attributes?["position"].InnerText.Split(',');
+                var x = float.Parse(positionAttribute[0]);
+                var y = float.Parse(positionAttribute[1]);
+                var z = float.Parse(positionAttribute[2]);
+                go.name = name;
+                go.transform.localPosition = new Vector3(x, y, z);
                 nameToUIElementGO.Add(name, go);
                 return go.GetComponent<T>();
             }
@@ -76,7 +82,7 @@ namespace FIVE.UI
 
         private static void SetAttributesFromXml<T>(XmlDocument xmlDocument, T uiElement) where T : MonoBehaviour
         {
-            
+
         }
 
     }
