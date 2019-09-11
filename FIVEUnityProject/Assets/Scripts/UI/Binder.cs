@@ -1,8 +1,12 @@
 using System;
 using System.Linq.Expressions;
+using static UnityEngine.Debug;
+
 namespace FIVE.UI
 {
-    public class Binder<TView, TViewModel> where TView : View where TViewModel : ViewModel
+    public class Binder<TView, TViewModel> 
+        where TView : View<TView,TViewModel>, new()
+        where TViewModel : ViewModel<TView, TViewModel>
     {
         public class BindingSource<TSource>
         {
@@ -23,7 +27,22 @@ namespace FIVE.UI
 
         public BindingSource<TSource> Bind<TSource>(Expression<Func<TView, TSource>> expression)
         {
-            //TODO: Implementation
+            var body = expression.Body;
+            switch(body)
+            {
+                case MethodCallExpression methodCall:
+                    Log(nameof(MethodCallExpression));
+                    break;
+                case UnaryExpression unary:
+                    Log(nameof(UnaryExpression));
+                    break;
+                case MemberExpression member:
+                    Log(nameof(MemberExpression));
+                    break;
+                default:
+                    Log("default");
+                    break;
+            }
             return default;
         }
     }
