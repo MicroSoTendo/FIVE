@@ -5,21 +5,18 @@ namespace FIVE.UI.StartupMenu
 {
     public class StartupMenuView : View<StartupMenuView, StartupMenuViewModel>
     {
-        public StartupMenuView() : base()
+        public StartupMenuView()
         {
-            this.Background = AddUIElement<Image>();
-            this.SinglePlayerButton = AddUIElement<Button>(nameof(SinglePlayerButton));
-            this.MultiplayerButton = AddUIElement<Button>(nameof(MultiplayerButton));
-            this.OptionsButton = AddUIElement<Button>(nameof(OptionsButton));
-            this.ExitGameButton = AddUIElement<Button>(nameof(ExitGameButton));
+            Background = AddUIElement<Image>();
+            SinglePlayerButton = AddUIElement<Button>(nameof(SinglePlayerButton));
+            MultiplayerButton = AddUIElement<Button>(nameof(MultiplayerButton));
+            OptionsButton = AddUIElement<Button>(nameof(OptionsButton));
+            ExitGameButton = AddUIElement<Button>(nameof(ExitGameButton));
         }
-
         public Image Background { get; }
         public Button SinglePlayerButton { get; }
         public Button MultiplayerButton { get; }
         public Button OptionsButton { get; }
         public Button ExitGameButton { get; }
-
-
     }
 }
