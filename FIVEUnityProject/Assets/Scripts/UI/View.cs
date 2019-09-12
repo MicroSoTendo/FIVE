@@ -9,19 +9,17 @@ namespace FIVE.UI
 {
     public abstract class View
     {
-        public RenderMode RenderMode { get; set; }
+        public Canvas ViewCanvas { get; set; }
         protected GameObject parent;
-        protected Canvas canvas;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
         protected Dictionary<string, GameObject> nameToUIElementGameObjects;
-
         protected XmlDocument viewXml;
         protected View()
         {
             parent = new GameObject { name = GetType().Name };
-            canvas = parent.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            ViewCanvas = parent.AddComponent<Canvas>();
+            ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasScaler = parent.AddComponent<CanvasScaler>();
             graphicRaycaster = parent.AddComponent<GraphicRaycaster>();
             nameToUIElementGameObjects = new Dictionary<string, GameObject>();
@@ -86,7 +84,7 @@ namespace FIVE.UI
             }
             UIElement = gameObject.GetComponent<T>();
             gameObject.name = name;
-            gameObject.transform.SetParent(canvas.transform);
+            gameObject.transform.SetParent(ViewCanvas.transform);
 
             foreach (KeyValuePair<string, object> keyValue in parsedAttributes)
             {
@@ -116,11 +114,5 @@ namespace FIVE.UI
             }
             return newView;
         }
-
-        private static void SetAttributesFromXml<T>(XmlDocument xmlDocument, T uiElement) where T : MonoBehaviour
-        {
-
-        }
-
     }
 }

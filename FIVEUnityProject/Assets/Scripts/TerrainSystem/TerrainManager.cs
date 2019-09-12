@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using FIVE.EventSystem;
+using FIVE.UI.StartupMenu;
 
 namespace FIVE.SceneSystem
 {
@@ -10,6 +12,11 @@ namespace FIVE.SceneSystem
         private GameObject Camera;
         private readonly Dictionary<(int, int), AreaData> Areas = new Dictionary<(int, int), AreaData>();
 
+        private void Awake()
+        {
+            EventManager.Subscribe<OnSinglePlayerButtonClicked>((button, args) => { gameObject.SetActive(true); });
+            gameObject.SetActive(false);
+        }
         private void Update()
         {
             if (Camera == null)

@@ -1,6 +1,4 @@
 using System;
-using System.Linq.Expressions;
-using System.Reflection;
 using UnityEngine;
 
 namespace FIVE.UI.StartupMenu
@@ -14,6 +12,9 @@ namespace FIVE.UI.StartupMenu
 
             binder.Bind(view => view.SinglePlayerButton.onClick).
             To(viewModel => viewModel.OnSinglePlayerButtonClicked);
+            
+            binder.Bind(v => v.SinglePlayerButton.onClick).
+            ToBroadcast<OnSinglePlayerButtonClicked>();
             
             binder.Bind(view => view.MultiplayerButton.onClick).
             To(viewModel => viewModel.OnMultiPlayerButtonClicked);
@@ -31,6 +32,7 @@ namespace FIVE.UI.StartupMenu
         private void OnSinglePlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
+            view.ViewCanvas.gameObject.SetActive(false);
         }
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
         {
