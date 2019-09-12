@@ -1,7 +1,4 @@
 namespace FIVE.EventSystem.EventTypes
 {
-    public class OnButtonClicked : IEventType
-    {
-        
-    }
+    public abstract class OnButtonClicked : IEventType { }
 }
