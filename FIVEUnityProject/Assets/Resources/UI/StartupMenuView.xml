@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Canvas name="StartupMenuView">
+    <Button name = "SinglePlayerButton" prefab = "EntityPrefabs/MenuButton" position = "0,150,0" text = "Single Player"/>
+    <Button name = "MultiplayerButton" prefab = "EntityPrefabs/MenuButton" position = "0,0,0" text = "Multiple Players"/>
+    <Button name = "OptionsButton" prefab = "EntityPrefabs/MenuButton" position = "0,-150,0" text = "Options"/>
+    <Button name = "ExitGameButton" prefab = "EntityPrefabs/MenuButton" position = "0,-300,0" text = "Exit"/>
+    <InputField name = "TestInputField" position = "0,-450,0"/>
+    <Image name = "Background" position = "0,0,0" sprite="Graphics/UI/background"/>
+</Canvas>
