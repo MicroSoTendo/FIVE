@@ -14,53 +14,91 @@ namespace FIVE.UI
         protected Canvas canvas;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
-        protected Dictionary<string, GameObject> nameToUIElementGO;
+        protected Dictionary<string, GameObject> nameToUIElementGameObjects;
 
         protected XmlDocument viewXml;
         protected View()
         {
-            parent = new GameObject();
-            parent.name = GetType().Name;
+            parent = new GameObject { name = GetType().Name };
             canvas = parent.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasScaler = parent.AddComponent<CanvasScaler>();
             graphicRaycaster = parent.AddComponent<GraphicRaycaster>();
-            nameToUIElementGO = new Dictionary<string, GameObject>();
+            nameToUIElementGameObjects = new Dictionary<string, GameObject>();
 
-            var pathToXml = $"UI/{GetType().Name}";// + ".xml";
+            string pathToXml = $"UI/{GetType().Name}";
             var xmlFile = Resources.Load<TextAsset>(pathToXml);
             viewXml = new XmlDocument();
             viewXml.LoadXml(xmlFile.text);
         }
 
-        protected T AddUIElement<T>(string name = "") where T : MonoBehaviour
+        private readonly Dictionary<string, Func<XmlAttribute, object>> attributeParser = new Dictionary<string, Func<XmlAttribute, object>>
         {
-            if (name.Length != 0)
+            {"text", attribute => attribute.InnerText},
+            {"position", attribute => { string[] positionAttribute = attribute.InnerText.Split(','); 
+                                        float x = float.Parse(positionAttribute[0]), 
+                                              y = float.Parse(positionAttribute[1]), 
+                                              z = float.Parse(positionAttribute[2]);
+                                        return new Vector3(x,y,z); }},
+            {"prefab", attribute => Resources.Load<GameObject>(attribute.InnerText)}
+        };
+
+        private readonly Dictionary<string, Action<GameObject, object>> attributeHandler = new Dictionary<string, Action<GameObject, object>>
+        {
+            {"text", (gameObject, attribute)=>{ (gameObject.GetComponent<Text>() ?? gameObject.GetComponentInChildren<Text>()).text = (string)attribute;}},
+            {"position", (gameObject, attribute)=>{ gameObject.transform.localPosition = (Vector3)attribute;}},
+        };
+
+        private Dictionary<string, object> ParseAttributes(XmlAttributeCollection attributes)
+        {
+            var parsedAttributes = new Dictionary<string, object>();
+            foreach (XmlAttribute attribute in attributes)
             {
-                var xmlNode = viewXml.SelectNodes($"/Canvas/Button[@name='{name}']")?[0];
-                var prefabAttribute = xmlNode?.Attributes?["prefab"];
-                var prefabPath = prefabAttribute?.InnerText;
-                var prefab = Resources.Load<GameObject>(prefabPath);
-                var go = Object.Instantiate(prefab, canvas.transform);
-                var positionAttribute = xmlNode?.Attributes?["position"].InnerText.Split(',');
-                var x = float.Parse(positionAttribute[0]);
-                var y = float.Parse(positionAttribute[1]);
-                var z = float.Parse(positionAttribute[2]);
-                go.name = name;
-                go.transform.localPosition = new Vector3(x, y, z);
-                nameToUIElementGO.Add(name, go);
-                return go.GetComponent<T>();
+                string name = attribute.Name;
+                if (attributeParser.ContainsKey(name))
+                {
+                    parsedAttributes.Add(name, attributeParser[name](attribute));
+                }
             }
-            var newUIElementGO = new GameObject();
-            newUIElementGO.transform.parent = canvas.transform;
-            var newUIElement = newUIElementGO.AddComponent<T>();
-            if (name.Length == 0)
+            return parsedAttributes;
+        }
+        private void DeserializeFromXml<T>(string name, out GameObject gameObject, out T UIElement) where T : MonoBehaviour
+        {
+            //Try find definition in Xml
+            XmlNode xmlNode = viewXml.SelectSingleNode($"/Canvas/{typeof(T).Name}[@name='{name}']");
+            if (xmlNode == null)
             {
-                name = typeof(T) + newUIElementGO.GetInstanceID().ToString();
+                gameObject = default;
+                UIElement = default;
+                return;
             }
-            newUIElementGO.name = name;
-            nameToUIElementGO.Add(name, newUIElementGO);
-            return newUIElement;
+            //Load attributes
+            Dictionary<string, object> parsedAttributes = ParseAttributes(xmlNode.Attributes);
+            //Initialize gameobject
+            if (parsedAttributes.ContainsKey("prefab"))
+            {
+                gameObject = Object.Instantiate(parsedAttributes["prefab"] as GameObject);
+                parsedAttributes.Remove("prefab");
+            }
+            else
+            {
+                gameObject = Object.Instantiate(Resources.Load<GameObject>($"EntityPrefabs/UIPrimitives/{typeof(T).Name}"));
+            }
+            UIElement = gameObject.GetComponent<T>();
+            gameObject.name = name;
+            gameObject.transform.SetParent(canvas.transform);
+
+            foreach (KeyValuePair<string, object> keyValue in parsedAttributes)
+            {
+                attributeHandler[keyValue.Key](gameObject, keyValue.Value);
+            }
+        }
+
+        protected T AddUIElement<T>(string name) where T : MonoBehaviour
+        {
+            DeserializeFromXml(name, out GameObject gameObject, out T UIElement);
+            nameToUIElementGameObjects.Add(name, gameObject);
+            return UIElement;
         }
 
     }
@@ -68,14 +106,13 @@ namespace FIVE.UI
         where TView : View<TView, TViewModel>, new()
         where TViewModel : ViewModel<TView, TViewModel>
     {
-        private static Dictionary<Type, View> cachedViews = new Dictionary<Type, View>();
+        private static readonly Dictionary<Type, View> CachedViews = new Dictionary<Type, View>();
         public static T Create<T>() where T : View<TView, TViewModel>, new()
         {
-            return new T();
-            T newView = new T();
-            if (cachedViews.ContainsKey(typeof(T)))
+            var newView = new T();
+            if (CachedViews.ContainsKey(typeof(T)))
             {
-                return cachedViews[typeof(T)] as T;
+                return CachedViews[typeof(T)] as T;
             }
             return newView;
         }
