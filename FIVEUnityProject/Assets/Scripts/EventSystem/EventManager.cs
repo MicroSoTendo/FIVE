@@ -92,17 +92,33 @@ namespace FIVE.EventSystem
 
         public static async Task RaiseEventAsync<T>(object sender, EventArgs args)
         {
-            await Task.Run(() =>
+            Task concreteTypeEventTask = Task.Run(() =>
             {
                 foreach (var (requiresMain, handlerNodes) in Instance.typedHandlerNodes[typeof(T)])
                 {
-                    var queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
-                    foreach (var handlerNode in handlerNodes)
+                    ConcurrentQueue<Action> queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
+                    foreach (HandlerNode handlerNode in handlerNodes)
                     {
                         queue.Enqueue(delegate { handlerNode.Handler(sender, args); });
                     }
                 }
             });
+
+            Task baseTypeEventTask = Task.Run(() =>
+            {
+                Type baseType = typeof(T).BaseType;
+                Debug.Log(baseType.Name);
+                if (!Instance.typedHandlerNodes.ContainsKey(baseType)) return;
+                foreach (var (requiresMain, handlerNodes) in Instance.typedHandlerNodes[baseType])
+                {
+                    ConcurrentQueue<Action> queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
+                    foreach (HandlerNode handlerNode in handlerNodes)
+                    {
+                        queue.Enqueue(delegate { handlerNode.Handler(sender, args); });
+                    }
+                }
+            });
+            await Task.WhenAll(concreteTypeEventTask, baseTypeEventTask);
         }
 
         public static void RaiseEvent<T>(object sender, EventArgs args)
