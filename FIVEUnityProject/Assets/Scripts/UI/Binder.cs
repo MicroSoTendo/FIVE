@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using FIVE.EventSystem;
-using FIVE.EventSystem.EventTypes;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Debug;
 
 namespace FIVE.UI
 {
@@ -29,7 +27,7 @@ namespace FIVE.UI
         {
             public Expression<Func<TView, TSource>> Expression { get; }
 
-            public object UIElement;
+            public MonoBehaviour UIElement;
             public object BindingMember;
 
             private ViewModel<TView, TViewModel> viewModel;
@@ -42,7 +40,7 @@ namespace FIVE.UI
                 {
                     var UIElementExp = memberExpression.Expression as MemberExpression;
                     var UIElementProperty = UIElementExp.Member as PropertyInfo;
-                    UIElement = UIElementProperty.GetValue(view);
+                    UIElement = UIElementProperty.GetValue(view) as MonoBehaviour;
                     var BindingMemberProperty = memberExpression.Member as PropertyInfo;
                     BindingMember = BindingMemberProperty.GetValue(UIElement);
                 }
@@ -62,17 +60,13 @@ namespace FIVE.UI
                     clickEvent.AddListener(delegate { compiledFunc(viewModel as TViewModel)(UIElement, EventArgs.Empty); });
                 }
             }
-            public void To(Expression<Action<TViewModel>> expression,
-                BindingMode bindingMode = BindingMode.OneWay)
-            {
-                //TODO: Implementation
-            }
 
-            public void ToBroadcast()
+            public void ToBroadcast<T>()
             {
+                //TODO: Implement other objects event
                 if (BindingMember is Button.ButtonClickedEvent clickEvent)
                 {
-                    clickEvent.AddListener(async () => { await UIElement.RaiseEventAsync<OnButtonClicked>(EventArgs.Empty); });
+                    clickEvent.AddListener(async () => { await UIElement.gameObject.RaiseEventAsync<T>(EventArgs.Empty); });
                 }
             }
         }

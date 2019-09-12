@@ -10,12 +10,7 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        private GameObject canvas;
-        private Image backgroundImage;
-        public GameObject menuButtonPrefab;
-
-        private ViewModel viewModel;
-
+        public ViewModel viewModel;
         private void Awake()
         {
             viewModel = new StartupMenuViewModel();
