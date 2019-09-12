@@ -9,19 +9,19 @@ namespace FIVE
 {
     public class MainLoader : MonoBehaviour
     {
-        public List<GameObject> InfranstructuresOnAwake;
-        public List<GameObject> InfranstructuresOnStart;
+        public List<GameObject> InfrastructuresOnAwake;
+        public List<GameObject> InfrastructuresOnStart;
 
         private void Awake()
         {
             this.RaiseEvent<OnLauncherAwake>(EventArgs.Empty);
-            InfranstructuresOnAwake.ForEach(v => Instantiate(v));
+            InfrastructuresOnAwake.ForEach(v => Instantiate(v));
         }
 
         private IEnumerator Start()
         {
             this.RaiseEvent<OnLauncherStart>(EventArgs.Empty);
-            foreach (var prefab in InfranstructuresOnStart)
+            foreach (var prefab in InfrastructuresOnStart)
             {
                 Instantiate(prefab);
                 yield return null;
