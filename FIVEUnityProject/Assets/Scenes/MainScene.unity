@@ -256,9 +256,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ab5254118a2caf41be9962bcfd8e823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InfranstructuresOnAwake:
+  InfrastructuresOnAwake:
   - {fileID: 4403759981249881351, guid: f011d9216cb699f43b1dc5d9a8d79277, type: 3}
-  - {fileID: 5026378305358888911, guid: 31084ab21a18a3341819cb56be0baea6, type: 3}
   - {fileID: 398788844936882464, guid: e64eefca9d8c9884e9088b8bb25767a1, type: 3}
   - {fileID: 7202814800484729092, guid: b069d35f87ddd164db47680c2e34b9a4, type: 3}
-  InfranstructuresOnStart: []
+  - {fileID: 5026378305358888911, guid: 31084ab21a18a3341819cb56be0baea6, type: 3}
+  InfrastructuresOnStart: []
