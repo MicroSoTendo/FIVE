@@ -8,7 +8,7 @@ namespace FIVE.UI
         where TView : View<TView, TViewModel>, new()
         where TViewModel : ViewModel<TView, TViewModel>
     {
-        protected View<TView, TViewModel> view;
+        protected TView view;
         protected Binder<TView, TViewModel> binder;
         protected ViewModel()
         {

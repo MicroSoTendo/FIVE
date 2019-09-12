@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using FIVE.EventSystem;
+using FIVE.EventSystem.EventTypes;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.Debug;
@@ -13,8 +15,8 @@ namespace FIVE.UI
         where TViewModel : ViewModel<TView, TViewModel>
     {
 
-        private View<TView, TViewModel> view;
-        private ViewModel<TView, TViewModel> viewModel;
+        private readonly View<TView, TViewModel> view;
+        private readonly ViewModel<TView, TViewModel> viewModel;
 
         public Binder(View<TView, TViewModel> view, ViewModel<TView, TViewModel> viewModel)
         {
@@ -23,62 +25,54 @@ namespace FIVE.UI
         }
         private List<Binding> bindings;
 
-        public class BindingSource<TSource>
+        public class BindingSource<TSource> where TSource : class
         {
-            public BindingSource(Expression<Func<TView, TSource>> expression)
-            {
-                Helper(expression);
+            public Expression<Func<TView, TSource>> Expression { get; }
 
+            public object UIElement;
+            public object BindingMember;
+
+            private ViewModel<TView, TViewModel> viewModel;
+            public BindingSource(Expression<Func<TView, TSource>> expression, 
+                View<TView, TViewModel> view,
+                ViewModel<TView, TViewModel> viewModel)
+            {
+                Expression = expression;
+                if (expression.Body is MemberExpression memberExpression)
+                {
+                    var UIElementExp = memberExpression.Expression as MemberExpression;
+                    var UIElementProperty = UIElementExp.Member as PropertyInfo;
+                    UIElement = UIElementProperty.GetValue(view);
+                    var BindingMemberProperty = memberExpression.Member as PropertyInfo;
+                    BindingMember = BindingMemberProperty.GetValue(UIElement);
+                }
+                this.viewModel = viewModel;
             }
             public void To<TTarget>(Expression<Func<TViewModel, TTarget>> expression,
                 BindingMode bindingMode = BindingMode.OneWay)
             {
                 //TODO: Implementation
             }
+            public void To(Expression<Func<TViewModel, EventHandler>> expression,
+                BindingMode bindingMode = BindingMode.OneWay)
+            {
+                if (BindingMember is Button.ButtonClickedEvent clickEvent)
+                {
+                    var compiledFunc = expression.Compile();
+                    clickEvent.AddListener(delegate { compiledFunc(viewModel as TViewModel)(UIElement, EventArgs.Empty); });
+                }
+            }
             public void To(Expression<Action<TViewModel>> expression,
                 BindingMode bindingMode = BindingMode.OneWay)
             {
                 //TODO: Implementation
             }
-            //public void To(Expression<Func<TViewModel, TTarget>> expression,
-            //    BindingMode bindingMode = BindingMode.OneWay)
-            //{
-            //    //TODO: Implementation
-            //}
 
-            //public void To(Expression<Func<TViewModel, EventHandler>> expression,
-            //    BindingMode bindingMode = BindingMode.OneWay)
-            //{
-            //    this.To<EventHandler>(expression, bindingMode);
-            //}
-            //public void To(Expression<Func<TViewModel, Action>> expression,
-            //    BindingMode bindingMode = BindingMode.OneWay)
-            //{
-            //    this.To<Action>(expression, bindingMode);
-            //}
-
-            private void Helper(Expression<Func<TView, TSource>> expression)
+            public void ToBroadcast()
             {
-                switch (expression.Body)
+                if (BindingMember is Button.ButtonClickedEvent clickEvent)
                 {
-                    case LambdaExpression lambda:
-                        break;
-                    case MethodCallExpression methodCall:
-                        break;
-                    case MemberExpression member:
-                        var rootType = member.Member.DeclaringType;
-                        if(rootType.IsAssignableFrom(typeof(Button)))
-                        {
-                            Debug.Log(rootType);
-                            var name = member.Member.Name;
-                            Debug.Log(name);
-                        }
-                        // (member.Member as PropertyInfo).GetValue()
-                        break;
-                    case UnaryExpression unary:
-                        break;
-                    default:
-                        break;
+                    clickEvent.AddListener(async () => { await UIElement.RaiseEventAsync<OnButtonClicked>(EventArgs.Empty); });
                 }
             }
         }
@@ -88,9 +82,9 @@ namespace FIVE.UI
             //Expression<Func<TView, TSource>>[] sourceExpressions;
         }
         
-        public BindingSource<TSource> Bind<TSource>(Expression<Func<TView, TSource>> expression)
+        public BindingSource<TSource> Bind<TSource>(Expression<Func<TView, TSource>> expression) where TSource : class
         {
-            return new BindingSource<TSource>(expression);
+            return new BindingSource<TSource>(expression, view, viewModel);
         }
     }
 }
