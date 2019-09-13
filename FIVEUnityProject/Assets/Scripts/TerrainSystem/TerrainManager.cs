@@ -3,7 +3,7 @@ using UnityEngine;
 using FIVE.EventSystem;
 using FIVE.UI.StartupMenu;
 
-namespace FIVE.SceneSystem
+namespace FIVE.TerrainSystem
 {
     public class TerrainManager : MonoBehaviour
     {

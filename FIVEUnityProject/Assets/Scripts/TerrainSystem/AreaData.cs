@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace FIVE.SceneSystem
+namespace FIVE.TerrainSystem
 {
     internal class AreaData
     {
