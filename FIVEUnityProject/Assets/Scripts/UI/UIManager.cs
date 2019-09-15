@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using FIVE.EventSystem.EventTypes;
 using FIVE.EventSystem;
 using FIVE.UI.OptionMenu;
+using FIVE.UI.MainGameDisplay;
 
 namespace FIVE.UI
 {
@@ -19,7 +20,7 @@ namespace FIVE.UI
         private void Awake()
         {
             //viewModel = new StartupMenuViewModel();
-            viewModel = new OptionMenuViewModel();
+            viewModel = new GameDisplayViewModel();
         }
 
 
