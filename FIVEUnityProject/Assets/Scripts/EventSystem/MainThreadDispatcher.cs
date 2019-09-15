@@ -8,13 +8,14 @@ namespace FIVE.EventSystem
     {
         private static readonly ConcurrentQueue<Action> ScheduledActions = new ConcurrentQueue<Action>();
         private Action onUpdate = () => { };
+
         public Action OnUpdate
         {
             get => onUpdate;
             set { onUpdate = value ?? (() => { }); }
         }
 
-        void Update()
+        private void Update()
         {
             onUpdate.Invoke();
             while (!ScheduledActions.IsEmpty)
