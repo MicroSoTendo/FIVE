@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Canvas name="StartupMenuView">
-    <Button name = "SinglePlayerButton" prefab = "EntityPrefabs/MenuButton" position = "0,150,0" text = "Single Player"/>
-    <Button name = "MultiplayerButton" prefab = "EntityPrefabs/MenuButton" position = "0,0,0" text = "Multiple Players"/>
-    <Button name = "OptionsButton" prefab = "EntityPrefabs/MenuButton" position = "0,-150,0" text = "Options"/>
-    <Button name = "ExitGameButton" prefab = "EntityPrefabs/MenuButton" position = "0,-300,0" text = "Exit"/>
-    <InputField name = "TestInputField" position = "0,-450,0"/>
-    <Image name = "Background" position = "0,0,0" sprite="Graphics/UI/background"/>
+    <Button name = "SinglePlayerButton" GameObject = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,150,0);}" Text = "Single Player"/>
+    <Button name = "MultiplayerButton" GameObject = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,0,0);}" Text = "Multiple Players"/>
+    <Button name = "OptionsButton" GameObject = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-150,0);}" Text = "Options"/>
+    <Button name = "ExitGameButton" GameObject = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-300,0);}" Text = "Exit"/>
+    <InputField name = "TestInputField" Transform = "{localPosition:(0,-450,0);}"/>
+    <Image name = "Background" Sprite="Graphics/UI/background" RectTransform = "{anchorMin:(0,0); anchorMax:(1,1); pivot(0.5,0.5); anchoredPosition3D:(0,0,0); sizeDelta:(0,0); }"/>
 </Canvas>

@@ -11,9 +11,10 @@ namespace FIVE.UI
     public class UIManager : MonoBehaviour
     {
         public ViewModel viewModel;
+        private Dictionary<string, ViewModel> viewModels = new Dictionary<string, ViewModel>();
         private void Awake()
         {
-            viewModel = new StartupMenuViewModel();
+            viewModels.Add(nameof(StartupMenuView), new StartupMenuViewModel());
         }
 
 

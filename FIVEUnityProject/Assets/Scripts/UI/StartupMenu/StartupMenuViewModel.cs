@@ -37,6 +37,7 @@ namespace FIVE.UI.StartupMenu
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnMultiPlayerButtonClicked));
+            view.ViewCanvas.gameObject.SetActive(false);
         }
         private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
         {
