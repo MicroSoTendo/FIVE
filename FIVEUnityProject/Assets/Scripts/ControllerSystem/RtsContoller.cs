@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.ControllerSystem
@@ -8,10 +7,7 @@ namespace FIVE.ControllerSystem
     {
         private List<GameObject> selectedTroops;
 
-        private void Start()
-        {
-            selectedTroops = new List<GameObject>();
-        }
+        private void Start() => selectedTroops = new List<GameObject>();
 
         private void Update()
         {
