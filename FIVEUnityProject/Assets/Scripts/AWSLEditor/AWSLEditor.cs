@@ -30,6 +30,7 @@ public class AWSLEditor : MonoBehaviour
         };
         ButtonStyle.normal.background = EditorBackground;
         ButtonStyle.normal.textColor = Color.white;
+        ButtonStyle.hover.background = EditorBackground;
         ButtonStyle.hover.textColor = Color.blue;
         ButtonStyle.alignment = TextAnchor.MiddleCenter;
     }
