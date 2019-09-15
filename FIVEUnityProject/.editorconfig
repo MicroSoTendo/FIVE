@@ -204,3 +204,4 @@ resharper_braces_for_lock=required_for_multiline
 resharper_braces_for_using=required_for_multiline
 resharper_braces_for_while=required_for_multiline
 resharper_braces_redundant=true
+resharper_for_built_in_types=use_var_when_evident

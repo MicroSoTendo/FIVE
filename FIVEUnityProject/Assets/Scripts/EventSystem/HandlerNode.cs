@@ -4,23 +4,47 @@ namespace FIVE.EventSystem
 {
     public class HandlerNode : IEquatable<HandlerNode>
     {
-        public EventHandler Handler { get; }
-        public bool RequiresMainThread { get; }
+        public Delegate Handler { get; protected set; }
+        public bool RequiresMainThread { get; protected set; }
 
-        public HandlerNode(EventHandler handler, bool requiresMainThread)
+        public HandlerNode(Delegate handler, bool requiresMainThread)
         {
-            Handler = handler;
-            RequiresMainThread = requiresMainThread;
+            this.Handler = handler;
+            this.RequiresMainThread = requiresMainThread;
         }
 
         public bool Equals(HandlerNode other)
         {
-            return Handler.Equals(other.Handler) && RequiresMainThread == other.RequiresMainThread;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(Handler, other.Handler) && RequiresMainThread == other.RequiresMainThread;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((HandlerNode) obj);
         }
 
         public override int GetHashCode()
         {
-            return Handler.GetHashCode() ^ RequiresMainThread.GetHashCode();
+            unchecked
+            {
+                return ((Handler != null ? Handler.GetHashCode() : 0) * 397) ^ RequiresMainThread.GetHashCode();
+            }
+        }
+    }
+
+    public class HandlerNode<T> : HandlerNode where T : Delegate
+    {
+        public new T Handler { get; }
+
+        public HandlerNode(T handler, bool requiresMainThread) : base(handler, requiresMainThread)
+        {
+            Handler = handler;
+            RequiresMainThread = requiresMainThread;
         }
     }
 }

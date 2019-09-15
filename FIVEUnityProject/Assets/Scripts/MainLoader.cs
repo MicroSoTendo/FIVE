@@ -14,20 +14,20 @@ namespace FIVE
 
         private void Awake()
         {
-            this.RaiseEvent<OnLauncherAwake>(EventArgs.Empty);
+            this.RaiseEvent<OnMainLoaderAwake>(EventArgs.Empty);
             InfrastructuresOnAwake.ForEach(v => Instantiate(v));
         }
 
         private IEnumerator Start()
         {
-            this.RaiseEvent<OnLauncherStart>(EventArgs.Empty);
-            foreach (var prefab in InfrastructuresOnStart)
+            this.RaiseEvent<OnMainLoaderStart>(EventArgs.Empty);
+            foreach (GameObject prefab in InfrastructuresOnStart)
             {
                 Instantiate(prefab);
                 yield return null;
             }
             Destroy(this);
-            this.RaiseEvent<OnLauncherDestroyed>(EventArgs.Empty);
+            this.RaiseEvent<OnMainLoaderDestroyed>(EventArgs.Empty);
         }
     }
 }
