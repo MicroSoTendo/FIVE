@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using FIVE.EventSystem.EventTypes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace FIVE.CameraSystem
 {
@@ -11,11 +11,8 @@ namespace FIVE.CameraSystem
     {
         private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
-        private void Awake()
-        {
-            EventManager.Subscribe<OnCameraCreated, EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
+        private void Awake() => EventManager.Subscribe<OnCameraCreated, EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
                   ((sender, args) => { });
-        }
 
         private void Update()
         {
