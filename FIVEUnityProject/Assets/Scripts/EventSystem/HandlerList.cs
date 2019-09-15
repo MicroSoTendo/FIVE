@@ -4,8 +4,8 @@ namespace FIVE.EventSystem
 {
     public class HandlerList<T> where T : HandlerNode
     {
-        private List<(bool requiresMain, List<T> handlers)> storage;
-        private object syncroot = new object();
+        private readonly List<(bool requiresMain, List<T> handlers)> storage;
+        private readonly object syncroot = new object();
         public HandlerList()
         {
             storage = new List<(bool requiresMain, List<T> handlers)>();
