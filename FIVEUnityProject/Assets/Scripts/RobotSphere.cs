@@ -26,10 +26,11 @@ namespace FIVE
         private void Awake()
         {
             fpsCamera = Instantiate(CameraPrefab);
-            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "", Camera = fpsCamera });
-            fpsCamera.transform.parent = transform.Find("eyeDome");
+            Transform eye = transform.GetChild(0).GetChild(1); // HACK
+            fpsCamera.transform.parent = eye;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "", Camera = fpsCamera });
         }
 
         private void Start()
