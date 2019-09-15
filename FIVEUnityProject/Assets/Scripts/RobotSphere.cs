@@ -9,8 +9,7 @@ namespace FIVE
     {
         public enum RobotState { Idle, Walk, Jump, Open, };
 
-        private enum ControllerOp
-        { FPS, RTS, };
+        private enum ControllerOp { FPS, RTS, };
 
         private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
