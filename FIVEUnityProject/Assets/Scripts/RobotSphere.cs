@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using FIVE.CameraSystem;
-using FIVE.ControllerSystem;
+﻿using FIVE.ControllerSystem;
+using FIVE.EventSystem;
+using FIVE.EventSystem.EventTypes;
+using UnityEngine;
 
 namespace FIVE
 {
@@ -11,8 +12,10 @@ namespace FIVE
         private enum ControllerOp
         { FPS, RTS, };
 
-        private ControllerOp currOp = ControllerOp.FPS;
+        private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
+
+        public Camera CameraPrefab;
 
         // Script References
         private RobotFreeAnim animator;
@@ -23,10 +26,9 @@ namespace FIVE
 
         private void Awake()
         {
-            // Setup initial FPS Camera
-            fpsCamera = GameObject.Find("CameraManager").GetComponent<CameraManager>().NewCamera(gameObject.name + "Camera");
-            var eye = GameObject.Find("eyeDome");
-            fpsCamera.transform.parent = eye.transform;
+            fpsCamera = Instantiate(CameraPrefab);
+            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "", Camera = fpsCamera });
+            fpsCamera.transform.parent = transform.Find("eyeDome");
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
