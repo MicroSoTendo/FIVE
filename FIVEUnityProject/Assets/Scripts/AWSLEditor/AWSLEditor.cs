@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ASWLEditor : MonoBehaviour
+public class AWSLEditor : MonoBehaviour
 {
     private string code = "";
 
