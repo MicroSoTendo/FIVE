@@ -8,21 +8,20 @@ namespace FIVE.ControllerSystem
     {
         private List<GameObject> selectedTroops;
 
-        void Start()
+        private void Start()
         {
             selectedTroops = new List<GameObject>();
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
                 Vector3 mousePosition = Input.mousePosition;
                 mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
-                RaycastHit hitInfo;
                 Ray mouseToWorld = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(mouseToWorld, out hitInfo))
+                if (Physics.Raycast(mouseToWorld, out RaycastHit hitInfo))
                 {
                     Transform objectHit = hitInfo.transform;
                     if (Input.GetMouseButton(0))
@@ -69,5 +68,4 @@ namespace FIVE.ControllerSystem
             }
         }
     }
-
 }
