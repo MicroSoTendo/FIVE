@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using FIVE.UI.StartupMenu;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace FIVE.TerrainSystem
 {
@@ -17,6 +17,7 @@ namespace FIVE.TerrainSystem
             EventManager.Subscribe<OnSinglePlayerButtonClicked>((button, args) => { gameObject.SetActive(true); });
             gameObject.SetActive(false);
         }
+
         private void Update()
         {
             if (Camera == null)
@@ -28,11 +29,11 @@ namespace FIVE.TerrainSystem
             {
                 if (Time.frameCount % 60 == 0)
                 {
-                    var x = (int)Camera.transform.position.x / AreaData.size;
-                    var y = (int)Camera.transform.position.z / AreaData.size;
-                    for (var i = -1; i <= 1; i++)
+                    int x = (int)Camera.transform.position.x / AreaData.size;
+                    int y = (int)Camera.transform.position.z / AreaData.size;
+                    for (int i = -1; i <= 1; i++)
                     {
-                        for (var j = -1; j <= 1; j++)
+                        for (int j = -1; j <= 1; j++)
                         {
                             LoadArea(x + i, y + j);
                         }
@@ -53,7 +54,7 @@ namespace FIVE.TerrainSystem
             var ad = new AreaData(pos);
             Areas[(x, y)] = ad;
 
-            var o = Instantiate(Ground, pos, Quaternion.identity);
+            GameObject o = Instantiate(Ground, pos, Quaternion.identity);
             ad.ConstructArea(o);
         }
     }

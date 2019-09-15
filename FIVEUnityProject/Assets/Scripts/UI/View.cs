@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,10 +11,7 @@ namespace FIVE.UI
 
         public Vector2 Size
         {
-            get
-            {
-                return ViewCanvas.pixelRect.size;
-            }
+            get => ViewCanvas.pixelRect.size;
             set
             {
 

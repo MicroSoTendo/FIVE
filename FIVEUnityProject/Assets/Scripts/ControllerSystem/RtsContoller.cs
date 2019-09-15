@@ -7,7 +7,10 @@ namespace FIVE.ControllerSystem
     {
         private List<GameObject> selectedTroops;
 
-        private void Start() => selectedTroops = new List<GameObject>();
+        private void Start()
+        {
+            selectedTroops = new List<GameObject>();
+        }
 
         private void Update()
         {

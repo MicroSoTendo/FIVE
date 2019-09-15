@@ -4,9 +4,8 @@ namespace FIVE
 {
     public class RobotFreeAnim
     {
-        private GameObject gameObject;
-
-        Animator anim;
+        private readonly GameObject gameObject;
+        private readonly Animator anim;
 
         public RobotFreeAnim(GameObject gameObject)
         {
@@ -20,7 +19,7 @@ namespace FIVE
             UpdateAnim(currState);
         }
 
-        void UpdateAnim(RobotSphere.RobotState currState)
+        private void UpdateAnim(RobotSphere.RobotState currState)
         {
             if (currState == RobotSphere.RobotState.Idle)
             {

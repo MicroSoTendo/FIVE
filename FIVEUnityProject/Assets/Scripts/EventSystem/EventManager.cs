@@ -190,7 +190,10 @@ namespace FIVE.EventSystem
         public static async Task RaiseEventAsync<T, THandler, TEventArgs>(object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
-            where TEventArgs : EventArgs => await RaiseEventAsync<T>(sender, args);
+            where TEventArgs : EventArgs
+        {
+            await RaiseEventAsync<T>(sender, args);
+        }
 
         public static void RaiseEvent<T>(object sender, EventArgs args) where T : IEventType
         {
@@ -215,6 +218,9 @@ namespace FIVE.EventSystem
         public static void RaiseEvent<T, THandler, TEventArgs>(object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
-            where TEventArgs : EventArgs => RaiseEvent<T>(sender, args);
+            where TEventArgs : EventArgs
+        {
+            RaiseEvent<T>(sender, args);
+        }
     }
 }

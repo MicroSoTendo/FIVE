@@ -11,8 +11,11 @@ namespace FIVE.CameraSystem
     {
         private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
-        private void Awake() => EventManager.Subscribe<OnCameraCreated, EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
-                  ((sender, args) => { });
+        private void Awake()
+        {
+            EventManager.Subscribe<OnCameraCreated, EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
+((sender, args) => { });
+        }
 
         private void Update()
         {

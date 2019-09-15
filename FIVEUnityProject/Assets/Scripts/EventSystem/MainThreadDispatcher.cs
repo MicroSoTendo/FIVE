@@ -12,7 +12,7 @@ namespace FIVE.EventSystem
         public Action OnUpdate
         {
             get => onUpdate;
-            set { onUpdate = value ?? (() => { }); }
+            set => onUpdate = value ?? (() => { });
         }
 
         private void Update()
@@ -20,7 +20,7 @@ namespace FIVE.EventSystem
             onUpdate.Invoke();
             while (!ScheduledActions.IsEmpty)
             {
-                ScheduledActions.TryDequeue(out var result);
+                ScheduledActions.TryDequeue(out Action result);
                 result();
             }
         }
