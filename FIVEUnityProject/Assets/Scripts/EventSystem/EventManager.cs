@@ -22,6 +22,7 @@ namespace FIVE.EventSystem
         private bool initialized;
         private Coroutine coroutine;
         private Task asyncTask;
+
         private EventManager()
         {
             var mainThreadDispatcther = new GameObject(nameof(MainThreadDispatcher));
@@ -34,12 +35,16 @@ namespace FIVE.EventSystem
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
-            if (Instance.initialized) return;
-            var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                        from type in assembly.GetTypes()
-                        where typeof(IEventType).IsAssignableFrom(type)
-                        select type;
-            foreach (var type in types)
+            if (Instance.initialized)
+            {
+                return;
+            }
+
+            IEnumerable<Type> types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                                      from type in assembly.GetTypes()
+                                      where typeof(IEventType).IsAssignableFrom(type)
+                                      select type;
+            foreach (Type type in types)
             {
                 Instance.defaultHandlerNodes.TryAdd(type, new HandlerList<HandlerNode<EventHandler>>());
                 Instance.dynamicHandlerNodes.TryAdd(type, new HandlerList<HandlerNode>());
@@ -58,8 +63,11 @@ namespace FIVE.EventSystem
                     float countDown = 1f;
                     while (countDown > 0)
                     {
-                        if (scheduledMainThread.TryDequeue(out var action))
+                        if (scheduledMainThread.TryDequeue(out Action action))
+                        {
                             action();
+                        }
+
                         yield return null;
                         countDown -= Time.deltaTime;
                     }
@@ -114,7 +122,7 @@ namespace FIVE.EventSystem
 
         public static async Task RaiseEventAsync<T>(object sender, EventArgs args)
         {
-            Task concreteTypeEventTask = Task.Run(() =>
+            var concreteTypeEventTask = Task.Run(() =>
             {
                 foreach ((bool requiresMain, List<HandlerNode<EventHandler>> handlerNodes) in Instance.defaultHandlerNodes[typeof(T)])
                 {
@@ -126,7 +134,7 @@ namespace FIVE.EventSystem
                 }
             });
 
-            Task concreteTypeEventTaskDynamicInvoke = Task.Run(() =>
+            var concreteTypeEventTaskDynamicInvoke = Task.Run(() =>
             {
                 foreach ((bool requiresMain, List<HandlerNode> handlerNodes) in Instance.dynamicHandlerNodes[typeof(T)])
                 {
@@ -138,11 +146,15 @@ namespace FIVE.EventSystem
                 }
             });
 
-            Task baseTypeEventTask = Task.Run(() =>
+            var baseTypeEventTask = Task.Run(() =>
             {
                 Type baseType = typeof(T).BaseType;
                 Debug.Log(baseType.Name);
-                if (!Instance.defaultHandlerNodes.ContainsKey(baseType)) return;
+                if (!Instance.defaultHandlerNodes.ContainsKey(baseType))
+                {
+                    return;
+                }
+
                 foreach ((bool requiresMain, List<HandlerNode<EventHandler>> handlerNodes) in Instance.defaultHandlerNodes[baseType])
                 {
                     ConcurrentQueue<Action> queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
@@ -153,11 +165,15 @@ namespace FIVE.EventSystem
                 }
             });
 
-            Task baseTypeEventTaskDynamicInvoke = Task.Run(() =>
+            var baseTypeEventTaskDynamicInvoke = Task.Run(() =>
             {
                 Type baseType = typeof(T).BaseType;
                 Debug.Log(baseType.Name);
-                if (!Instance.defaultHandlerNodes.ContainsKey(baseType)) return;
+                if (!Instance.defaultHandlerNodes.ContainsKey(baseType))
+                {
+                    return;
+                }
+
                 foreach ((bool requiresMain, List<HandlerNode> handlerNodes) in Instance.dynamicHandlerNodes[baseType])
                 {
                     ConcurrentQueue<Action> queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
@@ -171,13 +187,11 @@ namespace FIVE.EventSystem
             await Task.WhenAll(concreteTypeEventTask, baseTypeEventTask, baseTypeEventTaskDynamicInvoke, concreteTypeEventTaskDynamicInvoke);
         }
 
-        public static async Task RaiseEventAsync<T, THandler, TEventArgs>(object sender, TEventArgs args) 
+        public static async Task RaiseEventAsync<T, THandler, TEventArgs>(object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
-            where TEventArgs : EventArgs
-        {
-            await RaiseEventAsync<T>(sender, args);
-        }
+            where TEventArgs : EventArgs => await RaiseEventAsync<T>(sender, args);
+
         public static void RaiseEvent<T>(object sender, EventArgs args) where T : IEventType
         {
             foreach ((bool requiresMain, List<HandlerNode<EventHandler>> handlerNodes) in Instance.defaultHandlerNodes[typeof(T)])
@@ -201,14 +215,6 @@ namespace FIVE.EventSystem
         public static void RaiseEvent<T, THandler, TEventArgs>(object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
-            where TEventArgs : EventArgs
-        {
-            RaiseEvent<T>(sender, args);
-        }
-
-
-
+            where TEventArgs : EventArgs => RaiseEvent<T>(sender, args);
     }
-
-
 }
