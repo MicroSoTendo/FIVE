@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using FIVE.EventSystem.EventTypes;
 using FIVE.EventSystem;
-using FIVE.UI.StartupMenu;
+using FIVE.UI.OptionMenu;
 
 namespace FIVE.UI
 {
@@ -18,7 +18,8 @@ namespace FIVE.UI
 
         private void Awake()
         {
-            viewModel = new StartupMenuViewModel();
+            //viewModel = new StartupMenuViewModel();
+            viewModel = new OptionMenuViewModel();
         }
 
 
