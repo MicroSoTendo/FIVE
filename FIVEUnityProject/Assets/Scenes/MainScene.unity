@@ -257,6 +257,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   code: 
+  EditorBackground: {fileID: 2800000, guid: d158b65747b9c7849a5a56f7ecfad7aa, type: 3}
+  EditorTextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1948811490
 GameObject:
   m_ObjectHideFlags: 0
