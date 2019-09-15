@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Canvas name="GameDisplayView">
+    <Button name = "PlayerButton" prefab = "EntityPrefabs/MenuButton" position = "-200,300,0" text = "Player Image Here"/>
+    <Button name = "Energy" prefab = "EntityPrefabs/MenuButton" position = "-200,200,0" text = "Energy Bar Here"/>
+    <Button name = "Inventory" prefab = "EntityPrefabs/MenuButton" position = "0,-150,0" text = "Possible Inventory Here"/>
+    <Button name = "Option" prefab = "EntityPrefabs/MenuButton" position = "200,-300,0" text = "Exit"/>
+    <Image name = "Background" position = "0,0,0" sprite="Graphics/UI/background"/>
+</Canvas>
