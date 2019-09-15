@@ -24,8 +24,17 @@ public class AWSLEditor : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!enabled)
+        {
+            return;
+        }
+
         Rect r = Screen.safeArea;
         float w = r.width, h = r.height;
-        code = GUI.TextArea(new Rect(20, 40, w - 40, h - 80), code, int.MaxValue, style);
+        code = GUI.TextArea(new Rect(20, 40, w - 100, h - 120), code, int.MaxValue, style);
+        if (GUI.Button(new Rect(20, h - 80, w - 100, 60), "Done!"))
+        {
+            enabled = false;
+        }
     }
 }
