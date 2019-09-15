@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70e0f16b9e0c88c48aa40739ef69fd69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuButtonPrefab: {fileID: 3864806767597317991, guid: d35071636131ee843bebf4cd11d9870e,
-    type: 3}
 --- !u!1 &4403759981252581567
 GameObject:
   m_ObjectHideFlags: 0
@@ -72,7 +70,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4403759981252581567}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -365, y: -305, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4403759981249881350}
