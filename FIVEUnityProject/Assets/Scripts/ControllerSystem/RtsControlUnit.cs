@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FIVE.ControllerSystem
 {
@@ -10,14 +8,14 @@ namespace FIVE.ControllerSystem
 
         private Vector3 currTarget;
         private Vector3 velocity;
-        private float speed = 10f;
+        private readonly float speed = 10f;
 
-        void Start()
+        private void Start()
         {
             cc = gameObject.GetComponent<CharacterController>();
         }
 
-        void Update()
+        private void Update()
         {
             if (Vector3.Distance(currTarget, transform.position) > Constants.floatPrecision && cc)
             {

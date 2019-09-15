@@ -15,7 +15,7 @@ namespace FIVE.UI
         }
         public XMLDeserializer(string pathToXml, Canvas parentCanvas)
         {
-            var xmlFile = Resources.Load<TextAsset>(pathToXml);
+            TextAsset xmlFile = Resources.Load<TextAsset>(pathToXml);
             viewXml = new XmlDocument();
             viewXml.LoadXml(xmlFile.text);
             this.parentCanvas = parentCanvas;
@@ -48,11 +48,13 @@ namespace FIVE.UI
 
             foreach (KeyValuePair<string, object> keyValue in parsedAttributes)
             {
-                if(AttributeHandler.ContainsKey(keyValue.Key))
+                if (AttributeHandler.ContainsKey(keyValue.Key))
+                {
                     AttributeHandler[keyValue.Key].DynamicInvoke(gameObject, keyValue.Value);
+                }
                 else
                 {
-                    GeneralPropertyHandler(gameObject, keyValue.Key, keyValue.Value as List<(string,object)>);
+                    GeneralPropertyHandler(gameObject, keyValue.Key, keyValue.Value as List<(string, object)>);
                 }
             }
         }

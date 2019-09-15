@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace FIVE.UI
 {
@@ -135,7 +134,7 @@ namespace FIVE.UI
         }
         private static void RectTransformHandler(GameObject gameObject, List<(string, object)> parsedObjects)
         {
-            var rectTransform = gameObject.GetComponent<RectTransform>();
+            RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             foreach ((string name, object value) in parsedObjects)
             {
                 switch (name)
