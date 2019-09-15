@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Canvas name="OptionMenuView">
+    <Button name = "LoadButton" prefab = "EntityPrefabs/MenuButton" position = "0,100,0" text = "Load"/>
+    <Button name = "SaveButton" prefab = "EntityPrefabs/MenuButton" position = "0,0,0" text = "Save"/>
+    <Button name = "GameOptionButton" prefab = "EntityPrefabs/MenuButton" position = "0,-100,0" text = "Game Options"/>
+    <Button name = "SoundOptionButton" prefab = "EntityPrefabs/MenuButton" position = "0,-300,0" text = "Sound Options"/>
+    <Button name = "ExitGameButton" prefab = "EntityPrefabs/MenuButton" position = "-230,200,0" text = "Exit"/>
+    <Button name = "ResumeButton" prefab = "EntityPrefabs/MenuButton" position = "230,200,0" text = "Resume Game"/>
+    <Image name = "Background" position = "0,0,0" sprite="Graphics/UI/background"/>
+</Canvas>
