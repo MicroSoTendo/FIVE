@@ -8,7 +8,7 @@ public class RobotManager : MonoBehaviour
 
     private void Awake()
     {
-        EventManager.Subscribe<OnSinglePlayerButtonClicked>((b, args) => Instantiate(RobotPrefab, new Vector3(0f, 10f, 0f), Quaternion.identity));
+        EventManager.Subscribe<OnSinglePlayerButtonClicked>((b, args) => Instantiate(RobotPrefab, new Vector3(0f, 20f, 0f), Quaternion.identity));
     }
 
     // Start is called before the first frame update
