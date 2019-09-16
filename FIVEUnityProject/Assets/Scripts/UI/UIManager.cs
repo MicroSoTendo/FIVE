@@ -1,4 +1,4 @@
-﻿using FIVE.UI.Background;
+using FIVE.UI.Background;
 using FIVE.UI.MainGameDisplay;
 using FIVE.UI.OptionMenu;
 using FIVE.UI.StartupMenu;
@@ -9,13 +9,13 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        public ViewModel viewModel;
-        private readonly Dictionary<string, ViewModel> viewModels = new Dictionary<string, ViewModel>();
+        private static Dictionary<string, ViewModel> viewModels = new Dictionary<string, ViewModel>();
+
         private void Awake()
         {
             viewModels.Add(nameof(StartupMenuView), new StartupMenuViewModel());
 
-            viewModel = new OptionMenuViewModel();
+            ViewModel viewModel = new OptionMenuViewModel();
             viewModel.SetActive(false);
             viewModels.Add(nameof(OptionMenuView), viewModel);
 
@@ -26,11 +26,11 @@ namespace FIVE.UI
             viewModels.Add(nameof(BackgroundView), new BackgroundViewModel());
         }
 
-
-        // Update is called once per frame
-        private void Update()
+        public static T AddViewModel<T>() where T : ViewModel, new()
         {
-
+            var newViewModel = new T();
+            viewModels.Add(typeof(T).Name, newViewModel);
+            return newViewModel;
         }
     }
 }
