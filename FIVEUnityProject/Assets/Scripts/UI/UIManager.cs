@@ -1,15 +1,9 @@
-<<<<<<< HEAD
 using FIVE.UI.Background;
 using FIVE.UI.MainGameDisplay;
 using FIVE.UI.OptionMenu;
 using FIVE.UI.StartupMenu;
 using System.Collections.Generic;
 using UnityEngine;
-=======
-﻿using System.Collections.Generic;
-using UnityEngine;
-using FIVE.UI.StartupMenu;
->>>>>>> 3e57151175f7abdcebf46f5163dc8de509ca6fa0
 
 namespace FIVE.UI
 {

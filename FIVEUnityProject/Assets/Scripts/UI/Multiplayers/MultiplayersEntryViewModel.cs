@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using FIVE.EventSystem;
-using FIVE.EventSystem.EventTypes;
 using FIVE.Network;
 using Photon.Realtime;
 using UnityEngine;
