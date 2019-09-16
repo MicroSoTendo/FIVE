@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="MultiplayersEntry">
-    <ScrollRect name = "RoomsScrollRect" Sprite="Graphics/UI/bg_Window1"/>
-</Canvas>
