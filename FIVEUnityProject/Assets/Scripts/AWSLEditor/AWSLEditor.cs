@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
+using System;
+using FIVE.EventSystem;
 
 public class AWSLEditor : MonoBehaviour
 {
-    public string code = "";
-
     public Texture2D EditorBackground;
     public Color EditorTextColor;
 
     private GUIStyle EditorStyle;
     private GUIStyle ButtonStyle;
 
+    private LauncherEditorArgs code;
+
     private void Awake()
     {
         enabled = false;
+        EventManager.Subscribe<DoLaunchEditor, EventHandler<LauncherEditorArgs>, LauncherEditorArgs>((sender, args) =>
+        {
+            code = args;
+            enabled = true;
+        });
     }
 
     private void Start()
@@ -48,7 +55,7 @@ public class AWSLEditor : MonoBehaviour
 
         Rect r = Screen.safeArea;
         float w = r.width, h = r.height;
-        code = GUI.TextArea(new Rect(20, 40, w - 40, h - 120), code, int.MaxValue, EditorStyle);
+        code.Code = GUI.TextArea(new Rect(20, 40, w - 40, h - 120), code.Code, int.MaxValue, EditorStyle);
         if (GUI.Button(new Rect(20, h - 80, w - 40, 60), "Done!", ButtonStyle))
         {
             enabled = false;
