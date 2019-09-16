@@ -1,13 +1,21 @@
+using UnityEngine;
 using UnityEngine.UI;
 namespace FIVE.UI.Multiplayers
 {
     public class MultiplayersEntryView : View<MultiplayersEntryView, MultiplayersEntryViewModel>
     {
-        public ScrollRect LobbyListScrollRect { get; }
-
+        public GameObject ScrollWindow { get; }
+        public Button LeftButton { get; }
+        public Button RightButton { get; }
+        public Transform ContentTransform { get; }
+    
         public MultiplayersEntryView()
         {
-            LobbyListScrollRect = AddUIElement<ScrollRect>(nameof(LobbyListScrollRect));
+            ScrollWindow = AddUIElement<GameObject>(nameof(ScrollWindow));
+            LeftButton = GetUIElement<Button>(nameof(LeftButton));
+            RightButton = GetUIElement<Button>(nameof(RightButton));
+            ContentTransform = ScrollWindow.transform.GetChild(3).transform.GetChild(0).transform.GetChild(0);
+            LoadResources();
         }
     }
 }

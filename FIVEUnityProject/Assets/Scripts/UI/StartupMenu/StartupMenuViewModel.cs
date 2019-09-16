@@ -1,4 +1,5 @@
 using System;
+using FIVE.UI.Multiplayers;
 using UnityEngine;
 
 namespace FIVE.UI.StartupMenu
@@ -18,6 +19,9 @@ namespace FIVE.UI.StartupMenu
             
             binder.Bind(view => view.MultiplayerButton.onClick).
             To(viewModel => viewModel.OnMultiPlayerButtonClicked);
+
+            binder.Bind(v=>v.MultiplayerButton.onClick).
+            ToBroadcast<OnMultiPlayersButtonClicked>();
             
             binder.Bind(view => view.OptionsButton.onClick).
             To(viewModel => viewModel.OnOptionsButtonClicked);
@@ -32,12 +36,13 @@ namespace FIVE.UI.StartupMenu
         private void OnSinglePlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
-            view.ViewCanvas.gameObject.SetActive(false);
+            View.ViewCanvas.gameObject.SetActive(false);
         }
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnMultiPlayerButtonClicked));
-            view.ViewCanvas.gameObject.SetActive(false);
+            View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.AddViewModel<MultiplayersEntryViewModel>();
         }
         private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
         {
