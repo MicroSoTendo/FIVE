@@ -22,7 +22,7 @@ namespace FIVE.UI
         {
             while (loadingTasks.Count > 0)
             {
-                var action = loadingTasks.Dequeue();
+                Action action = loadingTasks.Dequeue();
                 action();
                 finishedTasks++;
                 UpdateLoadingProgressBar();
