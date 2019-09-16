@@ -32,12 +32,12 @@ namespace FIVE.UI.StartupMenu
         private void OnSinglePlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
-            view.ViewCanvas.gameObject.SetActive(false);
+            View.ViewCanvas.gameObject.SetActive(false);
         }
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnMultiPlayerButtonClicked));
-            view.ViewCanvas.gameObject.SetActive(false);
+            View.ViewCanvas.gameObject.SetActive(false);
         }
         private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
         {

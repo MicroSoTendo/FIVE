@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace FIVE.UI.MainGameDisplay
+namespace FIVE.UI.CAttribute
 {
-    public class GameDisplayView : View<GameDisplayView, GameDisplayViewModel>
+    public class CAttributeView : View<CAttributeView, CAttributeViewModel>
     {
-        public GameDisplayView()
+        public CAttributeView()
         {
-            //Background = AddUIElement<Image>(nameof(Background));
+            Background = AddUIElement<Image>(nameof(Background));
             PlayerButton = AddUIElement<Button>(nameof(PlayerButton));
             Energy = AddUIElement<Button>(nameof(Energy));
             Inventory = AddUIElement<Button>(nameof(Inventory));

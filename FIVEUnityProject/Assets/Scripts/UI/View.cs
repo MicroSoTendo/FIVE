@@ -10,19 +10,6 @@ namespace FIVE.UI
     {
         public Canvas ViewCanvas { get; set; }
 
-        public Vector2 Size
-        {
-            get
-            {
-                return ViewCanvas.pixelRect.size;
-            }
-            set
-            {
-
-                //ViewCanvas.gameObject.GetComponent<CanvasScaler>().
-            }
-
-        }
         protected GameObject parent;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
