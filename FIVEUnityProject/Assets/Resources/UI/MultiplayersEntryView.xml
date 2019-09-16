@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Canvas name="MultiplayersEntry">
+    <Resources>
+        <Button name = "RoomEntry" Prefab = "EntityPrefabs/RoomEntry"/>
+    </Resources>
+    <GameObject name = "ScrollWindow" Prefab="EntityPrefabs/ScrollWindow">
+        <Text name = "Title" Text = "Lobby"/>
+        <Button name = "LeftButton" Text = "Join"/>
+        <Button name = "RightButton" Text = "Return"/>
+    </GameObject>
+</Canvas>

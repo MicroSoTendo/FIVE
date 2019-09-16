@@ -1,13 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-namespace FIVE.UI.OptionMenu
+namespace FIVE.UI.OptionsMenu
 {
-    public class OptionMenuViewModel : ViewModel<OptionMenuView, OptionMenuViewModel>
+    public class OptionsMenuViewModel : ViewModel<OptionsMenuView, OptionsMenuViewModel>
     {
-
-        public string TestInputFieldText { get; set; }
-        public OptionMenuViewModel() : base()
+        public OptionsMenuViewModel() : base()
         {
 
             binder.Bind(view => view.LoadButton.onClick).

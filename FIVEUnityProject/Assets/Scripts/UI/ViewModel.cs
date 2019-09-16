@@ -4,7 +4,7 @@ namespace FIVE.UI
 {
     public abstract class ViewModel
     {
-        protected View View { get; set;}
+        protected View View { get; set; }
         public void SetActive(bool value)
         {
             View.ViewCanvas.gameObject.SetActive(value);
