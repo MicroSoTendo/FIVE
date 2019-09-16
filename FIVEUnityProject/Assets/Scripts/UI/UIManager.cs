@@ -1,6 +1,6 @@
 using FIVE.UI.Background;
 using FIVE.UI.MainGameDisplay;
-using FIVE.UI.OptionMenu;
+using FIVE.UI.OptionsMenu;
 using FIVE.UI.StartupMenu;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,9 +15,9 @@ namespace FIVE.UI
         {
             viewModels.Add(nameof(StartupMenuView), new StartupMenuViewModel());
 
-            ViewModel viewModel = new OptionMenuViewModel();
+            ViewModel viewModel = new OptionsMenuViewModel();
             viewModel.SetActive(false);
-            viewModels.Add(nameof(OptionMenuView), viewModel);
+            viewModels.Add(nameof(OptionsMenuView), viewModel);
 
             viewModel = new GameDisplayViewModel();
             viewModel.SetActive(false);
