@@ -8,7 +8,7 @@ namespace FIVE.ControllerSystem
         {
             if (Input.GetKey(KeyCode.W))
             {
-                var d = transform.forward.normalized;
+                Vector3 d = transform.forward.normalized;
                 d.y = 0f;
                 d *= 2f;
                 d = transform.InverseTransformDirection(d);
@@ -16,7 +16,7 @@ namespace FIVE.ControllerSystem
             }
             if (Input.GetKey(KeyCode.S))
             {
-                var d = transform.forward.normalized;
+                Vector3 d = transform.forward.normalized;
                 d.y = 0f;
                 d *= -2f;
                 d = transform.InverseTransformDirection(d);

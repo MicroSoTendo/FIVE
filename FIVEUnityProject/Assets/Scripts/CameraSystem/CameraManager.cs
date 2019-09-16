@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using FIVE.EventSystem;
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,28 +9,15 @@ namespace FIVE.CameraSystem
 {
     public class CameraManager : MonoBehaviour
     {
-        public Camera CameraPrefab;
+        private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
-        public readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
-
-        public Camera NewCamera(string id)
+        private void Awake()
         {
-            Camera cam = Instantiate(CameraPrefab);
-            Cameras[id] = cam;
-            return cam;
+            EventManager.Subscribe<OnCameraCreated, EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
+((sender, args) => { });
         }
 
-        public Camera GetCamera(string id) => Cameras[id];
-
-        private void Start()
-        {
-            Camera cam = NewCamera("deep_space");
-            cam.transform.position = new Vector3(64f, 30f, 64f);
-            cam.transform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.forward);
-            cam.enabled = true;
-        }
-
-        public void Update()
+        private void Update()
         {
             if (Input.GetKeyUp(KeyCode.C))
             {
@@ -35,7 +25,7 @@ namespace FIVE.CameraSystem
                 {
                     c.Value.enabled = false;
                 }
-                Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
+                Cameras.ElementAt(UnityEngine.Random.Range(0, Cameras.Count)).Value.enabled = true;
             }
         }
     }

@@ -1,8 +1,8 @@
+using FIVE.EventSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using FIVE.EventSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +21,7 @@ namespace FIVE.UI
             this.view = view;
             this.viewModel = viewModel;
         }
-        private List<Binding> bindings;
+        private readonly List<Binding> bindings;
 
         public class BindingSource<TSource> where TSource : class
         {
@@ -30,8 +30,8 @@ namespace FIVE.UI
             public MonoBehaviour UIElement;
             public object BindingMember;
 
-            private ViewModel<TView, TViewModel> viewModel;
-            public BindingSource(Expression<Func<TView, TSource>> expression, 
+            private readonly ViewModel<TView, TViewModel> viewModel;
+            public BindingSource(Expression<Func<TView, TSource>> expression,
                 View<TView, TViewModel> view,
                 ViewModel<TView, TViewModel> viewModel)
             {
@@ -56,7 +56,7 @@ namespace FIVE.UI
             {
                 if (BindingMember is Button.ButtonClickedEvent clickEvent)
                 {
-                    var compiledFunc = expression.Compile();
+                    Func<TViewModel, EventHandler> compiledFunc = expression.Compile();
                     clickEvent.AddListener(delegate { compiledFunc(viewModel as TViewModel)(UIElement, EventArgs.Empty); });
                 }
             }
@@ -75,7 +75,7 @@ namespace FIVE.UI
         {
             //Expression<Func<TView, TSource>>[] sourceExpressions;
         }
-        
+
         public BindingSource<TSource> Bind<TSource>(Expression<Func<TView, TSource>> expression) where TSource : class
         {
             return new BindingSource<TSource>(expression, view, viewModel);

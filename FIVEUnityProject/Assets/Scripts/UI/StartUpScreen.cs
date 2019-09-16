@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FIVE.EventSystem;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FIVE.EventSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -113,7 +113,7 @@ namespace FIVE.UI
 
         private void SetUpEventTrigering()
         {
-            var speed = width / 1.75f;
+            float speed = width / 1.75f;
 
             genmtt = SetMoveToTarget(Gen, genTarget, speed);
             wallymtt = SetMoveToTarget(Wally, wallyTarget, speed);
@@ -149,7 +149,7 @@ namespace FIVE.UI
                 {
                     MainThreadDispatcher.Schedule(() =>
                     {
-                        Gen.SetActive(true); 
+                        Gen.SetActive(true);
                         Laurence.SetActive(true);
                         Wen.SetActive(true);
                         Wally.SetActive(true);
@@ -176,7 +176,7 @@ namespace FIVE.UI
                     });
                 }};
             var newQueue = new Queue<Action>();
-            foreach (var action in splashScreenActions)
+            foreach (Action action in splashScreenActions)
             {
                 newQueue.Enqueue(action);
             }
@@ -187,7 +187,7 @@ namespace FIVE.UI
                 //var str = i.ToString();
                 newQueue.Enqueue(() =>
                 {
-                    var t= Task.Delay(dummyTaskDuration);
+                    var t = Task.Delay(dummyTaskDuration);
                     while (!t.IsCompleted)
                     {
                         //Debug.Log("Dummy" + str);
@@ -196,7 +196,7 @@ namespace FIVE.UI
             }
 
 
-            foreach (var action in loadingLoadingTasks)
+            foreach (Action action in loadingLoadingTasks)
             {
                 newQueue.Enqueue(action);
             }
@@ -254,7 +254,7 @@ namespace FIVE.UI
         }
         private MoveInAnimation SetMoveToTarget(GameObject go, Vector3 target, float speed = 1f)
         {
-            var mtt = go.GetComponent<MoveInAnimation>();
+            MoveInAnimation mtt = go.GetComponent<MoveInAnimation>();
             mtt.SetTargetAndSpeed(target, speed);
             return mtt;
         }
@@ -262,18 +262,22 @@ namespace FIVE.UI
         {
             var obj = GameObject.Instantiate(Resources.Load<GameObject>("Logos/Prefabs/" + name), parentCanvas.transform);
             obj.SetActive(false);
-            var recttransform = obj.GetComponent<RectTransform>();
+            RectTransform recttransform = obj.GetComponent<RectTransform>();
             recttransform.sizeDelta *= (width / recttransform.sizeDelta.x);
             return obj;
         }
 
         protected override void UpdateLoadingProgressBar()
         {
-            if (TColor == null) return;
-            var progress = (float)finishedTasks / totalTasks;
-            var tAmount = 0f;
-            var s1Amount = 0f;
-            var s2Amount = 0f;
+            if (TColor == null)
+            {
+                return;
+            }
+
+            float progress = (float)finishedTasks / totalTasks;
+            float tAmount = 0f;
+            float s1Amount = 0f;
+            float s2Amount = 0f;
             if (progress < 1 / 3f)
             {
                 tAmount = progress * 3f;

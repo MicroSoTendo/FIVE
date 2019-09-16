@@ -21,7 +21,11 @@ namespace FIVE.UI
 
         public void StartMoving()
         {
-            if (started) return;
+            if (started)
+            {
+                return;
+            }
+
             OnUpdate = DoMoving;
             started = true;
         }
@@ -44,7 +48,7 @@ namespace FIVE.UI
             }
         }
 
-        void Update()
+        private void Update()
         {
             OnUpdate.Invoke();
         }

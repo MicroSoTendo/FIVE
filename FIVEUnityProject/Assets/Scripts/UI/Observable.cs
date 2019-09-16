@@ -1,7 +1,7 @@
+using FIVE.EventSystem;
+
 using System.ComponentModel;
 using System.Threading.Tasks;
-using FIVE.EventSystem;
-using FIVE.EventSystem.EventTypes;
 
 namespace FIVE.UI
 {

@@ -4,10 +4,9 @@ namespace FIVE.UI
 {
     public abstract class ViewModel
     {
-        protected View View;
+        protected View View { get; set;}
         public void SetActive(bool value)
         {
-            Debug.Log(this.GetType().Name);
             View.ViewCanvas.gameObject.SetActive(value);
         }
     }
@@ -19,7 +18,7 @@ namespace FIVE.UI
         protected Binder<TView, TViewModel> binder;
         protected ViewModel()
         {
-            base.View = View<TView, TViewModel>.Create<TView>();
+            View = View<TView, TViewModel>.Create<TView>();
             binder = new Binder<TView, TViewModel>(View, this);
         }
 

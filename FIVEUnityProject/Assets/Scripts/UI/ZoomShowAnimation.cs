@@ -7,23 +7,27 @@ namespace FIVE.UI
     {
         public EventHandler OnFinished = (o, e) => { };
         private float speed;
-        private float acceleration = 1f;
+        private readonly float acceleration = 1f;
         private Action OnUpdate = () => { };
         private bool started = false;
 
-        void Start()
+        private void Start()
         {
             transform.localScale = Vector3.zero;
         }
 
         public void SetUpSpeed(float newSpeed = 1f)
         {
-            this.speed = newSpeed;
+            speed = newSpeed;
         }
 
         public void StartZoomIn()
         {
-            if (started) return;
+            if (started)
+            {
+                return;
+            }
+
             OnUpdate = DoZoomIn;
             started = true;
         }
@@ -37,7 +41,7 @@ namespace FIVE.UI
         {
             UpdateSpeed();
             float step = speed * Time.deltaTime;
-            transform.localScale += new Vector3(1,1,1) * step;
+            transform.localScale += new Vector3(1, 1, 1) * step;
             if (transform.localScale.x >= 1)
             {
                 OnFinished?.Invoke(this, EventArgs.Empty);
@@ -53,7 +57,7 @@ namespace FIVE.UI
             timer += Time.deltaTime;
         }
 
-        void Update()
+        private void Update()
         {
             OnUpdate.Invoke();
         }

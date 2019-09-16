@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FIVE.EventSystem;
+
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FIVE.EventSystem;
-using FIVE.EventSystem.EventTypes;
-using System.Collections;
 
 namespace FIVE
 {
