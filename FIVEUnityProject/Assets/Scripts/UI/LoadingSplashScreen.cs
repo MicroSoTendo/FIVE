@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace FIVE.UI
 {
@@ -22,7 +21,7 @@ namespace FIVE.UI
         {
             while (loadingTasks.Count > 0)
             {
-                var action = loadingTasks.Dequeue();
+                Action action = loadingTasks.Dequeue();
                 action();
                 finishedTasks++;
                 UpdateLoadingProgressBar();

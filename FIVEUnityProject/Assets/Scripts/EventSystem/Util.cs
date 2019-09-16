@@ -9,6 +9,7 @@ namespace FIVE.EventSystem
         {
             EventManager.RaiseEvent<T>(sender, args);
         }
+
         public static void RaiseEvent<T, THandler, TEventArgs>(this object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
@@ -16,10 +17,12 @@ namespace FIVE.EventSystem
         {
             EventManager.RaiseEvent<T, THandler, TEventArgs>(sender, args);
         }
+
         public static async Task RaiseEventAsync<T>(this object sender, EventArgs args)
         {
             await EventManager.RaiseEventAsync<T>(sender, args);
         }
+
         public static async Task RaiseEventAsync<T, THandler, TEventArgs>(this object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate

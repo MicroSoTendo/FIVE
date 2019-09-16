@@ -6,6 +6,7 @@ namespace FIVE.EventSystem
     {
         private readonly List<(bool requiresMain, List<T> handlers)> storage;
         private readonly object syncroot = new object();
+
         public HandlerList()
         {
             storage = new List<(bool requiresMain, List<T> handlers)>();
@@ -28,9 +29,13 @@ namespace FIVE.EventSystem
             lock (syncroot)
             {
                 if (storage.Count != 0 && item.RequiresMainThread == storage[storage.Count - 1].requiresMain)
+                {
                     storage[storage.Count - 1].handlers.Add(item);
+                }
                 else
+                {
                     storage.Add((item.RequiresMainThread, new List<T>() { item }));
+                }
             }
         }
 
@@ -41,7 +46,7 @@ namespace FIVE.EventSystem
                 storage.Clear();
             }
         }
-        
+
         public IEnumerator<(bool requiresMain, List<T> handlers)> GetEnumerator()
         {
             lock (syncroot)
@@ -54,10 +59,12 @@ namespace FIVE.EventSystem
         {
             lock (syncroot)
             {
-                foreach (var (requiresMain, handlers) in storage)
+                foreach ((bool requiresMain, List<T> handlers) in storage)
                 {
                     if (handlers.Remove(item))
+                    {
                         return true;
+                    }
                 }
                 return false;
             }

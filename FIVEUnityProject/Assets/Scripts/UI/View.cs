@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +9,16 @@ namespace FIVE.UI
     {
         public Canvas ViewCanvas { get; set; }
 
+        public Vector2 Size
+        {
+            get => ViewCanvas.pixelRect.size;
+            set
+            {
+
+                //ViewCanvas.gameObject.GetComponent<CanvasScaler>().
+            }
+
+        }
         protected GameObject parent;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;

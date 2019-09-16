@@ -1,14 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace FIVE
+﻿namespace FIVE
 {
     public class Tokenizer
     {
-        struct Token
+        private struct Token
         {
-            string word;
+            private readonly string word;
         }
     }
 }
