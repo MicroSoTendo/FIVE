@@ -19,5 +19,10 @@ namespace FIVE
         internal int steps;
 
         internal int degree;
+
+        internal void parse()
+        {
+
+        }
     }
 }
