@@ -20,7 +20,8 @@ namespace FIVE.UI
 
             AttributeParser = new Dictionary<string, Func<XmlAttribute, object>>
             {
-                {nameof(GameObject), PrefabParser},
+                {"name", x => x.InnerText },
+                {"Prefab", PrefabParser},
                 {nameof(Text), TextParser},
                 {nameof(Transform), PropertyParser},
                 {nameof(Sprite), SpriteParser},
@@ -29,6 +30,7 @@ namespace FIVE.UI
 
             AttributeHandler = new Dictionary<string, Delegate>
             {
+                {"name", (Action<GameObject,string>)((g, s) => { g.name = s;})},
                 {nameof(Text), (Action<GameObject, List<(string, object)>>)TextHandler},
                 {nameof(Transform), (Action<GameObject, List<(string, object)>>)TransformHandler},
                 {nameof(Sprite), (Action<GameObject,Sprite>)SpriteHandler},
@@ -45,6 +47,8 @@ namespace FIVE.UI
                 {"anchoredPosition3D", (Func<string, Vector3>)Vector3Parser},
                 {"localPosition", (Func<string, Vector3>)Vector3Parser},
                 {"position", (Func<string, Vector3>)Vector3Parser},
+                {"offsetMax", (Func<string, Vector2>)Vector2Parser},
+                {"offsetMin", (Func<string, Vector2>)Vector2Parser},
             };
         }
 
@@ -73,10 +77,10 @@ namespace FIVE.UI
             }
         }
 
-        private static bool TryBinding(XmlAttribute arg)
+        private static bool TryBinding(XmlAttribute xmlAttribute)
         {
             //TODO: Finish
-            string text = arg.InnerText;
+            string text = xmlAttribute.InnerText;
             var directBindRegex = new Regex(@"\{Binding\s+([\w_]+)\s*\}");
             var pathBindRegex = new Regex(@"\{Binding\s+([\w_]+)\s*,\s*Path\s*\=\s*([\w_]+)\}");
 
@@ -85,14 +89,14 @@ namespace FIVE.UI
 
         private static Vector3 Vector3Parser(string text)
         {
-            string[] splited = text.Replace("(", "").Replace(")", "").Split(',');
-            return new Vector3(float.Parse(splited[0]), float.Parse(splited[1]), float.Parse(splited[2]));
+            string[] splitted = text.Replace("(", "").Replace(")", "").Split(',');
+            return new Vector3(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]));
         }
 
         private static Vector2 Vector2Parser(string text)
         {
-            string[] splited = text.Replace("(", "").Replace(")", "").Split(',');
-            return new Vector2(float.Parse(splited[0]), float.Parse(splited[1]));
+            string[] splitted = text.Replace("(", "").Replace(")", "").Split(',');
+            return new Vector2(float.Parse(splitted[0]), float.Parse(splitted[1]));
         }
         private static void TextHandler(GameObject gameObject, List<(string, object)> parsedAttributes)
         {
