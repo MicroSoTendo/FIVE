@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace FIVE.EventSystem.EventTypes
+namespace FIVE.EventSystem
 {
     public abstract class OnCameraCreated : IEventType<EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
     {

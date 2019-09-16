@@ -10,9 +10,13 @@ public class AWSLEditor : MonoBehaviour
     private GUIStyle EditorStyle;
     private GUIStyle ButtonStyle;
 
-    private void Start()
+    private void Awake()
     {
         enabled = false;
+    }
+
+    private void Start()
+    {
         EditorStyle = new GUIStyle
         {
             font = Font.CreateDynamicFontFromOSFont("Courier New", 16),

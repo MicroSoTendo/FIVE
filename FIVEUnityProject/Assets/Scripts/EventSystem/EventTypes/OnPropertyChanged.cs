@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace FIVE.EventSystem.EventTypes
+namespace FIVE.EventSystem
 {
     public class OnPropertyChanged : IEventType<PropertyChangedEventHandler, PropertyChangedEventArgs>
     {
