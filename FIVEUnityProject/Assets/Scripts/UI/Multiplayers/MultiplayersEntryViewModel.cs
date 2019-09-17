@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using FIVE.EventSystem;
@@ -16,6 +17,7 @@ namespace FIVE.UI.Multiplayers
         {
             contentTransform = View.ContentTransform;
             EventManager.Subscribe<OnPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(OnLobbyInfoChanged);
+            binder.Bind(View=>View.CreateButton.onClick).To(ViewModel=>ViewModel.OnCreateButtonClicked);
         }
 
         private void OnLobbyInfoChanged(object sender, PropertyChangedEventArgs e)
@@ -48,6 +50,12 @@ namespace FIVE.UI.Multiplayers
                 keyValue.Value.transform.GetChild(1).GetComponent<Text>().text = $"Players: {keyValue.Key.PlayerCount}/8";
                 i++;
             }
+        }
+
+        private void OnCreateButtonClicked(object sender, EventArgs e)
+        {
+            this.SetActive(false);
+            UIManager.AddViewModel<CreateRoomViewModel>();
         }
 
         private void OnRoomEntryClicked()
