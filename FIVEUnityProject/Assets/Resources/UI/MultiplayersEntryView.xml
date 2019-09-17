@@ -6,6 +6,6 @@
     <GameObject name = "ScrollWindow" Prefab="EntityPrefabs/ScrollWindow">
         <Text name = "Title" Text = "Lobby"/>
         <Button name = "LeftButton" Text = "Join"/>
-        <Button name = "RightButton" Text = "Return"/>
+        <Button name = "RightButton" Text = "Create"/>
     </GameObject>
 </Canvas>

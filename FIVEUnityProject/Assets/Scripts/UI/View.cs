@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,14 +27,34 @@ namespace FIVE.UI
             ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 
-        protected T AddUIElement<T>(string name)
+        public T AddUIElement<T>(string name)
         {
             xmlDeserializer.Deserialize(name, out GameObject gameObject);
             nameToUIElementGameObjects.Add(name, gameObject);
             return gameObject is T go ? go : gameObject.GetComponent<T>();
         }
 
-        protected T GetUIElement<T>(string name, bool includeInactive = false) where T : MonoBehaviour
+        public T AddUIElementFromResources<T>(string resourceName, string gameObjectName, Transform parent)
+        {
+            GameObject prefab = Resources[resourceName];
+            GameObject gameObject = GameObject.Instantiate(prefab, parent);
+            gameObject.name = gameObjectName;
+            nameToUIElementGameObjects.Add(gameObjectName, gameObject);
+            return gameObject is T go ? go : gameObject.GetComponent<T>();
+        }
+
+        public void RemoveUIElement(string name)
+        {
+            var go = nameToUIElementGameObjects[name];
+            nameToUIElementGameObjects.Remove(name);
+            go.transform.SetParent(null);
+            go.SetActive(false);
+            
+            Debug.Log($"{nameof(RemoveUIElement)} {go.name}");
+            GameObject.Destroy(go);
+        }
+
+        public T GetUIElement<T>(string name, bool includeInactive = false) where T : MonoBehaviour
         {
             return canvasGameObject.GetComponentsInChildren(typeof(T), includeInactive).Cast<T>().FirstOrDefault(child => child.name == name);
         }

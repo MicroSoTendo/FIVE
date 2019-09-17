@@ -14,6 +14,7 @@ namespace FIVE.UI.Multiplayers
             ScrollWindow = AddUIElement<GameObject>(nameof(ScrollWindow));
             LeftButton = GetUIElement<Button>(nameof(LeftButton));
             RightButton = GetUIElement<Button>(nameof(RightButton));
+            //Better way?
             ContentTransform = ScrollWindow.transform.GetChild(3).transform.GetChild(0).transform.GetChild(0);
             LoadResources();
         }

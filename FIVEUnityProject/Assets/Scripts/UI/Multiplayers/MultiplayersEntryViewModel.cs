@@ -11,7 +11,7 @@ namespace FIVE.UI.Multiplayers
     public class MultiplayersEntryViewModel : ViewModel<MultiplayersEntryView, MultiplayersEntryViewModel>
     {
         private readonly Transform contentTransform;
-        private readonly List<GameObject> roomEntries = new List<GameObject>();
+        private readonly Dictionary<RoomInfo, GameObject> roomEntries = new Dictionary<RoomInfo, GameObject>();
         public MultiplayersEntryViewModel()
         {
             contentTransform = View.ContentTransform;
@@ -21,32 +21,38 @@ namespace FIVE.UI.Multiplayers
         private void OnLobbyInfoChanged(object sender, PropertyChangedEventArgs e)
         {
             var lobbyInfoModel = sender as LobbyInfoModel;
-            for (int index = 0; index < roomEntries.Count; index++)
+            foreach (var roomInfo in lobbyInfoModel.RoomsList)
             {
-                GameObject t = roomEntries[index];
-                t.SetActive(false);
-                Object.Destroy(t);
+                if (roomEntries.ContainsKey(roomInfo))
+                {
+                    if (roomInfo.RemovedFromList || roomInfo.PlayerCount == 0)
+                    {
+                        View.RemoveUIElement(roomEntries[roomInfo].name);
+                        roomEntries.Remove(roomInfo);
+                    }
+                }
+                else
+                {
+                    Button roomEntry = View.AddUIElementFromResources<Button>("RoomEntry", $"Room {roomInfo.ToString()}", contentTransform);
+                    roomEntry.onClick.AddListener(OnRoomEntryClicked);
+                    roomEntry.gameObject.SetActive(true);
+                    roomEntries.Add(roomInfo, roomEntry.gameObject);
+                }
             }
-
-            roomEntries.Clear();
-
-            for (int index = 0; index < lobbyInfoModel?.RoomsList.Count; index++)
+            int i = 0;
+            foreach (KeyValuePair<RoomInfo, GameObject> keyValue in roomEntries)
             {
-                RoomInfo roomInfo = lobbyInfoModel.RoomsList[index];
-                //if (!roomInfo.IsVisible) return;
-                GameObject roomEntryPrefab = View.Resources["RoomEntry"];
-                GameObject roomEntry = Object.Instantiate(roomEntryPrefab, contentTransform);
-                roomEntry.name = roomInfo.Name;
-                roomEntry.name = $"Room {index}";
-                RectTransform rectTransform = roomEntry.GetComponent<RectTransform>();
-                rectTransform.anchoredPosition3D = new Vector3(0, -50 -rectTransform.rect.height * index, 0);
-
-                roomEntry.transform.GetChild(0).GetComponent<Text>().text = $"{roomInfo.Name}";
-                roomEntry.transform.GetChild(1).GetComponent<Text>().text = $"Players: {roomInfo.PlayerCount}";
-
-                roomEntry.SetActive(true);
-                roomEntries.Add(roomEntry);
+                RectTransform rectTransform = keyValue.Value.GetComponent<RectTransform>();
+                rectTransform.anchoredPosition3D = new Vector3(0, -50 - rectTransform.rect.height * i, 0);
+                keyValue.Value.transform.GetChild(0).GetComponent<Text>().text = $"{keyValue.Key.Name}";
+                keyValue.Value.transform.GetChild(1).GetComponent<Text>().text = $"Players: {keyValue.Key.PlayerCount}/8";
+                i++;
             }
+        }
+
+        private void OnRoomEntryClicked()
+        {
+
         }
     }
 }
