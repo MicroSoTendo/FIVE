@@ -96,6 +96,14 @@ namespace FIVE.EventSystem
             Instance.defaultHandlerNodes[typeof(T)].Add(new HandlerNode<EventHandler>(handler, requiresMainThread));
         }
 
+        public static void Subscribe<T, TEventArgs>(EventHandler<TEventArgs> handler, bool requiresMain = true)
+            where T : IEventType<TEventArgs>
+            where TEventArgs : EventArgs
+        {
+            Assert.IsTrue(Instance.initialized);
+            Instance.dynamicHandlerNodes[typeof(T)].Add(new HandlerNode(handler, requiresMain));
+        }
+
         public static void Subscribe<T, THandler, TEventArgs>(THandler handler, bool requiresMain = true)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
@@ -213,6 +221,13 @@ namespace FIVE.EventSystem
                     queue.Enqueue(delegate { handlerNode.Handler.DynamicInvoke(sender, args); });
                 }
             }
+        }
+
+        public static void RaiseEvent<T, TEventArgs>(object sender, TEventArgs args)
+            where T : IEventType<TEventArgs>
+            where TEventArgs : EventArgs
+        {
+            RaiseEvent<T>(sender, args);
         }
 
         public static void RaiseEvent<T, THandler, TEventArgs>(object sender, TEventArgs args)

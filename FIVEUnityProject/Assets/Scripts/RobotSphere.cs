@@ -1,18 +1,20 @@
 ﻿using FIVE.ControllerSystem;
 using FIVE.EventSystem;
-
 using UnityEngine;
 
 namespace FIVE
 {
     public class RobotSphere : MonoBehaviour
     {
-        public enum RobotState { Idle, Walk, Jump, Open, };
+        public enum RobotState { Idle, Walk, Jump, Open };
 
         private enum ControllerOp { FPS, RTS, };
 
         private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
+
+        private bool editingCode = false;
+        private LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
         public Camera CameraPrefab;
 
@@ -41,8 +43,24 @@ namespace FIVE
 
         private void Update()
         {
-            animator.Update(currState);
-            fpsController.Update();
+            if (Input.GetKey(KeyCode.E))
+            {
+                editingCode = true;
+                Util.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(this, code);
+            }
+
+            if (editingCode)
+            {
+                if (code.Saved)
+                {
+                    editingCode = false;
+                }
+            }
+            else
+            {
+                animator.Update(currState);
+                fpsController.Update();
+            }
         }
     }
 }
