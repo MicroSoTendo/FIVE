@@ -9,28 +9,39 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        private static Dictionary<string, ViewModel> viewModels = new Dictionary<string, ViewModel>();
-
+        private static Dictionary<string, ViewModel> nameToVMs = new Dictionary<string, ViewModel>();
+        private static SortedSet<ViewModel> sortedVMs = new SortedSet<ViewModel>(new VMComparer());
         private void Awake()
         {
-            viewModels.Add(nameof(StartupMenuView), new StartupMenuViewModel());
+            nameToVMs.Add(nameof(StartupMenuViewModel), new StartupMenuViewModel());
 
-            ViewModel viewModel = new OptionsMenuViewModel();
-            viewModel.SetActive(false);
-            viewModels.Add(nameof(OptionsMenuView), viewModel);
+            ViewModel optionsMenuViewModel = new OptionsMenuViewModel();
+            optionsMenuViewModel.SetActive(false);
+            nameToVMs.Add(nameof(OptionsMenuView), optionsMenuViewModel);
 
-            viewModel = new GameDisplayViewModel();
-            viewModel.SetActive(false);
-            viewModels.Add(nameof(GameDisplayView), viewModel);
+            ViewModel gameDisplayViewModel = new GameDisplayViewModel();
+            gameDisplayViewModel.SetActive(false);
+            nameToVMs.Add(nameof(GameDisplayView), gameDisplayViewModel);
 
-            viewModels.Add(nameof(BackgroundView), new BackgroundViewModel());
+            ViewModel backgroundViewModel = new BackgroundViewModel();
+            backgroundViewModel.SortingOrder = -10;
+            nameToVMs.Add(nameof(BackgroundView), backgroundViewModel);
         }
 
         public static T AddViewModel<T>() where T : ViewModel, new()
         {
             var newViewModel = new T();
-            viewModels.Add(typeof(T).Name, newViewModel);
+            nameToVMs.Add(typeof(T).Name, newViewModel);
+            sortedVMs.Add(newViewModel);
             return newViewModel;
+        }
+
+        private class VMComparer : IComparer<ViewModel>
+        {
+            public int Compare(ViewModel x, ViewModel y)
+            {
+                return x.SortingOrder - y.SortingOrder;
+            }
         }
     }
 }

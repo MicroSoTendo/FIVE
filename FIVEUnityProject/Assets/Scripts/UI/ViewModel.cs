@@ -5,6 +5,7 @@ namespace FIVE.UI
     public abstract class ViewModel
     {
         protected View View { get; set; }
+        public int SortingOrder { get => View.ViewCanvas.sortingOrder; set => View.ViewCanvas.sortingOrder = value; }
         public void SetActive(bool value)
         {
             View.ViewCanvas.gameObject.SetActive(value);
