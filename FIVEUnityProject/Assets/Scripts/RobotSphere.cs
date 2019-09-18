@@ -1,6 +1,7 @@
 ﻿using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 using UnityEngine;
 
 namespace FIVE
@@ -31,6 +32,7 @@ namespace FIVE
         private void Awake()
         {
             photonView = GetComponent<PhotonView>();
+            //TODO: Check if camera is really "mine" in multiple players
             fpsCamera = Instantiate(CameraPrefab);
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
@@ -47,13 +49,31 @@ namespace FIVE
 
         private void Start()
         {
+            
+            CameraWork cameraWork = GetComponent<CameraWork>();
+            if (cameraWork != null)
+            {
+                if (photonView.IsMine)
+                {
+                    cameraWork.OnStartFollowing();
+                }
+            }
+            else
+            {
+                Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
+            }
+            
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
         }
 
         private void Update()
         {
-            if (!photonView.IsMine) return;
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected == true)
+            {
+                return;
+            }
+            
             if (Input.GetKey(KeyCode.E))
             {
                 editingCode = true;

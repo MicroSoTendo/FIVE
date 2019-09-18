@@ -2492,6 +2492,7 @@ GameObject:
   - component: {fileID: 3368821557104076191}
   - component: {fileID: 4094719650238949762}
   - component: {fileID: 8122294824602304824}
+  - component: {fileID: 4234837269849963861}
   m_Layer: 0
   m_Name: robotSphere
   m_TagString: Untagged
@@ -2631,6 +2632,23 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
+--- !u!114 &4234837269849963861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528915638184230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd08475b23aa548b7b9d28397d430b32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 7
+  height: 3
+  heightSmoothLag: 0.3
+  centerOffset: {x: 0, y: 0, z: 0}
+  followOnStart: 0
 --- !u!1 &1533244445735912
 GameObject:
   m_ObjectHideFlags: 0
