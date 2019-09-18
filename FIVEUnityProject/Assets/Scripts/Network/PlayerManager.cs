@@ -11,7 +11,7 @@ namespace FIVE.Network
         void Start()
         {
 
-            player = PhotonNetwork.Instantiate("EntityPrefabs/robotSphere", new Vector3(3, 0, 3), Quaternion.identity);
+            player = PhotonNetwork.Instantiate("EntityPrefabs/robotSphere", new Vector3(Random.Range(0,10), Random.Range(0,5), Random.Range(0,10)), Quaternion.identity);
             playerPhotonView = player.GetComponent<PhotonView>();
             player.name = PlayerNickName;
         }
