@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using UnityEngine;
 
 public class AWSLEditor : MonoBehaviour
 {

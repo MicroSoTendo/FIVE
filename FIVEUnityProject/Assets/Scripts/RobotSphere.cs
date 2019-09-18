@@ -14,7 +14,7 @@ namespace FIVE
         public RobotState currState = RobotState.Idle;
 
         private bool editingCode = false;
-        private LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
+        private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
         public Camera CameraPrefab;
 
