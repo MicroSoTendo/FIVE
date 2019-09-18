@@ -1,6 +1,4 @@
 ﻿using FIVE.EventSystem;
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,8 +11,7 @@ namespace FIVE.CameraSystem
 
         private void Awake()
         {
-            EventManager.Subscribe<OnCameraCreated, EventHandler<OnCameraCreatedArgs>, OnCameraCreatedArgs>
-((sender, args) => { });
+            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => { });
         }
 
         private void Update()

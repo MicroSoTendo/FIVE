@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using UnityEngine;
 
 public class AWSLEditor : MonoBehaviour
 {
@@ -15,7 +14,7 @@ public class AWSLEditor : MonoBehaviour
     private void Awake()
     {
         enabled = false;
-        EventManager.Subscribe<DoLaunchEditor, EventHandler<LauncherEditorArgs>, LauncherEditorArgs>((sender, args) =>
+        EventManager.Subscribe<DoLaunchEditor, LauncherEditorArgs>((sender, args) =>
         {
             code = args;
             enabled = true;
@@ -59,6 +58,7 @@ public class AWSLEditor : MonoBehaviour
         if (GUI.Button(new Rect(20, h - 80, w - 40, 60), "Done!", ButtonStyle))
         {
             enabled = false;
+            code.Saved = true;
         }
     }
 }

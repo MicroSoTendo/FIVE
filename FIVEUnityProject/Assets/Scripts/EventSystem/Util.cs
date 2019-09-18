@@ -10,6 +10,13 @@ namespace FIVE.EventSystem
             EventManager.RaiseEvent<T>(sender, args);
         }
 
+        public static void RaiseEvent<T, TEventArgs>(this object sender, TEventArgs args)
+            where T : IEventType<TEventArgs>
+            where TEventArgs : EventArgs
+        {
+            EventManager.RaiseEvent<T, TEventArgs>(sender, args);
+        }
+
         public static void RaiseEvent<T, THandler, TEventArgs>(this object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
