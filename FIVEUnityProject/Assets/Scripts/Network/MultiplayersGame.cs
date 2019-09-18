@@ -35,9 +35,11 @@ namespace FIVE.Network
             {
                 // this.RaiseEvent<OnSinglePlayerButtonClicked>(EventArgs.Empty); //Fake it for now
                 PhotonNetwork.LoadLevel("Multiplayers");
+                Debug.Log("Host Mode.");
             }
             else
             {
+                Debug.Log("Client Mode.");
                 // var prefab = GameObject.FindObjectOfType<RobotManager>().RobotPrefab;
                 // var go = PhotonNetwork.Instantiate(prefab.name, new Vector3(20f, 20f, 20f), Quaternion.identity);
             }

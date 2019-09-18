@@ -21,12 +21,10 @@ namespace FIVE.Network
 
         void Initialize(object sender, EventArgs args)
         {
-            Debug.Log($"Initialize");
-            
             var connectingResult = PhotonNetwork.ConnectUsingSettings();
             if (connectingResult)
             {
-                Debug.Log("connecting");
+                Debug.Log("Initialize");
             }
             else
             {
@@ -47,19 +45,19 @@ namespace FIVE.Network
 
         public override void OnConnected()
         {
-            Debug.Log("Connected!");
+            Debug.Log("OnConnected");
         }
 
         public override void OnConnectedToMaster()
         {
-            Debug.Log("OnConnectedToMaster() was called by PUN.");
+            Debug.Log("OnConnectedToMaster");
             bool result = PhotonNetwork.JoinLobby();
         }
 
         public override void OnJoinedLobby()
         {
             Debug.Log(nameof(OnJoinedLobby));
-            PhotonNetwork.JoinOrCreateRoom("Test Room", new RoomOptions() { MaxPlayers = 10 }, new TypedLobby());
+            PhotonNetwork.JoinRoom("Test Room");
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
