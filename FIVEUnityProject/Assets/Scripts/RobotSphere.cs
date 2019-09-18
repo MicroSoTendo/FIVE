@@ -14,7 +14,7 @@ namespace FIVE
         public RobotState currState = RobotState.Idle;
 
         private bool editingCode = false;
-        private LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
+        private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
         public Camera CameraPrefab;
 
@@ -32,7 +32,13 @@ namespace FIVE
             fpsCamera.transform.parent = eye;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "", Camera = fpsCamera });
+            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID(), Camera = fpsCamera });
+
+            Camera camera2 = Instantiate(CameraPrefab);
+            camera2.transform.parent = transform;
+            camera2.transform.localPosition = new Vector3(0, 2, 0);
+            camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
         }
 
         private void Start()

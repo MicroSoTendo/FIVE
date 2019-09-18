@@ -11,6 +11,9 @@ namespace FIVE.UI
     {
         private static Dictionary<string, ViewModel> nameToVMs = new Dictionary<string, ViewModel>();
         private static SortedSet<ViewModel> sortedVMs = new SortedSet<ViewModel>(new VMComparer());
+
+
+        public static ViewModel Get(string name) => nameToVMs[name];
         private void Awake()
         {
             nameToVMs.Add(nameof(StartupMenuViewModel), new StartupMenuViewModel());

@@ -11,7 +11,7 @@ namespace FIVE.CameraSystem
 
         private void Awake()
         {
-            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => { });
+            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => Cameras.Add(args.Id, args.Camera));
         }
 
         private void Update()
@@ -22,7 +22,7 @@ namespace FIVE.CameraSystem
                 {
                     c.Value.enabled = false;
                 }
-                Cameras.ElementAt(UnityEngine.Random.Range(0, Cameras.Count)).Value.enabled = true;
+                Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
             }
         }
     }
