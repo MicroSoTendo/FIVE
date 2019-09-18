@@ -2581,10 +2581,11 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 0
+  Synchronization: 1
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 4094719650238949762}
+  - {fileID: 8122294824602304824}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
