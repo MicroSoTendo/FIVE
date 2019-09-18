@@ -6,14 +6,28 @@ using FIVE.UI.StartupMenu;
 using Photon.Pun;
 using UnityEngine;
 using Photon.Realtime;
+using Photon.Pun.Demo.PunBasics;
 
 namespace FIVE.Network
 {
-    public class NetworkManager : MonoBehaviourPunCallbacks
+    public class NetworkManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         private LobbyInfoModel lobbyInfoModel;
+
         void Start()
         {
+            CameraWork _cameraWork = gameObject.GetComponent<CameraWork>();
+            if (_cameraWork != null)
+            {
+                if (photonView.IsMine)
+                {
+                    _cameraWork.OnStartFollowing();
+                }
+            }
+            else
+            {
+                Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
+            }
             EventManager.Subscribe<OnMultiPlayersButtonClicked>(Initialize);
             lobbyInfoModel = new LobbyInfoModel();
             PhotonNetwork.AutomaticallySyncScene = true;
@@ -86,6 +100,11 @@ namespace FIVE.Network
         }
 
         void Update()
+        {
+            
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             
         }
