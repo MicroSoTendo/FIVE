@@ -60,7 +60,7 @@ namespace FIVE
         void readToken()
         {
             State state = State.Start;
-            string token;
+            string token = "";
 
             while (program[index] == ' ')
             {
@@ -76,10 +76,20 @@ namespace FIVE
             while (true)
             {
                 char ch = program[index];
+                State next;
 
-                if (fsa.ContainsKey(state))
+                if (fsa.ContainsKey(state) && fsa[state].ContainsKey(ch))
                 {
-                    State next;
+                    next = fsa[state][ch];
+                }
+                else
+                {
+                    next = State.Error;
+                }
+
+                if (next == State.End)
+                {
+                    currToken = new Token() { Word = token, TokenKind = TokenKind.ID };
                 }
             }
         }
@@ -92,7 +102,7 @@ namespace FIVE
 
         internal Token GetToken()
         {
-            if (currToken.TokenKind == TokenKind.ERR)
+            if (currToken.TokenKind != TokenKind.ERR)
             {
                 return currToken;
             }
