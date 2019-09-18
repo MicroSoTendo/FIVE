@@ -57,7 +57,7 @@ namespace FIVE.Network
         public override void OnJoinedLobby()
         {
             Debug.Log(nameof(OnJoinedLobby));
-            PhotonNetwork.JoinRoom("Test Room");
+            PhotonNetwork.JoinOrCreateRoom("Test Room", new RoomOptions(), new TypedLobby());
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
