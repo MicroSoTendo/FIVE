@@ -12,6 +12,7 @@ namespace FIVE.Network
 
             player = PhotonNetwork.Instantiate("EntityPrefabs/robotSphere", new Vector3(3, 0, 3), Quaternion.identity);
             playerPhotonView = player.GetComponent<PhotonView>();
+            player.name = PhotonNetwork.NickName;
         }
 
         // Update is called once per frame
