@@ -1,5 +1,6 @@
 ﻿using FIVE.ControllerSystem;
 using FIVE.EventSystem;
+using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE
@@ -25,8 +26,11 @@ namespace FIVE
 
         private Camera fpsCamera;
 
+        private PhotonView photonView;
+
         private void Awake()
         {
+            photonView = GetComponent<PhotonView>();
             fpsCamera = Instantiate(CameraPrefab);
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
@@ -49,6 +53,7 @@ namespace FIVE
 
         private void Update()
         {
+            if (!photonView.IsMine) return;
             if (Input.GetKey(KeyCode.E))
             {
                 editingCode = true;
@@ -68,5 +73,6 @@ namespace FIVE
                 fpsController.Update();
             }
         }
+        
     }
 }
