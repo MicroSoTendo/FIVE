@@ -8,18 +8,23 @@ namespace FIVE
 {
     internal class Stmts
     {
+        AwslScript script;
         internal Stmt stmt;
         internal Stmts stmts;
 
-        internal Stmts()
+        internal Stmts(AwslScript script)
         {
-            stmt = new Stmt();
+            this.script = script;
+            stmt = new Stmt(script);
         }
 
         internal void parse()
         {
             stmt.parse();
-            if ()
+            if (script.content[script.index] == '(')
+            {
+                stmts = new Stmts(script);       
+            }
         }
     }
 }
