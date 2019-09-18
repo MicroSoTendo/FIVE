@@ -226,9 +226,8 @@ GameObject:
   - component: {fileID: 775224202}
   - component: {fileID: 775224203}
   - component: {fileID: 775224204}
-  - component: {fileID: 775224205}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: PlayerManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -260,6 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3e6475e73706b84894d1b75ff04743a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerNickName: P1
 --- !u!114 &775224204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,23 +282,6 @@ MonoBehaviour:
   viewIdField: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &775224205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775224201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd08475b23aa548b7b9d28397d430b32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  distance: 7
-  height: 3
-  heightSmoothLag: 0.3
-  centerOffset: {x: 0, y: 0, z: 0}
-  followOnStart: 0
 --- !u!1 &2026617480
 GameObject:
   m_ObjectHideFlags: 0

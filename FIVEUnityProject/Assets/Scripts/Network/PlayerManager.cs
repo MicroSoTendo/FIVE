@@ -5,6 +5,7 @@ namespace FIVE.Network
 {
     public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
     {
+        [SerializeField] private string PlayerNickName;
         private GameObject player;
         private PhotonView playerPhotonView;
         void Start()
@@ -12,7 +13,7 @@ namespace FIVE.Network
 
             player = PhotonNetwork.Instantiate("EntityPrefabs/robotSphere", new Vector3(3, 0, 3), Quaternion.identity);
             playerPhotonView = player.GetComponent<PhotonView>();
-            player.name = PhotonNetwork.NickName;
+            player.name = PlayerNickName;
         }
 
         // Update is called once per frame

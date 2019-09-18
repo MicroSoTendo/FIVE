@@ -11,7 +11,6 @@ namespace FIVE.Network
 {
     public class NetworkManager : MonoBehaviourPunCallbacks, IPunObservable
     {
-        public string PlayerName;
         private LobbyInfoModel lobbyInfoModel;
 
         void Start()
@@ -19,7 +18,6 @@ namespace FIVE.Network
             EventManager.Subscribe<OnMultiPlayersButtonClicked>(Initialize);
             lobbyInfoModel = new LobbyInfoModel();
             PhotonNetwork.AutomaticallySyncScene = true;
-            SetPlayerName(PlayerName);
         }
 
         void Initialize(object sender, EventArgs args)
