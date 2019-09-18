@@ -16,18 +16,6 @@ namespace FIVE.Network
 
         void Start()
         {
-            CameraWork _cameraWork = gameObject.GetComponent<CameraWork>();
-            if (_cameraWork != null)
-            {
-                if (photonView.IsMine)
-                {
-                    _cameraWork.OnStartFollowing();
-                }
-            }
-            else
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
-            }
             EventManager.Subscribe<OnMultiPlayersButtonClicked>(Initialize);
             lobbyInfoModel = new LobbyInfoModel();
             PhotonNetwork.AutomaticallySyncScene = true;
