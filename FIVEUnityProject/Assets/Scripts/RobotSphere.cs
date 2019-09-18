@@ -32,7 +32,13 @@ namespace FIVE
             fpsCamera.transform.parent = eye;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "", Camera = fpsCamera });
+            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID(), Camera = fpsCamera });
+
+            Camera camera = Instantiate(CameraPrefab);
+            camera.transform.parent = transform;
+            camera.transform.localPosition = new Vector3(0, 2, 0);
+            camera.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = fpsCamera });
         }
 
         private void Start()

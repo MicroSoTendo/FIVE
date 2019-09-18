@@ -22,7 +22,7 @@ namespace FIVE.CameraSystem
                 {
                     c.Value.enabled = false;
                 }
-                Cameras.ElementAt(UnityEngine.Random.Range(0, Cameras.Count)).Value.enabled = true;
+                Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
             }
         }
     }
