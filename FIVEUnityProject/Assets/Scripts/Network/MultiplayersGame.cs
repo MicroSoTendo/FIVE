@@ -33,12 +33,13 @@ namespace FIVE.Network
         {
             if (state == State.Host)
             {
-                this.RaiseEvent<OnSinglePlayerButtonClicked>(EventArgs.Empty); //Fake it for now
+                // this.RaiseEvent<OnSinglePlayerButtonClicked>(EventArgs.Empty); //Fake it for now
+                PhotonNetwork.LoadLevel("Multiplayers");
             }
             else
             {
-                var prefab = GameObject.FindObjectOfType<RobotManager>().RobotPrefab;
-                var go = PhotonNetwork.Instantiate(prefab.name, new Vector3(20f, 20f, 20f), Quaternion.identity);
+                // var prefab = GameObject.FindObjectOfType<RobotManager>().RobotPrefab;
+                // var go = PhotonNetwork.Instantiate(prefab.name, new Vector3(20f, 20f, 20f), Quaternion.identity);
             }
 
             onUpdate -= Start;
@@ -49,6 +50,7 @@ namespace FIVE.Network
             while (true)
             {
                 onUpdate();
+                //Debug.Log($"{nameof(PhotonNetwork.CountOfPlayers)} = {PhotonNetwork.CountOfPlayers}");
                 yield return null;
             }
         }

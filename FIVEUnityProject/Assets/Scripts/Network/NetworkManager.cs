@@ -16,6 +16,7 @@ namespace FIVE.Network
         {
             EventManager.Subscribe<OnMultiPlayersButtonClicked>(Initialize);
             lobbyInfoModel = new LobbyInfoModel();
+            PhotonNetwork.AutomaticallySyncScene = true;
         }
 
         void Initialize(object sender, EventArgs args)
@@ -57,7 +58,8 @@ namespace FIVE.Network
 
         public override void OnJoinedLobby()
         {
-            PhotonNetwork.CreateRoom("Test Room");
+            Debug.Log(nameof(OnJoinedLobby));
+            PhotonNetwork.JoinOrCreateRoom("Test Room", new RoomOptions() { MaxPlayers = 10 }, new TypedLobby());
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -73,10 +75,10 @@ namespace FIVE.Network
         
         public override void OnJoinedRoom()
         {
+            Debug.Log(nameof(OnJoinedRoom));
             var multiplayersGame = new MultiplayersGame(
                 PhotonNetwork.CurrentRoom.PlayerCount == 1 ? //Check if I am the first player
                 MultiplayersGame.State.Host: MultiplayersGame.State.Client);
-            StartCoroutine(multiplayersGame.UpdateCoroutine());
         }
 
 
@@ -87,7 +89,7 @@ namespace FIVE.Network
 
         void Update()
         {
-
+            
         }
     }
 }
