@@ -32,6 +32,17 @@ namespace FIVE.Network
                 Debug.Log("fail to connect");
             }
         }
+        
+        public void SetPlayerName(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                Debug.LogError("Player Name is null or empty");
+                return;
+            }
+            PhotonNetwork.NickName = value;
+            PlayerPrefs.SetString("PlayerName", value);
+        }
 
         public override void OnConnected()
         {
@@ -42,13 +53,36 @@ namespace FIVE.Network
         {
             Debug.Log("OnConnectedToMaster() was called by PUN.");
             bool result = PhotonNetwork.JoinLobby();
-            // PhotonNetwork.JoinRandomRoom();
+        }
+
+        public override void OnJoinedLobby()
+        {
+            PhotonNetwork.CreateRoom("Test Room");
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             lobbyInfoModel.RoomsList.Clear();
             roomList.ForEach(o => lobbyInfoModel.RoomsList.Add(o));
+        }
+
+        public void JoinRoom(string roomName)
+        {
+            PhotonNetwork.JoinRoom(roomName);
+        }
+        
+        public override void OnJoinedRoom()
+        {
+            var multiplayersGame = new MultiplayersGame(
+                PhotonNetwork.CurrentRoom.PlayerCount == 1 ? //Check if I am the first player
+                MultiplayersGame.State.Host: MultiplayersGame.State.Client);
+            StartCoroutine(multiplayersGame.UpdateCoroutine());
+        }
+
+
+        public void CreateRoom(string roomName, RoomOptions roomOptions)
+        {
+            PhotonNetwork.CreateRoom(roomName, roomOptions);
         }
 
         void Update()
