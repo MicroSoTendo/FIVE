@@ -1,4 +1,6 @@
-﻿namespace FIVE
+﻿using System;
+
+namespace FIVE
 {
     internal class Stmt
     {
