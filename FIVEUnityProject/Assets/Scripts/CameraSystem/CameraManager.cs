@@ -11,7 +11,7 @@ namespace FIVE.CameraSystem
 
         private void Awake()
         {
-            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => { });
+            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => Cameras.Add(args.Id, args.Camera));
         }
 
         private void Update()
