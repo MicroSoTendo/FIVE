@@ -6,7 +6,6 @@ using FIVE.UI.StartupMenu;
 using Photon.Pun;
 using UnityEngine;
 using Photon.Realtime;
-using Photon.Pun.Demo.PunBasics;
 
 namespace FIVE.Network
 {
