@@ -1,4 +1,6 @@
-﻿namespace FIVE
+﻿using UnityEngine;
+
+namespace FIVE
 {
     internal class Stmts
     {
@@ -17,7 +19,17 @@
             stmt.parse();
             if (script.content[script.index] == '(')
             {
-                stmts = new Stmts(script);       
+                stmts = new Stmts(script);
+                stmts.parse();
+            }
+        }
+
+        internal void execute(GameObject gameObject)
+        {
+            stmt.execute(gameObject);
+            if (stmts != null)
+            {
+                stmts.execute(gameObject);
             }
         }
     }

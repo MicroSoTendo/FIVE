@@ -25,6 +25,9 @@ namespace FIVE
 
         private Camera fpsCamera;
 
+        private AwslScript script;
+        private bool scriptActive;
+
         private void Awake()
         {
             fpsCamera = Instantiate(CameraPrefab);
@@ -39,6 +42,8 @@ namespace FIVE
             camera2.transform.localPosition = new Vector3(0, 2, 0);
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
             Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
+
+            scriptActive = false;
         }
 
         private void Start()
@@ -67,6 +72,11 @@ namespace FIVE
                 animator.Update(currState);
                 fpsController.Update();
             }
+        }
+
+        private void executeScript()
+        {
+
         }
     }
 }

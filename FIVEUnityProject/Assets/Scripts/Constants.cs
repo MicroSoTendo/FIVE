@@ -8,6 +8,11 @@ namespace FIVE
     {
         public static float floatPrecision = 0.1f;
 
+        public static char[] AwslDelimiter =
+        {
+            '(', ' ', ')',
+        };
+
         public static char[] AwslCharset =
         {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
