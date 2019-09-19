@@ -1,5 +1,6 @@
 ﻿using FIVE.ControllerSystem;
 using FIVE.EventSystem;
+using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE
@@ -25,17 +26,20 @@ namespace FIVE
 
         private Camera fpsCamera;
 
+        private PhotonView photonView;
         private AwslScript script;
         private bool scriptActive;
 
         private void Awake()
         {
+            photonView = GetComponent<PhotonView>();
+            //TODO: Check if camera is really "mine" in multiple players
             fpsCamera = Instantiate(CameraPrefab);
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID(), Camera = fpsCamera });
+            this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID(), Camera = fpsCamera });
 
             Camera camera2 = Instantiate(CameraPrefab);
             camera2.transform.parent = transform;
@@ -54,10 +58,15 @@ namespace FIVE
 
         private void Update()
         {
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected == true)
+            {
+                return;
+            }
+            
             if (Input.GetKey(KeyCode.E))
             {
                 editingCode = true;
-                Util.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(this, code);
+                this.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(code);
             }
 
             if (editingCode)
