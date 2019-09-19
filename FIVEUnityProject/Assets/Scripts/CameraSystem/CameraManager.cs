@@ -11,6 +11,8 @@ namespace FIVE.CameraSystem
     {
         public readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
+        private int index = 0;
+
         private void Awake()
         {
             Camera[] cameras = FindObjectsOfType<Camera>();
@@ -44,7 +46,9 @@ namespace FIVE.CameraSystem
                 {
                     c.enabled = false;
                 }
-                Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
+                index %= Cameras.Count;
+                Cameras.ElementAt(index).Value.enabled = true;
+                index++;
             }
         }
     }
