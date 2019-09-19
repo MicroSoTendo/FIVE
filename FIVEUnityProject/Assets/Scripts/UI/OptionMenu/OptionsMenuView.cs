@@ -1,6 +1,6 @@
 ﻿using UnityEngine.UI;
 
-namespace FIVE.UI.OptionsMenu
+namespace FIVE.UI.OptionMenu
 {
     public class OptionsMenuView : View<OptionsMenuView, OptionsMenuViewModel>
     {

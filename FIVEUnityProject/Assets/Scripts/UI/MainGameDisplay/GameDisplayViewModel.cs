@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FIVE.UI.Background;
+using FIVE.UI.OptionMenu;
+using System;
 using UnityEngine;
 
 namespace FIVE.UI.MainGameDisplay
@@ -41,6 +43,8 @@ namespace FIVE.UI.MainGameDisplay
         private void OnOptionClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnOptionClicked));
+            UIManager.Get(nameof(OptionsMenuView)).SetActive(true);
+            UIManager.Get(nameof(OptionBGView)).SetActive(true);
         }
 
     }

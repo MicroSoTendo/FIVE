@@ -1,6 +1,7 @@
 using FIVE.UI.Background;
 using FIVE.UI.MainGameDisplay;
-using FIVE.UI.OptionsMenu;
+using FIVE.UI.OptionMenu;
+using FIVE.UI.OptionMenus;
 using FIVE.UI.StartupMenu;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,15 +17,28 @@ namespace FIVE.UI
         public static ViewModel Get(string name) => nameToVMs[name];
         private void Awake()
         {
-            nameToVMs.Add(nameof(StartupMenuViewModel), new StartupMenuViewModel());
+            ViewModel startupMenuViewModel = new StartupMenuViewModel();
+            startupMenuViewModel.SortingOrder = -6;
+            nameToVMs.Add(nameof(StartupMenuViewModel),startupMenuViewModel);
 
             ViewModel optionsMenuViewModel = new OptionsMenuViewModel();
+            optionsMenuViewModel.SortingOrder = -1;
             optionsMenuViewModel.SetActive(false);
             nameToVMs.Add(nameof(OptionsMenuView), optionsMenuViewModel);
 
+            ViewModel optionBGViewModel = new OptionBGViewModel();
+            optionBGViewModel.SortingOrder = -2;
+            optionBGViewModel.SetActive(false);
+            nameToVMs.Add(nameof(OptionBGView), optionBGViewModel);
+
             ViewModel gameDisplayViewModel = new GameDisplayViewModel();
             gameDisplayViewModel.SetActive(false);
+            gameDisplayViewModel.SortingOrder = -12;
             nameToVMs.Add(nameof(GameDisplayView), gameDisplayViewModel);
+
+            ViewModel gameOptionViewModel = new GameOptionViewModel();
+            gameOptionViewModel.SetActive(false);
+            nameToVMs.Add(nameof(GameOptionView), gameOptionViewModel);
 
             ViewModel backgroundViewModel = new BackgroundViewModel();
             backgroundViewModel.SortingOrder = -10;

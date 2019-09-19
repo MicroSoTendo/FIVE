@@ -3,6 +3,8 @@ using FIVE.EventSystem;
 using FIVE.UI.Multiplayers;
 using UnityEngine;
 using FIVE.UI.MainGameDisplay;
+using FIVE.UI.Background;
+using FIVE.UI.OptionMenu;
 
 namespace FIVE.UI.StartupMenu
 {
@@ -51,9 +53,13 @@ namespace FIVE.UI.StartupMenu
         private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnOptionsButtonClicked));
+            //View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.Get(nameof(OptionsMenuView)).SetActive(true);
+            UIManager.Get(nameof(OptionBGView)).SetActive(true);
         }
         private void OnExitButtonClicked(object sender, EventArgs eventArgs)
         {
+            Application.Quit();
             Debug.Log(nameof(OnExitButtonClicked));
         }
 

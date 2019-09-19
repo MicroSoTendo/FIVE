@@ -2,6 +2,6 @@
 <Canvas name="GameDisplayView">
     <Button name = "PlayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(-200,300,0);}" Text = "Player Image Here"/>
     <Button name = "Energy" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(-200,200,0);}" Text = "Energy Bar Here"/>
-    <Button name = "Inventory" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-150,0);}" Text = "Possible Inventory Here"/>
+    <Button name = "Inventory" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(-200,-300,0);}" Text = "Possible Inventory Here"/>
     <Button name = "Option" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(200,-300,0);}" Text = "Option"/>
 </Canvas>

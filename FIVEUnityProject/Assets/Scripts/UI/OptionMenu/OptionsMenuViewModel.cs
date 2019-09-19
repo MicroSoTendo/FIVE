@@ -1,7 +1,9 @@
-﻿using System;
+﻿using FIVE.UI.Background;
+using FIVE.UI.OptionMenus;
+using System;
 using UnityEngine;
 
-namespace FIVE.UI.OptionsMenu
+namespace FIVE.UI.OptionMenu
 {
     public class OptionsMenuViewModel : ViewModel<OptionsMenuView, OptionsMenuViewModel>
     {
@@ -32,26 +34,37 @@ namespace FIVE.UI.OptionsMenu
 
         private void OnLoadButtonClicked(object sender, EventArgs eventArgs)
         {
+            View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnLoadButtonClicked));
         }
         private void OnSaveButtonClicked(object sender, EventArgs eventArgs)
         {
+            View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnSaveButtonClicked));
         }
         private void OnGameOptionButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnGameOptionButtonClicked));
+            View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.Get(nameof(GameOptionView)).SetActive(true);
         }
         private void OnExitButtonClicked(object sender, EventArgs eventArgs)
         {
+            Application.Quit();
             Debug.Log(nameof(OnExitButtonClicked));
         }
         private void OnResumeButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnResumeButtonClicked));
+            UIManager.Get(nameof(OptionsMenuView)).SetActive(false);
+            UIManager.Get(nameof(OptionBGView)).SetActive(false);
         }
         private void OnSoundOptionButtonClicked(object sender, EventArgs eventArgs)
         {
+            View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnSoundOptionButtonClicked));
         }
 
