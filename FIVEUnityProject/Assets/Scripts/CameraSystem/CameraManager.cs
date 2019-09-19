@@ -9,12 +9,10 @@ namespace FIVE.CameraSystem
     [RequireComponent(typeof(PhotonView))]
     public class CameraManager : MonoBehaviourPun
     {
-        public static CameraManager Instance;
-        private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
+        public readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
         private void Awake()
         {
-            Instance = this;
             EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>(OnCameraCreated);
         }
 
@@ -32,8 +30,10 @@ namespace FIVE.CameraSystem
                 foreach (Camera c in Cameras.Values)
                 {
                     c.enabled = false;
+                    c.gameObject.SetActive(false);
                 }
                 Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
+                Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.gameObject.SetActive(true);
             }
         }
     }

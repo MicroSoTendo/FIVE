@@ -33,7 +33,6 @@ namespace FIVE
 
         private void Awake()
         {
-            //TODO: Check if camera is really "mine" in multiple players
             fpsCamera = Instantiate(CameraPrefab);
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
