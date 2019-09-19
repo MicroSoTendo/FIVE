@@ -68,7 +68,7 @@ public class AWSLEditor : MonoBehaviour
         if (GUI.Button(new Rect(20 + (w - 40) / 2, h - 80, (w - 40) / 2, 60), "Cancel", ButtonStyle))
         {
             enabled = false;
-            code.Saved = true;
+            code.Saved = false;
         }
     }
 }
