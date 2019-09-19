@@ -20,7 +20,7 @@ namespace FIVE
 
         internal AwslScript(string script)
         {
-            content = script;
+            content = script.Trim();
             index = 0;
 
             program = new List<Tuple<Instruction, int>>();
