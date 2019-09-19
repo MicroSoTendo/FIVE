@@ -72,6 +72,7 @@ namespace FIVE
                 editingCode = true;
                 code.Saved = false;
                 this.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(code);
+                return;
             }
 
             if (editingCode)
@@ -82,15 +83,16 @@ namespace FIVE
                     script = new AwslScript(code.Code);
                     scriptActive = true;
                 }
+                return;
             }
-            else if (scriptActive)
+
+            animator.Update(currState);
+            if (scriptActive)
             {
-                animator.Update(currState);
                 ExecuteScript();
             }
             else
             {
-                animator.Update(currState);
                 fpsController.Update();
             }
         }

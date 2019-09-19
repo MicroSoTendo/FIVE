@@ -13,7 +13,6 @@ namespace FIVE
             anim = gameObject.GetComponent<Animator>();
         }
 
-        // Update is called once per frame
         public void Update(RobotSphere.RobotState currState)
         {
             UpdateAnim(currState);
@@ -31,5 +30,4 @@ namespace FIVE
             }
         }
     }
-
 }

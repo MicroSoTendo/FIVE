@@ -37,18 +37,15 @@ namespace FIVE
             {
                 Tuple<Instruction, int> instruction = program[ip];
 
-                robotSphere.currState = RobotSphere.RobotState.Idle;
-
                 if (instruction.Item1 == Instruction.Forward)
                 {
-                    Debug.Log("Forward");
-                    cc.SimpleMove(gameObject.transform.forward * 5.0f);
                     robotSphere.currState = RobotSphere.RobotState.Walk;
+                    cc.SimpleMove(gameObject.transform.forward * 5.0f);
                 }
                 else if (instruction.Item1 == Instruction.Backward)
                 {
-                    cc.SimpleMove(-gameObject.transform.forward * 5.0f);
                     robotSphere.currState = RobotSphere.RobotState.Walk;
+                    cc.SimpleMove(-gameObject.transform.forward * 5.0f);
                 }
                 else if (instruction.Item1 == Instruction.Left)
                 {
@@ -62,6 +59,7 @@ namespace FIVE
             }
             else
             {
+                robotSphere.currState = RobotSphere.RobotState.Idle;
                 robotSphere.scriptActive = false;
             }
         }
