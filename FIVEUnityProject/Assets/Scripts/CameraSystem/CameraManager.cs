@@ -1,26 +1,35 @@
 ﻿using FIVE.EventSystem;
 using System.Collections.Generic;
 using System.Linq;
+using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE.CameraSystem
 {
-    public class CameraManager : MonoBehaviour
+    [RequireComponent(typeof(PhotonView))]
+    public class CameraManager : MonoBehaviourPun
     {
-        private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
+        public readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
         private void Awake()
         {
-            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => Cameras.Add(args.Id, args.Camera));
+            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>(OnCameraCreated);
+        }
+
+        private void OnCameraCreated(object sender, OnCameraCreatedArgs args)
+        {
+            Debug.Log(nameof(OnCameraCreated) + " Called.");
+            Cameras.Add(args.Id, args.Camera);
         }
 
         private void Update()
         {
-            if (Input.GetKeyUp(KeyCode.C))
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected) return;
+            if (Input.GetKeyUp(KeyCode.C) && Cameras.Count > 0)
             {
-                foreach (KeyValuePair<string, Camera> c in Cameras)
+                foreach (Camera c in Cameras.Values)
                 {
-                    c.Value.enabled = false;
+                    c.enabled = false;
                 }
                 Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
             }

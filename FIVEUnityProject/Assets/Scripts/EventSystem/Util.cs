@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FIVE.EventSystem
 {
@@ -8,6 +9,7 @@ namespace FIVE.EventSystem
         public static void RaiseEvent<T>(this object sender, EventArgs args) where T : IEventType
         {
             EventManager.RaiseEvent<T>(sender, args);
+            Debug.Log($"{sender} raised event {typeof(T)}");
         }
 
         public static void RaiseEvent<T, TEventArgs>(this object sender, TEventArgs args)

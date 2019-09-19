@@ -15,7 +15,7 @@ namespace FIVE
         private void Awake()
         {
             this.RaiseEvent<OnMainLoaderAwake>(EventArgs.Empty);
-            InfrastructuresOnAwake.ForEach(v => Instantiate(v));
+            InfrastructuresOnAwake.ForEach(v => DontDestroyOnLoad(Instantiate(v)));
         }
 
         private IEnumerator Start()
@@ -23,7 +23,7 @@ namespace FIVE
             this.RaiseEvent<OnMainLoaderStart>(EventArgs.Empty);
             foreach (GameObject prefab in InfrastructuresOnStart)
             {
-                Instantiate(prefab);
+                DontDestroyOnLoad(Instantiate(prefab));
                 yield return null;
             }
             Destroy(this);
