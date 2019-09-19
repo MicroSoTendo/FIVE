@@ -1,11 +1,13 @@
-﻿using FIVE.ControllerSystem;
+﻿using FIVE.CameraSystem;
+using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE
 {
-    public class RobotSphere : MonoBehaviour
+    [RequireComponent(typeof(PhotonView))]
+    public class RobotSphere : MonoBehaviourPun
     {
         public enum RobotState { Idle, Walk, Jump, Open };
 
@@ -26,26 +28,30 @@ namespace FIVE
 
         private Camera fpsCamera;
 
-        private PhotonView photonView;
         private AwslScript script;
         public bool scriptActive;
 
         private void Awake()
         {
-            photonView = GetComponent<PhotonView>();
             //TODO: Check if camera is really "mine" in multiple players
             fpsCamera = Instantiate(CameraPrefab);
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
+            //fpsCamera.transform.position = eye.position;
+            //fpsCamera.transform.rotation = eye.rotation;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID(), Camera = fpsCamera });
 
-            Camera camera2 = Instantiate(CameraPrefab);
-            camera2.transform.parent = transform;
-            camera2.transform.localPosition = new Vector3(0, 2, 0);
-            camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
-            Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
+            //CameraManager.AddBinding(fpsCamera, eye);
+
+            //Camera camera2 = Instantiate(CameraPrefab);
+            //camera2.transform.parent = transform;
+            //camera2.transform.localPosition = new Vector3(0, 2, 0);
+            //camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            //this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
+
+
 
             scriptActive = false;
         }
@@ -54,11 +60,12 @@ namespace FIVE
         {
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
+
         }
 
         private void Update()
         {
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected == true)
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 return;
             }
@@ -87,6 +94,14 @@ namespace FIVE
             {
                 animator.Update(currState);
                 fpsController.Update();
+            }
+        }
+
+        public void LateUpdate()
+        {
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            {
+                return;
             }
         }
 
