@@ -31,34 +31,37 @@ namespace FIVE
         internal void execute(GameObject gameObject)
         {
             CharacterController cc = gameObject.GetComponent<CharacterController>();
-            RobotSphere robotSphere = gameObject.GetComponent<RobotSphere>(); 
-            Tuple<Instruction, int> instruction = program[ip];
+            RobotSphere robotSphere = gameObject.GetComponent<RobotSphere>();
+            if (ip < program.Count)
+            {
+                Tuple<Instruction, int> instruction = program[ip];
 
-            robotSphere.currState = RobotSphere.RobotState.Idle;
+                robotSphere.currState = RobotSphere.RobotState.Idle;
 
-            if (instruction.Item1 == Instruction.Forward)
-            {
-                Debug.Log("Forward");
-                cc.SimpleMove(gameObject.transform.forward * 5.0f);
-                robotSphere.currState = RobotSphere.RobotState.Walk;
+                if (instruction.Item1 == Instruction.Forward)
+                {
+                    Debug.Log("Forward");
+                    cc.SimpleMove(gameObject.transform.forward * 5.0f);
+                    robotSphere.currState = RobotSphere.RobotState.Walk;
+                }
+                else if (instruction.Item1 == Instruction.Backward)
+                {
+                    cc.SimpleMove(-gameObject.transform.forward * 5.0f);
+                    robotSphere.currState = RobotSphere.RobotState.Walk;
+                }
+                else if (instruction.Item1 == Instruction.Left)
+                {
+                    gameObject.transform.Rotate(new Vector3(0, 360 - instruction.Item2, 0));
+                }
+                else if (instruction.Item1 == Instruction.Right)
+                {
+                    gameObject.transform.Rotate(new Vector3(0, instruction.Item2, 0));
+                }
+                ip++;
             }
-            else if (instruction.Item1 == Instruction.Backward)
+            else
             {
-                cc.SimpleMove(-gameObject.transform.forward * 5.0f);
-                robotSphere.currState = RobotSphere.RobotState.Walk;
-            }
-            else if (instruction.Item1 == Instruction.Left)
-            {
-                gameObject.transform.Rotate(new Vector3(0, instruction.Item2, 0));
-            }
-            else if (instruction.Item1 == Instruction.Right)
-            {
-                gameObject.transform.Rotate(new Vector3(0, 360 - instruction.Item2, 0));
-            }
-            ip++;
-            if (ip == program.Count)
-            {
-                ip = 0;
+                robotSphere.scriptActive = false;
             }
         }
 
@@ -86,7 +89,7 @@ namespace FIVE
             index += data.Length;
             if (word == "forward")
             {
-                int steps = Convert.ToInt32(data);
+                int steps = Convert.ToInt32(data) * 10;
                 for (int i = 0; i < steps; i++)
                 {
                     program.Add(new Tuple<Instruction, int>(Instruction.Forward, 1));
@@ -94,7 +97,7 @@ namespace FIVE
             }
             else if (word == "backward")
             {
-                int steps = Convert.ToInt32(data);
+                int steps = Convert.ToInt32(data) * 10;
                 for (int i = 0; i < steps; i++)
                 {
                     program.Add(new Tuple<Instruction, int>(Instruction.Backward, 1));
@@ -102,11 +105,21 @@ namespace FIVE
             }
             else if (word == "left")
             {
-                program.Add(new Tuple<Instruction, int>(Instruction.Left, Convert.ToInt32(data)));
+                int steps = Convert.ToInt32(data);
+                for (int i = 0; i < steps / 3; i++)
+                {
+                    program.Add(new Tuple<Instruction, int>(Instruction.Left, 3));
+                }
+                program.Add(new Tuple<Instruction, int>(Instruction.Left, steps % 3));
             }
             else if (word == "right")
             {
-                program.Add(new Tuple<Instruction, int>(Instruction.Right, Convert.ToInt32(data)));
+                int steps = Convert.ToInt32(data);
+                for (int i = 0; i < steps / 3; i++)
+                {
+                    program.Add(new Tuple<Instruction, int>(Instruction.Right, 3));
+                }
+                program.Add(new Tuple<Instruction, int>(Instruction.Right, steps % 3));
             }
 
 

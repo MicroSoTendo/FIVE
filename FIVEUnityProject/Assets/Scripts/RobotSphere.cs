@@ -28,7 +28,7 @@ namespace FIVE
 
         private PhotonView photonView;
         private AwslScript script;
-        private bool scriptActive;
+        public bool scriptActive;
 
         private void Awake()
         {
@@ -75,9 +75,10 @@ namespace FIVE
                 {
                     editingCode = false;
                     script = new AwslScript(code.Code);
+                    scriptActive = true;
                 }
             }
-            else if (script != null)
+            else if (scriptActive)
             {
                 animator.Update(currState);
                 executeScript();
