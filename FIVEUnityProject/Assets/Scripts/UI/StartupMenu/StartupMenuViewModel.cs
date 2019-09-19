@@ -55,7 +55,7 @@ namespace FIVE.UI.StartupMenu
             Debug.Log(nameof(OnOptionsButtonClicked));
             //View.ViewCanvas.gameObject.SetActive(false);
             UIManager.Get(nameof(OptionsMenuView)).SetActive(true);
-            UIManager.Get(nameof(OptionBGView)).SetActive(true);
+            //UIManager.Get(nameof(OptionBGView)).SetActive(true);
         }
         private void OnExitButtonClicked(object sender, EventArgs eventArgs)
         {

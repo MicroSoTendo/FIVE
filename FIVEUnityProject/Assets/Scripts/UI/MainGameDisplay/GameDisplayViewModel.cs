@@ -44,7 +44,7 @@ namespace FIVE.UI.MainGameDisplay
         {
             Debug.Log(nameof(OnOptionClicked));
             UIManager.Get(nameof(OptionsMenuView)).SetActive(true);
-            UIManager.Get(nameof(OptionBGView)).SetActive(true);
+            //UIManager.Get(nameof(OptionBGView)).SetActive(true);
         }
 
     }
