@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using FIVE.EventSystem;
+using System;
 
 namespace FIVE
 {
@@ -7,7 +8,13 @@ namespace FIVE
     {
         void Awake()
         {
-            EventManager.Subscribe<OnLoadingGameMode>((o, e) => { gameObject.SetActive(false); });
+            EventManager.Subscribe<OnLoadingGameMode>(OnLoadingGameMode);
+        }
+        private void OnLoadingGameMode(object sender, EventArgs args)
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+            EventManager.Unsubscribe<OnLoadingGameMode>(OnLoadingGameMode);
         }
     }
 
