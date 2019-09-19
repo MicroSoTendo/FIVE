@@ -26,14 +26,12 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
-            if(Cameras.Count>0)
-                Debug.Log($"Cameras.count = {Cameras.Count}");
             if (photonView.IsMine == false && PhotonNetwork.IsConnected) return;
             if (Input.GetKeyUp(KeyCode.C) && Cameras.Count > 0)
             {
-                foreach (KeyValuePair<string, Camera> c in Cameras)
+                foreach (Camera c in Cameras.Values)
                 {
-                    c.Value.enabled = false;
+                    c.enabled = false;
                 }
                 Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
             }
