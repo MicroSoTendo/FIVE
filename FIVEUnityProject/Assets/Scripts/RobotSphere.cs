@@ -1,4 +1,5 @@
-﻿using FIVE.CameraSystem;
+﻿using System;
+using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using Photon.Pun;
@@ -48,7 +49,7 @@ namespace FIVE
             camera2.transform.localPosition = new Vector3(0, 2, 0);
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
-
+            this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 fpsCamera.enabled = false;
