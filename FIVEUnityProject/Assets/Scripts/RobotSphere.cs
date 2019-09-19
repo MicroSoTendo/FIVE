@@ -65,7 +65,13 @@ namespace FIVE
                 if (code.Saved)
                 {
                     editingCode = false;
+                    script = new AwslScript(code.Code);
                 }
+            }
+            else if (script != null)
+            {
+                animator.Update(currState);
+                executeScript();
             }
             else
             {
@@ -76,7 +82,7 @@ namespace FIVE
 
         private void executeScript()
         {
-
+            script.execute(gameObject);
         }
     }
 }
