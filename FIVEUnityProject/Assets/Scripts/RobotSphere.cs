@@ -26,12 +26,9 @@ namespace FIVE
 
         private Camera fpsCamera;
 
-<<<<<<< HEAD
         private PhotonView photonView;
-=======
         private AwslScript script;
         private bool scriptActive;
->>>>>>> master
 
         private void Awake()
         {
@@ -48,13 +45,9 @@ namespace FIVE
             camera2.transform.parent = transform;
             camera2.transform.localPosition = new Vector3(0, 2, 0);
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
-<<<<<<< HEAD
-            this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
-=======
             Util.RaiseEvent<OnCameraCreated>(this, new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
 
             scriptActive = false;
->>>>>>> master
         }
 
         private void Start()
@@ -95,14 +88,10 @@ namespace FIVE
                 fpsController.Update();
             }
         }
-<<<<<<< HEAD
-        
-=======
 
         private void executeScript()
         {
             script.execute(gameObject);
         }
->>>>>>> master
     }
 }
