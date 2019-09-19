@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace FIVE
@@ -8,10 +8,11 @@ namespace FIVE
     [RequireComponent(typeof(RobotSphere))]
     internal class AwslScript
     {
-        enum Instruction { Forward, Backward, Left, Right }
+        private enum Instruction
+        { Forward, Backward, Left, Right, Goto }
 
-        List<Tuple<Instruction, int>> program;
-        int ip; // instruction pointer
+        private readonly List<Tuple<Instruction, int>> program;
+        private int ip; // instruction pointer
 
         public string content;
         public int index;
@@ -19,16 +20,16 @@ namespace FIVE
 
         internal AwslScript(string script)
         {
-            content = script;
+            content = script.Trim();
             index = 0;
 
             program = new List<Tuple<Instruction, int>>();
             ip = 0;
 
-            parse();
+            Parse();
         }
 
-        internal void execute(GameObject gameObject)
+        internal void Execute(GameObject gameObject)
         {
             CharacterController cc = gameObject.GetComponent<CharacterController>();
             RobotSphere robotSphere = gameObject.GetComponent<RobotSphere>();
@@ -65,31 +66,31 @@ namespace FIVE
             }
         }
 
-        internal void parse()
+        internal void Parse()
         {
             while (index < content.Length)
             {
-                parseStmt();
+                ParseStmt();
             }
         }
 
-        private void parseStmt()
+        private void ParseStmt()
         {
-            skipSpace();
+            SkipSpace();
             if (content[index] != '(')
             {
                 // ERROR
             }
             index++;
 
-            string word = getWord();
+            string word = GetWord();
             index += word.Length;
-            skipSpace();
-            string data = getWord();
+            SkipSpace();
+            string data = GetWord();
             index += data.Length;
             if (word == "forward")
             {
-                int steps = Convert.ToInt32(data) * 10;
+                int steps = Convert.ToInt32(data) * 50;
                 for (int i = 0; i < steps; i++)
                 {
                     program.Add(new Tuple<Instruction, int>(Instruction.Forward, 1));
@@ -97,7 +98,7 @@ namespace FIVE
             }
             else if (word == "backward")
             {
-                int steps = Convert.ToInt32(data) * 10;
+                int steps = Convert.ToInt32(data) * 50;
                 for (int i = 0; i < steps; i++)
                 {
                     program.Add(new Tuple<Instruction, int>(Instruction.Backward, 1));
@@ -122,8 +123,7 @@ namespace FIVE
                 program.Add(new Tuple<Instruction, int>(Instruction.Right, steps % 3));
             }
 
-
-            skipSpace();
+            SkipSpace();
             if (content[index] != ')')
             {
                 // ERROR
@@ -131,7 +131,7 @@ namespace FIVE
             index++;
         }
 
-        internal void skipSpace()
+        internal void SkipSpace()
         {
             while (index < content.Length && (content[index] == ' ' || content[index] == '\n' || content[index] == '\t'))
             {
@@ -140,7 +140,7 @@ namespace FIVE
         }
 
         // Return the first word ending in space
-        internal string getWord()
+        internal string GetWord()
         {
             int endIndex = index;
             while (endIndex < content.Length && !Constants.AwslDelimiter.Contains(content[endIndex]))

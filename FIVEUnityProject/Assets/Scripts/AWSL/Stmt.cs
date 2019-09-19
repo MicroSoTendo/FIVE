@@ -28,13 +28,13 @@ namespace FIVE
             }
 
             script.index++;
-            string word = script.getWord();
+            string word = script.GetWord();
             script.index += word.Length;
             if (word == "forward" || word == "backward")
             {
                 stmtType = StmtType.MOVE;
-                script.skipSpace();
-                string steps = script.getWord();
+                script.SkipSpace();
+                string steps = script.GetWord();
                 script.index += steps.Length;
                 steps = steps.Substring(0, steps.Length - 1); // remove trailing ')'
                 if (word == "forward")
@@ -49,8 +49,8 @@ namespace FIVE
             else if (word == "left" || word == "right")
             {
                 stmtType = StmtType.TURN;
-                script.skipSpace();
-                string degree = script.getWord();
+                script.SkipSpace();
+                string degree = script.GetWord();
                 script.index += degree.Length;
                 degree = degree.Substring(0, degree.Length - 1); // remove trailing ')'
                 this.degree = Convert.ToInt32(degree);
