@@ -9,7 +9,7 @@ namespace FIVE
     internal class AwslScript
     {
         private enum Instruction
-        { Forward, Backward, Left, Right }
+        { Forward, Backward, Left, Right, Goto }
 
         private readonly List<Tuple<Instruction, int>> program;
         private int ip; // instruction pointer
@@ -90,7 +90,7 @@ namespace FIVE
             index += data.Length;
             if (word == "forward")
             {
-                int steps = Convert.ToInt32(data) * 10;
+                int steps = Convert.ToInt32(data) * 50;
                 for (int i = 0; i < steps; i++)
                 {
                     program.Add(new Tuple<Instruction, int>(Instruction.Forward, 1));
@@ -98,7 +98,7 @@ namespace FIVE
             }
             else if (word == "backward")
             {
-                int steps = Convert.ToInt32(data) * 10;
+                int steps = Convert.ToInt32(data) * 50;
                 for (int i = 0; i < steps; i++)
                 {
                     program.Add(new Tuple<Instruction, int>(Instruction.Backward, 1));
