@@ -4,5 +4,4 @@
     <Button name = "MultiplayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,0,0);}" Text = "Multiple Players"/>
     <Button name = "OptionsButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-150,0);}" Text = "Options"/>
     <Button name = "ExitGameButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-300,0);}" Text = "Exit"/>
-    <InputField name = "TestInputField" Transform = "{localPosition:(0,-450,0);}"/>
 </Canvas>
