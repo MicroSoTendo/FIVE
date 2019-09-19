@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AppSettings:
     AppIdRealtime: c63f13c5-ca9e-4eeb-8d32-6a2175b047b9
-    AppIdChat: 
+    AppIdChat: c71c6eb2-96a6-4e27-9566-dcb0bf251be4
     AppIdVoice: 
     AppVersion: 
-    UseNameServer: 1
+    UseNameServer: 0
     FixedRegion: 
     Server: gs.xugen.me
     Port: 5055
