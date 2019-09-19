@@ -60,7 +60,6 @@ namespace FIVE.UI
         }
         private void Start()
         {
-     
         }
 
         public static T AddViewModel<T>() where T : ViewModel, new()
