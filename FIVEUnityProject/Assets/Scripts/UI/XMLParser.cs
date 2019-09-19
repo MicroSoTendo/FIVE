@@ -21,6 +21,12 @@ namespace FIVE.UI
             {
                 {"name", x => x.InnerText },
                 {"Prefab", PrefabParser},
+                {"NativeSize", (a)=>
+                    {
+                        bool.TryParse(a.InnerText, out bool result);
+                        return result;
+                    }
+                },
                 {nameof(Text), TextParser},
                 {nameof(Transform), PropertyParser},
                 {nameof(Sprite), SpriteParser},
@@ -30,6 +36,12 @@ namespace FIVE.UI
             AttributeHandler = new Dictionary<string, Delegate>
             {
                 {"name", (Action<GameObject,string>)((g, s) => { g.name = s;})},
+                {"NativeSize", (Action<GameObject,bool>)((g, b) => {
+                    if (b)
+                    {
+                        Debug.Log("SetToNative");
+                        g.GetComponent<Image>().SetNativeSize();
+                    }})},
                 {nameof(Text), (Action<GameObject, List<(string, object)>>)TextHandler},
                 {nameof(Transform), (Action<GameObject, List<(string, object)>>)TransformHandler},
                 {nameof(Sprite), (Action<GameObject,Sprite>)SpriteHandler},
