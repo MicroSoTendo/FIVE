@@ -4,7 +4,7 @@ namespace FIVE
 {
     internal class Stmts
     {
-        AwslScript script;
+        private readonly AwslScript script;
         internal Stmt stmt;
         internal Stmts stmts;
 
@@ -14,22 +14,22 @@ namespace FIVE
             stmt = new Stmt(script);
         }
 
-        internal void parse()
+        internal void Parse()
         {
-            stmt.parse();
+            stmt.Parse();
             if (script.content[script.index] == '(')
             {
                 stmts = new Stmts(script);
-                stmts.parse();
+                stmts.Parse();
             }
         }
 
-        internal void execute(GameObject gameObject)
+        internal void Execute(GameObject gameObject)
         {
-            stmt.execute(gameObject);
+            stmt.Execute(gameObject);
             if (stmts != null)
             {
-                stmts.execute(gameObject);
+                stmts.Execute(gameObject);
             }
         }
     }

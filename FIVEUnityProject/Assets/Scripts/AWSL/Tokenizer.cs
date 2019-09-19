@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace FIVE
 {
     internal class Tokenizer
     {
-        List<Token> tokens;
-        Dictionary<State, Dictionary<char, State>> fsa;
+        private readonly List<Token> tokens;
+        private readonly Dictionary<State, Dictionary<char, State>> fsa;
 
-        private string program;
+        private readonly string program;
         private int index;
         private Token currToken;
 
@@ -20,7 +18,7 @@ namespace FIVE
             public TokenKind TokenKind;
         }
 
-        enum State
+        private enum State
         {
             Start, Error, End,
             LP, // Left Parenthesis
@@ -33,7 +31,7 @@ namespace FIVE
             LP, RP, ID, ERR, END,
         }
 
-        internal Tokenizer(string program)
+        public Tokenizer(string program)
         {
             fsa = new Dictionary<State, Dictionary<char, State>>();
             foreach (State state in (State[])Enum.GetValues(typeof(State)))
@@ -57,7 +55,7 @@ namespace FIVE
             currToken = new Token() { Word = "", TokenKind = TokenKind.ERR };
         }
 
-        void readToken()
+        private void ReadToken()
         {
             State state = State.Start;
             string token = "";
@@ -94,13 +92,13 @@ namespace FIVE
             }
         }
 
-        void skipToken()
+        private void SkipToken()
         {
             GetToken();
             currToken = new Token() { Word = "", TokenKind = TokenKind.ERR };
         }
 
-        internal Token GetToken()
+        private Token GetToken()
         {
             if (currToken.TokenKind != TokenKind.ERR)
             {
@@ -108,7 +106,7 @@ namespace FIVE
             }
             else
             {
-                readToken();
+                ReadToken();
                 return currToken;
             }
         }

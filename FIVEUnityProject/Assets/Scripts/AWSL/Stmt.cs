@@ -5,7 +5,7 @@ namespace FIVE
 {
     internal class Stmt
     {
-        AwslScript script;
+        private readonly AwslScript script;
 
         internal enum StmtType { IF, WHILE, MOVE, TURN, };
 
@@ -20,11 +20,10 @@ namespace FIVE
             this.script = script;
         }
 
-        internal void parse()
+        internal void Parse()
         {
             if (script.content[script.index] != '(')
             {
-
             }
 
             script.index++;
@@ -57,7 +56,7 @@ namespace FIVE
             }
         }
 
-        internal void execute(GameObject gameObject)
+        internal void Execute(GameObject gameObject)
         {
             if (stmtType == StmtType.MOVE)
             {
