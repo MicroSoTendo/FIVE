@@ -45,6 +45,9 @@ namespace FIVE.Robot
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID() + " Camera 2", Camera = camera2 });
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
+            
+            (fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled=false;
+            (camera2.gameObject.GetComponentInChildren<AudioListener>() ?? camera2.GetComponent<AudioListener>()).enabled = true;
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 fpsCamera.enabled = false;

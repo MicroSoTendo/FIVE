@@ -45,9 +45,12 @@ namespace FIVE.CameraSystem
                 foreach (Camera c in Cameras.Values)
                 {
                     c.enabled = false;
+                    c.gameObject.GetComponent<AudioListener>().enabled = false;
                 }
                 index %= Cameras.Count;
-                Cameras.ElementAt(index).Value.enabled = true;
+                Camera ca = Cameras.ElementAt(index).Value;
+                ca.enabled = true;
+                ca.gameObject.GetComponent<AudioListener>().enabled = true;
                 index++;
             }
         }
