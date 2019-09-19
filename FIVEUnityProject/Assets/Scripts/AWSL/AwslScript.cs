@@ -55,6 +55,11 @@ namespace FIVE
                 {
                     gameObject.transform.Rotate(new Vector3(0, instruction.Item2, 0));
                 }
+                else if (instruction.Item1 == Instruction.Goto)
+                {
+                    ip = instruction.Item2;
+                    ip--;
+                }
                 ip++;
             }
             else
@@ -119,6 +124,10 @@ namespace FIVE
                     program.Add(new Tuple<Instruction, int>(Instruction.Right, 3));
                 }
                 program.Add(new Tuple<Instruction, int>(Instruction.Right, steps % 3));
+            }
+            else if (word == "goto")
+            {
+                program.Add(new Tuple<Instruction, int>(Instruction.Goto, Convert.ToInt32(data)));
             }
 
             SkipSpace();
