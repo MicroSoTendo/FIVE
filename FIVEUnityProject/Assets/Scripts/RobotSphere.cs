@@ -86,7 +86,7 @@ namespace FIVE
             else if (scriptActive)
             {
                 animator.Update(currState);
-                executeScript();
+                ExecuteScript();
             }
             else
             {
@@ -103,9 +103,9 @@ namespace FIVE
             }
         }
 
-        private void executeScript()
+        private void ExecuteScript()
         {
-            script.execute(gameObject);
+            script.Execute(gameObject);
         }
     }
 }
