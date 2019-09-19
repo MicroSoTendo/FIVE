@@ -10,6 +10,7 @@ public class AWSLEditor : MonoBehaviour
     private GUIStyle ButtonStyle;
 
     private LauncherEditorArgs code;
+    private string origCode;
 
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class AWSLEditor : MonoBehaviour
         EventManager.Subscribe<DoLaunchEditor, LauncherEditorArgs>((sender, args) =>
         {
             code = args;
+            origCode = code.Code;
             enabled = true;
         });
     }
@@ -57,10 +59,16 @@ public class AWSLEditor : MonoBehaviour
         Rect r = Screen.safeArea;
         float w = r.width, h = r.height;
         code.Code = GUI.TextArea(new Rect(20, 40, w - 40, h - 120), code.Code, int.MaxValue, EditorStyle);
-        if (GUI.Button(new Rect(20, h - 80, w - 40, 60), "Done!", ButtonStyle))
+        if (GUI.Button(new Rect(20, h - 80, (w - 40) / 2, 60), "Save", ButtonStyle))
         {
             enabled = false;
             code.Saved = true;
+        }
+        if (GUI.Button(new Rect(20 + (w - 40) / 2, h - 80, (w - 40) / 2, 60), "Cancel", ButtonStyle))
+        {
+            enabled = false;
+            code.Saved = true;
+            code.Code = origCode;
         }
     }
 }
