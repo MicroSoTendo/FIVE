@@ -10,10 +10,10 @@ namespace FIVE.UI
         protected int totalTasks;
         protected int finishedTasks;
 
-        protected LoadingSplashScreen(Queue<Action> loadingLoadingTasks)
+        protected LoadingSplashScreen(Queue<Action> loadingTasks)
         {
-            loadingTasks = loadingLoadingTasks;
-            totalTasks = loadingLoadingTasks.Count;
+            this.loadingTasks = loadingTasks;
+            totalTasks = loadingTasks.Count;
             finishedTasks = 0;
         }
         protected abstract void UpdateLoadingProgressBar();

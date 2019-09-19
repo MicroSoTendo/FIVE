@@ -23,14 +23,7 @@ namespace FIVE.UI
 
         #endregion
 
-        private void GetCanvas()
-        {
-            canvas = GameObject.Find("Canvas");
-            width = canvas.GetComponent<RectTransform>().sizeDelta.x;
-            height = canvas.GetComponent<RectTransform>().sizeDelta.y;
-            unitWidth = (width / 4f);
-            canvas.AddComponent<Image>().sprite = Resources.Load<Sprite>("UI/WhiteBackground");
-        }
+
 
         #region Animation Methods
         private void InstantiateCharacters()
@@ -140,11 +133,18 @@ namespace FIVE.UI
         }
 
         #endregion
-
-        public StartUpScreen(Queue<Action> loadingLoadingTasks, int numberOfDummyTasks = 2000, int dummyTaskDuration = 2) : base(loadingLoadingTasks)
+        private void SetUpFromCanvas()
         {
+            width = canvas.GetComponent<RectTransform>().sizeDelta.x;
+            height = canvas.GetComponent<RectTransform>().sizeDelta.y;
+            unitWidth = (width / 4f);
+            canvas.AddComponent<Image>().sprite = Resources.Load<Sprite>("UI/WhiteBackground");
+        }
+        public StartUpScreen(GameObject canvas,Queue<Action> loadingTasks, int numberOfDummyTasks = 2000, int dummyTaskDuration = 2) : base(loadingTasks)
+        {
+            this.canvas = canvas;
             Action[] splashScreenActions = {
-                GetCanvas, InstantiateTSS, SetUpTSSPositionAndBar, InstantiateCharacters, InstantiateSymbols,  SetUpInitialPositions, SetUpTargetPositions,
+                SetUpFromCanvas, InstantiateTSS, SetUpTSSPositionAndBar, InstantiateCharacters, InstantiateSymbols,  SetUpInitialPositions, SetUpTargetPositions,
                 SetUpSymbolPositions, SetUpEventTrigering,  () =>
                 {
                     MainThreadDispatcher.Schedule(() =>
@@ -196,16 +196,16 @@ namespace FIVE.UI
             }
 
 
-            foreach (Action action in loadingLoadingTasks)
+            foreach (Action action in loadingTasks)
             {
                 newQueue.Enqueue(action);
             }
 
-            loadingTasks = newQueue;
+            base.loadingTasks = newQueue;
             totalTasks = newQueue.Count;
 
-            loadingTasks.Enqueue(FadingOut);
-            loadingTasks.Enqueue(async () =>
+            base.loadingTasks.Enqueue(FadingOut);
+            base.loadingTasks.Enqueue(async () =>
             {
                 await Task.Delay(2000);
                 MainThreadDispatcher.Schedule(() =>
@@ -224,6 +224,7 @@ namespace FIVE.UI
                     MainThreadDispatcher.Destroy(S1Color);
                     MainThreadDispatcher.Destroy(S2Boundary);
                     MainThreadDispatcher.Destroy(S2Color);
+                    MainThreadDispatcher.Destroy(canvas);
                 });
             });
 
