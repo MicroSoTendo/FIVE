@@ -27,6 +27,7 @@ public class AWSLEditor : MonoBehaviour
         {
             font = Font.CreateDynamicFontFromOSFont("Courier New", 18),
             fontSize = 18,
+            fontStyle = FontStyle.Bold,
             padding = new RectOffset(20, 20, 20, 20),
             wordWrap = true,
         };
@@ -36,6 +37,7 @@ public class AWSLEditor : MonoBehaviour
         ButtonStyle = new GUIStyle
         {
             font = Font.CreateDynamicFontFromOSFont("Courier New", 22),
+            fontStyle = FontStyle.Bold,
             fontSize = 22,
         };
         ButtonStyle.normal.background = EditorBackground;
