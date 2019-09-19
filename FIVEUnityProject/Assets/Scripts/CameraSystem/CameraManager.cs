@@ -1,7 +1,7 @@
 ﻿using FIVE.EventSystem;
+using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
-using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE.CameraSystem
@@ -13,6 +13,15 @@ namespace FIVE.CameraSystem
 
         private void Awake()
         {
+            Camera[] cameras = FindObjectsOfType<Camera>();
+            foreach (Camera cam in cameras)
+            {
+                if (cam.name.Contains("DefaultCamera"))
+                {
+                    Cameras.Add(cam.name, cam);
+                }
+            }
+
             EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>(OnCameraCreated);
         }
 
@@ -24,7 +33,11 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected) return;
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            {
+                return;
+            }
+
             if (Input.GetKeyUp(KeyCode.C) && Cameras.Count > 0)
             {
                 foreach (Camera c in Cameras.Values)
