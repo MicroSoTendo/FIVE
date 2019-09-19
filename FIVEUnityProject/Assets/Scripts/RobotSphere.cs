@@ -3,8 +3,8 @@ using FIVE.EventSystem;
 using Photon.Pun;
 using System;
 using UnityEngine;
-
-namespace FIVE
+using FIVE.AWSL;
+namespace FIVE.Robot
 {
     [RequireComponent(typeof(PhotonView))]
     public class RobotSphere : MonoBehaviourPun

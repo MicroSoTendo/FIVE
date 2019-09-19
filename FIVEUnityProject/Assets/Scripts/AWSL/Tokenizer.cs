@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FIVE
+namespace FIVE.AWSL
 {
     internal class Tokenizer
     {

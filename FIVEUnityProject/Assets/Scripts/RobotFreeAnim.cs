@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace FIVE
+namespace FIVE.Robot
 {
     public class RobotFreeAnim
     {

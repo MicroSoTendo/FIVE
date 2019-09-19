@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using FIVE.Robot;
 
-namespace FIVE
+namespace FIVE.AWSL
 {
     [RequireComponent(typeof(RobotSphere))]
     internal class AwslScript

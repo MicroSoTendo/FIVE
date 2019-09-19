@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FIVE
+namespace FIVE.AWSL
 {
     public class Constants
     {

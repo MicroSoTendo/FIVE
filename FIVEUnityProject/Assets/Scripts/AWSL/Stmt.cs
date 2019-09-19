@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace FIVE
+namespace FIVE.AWSL
 {
     internal class Stmt
     {

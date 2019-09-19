@@ -2,7 +2,7 @@
 using FIVE.UI.StartupMenu;
 using UnityEngine;
 
-namespace FIVE
+namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {

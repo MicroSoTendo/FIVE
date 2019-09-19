@@ -17,7 +17,7 @@ namespace FIVE.ControllerSystem
 
         private void Update()
         {
-            if (Vector3.Distance(currTarget, transform.position) > Constants.floatPrecision && cc)
+            if (Vector3.Distance(currTarget, transform.position) > 0.1f && cc)
             {
                 cc.SimpleMove(velocity);
             }

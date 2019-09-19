@@ -2,7 +2,7 @@
 using FIVE.EventSystem;
 using System;
 
-namespace FIVE
+namespace FIVE.CameraSystem
 {
     public class GUICamera : MonoBehaviour
     {

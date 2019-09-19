@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace FIVE
+namespace FIVE.AWSL
 {
     internal class Stmts
     {
