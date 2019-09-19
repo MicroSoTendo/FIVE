@@ -23,12 +23,12 @@ namespace FIVE.ControllerSystem
             robotSphere.currState = RobotSphere.RobotState.Idle;
             if (Input.GetKey(KeyCode.W))
             {
-                cc.SimpleMove(Vector3.forward);
+                cc.SimpleMove(gameObject.transform.TransformDirection(Vector3.forward));
                 robotSphere.currState = RobotSphere.RobotState.Walk;
             }
             if (Input.GetKey(KeyCode.S))
             {
-                cc.SimpleMove(-Vector3.forward);
+                cc.SimpleMove(gameObject.transform.TransformDirection(-Vector3.forward));
                 robotSphere.currState = RobotSphere.RobotState.Walk;
             }
             if (Input.GetKey(KeyCode.A))

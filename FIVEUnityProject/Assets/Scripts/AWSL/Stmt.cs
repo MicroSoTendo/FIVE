@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace FIVE
 {
@@ -36,7 +37,14 @@ namespace FIVE
                 string steps = script.getWord();
                 script.index += steps.Length;
                 steps = steps.Substring(0, steps.Length - 1); // remove trailing ')'
-                this.steps = Convert.ToInt32(steps);
+                if (word == "forward")
+                {
+                    this.steps = Convert.ToInt32(steps);
+                }
+                else
+                {
+                    this.steps = -Convert.ToInt32(steps);
+                }
             }
             else if (word == "left" || word == "right")
             {
@@ -46,6 +54,15 @@ namespace FIVE
                 script.index += degree.Length;
                 degree = degree.Substring(0, degree.Length - 1); // remove trailing ')'
                 this.degree = Convert.ToInt32(degree);
+            }
+        }
+
+        internal void execute(GameObject gameObject)
+        {
+            if (stmtType == StmtType.MOVE)
+            {
+                CharacterController cc = gameObject.GetComponent<CharacterController>();
+                cc.SimpleMove(gameObject.transform.forward * steps);
             }
         }
     }
