@@ -13,7 +13,7 @@ namespace FIVE.UI
     {
         private static Dictionary<string, ViewModel> nameToVMs = new Dictionary<string, ViewModel>();
         private static SortedSet<ViewModel> sortedVMs = new SortedSet<ViewModel>(new VMComparer());
-
+        [SerializeField] private int numberOfDummyTask = 2000;
 
         public static ViewModel Get(string name) => nameToVMs[name];
 
@@ -54,7 +54,7 @@ namespace FIVE.UI
                 backgroundViewModel.SortingOrder = -10;
                 nameToVMs.Add(nameof(BackgroundView), backgroundViewModel);
             });
-            var startUpScreen = new StartUpScreen(canvasGameObject, loadingActions);
+            var startUpScreen = new StartUpScreen(canvasGameObject, loadingActions, numberOfDummyTask);
             StartCoroutine(startUpScreen.OnTransitioning());
 
         }
