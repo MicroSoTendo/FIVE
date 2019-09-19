@@ -30,10 +30,8 @@ namespace FIVE.CameraSystem
                 foreach (Camera c in Cameras.Values)
                 {
                     c.enabled = false;
-                    c.gameObject.SetActive(false);
                 }
                 Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
-                Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.gameObject.SetActive(true);
             }
         }
     }
