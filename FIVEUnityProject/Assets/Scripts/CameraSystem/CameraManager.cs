@@ -1,55 +1,41 @@
 ﻿using FIVE.EventSystem;
 using System.Collections.Generic;
 using System.Linq;
+using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE.CameraSystem
 {
-    public class CameraManager : MonoBehaviour
+    [RequireComponent(typeof(PhotonView))]
+    public class CameraManager : MonoBehaviourPun
     {
-        private static readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
-
-        private static readonly Dictionary<Camera, Transform> Bindings = new Dictionary<Camera, Transform>();
-        private static readonly Dictionary<Transform, (Vector3, Quaternion)> Last = new Dictionary<Transform, (Vector3, Quaternion)>();
-
-        public static void AddBinding(Camera c, Transform t)
-        {
-            Bindings.Add(c, t);
-            Last.Add(t, (t.position, t.localRotation));
-        }
+        public static CameraManager Instance;
+        private readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
 
         private void Awake()
         {
-            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>((sender, args) => Cameras.Add(args.Id, args.Camera));
+            Instance = this;
+            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>(OnCameraCreated);
+        }
+
+        private void OnCameraCreated(object sender, OnCameraCreatedArgs args)
+        {
+            Debug.Log(nameof(OnCameraCreated) + " Called.");
+            Cameras.Add(args.Id, args.Camera);
         }
 
         private void Update()
         {
-
-            if (Input.GetKeyUp(KeyCode.C))
+            if(Cameras.Count>0)
+                Debug.Log($"Cameras.count = {Cameras.Count}");
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected) return;
+            if (Input.GetKeyUp(KeyCode.C) && Cameras.Count > 0)
             {
                 foreach (KeyValuePair<string, Camera> c in Cameras)
                 {
                     c.Value.enabled = false;
                 }
                 Cameras.ElementAt(Random.Range(0, Cameras.Count)).Value.enabled = true;
-            }
-        }
-
-        private void LateUpdate()
-        {
-            return;
-            foreach (KeyValuePair<Camera, Transform> binding in Bindings)
-            {
-                var camera = binding.Key;
-                var transform = binding.Value;
-                if (!transform.hasChanged) continue;
-                var (lastPosition, lastRotation) = Last[transform];
-                camera.transform.Translate(transform.position - lastPosition);
-            }
-            foreach (Transform lastKey in Last.Keys.ToList())
-            {
-                Last[lastKey] = (lastKey.position, lastKey.localRotation);
             }
         }
     }

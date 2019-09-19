@@ -34,12 +34,9 @@ namespace FIVE
         private void Awake()
         {
             //TODO: Check if camera is really "mine" in multiple players
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected) return;
             fpsCamera = Instantiate(CameraPrefab);
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
-            //fpsCamera.transform.position = eye.position;
-            //fpsCamera.transform.rotation = eye.rotation;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs
@@ -47,15 +44,17 @@ namespace FIVE
                 Id = "Robot" + this.GetInstanceID(),
                 Camera = fpsCamera
             });
-
-            CameraManager.AddBinding(fpsCamera, eye);
-
             Camera camera2 = Instantiate(CameraPrefab);
             camera2.transform.parent = transform;
             camera2.transform.localPosition = new Vector3(0, 2, 0);
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + this.GetInstanceID() + " Camera 2", Camera = camera2 });
 
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            {
+                fpsCamera.enabled = false;
+                camera2.enabled = false;
+            }
 
 
             scriptActive = false;
