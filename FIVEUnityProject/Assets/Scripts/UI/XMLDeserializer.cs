@@ -12,16 +12,16 @@ namespace FIVE.UI
     {
         private readonly XmlDocument viewXml;
         private readonly Canvas parentCanvas;
+        private readonly string xmlText;
         public XMLDeserializer(XmlDocument viewXml, Canvas parentCanvas)
         {
             this.viewXml = viewXml;
             this.parentCanvas = parentCanvas;
         }
-        public XMLDeserializer(string pathToXml, Canvas parentCanvas)
+        public XMLDeserializer(string xmlText, Canvas parentCanvas)
         {
-            TextAsset xmlFile = Resources.Load<TextAsset>(pathToXml);
             viewXml = new XmlDocument();
-            viewXml.LoadXml(xmlFile.text);
+            viewXml.LoadXml(xmlText);
             this.parentCanvas = parentCanvas;
         }
 
@@ -111,6 +111,5 @@ namespace FIVE.UI
             }
             return gameObject;
         }
-
     }
 }

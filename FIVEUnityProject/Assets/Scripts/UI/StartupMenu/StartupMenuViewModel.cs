@@ -31,8 +31,8 @@ namespace FIVE.UI.StartupMenu
             binder.Bind(view => view.ExitGameButton.onClick).
             To(viewModel => viewModel.OnExitButtonClicked);
 
-            binder.Bind(view => view.TestInputField.text).
-            To(viewMode => viewMode.TestInputFieldText, BindingMode.TwoWay);
+            //binder.Bind(view => view.TestInputField.text).
+            //To(viewMode => viewMode.TestInputFieldText, BindingMode.TwoWay);
         }
 
         private void OnSinglePlayerButtonClicked(object sender, EventArgs eventArgs)

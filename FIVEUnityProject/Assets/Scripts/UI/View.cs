@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ namespace FIVE.UI
     public abstract class View
     {
         public Canvas ViewCanvas { get; set; }
-        public Dictionary<string, GameObject> Resources { get; }
+        public Dictionary<string, GameObject> CanvasResources { get; }
         protected GameObject canvasGameObject;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
@@ -22,8 +23,13 @@ namespace FIVE.UI
             canvasScaler = canvasGameObject.AddComponent<CanvasScaler>();
             graphicRaycaster = canvasGameObject.AddComponent<GraphicRaycaster>();
             nameToUIElementGameObjects = new Dictionary<string, GameObject>();
-            Resources = new Dictionary<string, GameObject>();
-            xmlDeserializer = new XMLDeserializer($"UI/{GetType().Name}", ViewCanvas);
+            CanvasResources = new Dictionary<string, GameObject>();
+#if DEBUG
+            var xmlText = File.ReadAllText($"{Application.dataPath}/Resources/UI/{GetType().Name}.xml");
+#else
+            var xmlText = Resources.Load<TextAsset>($"UI/{GetType().Name}").text;
+#endif
+            xmlDeserializer = new XMLDeserializer(xmlText, ViewCanvas);
             ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 
@@ -36,7 +42,7 @@ namespace FIVE.UI
 
         public T AddUIElementFromResources<T>(string resourceName, string gameObjectName, Transform parent)
         {
-            GameObject prefab = Resources[resourceName];
+            GameObject prefab = CanvasResources[resourceName];
             GameObject gameObject = GameObject.Instantiate(prefab, parent);
             gameObject.name = gameObjectName;
             nameToUIElementGameObjects.Add(gameObjectName, gameObject);
@@ -58,10 +64,29 @@ namespace FIVE.UI
         {
             return canvasGameObject.GetComponentsInChildren(typeof(T), includeInactive).Cast<T>().FirstOrDefault(child => child.name == name);
         }
+#if DEBUG
+        public void Unload()
+        {
+            foreach (GameObject gameObject in nameToUIElementGameObjects.Values.ToArray())
+            {
+                gameObject.SetActive(false);
+                GameObject.Destroy(gameObject);
+            }
 
+            foreach (GameObject gameObject in CanvasResources.Values)
+            {
+
+                gameObject.SetActive(false);
+                GameObject.Destroy(gameObject);
+            }
+            nameToUIElementGameObjects.Clear();
+            CanvasResources.Clear();
+            GameObject.Destroy(canvasGameObject);
+        }
+#endif
         protected void LoadResources()
         {
-            xmlDeserializer.LoadResources(Resources);
+            xmlDeserializer.LoadResources(CanvasResources);
         }
     }
 

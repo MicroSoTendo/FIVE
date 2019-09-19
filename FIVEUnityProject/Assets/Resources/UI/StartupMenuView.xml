@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Canvas name="StartupMenuView">
-    <Button name = "SinglePlayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,150,0);}" Text = "Single Player"/>
+    <Button name = "SinglePlayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,150,0);}" Text = "Single Player" OnClick = "{Bind:OnSinglePlayerButtonClicked}"/>
     <Button name = "MultiplayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,0,0);}" Text = "Multiple Players"/>
     <Button name = "OptionsButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-150,0);}" Text = "Options"/>
     <Button name = "ExitGameButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-300,0);}" Text = "Exit"/>
