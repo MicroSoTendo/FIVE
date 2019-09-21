@@ -29,13 +29,18 @@ namespace FIVE
             get; set;
         }
 
+        public delegate void MoveOnce();
+        public MoveOnce[] MoveOnces
+        {
+            get;
+            private set;
+        }
+
         private Vector3 rotate = Vector3.zero;
 
         private Queue<Move> moves;
         private CharacterController cc;
 
-        private delegate void MoveOnce();
-        MoveOnce[] moveOnces;
 
         void Start()
         {
@@ -44,7 +49,7 @@ namespace FIVE
             RotateSpeed = 30.0f;
 
             moves = new Queue<Move>();
-            moveOnces = new MoveOnce[4] { this.forward, this.backward, this.turnLeft, this.turnRight, };
+            MoveOnces = new MoveOnce[4] { this.Forward, this.Backward, this.TurnLeft, this.TurnRight, };
         }
 
         void Update()
@@ -52,7 +57,7 @@ namespace FIVE
             if (moves.Count > 0)
             {
                 Move move = moves.Dequeue();
-                moveOnces[(int)move]();
+                MoveOnces[(int)move]();
             }
             //if (MoveTarget != null && Vector3.Distance(transform.position, MoveTarget) > 0.5f)
             //{
@@ -60,41 +65,31 @@ namespace FIVE
             //}
         }
 
-        public void MoveStep(Move move, int steps)
+        public void ScheduleMove(Move move, int steps)
         {
-            if (move == Move.Front || move == Move.Back)
+            for (int i = 0; i < steps; i++)
             {
-                for (int i = 0; i < steps; i++)
-                {
-                    moves.Enqueue(move);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < steps; i++)
-                {
-                    moves.Enqueue(move);
-                }
+                moves.Enqueue(move);
             }
         }
 
-        private void forward()
+        public void Forward()
         {
             cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
         }
 
-        private void backward()
+        public void Backward()
         {
             cc.SimpleMove(-gameObject.transform.forward * MoveSpeed);
         }
 
-        private void turnLeft()
+        public void TurnLeft()
         {
             Debug.Log("Turn Left");
             gameObject.transform.Rotate(0, -5, 0);
         }
 
-        private void turnRight()
+        public void TurnRight()
         {
             Debug.Log("Turn Right");
             gameObject.transform.Rotate(0, 5, 0);

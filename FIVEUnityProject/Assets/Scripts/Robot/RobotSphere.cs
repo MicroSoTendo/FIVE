@@ -21,6 +21,8 @@ namespace FIVE.Robot
         private bool editingCode = false;
         private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
+        private CharacterController cc;
+
         // Script References
         private RobotFreeAnim animator;
         private FpsController fpsController;
@@ -32,25 +34,24 @@ namespace FIVE.Robot
 
         private void Awake()
         {
-            //fpsCamera = Instantiate(CameraPrefab);
+            cc = GetComponent<CharacterController>();
+
             fpsCamera = gameObject.AddComponent<Camera>();
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
-            //fpsCamera.transform.parent = eye;
-            //fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
-            //fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            fpsCamera.transform.parent = eye;
+            fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
+            fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID(), Camera = fpsCamera });
 
             Camera camera2 = gameObject.AddComponent<Camera>();
-            //camera2.transform.parent = transform;
-            //camera2.transform.localPosition = new Vector3(0, 2, 0);
-            //camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            camera2.transform.parent = transform;
+            camera2.transform.localPosition = new Vector3(0, 2, 0);
+            camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID() + " Camera 2", Camera = camera2 });
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
 
-            movable = GetComponent<Movable>();
-
-            //(fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled=false;
-            //(camera2.gameObject.GetComponentInChildren<AudioListener>() ?? camera2.GetComponent<AudioListener>()).enabled = true;
+            (fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled = false;
+            (camera2.gameObject.GetComponentInChildren<AudioListener>() ?? camera2.GetComponent<AudioListener>()).enabled = true;
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 fpsCamera.enabled = false;
@@ -69,6 +70,11 @@ namespace FIVE.Robot
         private void Update()
         {
             currState = RobotState.Idle;
+            if (cc.velocity.magnitude != 0)
+            {
+                currState = RobotState.Walk;
+            }
+
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 return;
@@ -112,10 +118,17 @@ namespace FIVE.Robot
             }
         }
 
-        public void Move(Movable.Move move, int steps)
+        public void Move(Movable.Move move, int steps, bool schedule = false)
         {
             currState = RobotState.Walk;
-            movable.MoveStep(move, steps);
+            if (schedule)
+            {
+                movable.ScheduleMove(move, steps);
+            }
+            else
+            {
+                movable.MoveOnces[(int)move]();
+            }
         }
 
         private void ExecuteScript()
