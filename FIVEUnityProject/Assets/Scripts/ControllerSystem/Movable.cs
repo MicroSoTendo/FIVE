@@ -37,6 +37,8 @@ namespace FIVE
             cc = GetComponent<CharacterController>();
             MoveSpeed = 5.0f;
             RotateSpeed = 30.0f;
+
+            moves = new Queue<Move>();
         }
 
         void FixedUpdate()

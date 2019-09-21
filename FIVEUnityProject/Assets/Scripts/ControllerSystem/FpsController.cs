@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using FIVE.Robot;
+
 namespace FIVE.ControllerSystem
 {
+    [RequireComponent(typeof(Movable))]
     public class FpsController
     {
         private readonly GameObject gameObject;
