@@ -21,8 +21,6 @@ namespace FIVE.Robot
         private bool editingCode = false;
         private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
-        public Camera CameraPrefab;
-
         // Script References
         private RobotFreeAnim animator;
 
@@ -35,13 +33,15 @@ namespace FIVE.Robot
 
         private void Awake()
         {
-            fpsCamera = Instantiate(CameraPrefab);
+            // fpsCamera = Instantiate(CameraPrefab);
+            fpsCamera = gameObject.AddComponent<Camera>();
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
             fpsCamera.transform.parent = eye;
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID(), Camera = fpsCamera });
-            Camera camera2 = Instantiate(CameraPrefab);
+
+            Camera camera2 = gameObject.AddComponent<Camera>();
             camera2.transform.parent = transform;
             camera2.transform.localPosition = new Vector3(0, 2, 0);
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
