@@ -40,21 +40,25 @@ namespace FIVE.AWSL
 
                 if (instruction.Item1 == Instruction.Forward)
                 {
-                    robotSphere.currState = RobotSphere.RobotState.Walk;
-                    cc.SimpleMove(gameObject.transform.forward * 5.0f);
+                    robotSphere.Move(Movable.Move.Front, 1, true);
+                    //robotSphere.currState = RobotSphere.RobotState.Walk;
+                    //cc.SimpleMove(gameObject.transform.forward * 5.0f);
                 }
                 else if (instruction.Item1 == Instruction.Backward)
                 {
-                    robotSphere.currState = RobotSphere.RobotState.Walk;
-                    cc.SimpleMove(-gameObject.transform.forward * 5.0f);
+                    robotSphere.Move(Movable.Move.Front, 1, true);
+                    //robotSphere.currState = RobotSphere.RobotState.Walk;
+                    //cc.SimpleMove(-gameObject.transform.forward * 5.0f);
                 }
                 else if (instruction.Item1 == Instruction.Left)
                 {
-                    gameObject.transform.Rotate(new Vector3(0, 360 - instruction.Item2, 0));
+                    robotSphere.Move(Movable.Move.Left, 1, true);
+                    //gameObject.transform.Rotate(new Vector3(0, 360 - instruction.Item2, 0));
                 }
                 else if (instruction.Item1 == Instruction.Right)
                 {
-                    gameObject.transform.Rotate(new Vector3(0, instruction.Item2, 0));
+                    robotSphere.Move(Movable.Move.Right, 1, true);
+                    //gameObject.transform.Rotate(new Vector3(0, instruction.Item2, 0));
                 }
                 else if (instruction.Item1 == Instruction.Goto)
                 {

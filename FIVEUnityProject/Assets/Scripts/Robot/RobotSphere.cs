@@ -35,6 +35,7 @@ namespace FIVE.Robot
         private void Awake()
         {
             cc = GetComponent<CharacterController>();
+            movable = GetComponent<Movable>();
 
             fpsCamera = gameObject.AddComponent<Camera>();
             Transform eye = transform.GetChild(0).GetChild(1); // HACK
