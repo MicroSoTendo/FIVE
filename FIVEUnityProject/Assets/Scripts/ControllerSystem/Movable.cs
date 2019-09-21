@@ -29,6 +29,8 @@ namespace FIVE
             get; set;
         }
 
+        private Vector3 rotate = Vector3.zero;
+
         private Queue<Move> moves;
         private CharacterController cc;
 
@@ -38,14 +40,14 @@ namespace FIVE
         void Start()
         {
             cc = GetComponent<CharacterController>();
-            MoveSpeed = 5.0f;
+            MoveSpeed = 15.0f;
             RotateSpeed = 30.0f;
 
             moves = new Queue<Move>();
             moveOnces = new MoveOnce[4] { this.forward, this.backward, this.turnLeft, this.turnRight, };
         }
 
-        void FixedUpdate()
+        void Update()
         {
             if (moves.Count > 0)
             {
@@ -60,13 +62,20 @@ namespace FIVE
 
         public void MoveStep(Move move, int steps)
         {
-            //if (move == Move.Front || move == Move.Back)
-            //{
-            for (int i = 0; i < steps; i++)
+            if (move == Move.Front || move == Move.Back)
             {
-                moves.Enqueue(move);
+                for (int i = 0; i < steps; i++)
+                {
+                    moves.Enqueue(move);
+                }
             }
-            //}
+            else
+            {
+                for (int i = 0; i < steps; i++)
+                {
+                    moves.Enqueue(move);
+                }
+            }
         }
 
         private void forward()
@@ -82,15 +91,13 @@ namespace FIVE
         private void turnLeft()
         {
             Debug.Log("Turn Left");
-            Quaternion target = Quaternion.Euler(0, -10, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
+            gameObject.transform.Rotate(0, -5, 0);
         }
 
         private void turnRight()
         {
             Debug.Log("Turn Right");
-            Quaternion target = Quaternion.Euler(0, 10, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
+            gameObject.transform.Rotate(0, 5, 0);
         }
     }
 }
