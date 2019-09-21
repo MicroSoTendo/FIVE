@@ -29,23 +29,35 @@ namespace FIVE
             get; set;
         }
 
+        public delegate void MoveOnce();
+        public MoveOnce[] MoveOnces
+        {
+            get;
+            private set;
+        }
+
+        private Vector3 rotate = Vector3.zero;
+
         private Queue<Move> moves;
         private CharacterController cc;
+
 
         void Start()
         {
             cc = GetComponent<CharacterController>();
-            MoveSpeed = 5.0f;
+            MoveSpeed = 15.0f;
             RotateSpeed = 30.0f;
 
             moves = new Queue<Move>();
+            MoveOnces = new MoveOnce[4] { this.Forward, this.Backward, this.TurnLeft, this.TurnRight, };
         }
 
-        void FixedUpdate()
+        void Update()
         {
             if (moves.Count > 0)
             {
                 Move move = moves.Dequeue();
+                MoveOnces[(int)move]();
             }
             //if (MoveTarget != null && Vector3.Distance(transform.position, MoveTarget) > 0.5f)
             //{
@@ -53,37 +65,34 @@ namespace FIVE
             //}
         }
 
-        public void MoveStep(Move move, int steps)
+        public void ScheduleMove(Move move, int steps)
         {
-            //if (move == Move.Front || move == Move.Back)
-            //{
             for (int i = 0; i < steps; i++)
             {
                 moves.Enqueue(move);
             }
-            //}
         }
 
-        private void forward()
+        public void Forward()
         {
             cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
         }
 
-        private void backward()
+        public void Backward()
         {
-            cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
+            cc.SimpleMove(-gameObject.transform.forward * MoveSpeed);
         }
 
-        private void turnLeft()
+        public void TurnLeft()
         {
-            Quaternion target = Quaternion.Euler(0, -1, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
+            Debug.Log("Turn Left");
+            gameObject.transform.Rotate(0, -5, 0);
         }
 
-        private void turnRight()
+        public void TurnRight()
         {
-            Quaternion target = Quaternion.Euler(0, 1, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
+            Debug.Log("Turn Right");
+            gameObject.transform.Rotate(0, 5, 0);
         }
     }
 }

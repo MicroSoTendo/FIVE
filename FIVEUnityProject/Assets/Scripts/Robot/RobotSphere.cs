@@ -1,7 +1,6 @@
 ﻿using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using Photon.Pun;
-using System;
 using UnityEngine;
 using FIVE.AWSL;
 using FIVE.CameraSystem;
@@ -22,13 +21,15 @@ namespace FIVE.Robot
         private bool editingCode = false;
         private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
+        private CharacterController cc;
+
         // Script References
         private RobotFreeAnim animator;
-
         private FpsController fpsController;
-
         private Camera fpsCamera;
         private Camera thirdPersonCamera;
+        private Movable movable;
+
         private AwslScript script;
         public bool scriptActive;
 
@@ -47,6 +48,9 @@ namespace FIVE.Robot
 
             (fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled=false;
             (thirdPersonCamera.gameObject.GetComponentInChildren<AudioListener>() ?? thirdPersonCamera.GetComponent<AudioListener>()).enabled = true;
+            cc = GetComponent<CharacterController>();
+            movable = GetComponent<Movable>();
+
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 fpsCamera.enabled = false;
@@ -64,6 +68,12 @@ namespace FIVE.Robot
 
         private void Update()
         {
+            currState = RobotState.Idle;
+            if (cc.velocity.magnitude != 0)
+            {
+                currState = RobotState.Walk;
+            }
+
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 return;
@@ -104,6 +114,19 @@ namespace FIVE.Robot
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 return;
+            }
+        }
+
+        public void Move(Movable.Move move, int steps, bool schedule = false)
+        {
+            currState = RobotState.Walk;
+            if (schedule)
+            {
+                movable.ScheduleMove(move, steps);
+            }
+            else
+            {
+                movable.MoveOnces[(int)move]();
             }
         }
 
