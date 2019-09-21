@@ -23,10 +23,9 @@ namespace FIVE.Robot
 
         // Script References
         private RobotFreeAnim animator;
-
         private FpsController fpsController;
-
         private Camera fpsCamera;
+        private Movable movable;
 
         private AwslScript script;
         public bool scriptActive;
@@ -47,6 +46,8 @@ namespace FIVE.Robot
             camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
             this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID() + " Camera 2", Camera = camera2 });
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
+
+            movable = GetComponent<Movable>();
             
             (fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled=false;
             (camera2.gameObject.GetComponentInChildren<AudioListener>() ?? camera2.GetComponent<AudioListener>()).enabled = true;
@@ -67,6 +68,7 @@ namespace FIVE.Robot
 
         private void Update()
         {
+            currState = RobotState.Idle;
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 return;
@@ -108,6 +110,12 @@ namespace FIVE.Robot
             {
                 return;
             }
+        }
+
+        public void Move(Movable.Move move, int steps)
+        {
+            currState = RobotState.Walk;
+            movable.MoveStep(move, steps);
         }
 
         private void ExecuteScript()

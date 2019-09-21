@@ -32,6 +32,9 @@ namespace FIVE
         private Queue<Move> moves;
         private CharacterController cc;
 
+        private delegate void MoveOnce();
+        MoveOnce[] moveOnces;
+
         void Start()
         {
             cc = GetComponent<CharacterController>();
@@ -39,6 +42,7 @@ namespace FIVE
             RotateSpeed = 30.0f;
 
             moves = new Queue<Move>();
+            moveOnces = new MoveOnce[4] { this.forward, this.backward, this.turnLeft, this.turnRight, };
         }
 
         void FixedUpdate()
@@ -46,6 +50,7 @@ namespace FIVE
             if (moves.Count > 0)
             {
                 Move move = moves.Dequeue();
+                moveOnces[(int)move]();
             }
             //if (MoveTarget != null && Vector3.Distance(transform.position, MoveTarget) > 0.5f)
             //{
@@ -71,18 +76,20 @@ namespace FIVE
 
         private void backward()
         {
-            cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
+            cc.SimpleMove(-gameObject.transform.forward * MoveSpeed);
         }
 
         private void turnLeft()
         {
-            Quaternion target = Quaternion.Euler(0, -1, 0);
+            Debug.Log("Turn Left");
+            Quaternion target = Quaternion.Euler(0, -10, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
         }
 
         private void turnRight()
         {
-            Quaternion target = Quaternion.Euler(0, 1, 0);
+            Debug.Log("Turn Right");
+            Quaternion target = Quaternion.Euler(0, 10, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5.0f);
         }
     }
