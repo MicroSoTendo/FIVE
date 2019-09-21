@@ -4,6 +4,7 @@ using Photon.Pun;
 using System;
 using UnityEngine;
 using FIVE.AWSL;
+using FIVE.CameraSystem;
 
 namespace FIVE.Robot
 {
@@ -27,33 +28,29 @@ namespace FIVE.Robot
         private FpsController fpsController;
 
         private Camera fpsCamera;
-
+        private Camera thirdPersonCamera;
         private AwslScript script;
         public bool scriptActive;
 
         private void Awake()
         {
-            // fpsCamera = Instantiate(CameraPrefab);
-            fpsCamera = gameObject.AddComponent<Camera>();
-            Transform eye = transform.GetChild(0).GetChild(1); // HACK
-            fpsCamera.transform.parent = eye;
+            
+            GameObject eyeDome1 = gameObject.GetChildGameObject(nameof(eyeDome1));
+            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera), eyeDome1.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID(), Camera = fpsCamera });
 
-            Camera camera2 = gameObject.AddComponent<Camera>();
-            camera2.transform.parent = transform;
-            camera2.transform.localPosition = new Vector3(0, 2, 0);
-            camera2.transform.localRotation = Quaternion.Euler(90, 0, 0);
-            this.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs { Id = "Robot" + GetInstanceID() + " Camera 2", Camera = camera2 });
-            this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
-            
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera), transform);
+            thirdPersonCamera.transform.SetParent(transform);
+            thirdPersonCamera.transform.localPosition = new Vector3(0, 2, 0);
+            thirdPersonCamera.transform.localRotation = Quaternion.Euler(90, 0, 0);
+
             (fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled=false;
-            (camera2.gameObject.GetComponentInChildren<AudioListener>() ?? camera2.GetComponent<AudioListener>()).enabled = true;
+            (thirdPersonCamera.gameObject.GetComponentInChildren<AudioListener>() ?? thirdPersonCamera.GetComponent<AudioListener>()).enabled = true;
             if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             {
                 fpsCamera.enabled = false;
-                camera2.enabled = false;
+                thirdPersonCamera.enabled = false;
             }
 
             scriptActive = false;

@@ -9,7 +9,13 @@ namespace FIVE.EventSystem
 
     public sealed class OnCameraCreatedArgs : EventArgs
     {
-        public string Id;
-        public Camera Camera;
+        public string Id { get; }
+        public Camera Camera { get; }
+
+        public OnCameraCreatedArgs(string id, Camera camera)
+        {
+            this.Id = id;
+            Camera = camera;
+        }
     }
 }

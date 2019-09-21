@@ -3,34 +3,46 @@ using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace FIVE.CameraSystem
 {
     [RequireComponent(typeof(PhotonView))]
     public class CameraManager : MonoBehaviourPun
     {
-        public readonly Dictionary<string, Camera> Cameras = new Dictionary<string, Camera>();
-
+        public readonly Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
+        private GameObject cameraPrefab;
+        private static CameraManager instance;
         private int index = 0;
 
         private void Awake()
         {
-            Camera[] cameras = FindObjectsOfType<Camera>();
-            foreach (Camera cam in cameras)
+            Assert.IsNull(instance);
+            instance = this;
+            cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
+            Camera[] existedCameras = FindObjectsOfType<Camera>();
+            foreach (Camera cam in existedCameras)
             {
                 if (cam.name.Contains("DefaultCamera"))
                 {
-                    Cameras.Add(cam.name, cam);
+                    cameras.Add(cam.name, cam);
                 }
             }
-
-            EventManager.Subscribe<OnCameraCreated, OnCameraCreatedArgs>(OnCameraCreated);
         }
 
-        private void OnCameraCreated(object sender, OnCameraCreatedArgs args)
+        public static Camera AddCamera(string cameraName = null, Transform parent = null, bool enableAudioListener = false)
         {
-            Debug.Log(nameof(OnCameraCreated) + " Called.");
-            Cameras.Add(args.Id, args.Camera);
+            GameObject gameObject = Instantiate(instance.cameraPrefab);
+            gameObject.GetComponent<AudioListener>().enabled = enableAudioListener;
+            gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
+            Camera camera = gameObject.GetComponent<Camera>();
+            if (parent != null)
+            {
+                gameObject.transform.SetParent(parent);
+            }
+            instance.cameras.Add(gameObject.name, camera);
+            instance.RaiseEvent<OnCameraCreated>(new OnCameraCreatedArgs(gameObject.name, camera));
+            return gameObject.GetComponent<Camera>();
         }
 
         private void Update()
@@ -40,17 +52,17 @@ namespace FIVE.CameraSystem
                 return;
             }
 
-            if (Input.GetKeyUp(KeyCode.C) && Cameras.Count > 0)
+            if (Input.GetKeyUp(KeyCode.C) && cameras.Count > 0)
             {
-                foreach (Camera c in Cameras.Values)
+                foreach (Camera c in cameras.Values)
                 {
                     c.enabled = false;
-                    c.gameObject.GetComponent<AudioListener>().enabled = false;
+                    (c.gameObject.GetComponent<AudioListener>() ?? c.gameObject.GetComponentInChildren<AudioListener>()).enabled = false;
                 }
-                index %= Cameras.Count;
-                Camera ca = Cameras.ElementAt(index).Value;
+                index %= cameras.Count;
+                Camera ca = cameras.ElementAt(index).Value;
                 ca.enabled = true;
-                ca.gameObject.GetComponent<AudioListener>().enabled = true;
+                (ca.gameObject.GetComponent<AudioListener>() ?? ca.gameObject.GetComponentInChildren<AudioListener>()).enabled = true;
                 index++;
             }
         }

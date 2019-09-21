@@ -20,7 +20,7 @@ namespace FIVE.Assets.Scripts.CameraSystem
             return;
             if (stream.IsWriting)
             {
-                stream.SendNext(cameraManager.Cameras);
+                stream.SendNext(cameraManager.cameras);
             }
             else
             {
@@ -33,7 +33,7 @@ namespace FIVE.Assets.Scripts.CameraSystem
             return;
             foreach (KeyValuePair<string, Camera> keyValuePair in camerasReceived)
             {
-                if (cameraManager.Cameras.ContainsKey(keyValuePair.Key))
+                if (cameraManager.cameras.ContainsKey(keyValuePair.Key))
                 {
 
                 }

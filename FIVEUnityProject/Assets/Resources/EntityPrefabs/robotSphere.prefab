@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 33536440188300702}
   - component: {fileID: 23449536063904852}
   m_Layer: 0
-  m_Name: eyeDome
+  m_Name: eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2681,7 +2681,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currState: 0
-  CameraPrefab: {fileID: 0}
   scriptActive: 0
 --- !u!1 &1533244445735912
 GameObject:
