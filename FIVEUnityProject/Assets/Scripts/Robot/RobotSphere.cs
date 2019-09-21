@@ -4,9 +4,11 @@ using Photon.Pun;
 using System;
 using UnityEngine;
 using FIVE.AWSL;
+
 namespace FIVE.Robot
 {
     [RequireComponent(typeof(PhotonView))]
+    [RequireComponent(typeof(Movable))]
     public class RobotSphere : MonoBehaviourPun
     {
         public enum RobotState { Idle, Walk, Jump, Open };
