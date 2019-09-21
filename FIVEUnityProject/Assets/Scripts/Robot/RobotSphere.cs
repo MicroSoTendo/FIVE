@@ -36,8 +36,8 @@ namespace FIVE.Robot
         private void Awake()
         {
             
-            GameObject eyeDome1 = gameObject.GetChildGameObject(nameof(eyeDome1));
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera), eyeDome1.transform);
+            GameObject eye = gameObject.GetChildGameObject(nameof(eye));
+            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera), eye.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
