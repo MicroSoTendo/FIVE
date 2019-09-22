@@ -22,15 +22,8 @@ namespace FIVE.Network
 
         void Initialize(object sender, EventArgs args)
         {
-            var connectingResult = PhotonNetwork.ConnectUsingSettings();
-            if (connectingResult)
-            {
-                Debug.Log("Initialize");
-            }
-            else
-            {
-                Debug.Log("fail to connect");
-            }
+            bool connectingResult = PhotonNetwork.ConnectUsingSettings();
+            Debug.Log(connectingResult ? "Initialize" : "fail to connect");
         }
         
         public void SetPlayerName(string value)
@@ -75,9 +68,7 @@ namespace FIVE.Network
         public override void OnJoinedRoom()
         {
             Debug.Log(nameof(OnJoinedRoom));
-            var multiplayersGame = new MultiplayersGame(
-                PhotonNetwork.CurrentRoom.PlayerCount == 1 ? //Check if I am the first player
-                MultiplayersGame.State.Host: MultiplayersGame.State.Client);
+            gameObject.AddComponent<MultiplayersGameView>();
         }
 
 
