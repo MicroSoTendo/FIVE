@@ -1,14 +1,15 @@
-﻿using FIVE.EventSystem;
+﻿using System;
+using FIVE.EventSystem;
 using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
+using FIVE.Network;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace FIVE.CameraSystem
 {
-    [RequireComponent(typeof(PhotonView))]
-    public class CameraManager : MonoBehaviourPun
+    public class CameraManager : MonoBehaviour
     {
         public readonly Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
         private GameObject cameraPrefab;
@@ -47,11 +48,6 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            {
-                return;
-            }
-
             if (Input.GetKeyUp(KeyCode.C) && cameras.Count > 0)
             {
                 foreach (Camera c in cameras.Values)

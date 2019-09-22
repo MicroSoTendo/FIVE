@@ -7,9 +7,8 @@ using FIVE.CameraSystem;
 
 namespace FIVE.Robot
 {
-    [RequireComponent(typeof(PhotonView))]
     [RequireComponent(typeof(Movable))]
-    public class RobotSphere : MonoBehaviourPun
+    public class RobotSphere : MonoBehaviour
     {
         public enum RobotState { Idle, Walk, Jump, Open };
 
@@ -35,7 +34,7 @@ namespace FIVE.Robot
 
         private void Awake()
         {
-            
+
             GameObject eye = gameObject.GetChildGameObject(nameof(eye));
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera), eye.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
@@ -46,16 +45,17 @@ namespace FIVE.Robot
             thirdPersonCamera.transform.localPosition = new Vector3(0, 2, 0);
             thirdPersonCamera.transform.localRotation = Quaternion.Euler(90, 0, 0);
 
-            (fpsCamera.gameObject.GetComponentInChildren<AudioListener>() ?? fpsCamera.gameObject.GetComponent<AudioListener>()).enabled=false;
-            (thirdPersonCamera.gameObject.GetComponentInChildren<AudioListener>() ?? thirdPersonCamera.GetComponent<AudioListener>()).enabled = true;
+            fpsCamera.gameObject.GetComponent<AudioListener>().enabled = false;
+            thirdPersonCamera.gameObject.GetComponent<AudioListener>().enabled = true;
             cc = GetComponent<CharacterController>();
             movable = GetComponent<Movable>();
 
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            {
-                fpsCamera.enabled = false;
-                thirdPersonCamera.enabled = false;
-            }
+            // TODO: make networking non-invasive
+            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            // {
+            //     fpsCamera.enabled = false;
+            //     thirdPersonCamera.enabled = false;
+            // }
 
             scriptActive = false;
         }
@@ -74,10 +74,11 @@ namespace FIVE.Robot
                 currState = RobotState.Walk;
             }
 
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            {
-                return;
-            }
+            // TODO: Make network non-invasive
+            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            // {
+            //     return;
+            // }
 
             if (Input.GetKey(KeyCode.E))
             {
@@ -111,10 +112,11 @@ namespace FIVE.Robot
 
         public void LateUpdate()
         {
-            if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            {
-                return;
-            }
+            // TODO: Make network non-invasive
+            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            // {
+            //     return;
+            // }
         }
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
