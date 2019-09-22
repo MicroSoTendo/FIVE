@@ -25,7 +25,7 @@ namespace FIVE.UI
             nameToUIElementGameObjects = new Dictionary<string, GameObject>();
             CanvasResources = new Dictionary<string, GameObject>();
 #if DEBUG
-            var xmlText = File.ReadAllText($"{Application.dataPath}/Resources/UI/{GetType().Name}.xml");
+            string xmlText = File.ReadAllText($"{Application.dataPath}/Resources/UI/{GetType().Name}.xml");
 #else
             var xmlText = Resources.Load<TextAsset>($"UI/{GetType().Name}").text;
 #endif
@@ -51,7 +51,7 @@ namespace FIVE.UI
 
         public void RemoveUIElement(string name)
         {
-            var go = nameToUIElementGameObjects[name];
+            GameObject go = nameToUIElementGameObjects[name];
             nameToUIElementGameObjects.Remove(name);
             go.transform.SetParent(null);
             go.SetActive(false);
@@ -97,7 +97,7 @@ namespace FIVE.UI
         private static readonly Dictionary<Type, View> CachedViews = new Dictionary<Type, View>();
         public static T Create<T>() where T : View<TView, TViewModel>, new()
         {
-            var newView = new T();
+            T newView = new T();
             if (CachedViews.ContainsKey(typeof(T)))
             {
                 return CachedViews[typeof(T)] as T;

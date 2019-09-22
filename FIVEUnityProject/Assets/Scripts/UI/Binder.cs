@@ -38,10 +38,10 @@ namespace FIVE.UI
                 Expression = expression;
                 if (expression.Body is MemberExpression memberExpression)
                 {
-                    var uiElementExp = memberExpression.Expression as MemberExpression;
-                    var uiElementProperty = uiElementExp.Member as PropertyInfo;
+                    MemberExpression uiElementExp = memberExpression.Expression as MemberExpression;
+                    PropertyInfo uiElementProperty = uiElementExp.Member as PropertyInfo;
                     UIElement = uiElementProperty.GetValue(view) as MonoBehaviour;
-                    var bindingMemberProperty = memberExpression.Member as PropertyInfo;
+                    PropertyInfo bindingMemberProperty = memberExpression.Member as PropertyInfo;
                     BindingMember = bindingMemberProperty.GetValue(UIElement);
                 }
                 this.viewModel = viewModel;

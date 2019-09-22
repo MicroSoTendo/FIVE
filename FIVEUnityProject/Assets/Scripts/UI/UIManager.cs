@@ -27,6 +27,7 @@ namespace FIVE.UI
             canvasGameObject.AddComponent<CanvasScaler>();
             canvasGameObject.AddComponent<GraphicRaycaster>();
 
+            //TODO: Move this to proper place
             var loadingActions = new Queue<Action>();
             GameObject go = null;
             loadingActions.Enqueue(() =>
