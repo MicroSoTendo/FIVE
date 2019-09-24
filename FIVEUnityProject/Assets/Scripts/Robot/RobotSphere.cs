@@ -35,11 +35,11 @@ namespace FIVE.Robot
         {
 
             GameObject eye = gameObject.GetChildGameObject(nameof(eye));
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera), eye.transform);
+            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), eye.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera), transform, true);
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(), transform, true);
             thirdPersonCamera.transform.SetParent(transform);
             thirdPersonCamera.transform.localPosition = new Vector3(0, 2, 0);
             thirdPersonCamera.transform.localRotation = Quaternion.Euler(90, 0, 0);

@@ -52,7 +52,12 @@ namespace Assets.Scripts.PrefabPool
                 Debug.LogWarning("Networked objects need to be in asset database.");
                 return;
             }
-            hackDictionary.Add(guid, syncModules);
+
+            if (!hackDictionary.ContainsKey(guid))
+            {
+                hackDictionary.Add(guid, syncModules);
+            }
+
             PhotonNetwork.Instantiate(guid, Vector3.zero, Quaternion.identity);
         }
 
