@@ -4,6 +4,7 @@ using FIVE.UI.MainGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.StartupMenu;
 using System.Collections.Generic;
+using System.Linq;
 using FIVE.EventSystem;
 using FIVE.GameStates;
 using FIVE.UI.SplashScreens;
@@ -14,11 +15,15 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        private static Dictionary<string, ViewModel> nameToVMs = new Dictionary<string, ViewModel>();
-        private static SortedSet<ViewModel> sortedVMs = new SortedSet<ViewModel>(new VMComparer());
-        [SerializeField] private int numberOfDummyTask = 2000;
+        private static readonly Dictionary<string, ViewModel> NameToVMs = new Dictionary<string, ViewModel>();
+        private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
+        private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModelComparer());
 
-        public static ViewModel Get(string name) => nameToVMs[name];
+        public static bool TryGetViewModel(string name, out ViewModel viewModel) => NameToVMs.TryGetValue(name, out viewModel);
+
+        public static T GetViewModel<T>() where T : ViewModel => (T)TypeToVMs[typeof(T)].FirstOrDefault();
+
+        public static SortedSet<ViewModel> GetViewModels<T>() where T : ViewModel => TypeToVMs[typeof(T)];
 
         private void Awake()
         {
@@ -36,15 +41,20 @@ namespace FIVE.UI
         {
         }
 
-        public static T AddViewModel<T>() where T : ViewModel, new()
+        public static T AddViewModel<T>(string name = null) where T : ViewModel, new()
         {
             var newViewModel = new T();
-            nameToVMs.Add(typeof(T).Name, newViewModel);
-            sortedVMs.Add(newViewModel);
+            NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
+            if (!TypeToVMs.ContainsKey(typeof(T)))
+            {
+                TypeToVMs.Add(typeof(T), new SortedSet<ViewModel>(new ViewModelComparer()));
+            }
+            TypeToVMs[typeof(T)].Add(newViewModel);
+            LayerSortedVMs.Add(newViewModel);
             return newViewModel;
         }
 
-        private class VMComparer : IComparer<ViewModel>
+        private class ViewModelComparer : IComparer<ViewModel>
         {
             public int Compare(ViewModel x, ViewModel y)
             {

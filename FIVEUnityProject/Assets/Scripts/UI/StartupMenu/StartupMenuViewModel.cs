@@ -37,25 +37,25 @@ namespace FIVE.UI.StartupMenu
         {
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.Get(nameof(GameDisplayViewModel)).SetActive(true);
+            UIManager.GetViewModel<GameDisplayViewModel>().SetActive(true);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnMultiPlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            // UIManager.AddViewModel<MultiplayersEntryViewModel>();
         }
         private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnOptionsButtonClicked));
-            //View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.Get(nameof(OptionsMenuViewModel)).SetActive(true);
-            //UIManager.Get(nameof(OptionBGView)).SetActive(true);
+            UIManager.GetViewModel<OptionsMenuViewModel>().SetActive(true);
         }
         private void OnExitButtonClicked(object sender, EventArgs eventArgs)
         {
             Application.Quit();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
             Debug.Log(nameof(OnExitButtonClicked));
         }
 

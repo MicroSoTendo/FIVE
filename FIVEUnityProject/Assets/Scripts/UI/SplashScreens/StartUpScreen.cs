@@ -1,10 +1,12 @@
-﻿using FIVE.EventSystem;
+﻿using System;
+using FIVE.EventSystem;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace FIVE.UI.SplashScreens
 {
+    public abstract class OnFadedOut : IEventType { }
     public class StartUpScreen : LoadingSplashScreen
     {
         #region Private Fields
@@ -216,7 +218,7 @@ namespace FIVE.UI.SplashScreens
             S1Color.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
             S2Boundary.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
             S2Color.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-
+            this.RaiseEvent<OnFadedOut>(EventArgs.Empty);
         }
 
 

@@ -1,11 +1,12 @@
 ﻿using FIVE.EventSystem;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditorInternal;
+#endif
 
 namespace FIVE
 {
@@ -38,7 +39,7 @@ namespace FIVE
             this.RaiseEvent<OnMainLoaderDestroyed>(EventArgs.Empty);
         }
     }
-
+#if UNITY_EDITOR
     [CustomEditor(typeof(MainLoader))]
     public class MainLoaderEditor : Editor
     {
@@ -131,4 +132,5 @@ namespace FIVE
             }
         }
     }
+#endif
 }

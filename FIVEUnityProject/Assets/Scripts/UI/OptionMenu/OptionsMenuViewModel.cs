@@ -51,12 +51,15 @@ namespace FIVE.UI.OptionsMenu
         private void OnExitButtonClicked(object sender, EventArgs eventArgs)
         {
             Application.Quit();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
             Debug.Log(nameof(OnExitButtonClicked));
         }
         private void OnResumeButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnResumeButtonClicked));
-            UIManager.Get(nameof(OptionsMenuView)).SetActive(false);
+            UIManager.GetViewModel<OptionsMenuViewModel>().SetActive(false);
             //UIManager.Get(nameof(OptionBGView)).SetActive(false);
         }
         private void OnSoundOptionButtonClicked(object sender, EventArgs eventArgs)

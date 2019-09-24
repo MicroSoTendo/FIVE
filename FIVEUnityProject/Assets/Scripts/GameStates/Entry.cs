@@ -18,17 +18,22 @@ namespace FIVE.GameStates
     {
         private readonly List<Action> loadingActions = new List<Action>();
 
-        private void LoadingBasicUI()
+        private IEnumerator LoadingBasicUI()
         {
             var startupMenuViewModel = UIManager.AddViewModel<StartupMenuViewModel>();
+            yield return null;
             var backgroundViewModel = UIManager.AddViewModel<BackgroundViewModel>();
-            EventManager.Subscribe<OnLoadingFinished>((o, e) =>
+            yield return null;
+            EventManager.Subscribe<OnFadedOut>(async (o, e) =>
             {
+                await Task.Delay(1800);
                 startupMenuViewModel.SetActive(true);
                 backgroundViewModel.SetActive(true);
             });
             UIManager.AddViewModel<OptionsMenuViewModel>().SetActive(false);
+            yield return null;
             UIManager.AddViewModel<GameDisplayViewModel>().SetActive(false);
+            yield return null;
         }
 
         void Awake()
@@ -41,7 +46,7 @@ namespace FIVE.GameStates
             {
                 loadingActions.Add(async () => { await Task.Delay(1); });
             }
-            loadingActions.Add(LoadingBasicUI);
+            loadingActions.Add(() => { StartCoroutine(LoadingBasicUI());});
         }
 
         IEnumerator Start()
