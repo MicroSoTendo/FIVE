@@ -42,52 +42,52 @@ namespace FIVE
     [CustomEditor(typeof(MainLoader))]
     public class MainLoaderEditor : Editor
     {
-        private ReorderableList OnAwakeLoadingList;
-        private ReorderableList OnStartLoadingList;
+        private ReorderableList onAwakeLoadingList;
+        private ReorderableList onStartLoadingList;
 
-        private int OnAwakePickerWindowID;
-        private int OnStartPickerWindowID;
+        private int onAwakePickerWindowId;
+        private int onStartPickerWindowId;
 
         private MainLoader MainLoader => (MainLoader)target;
 
         private void OnEnable()
         {
-            OnAwakeLoadingList = new ReorderableList(MainLoader.InfrastructuresOnAwake, typeof(GameObject), true, true, true, true);
-            OnStartLoadingList = new ReorderableList(MainLoader.InfrastructuresOnStart, typeof(GameObject), true, true, true, true);
-            OnAwakeLoadingList.drawHeaderCallback += rect => { GUI.Label(rect, "Loading on Awake"); };
-            OnStartLoadingList.drawHeaderCallback += rect => { GUI.Label(rect, "Loading on Start"); };
+            onAwakeLoadingList = new ReorderableList(MainLoader.InfrastructuresOnAwake, typeof(GameObject), true, true, true, true);
+            onStartLoadingList = new ReorderableList(MainLoader.InfrastructuresOnStart, typeof(GameObject), true, true, true, true);
+            onAwakeLoadingList.drawHeaderCallback += rect => { GUI.Label(rect, "Loading on Awake"); };
+            onStartLoadingList.drawHeaderCallback += rect => { GUI.Label(rect, "Loading on Start"); };
 
-            OnAwakeLoadingList.onAddCallback += OnAdd;
-            OnStartLoadingList.onAddCallback += OnAdd;
+            onAwakeLoadingList.onAddCallback += OnAdd;
+            onStartLoadingList.onAddCallback += OnAdd;
 
 
-            OnAwakeLoadingList.onRemoveCallback += RemoveItem;
-            OnStartLoadingList.onRemoveCallback += RemoveItem;
+            onAwakeLoadingList.onRemoveCallback += RemoveItem;
+            onStartLoadingList.onRemoveCallback += RemoveItem;
         }
 
         private void OnDisable()
         {
-            OnAwakeLoadingList.drawHeaderCallback = null;
-            OnAwakeLoadingList.onAddCallback = null;
-            OnAwakeLoadingList.onRemoveCallback = null;
+            onAwakeLoadingList.drawHeaderCallback = null;
+            onAwakeLoadingList.onAddCallback = null;
+            onAwakeLoadingList.onRemoveCallback = null;
 
-            OnStartLoadingList.drawHeaderCallback = null;
-            OnStartLoadingList.onAddCallback = null;
-            OnStartLoadingList.onRemoveCallback = null;
+            onStartLoadingList.drawHeaderCallback = null;
+            onStartLoadingList.onAddCallback = null;
+            onStartLoadingList.onRemoveCallback = null;
         }
 
         private void OnAdd(ReorderableList list)
         {
-            if (list == OnAwakeLoadingList)
+            if (list == onAwakeLoadingList)
             {
-                OnAwakePickerWindowID = EditorGUIUtility.GetControlID(FocusType.Passive) + 100;
-                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, OnAwakePickerWindowID);
+                onAwakePickerWindowId = GUIUtility.GetControlID(FocusType.Passive) + 100;
+                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, onAwakePickerWindowId);
             }
 
-            if (list == OnStartLoadingList)
+            if (list == onStartLoadingList)
             {
-                OnStartPickerWindowID = EditorGUIUtility.GetControlID(FocusType.Passive) + 101;
-                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, OnStartPickerWindowID);
+                onStartPickerWindowId = GUIUtility.GetControlID(FocusType.Passive) + 101;
+                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, onStartPickerWindowId);
             }
 
             EditorUtility.SetDirty(target);
@@ -95,12 +95,12 @@ namespace FIVE
 
         private void RemoveItem(ReorderableList list)
         {
-            if(list == OnAwakeLoadingList)
+            if(list == onAwakeLoadingList)
             {
                 MainLoader.InfrastructuresOnAwake.RemoveAt(list.index);
             }
 
-            if(list == OnStartLoadingList)
+            if(list == onStartLoadingList)
             {
                 MainLoader.InfrastructuresOnStart.RemoveAt(list.index);
             }
@@ -111,22 +111,22 @@ namespace FIVE
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            OnAwakeLoadingList.DoLayoutList();
+            onAwakeLoadingList.DoLayoutList();
             GUILayout.Space(10);
-            OnStartLoadingList.DoLayoutList();
+            onStartLoadingList.DoLayoutList();
             GUILayout.Space(10);
 
-            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == OnAwakePickerWindowID)
+            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == onAwakePickerWindowId)
             {
-                GameObject selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
-                OnAwakePickerWindowID = -1;
+                var selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
+                onAwakePickerWindowId = -1;
                 MainLoader.InfrastructuresOnAwake.Add(selectedObject);
             }
 
-            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == OnStartPickerWindowID)
+            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == onStartPickerWindowId)
             {
-                GameObject selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
-                OnStartPickerWindowID = -1;
+                var selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
+                onStartPickerWindowId = -1;
                 MainLoader.InfrastructuresOnStart.Add(selectedObject);
             }
         }
