@@ -14,7 +14,7 @@ using UnityEngine;
 namespace FIVE.GameStates
 {
     public abstract class OnLoadingFinished : IEventType { }
-    public class Entry : GameState
+    public class Entry : GameMode
     {
         private readonly List<Action> loadingActions = new List<Action>();
 
@@ -59,6 +59,8 @@ namespace FIVE.GameStates
             }
             loadingActions.Clear();
             this.RaiseEvent<OnLoadingFinished>(EventArgs.Empty);
+            EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e)=>{SwitchTo<SinglePlayer>();});
+            EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e)=>{SwitchTo<MultiPlayer>();});
         }
     }
 }
