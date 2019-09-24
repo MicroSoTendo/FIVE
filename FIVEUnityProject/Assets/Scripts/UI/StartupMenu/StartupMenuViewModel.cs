@@ -9,11 +9,8 @@ namespace FIVE.UI.StartupMenu
 {
     public class StartupMenuViewModel : ViewModel<StartupMenuView, StartupMenuViewModel>
     {
-
-        public string TestInputFieldText { get; set; }
         public StartupMenuViewModel() : base()
         {
-
             binder.Bind(view => view.SinglePlayerButton.onClick).
             To(viewModel => viewModel.OnSinglePlayerButtonClicked);
 
@@ -40,7 +37,7 @@ namespace FIVE.UI.StartupMenu
         {
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.Get(nameof(GameDisplayView)).SetActive(true);
+            UIManager.Get(nameof(GameDisplayViewModel)).SetActive(true);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
@@ -53,7 +50,7 @@ namespace FIVE.UI.StartupMenu
         {
             Debug.Log(nameof(OnOptionsButtonClicked));
             //View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.Get(nameof(OptionsMenuView)).SetActive(true);
+            UIManager.Get(nameof(OptionsMenuViewModel)).SetActive(true);
             //UIManager.Get(nameof(OptionBGView)).SetActive(true);
         }
         private void OnExitButtonClicked(object sender, EventArgs eventArgs)

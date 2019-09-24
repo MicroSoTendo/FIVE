@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace FIVE
 {
@@ -24,6 +25,18 @@ namespace FIVE
                 }
             }
             return null;
+        }
+
+        public static List<GameObject> GetChildGameObjects(this GameObject gameObject)
+        {
+            var results = new List<GameObject>();
+            for (int i = 0; i < gameObject.transform.childCount; i++)
+            {
+                GameObject child = gameObject.transform.GetChild(i).gameObject;
+                results.Add(child);
+                results.AddRange(child.GetChildGameObjects());
+            }
+            return results;
         }
     }
 }

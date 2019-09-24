@@ -1,11 +1,9 @@
 ﻿using FIVE.EventSystem;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace FIVE.UI
+namespace FIVE.UI.SplashScreens
 {
     public class StartUpScreen : LoadingSplashScreen
     {
@@ -20,10 +18,7 @@ namespace FIVE.UI
         private GameObject canvas;
         private float width, height, unitWidth;
         private MoveInAnimation genmtt, wallymtt, laurencemtt, wenmtt, yumtt;
-
         #endregion
-
-
 
         #region Animation Methods
         private void InstantiateCharacters()
@@ -131,8 +126,24 @@ namespace FIVE.UI
 
             wenmtt.OnFinished = (o, e) => { yumtt.StartMoving(); };
         }
-
         #endregion
+
+        public StartUpScreen(GameObject canvas) : base()
+        {
+            this.canvas = canvas;
+            MainThreadDispatcher.Schedule(
+                SetUpFromCanvas,
+                InstantiateTSS,
+                SetUpTSSPositionAndBar,
+                InstantiateCharacters,
+                InstantiateSymbols,
+                SetUpInitialPositions,
+                SetUpTargetPositions,
+                SetUpSymbolPositions,
+                SetUpEventTrigering,
+                SetActive,
+                StartMoving);
+        }
         private void SetUpFromCanvas()
         {
             width = canvas.GetComponent<RectTransform>().sizeDelta.x;
@@ -140,98 +151,57 @@ namespace FIVE.UI
             unitWidth = (width / 4f);
             canvas.AddComponent<Image>().sprite = Resources.Load<Sprite>("UI/WhiteBackground");
         }
-        public StartUpScreen(GameObject canvas,Queue<Action> loadingTasks, int numberOfDummyTasks = 2000, int dummyTaskDuration = 2) : base(loadingTasks)
+
+        private async void StartMoving()
         {
-            this.canvas = canvas;
-            Action[] splashScreenActions = {
-                SetUpFromCanvas, InstantiateTSS, SetUpTSSPositionAndBar, InstantiateCharacters, InstantiateSymbols,  SetUpInitialPositions, SetUpTargetPositions,
-                SetUpSymbolPositions, SetUpEventTrigering,  () =>
-                {
-                    MainThreadDispatcher.Schedule(() =>
-                    {
-                        Gen.SetActive(true);
-                        Laurence.SetActive(true);
-                        Wen.SetActive(true);
-                        Wally.SetActive(true);
-                        Yu.SetActive(true);
-                        QuestionMark.SetActive(true);
-                        ExclamationMark.SetActive(true);
-                        LaurenceMark.SetActive(true);
-                        TBoundary.SetActive(true);
-                        TColor.SetActive(true);
-                        S1Boundary.SetActive(true);
-                        S1Color.SetActive(true);
-                        S2Boundary.SetActive(true);
-                        S2Color.SetActive(true);
-                    });
-                    Task.Run(async () =>
-                    {
-                        genmtt.StartMoving();
-                        await Task.Delay(1);
-                        laurencemtt.StartMoving();
-                        await Task.Delay(2);
-                        wenmtt.StartMoving();
-                        await Task.Delay(1);
-                        wallymtt.StartMoving();
-                    });
-                }};
-            var newQueue = new Queue<Action>();
-            foreach (Action action in splashScreenActions)
-            {
-                newQueue.Enqueue(action);
-            }
-
-            //Dummy task for testing purpose
-            for (int i = 0; i < numberOfDummyTasks; i++)
-            {
-                //var str = i.ToString();
-                newQueue.Enqueue(() =>
-                {
-                    var t = Task.Delay(dummyTaskDuration);
-                    while (!t.IsCompleted)
-                    {
-                        //Debug.Log("Dummy" + str);
-                    }
-                });
-            }
-
-
-            foreach (Action action in loadingTasks)
-            {
-                newQueue.Enqueue(action);
-            }
-
-            base.loadingTasks = newQueue;
-            totalTasks = newQueue.Count;
-
-            base.loadingTasks.Enqueue(FadingOut);
-            base.loadingTasks.Enqueue(async () =>
-            {
-                await Task.Delay(2000);
-                MainThreadDispatcher.Schedule(() =>
-                {
-                    MainThreadDispatcher.Destroy(Wally);
-                    MainThreadDispatcher.Destroy(Gen);
-                    MainThreadDispatcher.Destroy(Laurence);
-                    MainThreadDispatcher.Destroy(Yu);
-                    MainThreadDispatcher.Destroy(Wen);
-                    MainThreadDispatcher.Destroy(QuestionMark);
-                    MainThreadDispatcher.Destroy(ExclamationMark);
-                    MainThreadDispatcher.Destroy(LaurenceMark);
-                    MainThreadDispatcher.Destroy(TBoundary);
-                    MainThreadDispatcher.Destroy(TColor);
-                    MainThreadDispatcher.Destroy(S1Boundary);
-                    MainThreadDispatcher.Destroy(S1Color);
-                    MainThreadDispatcher.Destroy(S2Boundary);
-                    MainThreadDispatcher.Destroy(S2Color);
-                    MainThreadDispatcher.Destroy(canvas);
-                });
-            });
-
+            genmtt.StartMoving();
+            await Task.Delay(1);
+            laurencemtt.StartMoving();
+            await Task.Delay(2);
+            wenmtt.StartMoving();
+            await Task.Delay(1);
+            wallymtt.StartMoving();
         }
 
-        private void FadingOut()
+        private void SetActive()
         {
+            Gen.SetActive(true);
+            Laurence.SetActive(true);
+            Wen.SetActive(true);
+            Wally.SetActive(true);
+            Yu.SetActive(true);
+            QuestionMark.SetActive(true);
+            ExclamationMark.SetActive(true);
+            LaurenceMark.SetActive(true);
+            TBoundary.SetActive(true);
+            TColor.SetActive(true);
+            S1Boundary.SetActive(true);
+            S1Color.SetActive(true);
+            S2Boundary.SetActive(true);
+            S2Color.SetActive(true);
+        }
+        private void Destroy()
+        {
+            MainThreadDispatcher.Destroy(Wally, 2f);
+            MainThreadDispatcher.Destroy(Gen, 2f);
+            MainThreadDispatcher.Destroy(Laurence, 2f);
+            MainThreadDispatcher.Destroy(Yu, 2f);
+            MainThreadDispatcher.Destroy(Wen, 2f);
+            MainThreadDispatcher.Destroy(QuestionMark, 2f);
+            MainThreadDispatcher.Destroy(ExclamationMark, 2f);
+            MainThreadDispatcher.Destroy(LaurenceMark, 2f);
+            MainThreadDispatcher.Destroy(TBoundary, 2f);
+            MainThreadDispatcher.Destroy(TColor, 2f);
+            MainThreadDispatcher.Destroy(S1Boundary, 2f);
+            MainThreadDispatcher.Destroy(S1Color, 2f);
+            MainThreadDispatcher.Destroy(S2Boundary, 2f);
+            MainThreadDispatcher.Destroy(S2Color, 2f);
+            MainThreadDispatcher.Destroy(canvas, 2f);
+        }
+
+        public void DoFadingOut()
+        {
+            Destroy();
             Wally.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
             Gen.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
             Laurence.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
@@ -246,6 +216,7 @@ namespace FIVE.UI
             S1Color.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
             S2Boundary.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
             S2Color.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
+
         }
 
 
@@ -261,7 +232,7 @@ namespace FIVE.UI
         }
         private GameObject InitLogoHelper(string name, GameObject parentCanvas, float width)
         {
-            var obj = GameObject.Instantiate(Resources.Load<GameObject>("Logos/Prefabs/" + name), parentCanvas.transform);
+            GameObject obj = GameObject.Instantiate(Resources.Load<GameObject>("Logos/Prefabs/" + name), parentCanvas.transform);
             obj.SetActive(false);
             RectTransform recttransform = obj.GetComponent<RectTransform>();
             recttransform.sizeDelta *= (width / recttransform.sizeDelta.x);
@@ -275,7 +246,6 @@ namespace FIVE.UI
                 return;
             }
 
-            float progress = (float)finishedTasks / totalTasks;
             float tAmount = 0f;
             float s1Amount = 0f;
             float s2Amount = 0f;
@@ -294,6 +264,7 @@ namespace FIVE.UI
                 s1Amount = 1f;
                 s2Amount = progress * 3f - 2f;
             }
+
             TColor.GetComponent<Image>().fillAmount = tAmount;
             S1Color.GetComponent<Image>().fillAmount = s1Amount;
             S2Color.GetComponent<Image>().fillAmount = s2Amount;

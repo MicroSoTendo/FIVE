@@ -68,7 +68,8 @@ namespace FIVE.Network
         public override void OnJoinedRoom()
         {
             Debug.Log(nameof(OnJoinedRoom));
-            gameObject.AddComponent<MultiplayersGameView>();
+            GameObject multiPlayer = new GameObject("Multiplayer");
+            multiPlayer.AddComponent<MultiplayersManager>();
         }
 
 

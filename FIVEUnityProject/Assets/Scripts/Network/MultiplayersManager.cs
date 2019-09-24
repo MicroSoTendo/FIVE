@@ -8,7 +8,7 @@ using NetworkView = FIVE.Network.Views.NetworkView;
 namespace FIVE.Network
 {
     [RequireComponent(typeof(PhotonView))]
-    public class MultiplayersGameView : MonoBehaviourPun
+    public class MultiplayersManager : MonoBehaviourPun
     {
         public enum State
         {

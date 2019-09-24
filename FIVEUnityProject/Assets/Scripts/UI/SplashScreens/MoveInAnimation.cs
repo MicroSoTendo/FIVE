@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace FIVE.UI
+namespace FIVE.UI.SplashScreens
 {
     public class MoveInAnimation : MonoBehaviour
     {

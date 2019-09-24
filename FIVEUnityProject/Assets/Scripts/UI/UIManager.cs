@@ -4,6 +4,9 @@ using FIVE.UI.MainGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.StartupMenu;
 using System.Collections.Generic;
+using FIVE.EventSystem;
+using FIVE.GameStates;
+using FIVE.UI.SplashScreens;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,46 +22,16 @@ namespace FIVE.UI
 
         private void Awake()
         {
-    
-
             var canvasGameObject = new GameObject { name = "LoadingSplashCanvas" };
-            var canvas = canvasGameObject.AddComponent<Canvas>();
+            Canvas canvas = canvasGameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasGameObject.AddComponent<CanvasScaler>();
             canvasGameObject.AddComponent<GraphicRaycaster>();
-
-            //TODO: Move this to proper place
-            var loadingActions = new Queue<Action>();
-            GameObject go = null;
-            loadingActions.Enqueue(() =>
-            {
-                go = Resources.Load<GameObject>("EntityPrefabs/CyberPunkPrefab");
-                // go.SetActive(true);
-            });
-            loadingActions.Enqueue(() =>
-            {
-                Instantiate(go, Vector3.zero, Quaternion.identity).SetActive(true);
-            });
-            loadingActions.Enqueue(() =>
-            {
-                nameToVMs.Add(nameof(StartupMenuViewModel), new StartupMenuViewModel());
-
-                ViewModel optionsMenuViewModel = new OptionsMenuViewModel();
-                optionsMenuViewModel.SetActive(false);
-                nameToVMs.Add(nameof(OptionsMenuView), optionsMenuViewModel);
-
-                ViewModel gameDisplayViewModel = new GameDisplayViewModel();
-                gameDisplayViewModel.SetActive(false);
-                nameToVMs.Add(nameof(GameDisplayView), gameDisplayViewModel);
-
-                ViewModel backgroundViewModel = new BackgroundViewModel();
-                backgroundViewModel.SortingOrder = -10;
-                nameToVMs.Add(nameof(BackgroundView), backgroundViewModel);
-            });
-            var startUpScreen = new StartUpScreen(canvasGameObject, loadingActions, numberOfDummyTask);
+            var startUpScreen = new StartUpScreen(canvasGameObject);
             StartCoroutine(startUpScreen.OnTransitioning());
-
+            EventManager.Subscribe<OnLoadingFinished>((sender, args) => startUpScreen.DoFadingOut());
         }
+
         private void Start()
         {
         }

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace FIVE.UI
+namespace FIVE.UI.SplashScreens
 {
     public abstract class SplashScreen
     {

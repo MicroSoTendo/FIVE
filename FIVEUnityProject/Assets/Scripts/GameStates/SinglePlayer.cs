@@ -1,6 +1,6 @@
 ﻿namespace FIVE.GameStates
 {
-    class SinglePlayer : GameState
+    public class SinglePlayer : GameState
     {
     }
 }
