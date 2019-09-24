@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace FIVE.EventSystem
 {
@@ -35,14 +36,22 @@ namespace FIVE.EventSystem
             }
         }
 
-        public static void Schedule(Action action)
+        public static void Schedule(params Action[] actions)
         {
-            ScheduledActions.Enqueue(action);
+            foreach (Action action in actions)
+            {
+                ScheduledActions.Enqueue(action);
+            }
         }
 
         public static void ScheduleCoroutine(IEnumerator coroutine)
         {
             ScheduledCoroutine.Enqueue(coroutine);
+        }
+
+        public static void Destroy(GameObject gameObject, float time = 0f)
+        {
+            Schedule(() => { Object.Destroy(gameObject, time); });
         }
     }
 }
