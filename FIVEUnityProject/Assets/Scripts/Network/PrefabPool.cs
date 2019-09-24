@@ -1,5 +1,10 @@
-﻿using Photon.Pun;
+﻿using System;
+using System.Collections.Generic;
+using FIVE.Network;
+using FIVE.Network.Views;
+using Photon.Pun;
 using UnityEngine;
+using NetworkView = FIVE.Network.Views.NetworkView;
 
 namespace Assets.Scripts.PrefabPool
 {
@@ -15,13 +20,37 @@ namespace Assets.Scripts.PrefabPool
         {
         }
 
-        public void HackInstantiate(GameObject gameObject)
+        private readonly Dictionary<SyncModule, Action<GameObject>> addingViewsTable =
+            new Dictionary<SyncModule, Action<GameObject>>
+            {
+                {SyncModule.Animator, AddView<AnimatorView> },
+                {SyncModule.Transform, AddView<TransformView> },
+                {SyncModule.Rigidbody, AddView<RigidbodyView> },
+            };
+
+        private static void AddView<T>(GameObject gameObject) where T: NetworkView
+        {
+            var view = gameObject.AddComponent<T>();
+            gameObject.GetComponent<PhotonView>().ObservedComponents.Add(view);
+        }
+
+        public void HackInstantiate(GameObject gameObject, params SyncModule[] syncModules)
         {
             isHacking = true;
             hackedGameObject = gameObject;
-            if (gameObject.GetComponent<PhotonView>() == null)
+            PhotonView photonView = gameObject.GetComponent<PhotonView>();
+            if (photonView == null)
             {
-                gameObject.AddComponent<PhotonView>();
+                photonView = gameObject.AddComponent<PhotonView>();
+            }
+            if (photonView.ObservedComponents == null)
+            {
+                photonView.ObservedComponents = new List<Component>();
+            }
+
+            foreach (SyncModule syncModule in syncModules)
+            {
+                addingViewsTable[syncModule](gameObject);
             }
             PhotonNetwork.Instantiate("", Vector3.zero, Quaternion.identity);
         }

@@ -6,27 +6,34 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
+    public enum SyncModule
+    {
+        Transform,
+        Animator,
+        Rigidbody,
+    }
+
     public class NetworkProxy
     {
         private static readonly ConcurrentDictionary<GameObject, ConcurrentQueue<NetworkProxy>> NetworkedObjects = new ConcurrentDictionary<GameObject, ConcurrentQueue<NetworkProxy>>();
         private readonly GameObject gameObject;
         private readonly List<Component> observedComponents = null;
 
-        public static bool TryCreateProxy(GameObject gameObject, out NetworkProxy proxy)
+
+        public static NetworkProxy ProxyIt(GameObject gameObject, params SyncModule[] syncModules)
         {
             if (!PhotonNetwork.IsConnected)
             {
-                proxy = null;
-                return false;
+                return null;
             }
 
             if (!(PhotonNetwork.PrefabPool is PrefabPools))
             {
                 PhotonNetwork.PrefabPool = PrefabPools.Instance;
             }
-            PrefabPools.Instance.HackInstantiate(gameObject);
-            proxy = new NetworkProxy(gameObject);
-            return true;
+            PrefabPools.Instance.HackInstantiate(gameObject, syncModules);
+            var proxy = new NetworkProxy(gameObject);
+            return proxy;
 
         }
 

@@ -6,7 +6,7 @@ namespace FIVE.Network.Views
 {
     public abstract class NetworkView : MonoBehaviour, IPunObservable
     {
-        protected PhotonView PhotonView { get; }
+        protected PhotonView PhotonView { get; private set; }
         protected event Action<PhotonStream, PhotonMessageInfo> OnSending;
         protected event Action<PhotonStream, PhotonMessageInfo> OnReading;
         protected void SetStreamingDelegate(
@@ -26,7 +26,7 @@ namespace FIVE.Network.Views
             }
         }
 
-        protected NetworkView()
+        protected virtual void Awake()
         {
             PhotonView = gameObject.GetComponent<PhotonView>();
         }
