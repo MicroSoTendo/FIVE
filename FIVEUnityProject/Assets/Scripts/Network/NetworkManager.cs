@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using Assets.Scripts.PrefabPool;
 using FIVE.EventSystem;
 using FIVE.UI.StartupMenu;
 using Photon.Pun;
@@ -12,6 +13,11 @@ namespace FIVE.Network
     public class NetworkManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         private LobbyInfoModel lobbyInfoModel;
+
+        void Awake()
+        {
+            PhotonNetwork.PrefabPool = PrefabPools.Instance;
+        }
 
         void Start()
         {

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Assets.Scripts.PrefabPool;
 using Photon.Pun;
 using UnityEngine;
-using FIVE.Network.Views;
-using NetworkView = FIVE.Network.Views.NetworkView;
 
 namespace FIVE.Network
 {
@@ -24,9 +22,9 @@ namespace FIVE.Network
 
             if (!(PhotonNetwork.PrefabPool is PrefabPools))
             {
-                PhotonNetwork.PrefabPool = new PrefabPools();
+                PhotonNetwork.PrefabPool = PrefabPools.Instance;
             }
-
+            PrefabPools.Instance.HackInstantiate(gameObject);
             proxy = new NetworkProxy(gameObject);
             return true;
 
