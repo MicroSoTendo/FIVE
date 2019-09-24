@@ -6,9 +6,9 @@ namespace FIVE.EventSystem
 {
     public static class Util
     {
-        public static void RaiseEvent<T>(this object sender, EventArgs args) where T : IEventType
+        public static void RaiseEvent<T>(this object sender, EventArgs args = null) where T : IEventType
         {
-            EventManager.RaiseEvent<T>(sender, args);
+            EventManager.RaiseEvent<T>(sender, args ?? EventArgs.Empty);
             Debug.Log($"{sender} raised event {typeof(T)}");
         }
 
