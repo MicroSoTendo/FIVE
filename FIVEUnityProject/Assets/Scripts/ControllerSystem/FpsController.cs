@@ -11,7 +11,7 @@ namespace FIVE.ControllerSystem
         private readonly RobotSphere robotSphere;
 
         private Vector3 rot = Vector3.zero;
-        private readonly float rotSpeed = 40f;
+        // private readonly float rotSpeed = 40f;
 
         public FpsController(CharacterController cc, GameObject gameObject)
         {

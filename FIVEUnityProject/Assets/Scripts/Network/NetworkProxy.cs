@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Assets.Scripts.PrefabPool;
 using Photon.Pun;
 using UnityEngine;
+using FIVE.Network.Views;
+using NetworkView = FIVE.Network.Views.NetworkView;
 
 namespace FIVE.Network
 {
@@ -10,7 +12,7 @@ namespace FIVE.Network
     {
         private static readonly ConcurrentDictionary<GameObject, ConcurrentQueue<NetworkProxy>> NetworkedObjects = new ConcurrentDictionary<GameObject, ConcurrentQueue<NetworkProxy>>();
         private readonly GameObject gameObject;
-        private readonly List<Component> observedComponents;
+        private readonly List<Component> observedComponents = null;
 
         public static bool TryCreateProxy(GameObject gameObject, out NetworkProxy proxy)
         {

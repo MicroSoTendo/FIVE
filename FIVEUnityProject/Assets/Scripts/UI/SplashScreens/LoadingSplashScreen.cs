@@ -34,7 +34,6 @@ namespace FIVE.UI.SplashScreens
         {
             while (Progress <= 1)
             {
-                Debug.Log(Progress);
                 UpdateLoadingProgressBar();
                 yield return null;
             }

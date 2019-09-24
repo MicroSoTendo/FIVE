@@ -1,6 +1,5 @@
 ﻿using FIVE.ControllerSystem;
 using FIVE.EventSystem;
-using Photon.Pun;
 using UnityEngine;
 using FIVE.AWSL;
 using FIVE.CameraSystem;
@@ -14,7 +13,7 @@ namespace FIVE.Robot
 
         private enum ControllerOp { FPS, RTS, };
 
-        private readonly ControllerOp currOp = ControllerOp.FPS;
+        // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
 
         private bool editingCode = false;
@@ -40,13 +39,11 @@ namespace FIVE.Robot
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera), transform);
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera), transform, true);
             thirdPersonCamera.transform.SetParent(transform);
             thirdPersonCamera.transform.localPosition = new Vector3(0, 2, 0);
             thirdPersonCamera.transform.localRotation = Quaternion.Euler(90, 0, 0);
 
-            fpsCamera.gameObject.GetComponent<AudioListener>().enabled = false;
-            thirdPersonCamera.gameObject.GetComponent<AudioListener>().enabled = true;
             cc = GetComponent<CharacterController>();
             movable = GetComponent<Movable>();
 

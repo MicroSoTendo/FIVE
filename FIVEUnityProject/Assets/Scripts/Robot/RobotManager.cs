@@ -7,20 +7,15 @@ namespace FIVE.Robot
     public class RobotManager : MonoBehaviour
     {
         public GameObject RobotPrefab;
-
+        private static RobotManager instance;
         private void Awake()
         {
-            EventManager.Subscribe<OnSinglePlayerButtonClicked>((b, args) => Instantiate(RobotPrefab, new Vector3(0f, 20f, 0f), Quaternion.identity));
+            instance = this;
         }
 
-        // Start is called before the first frame update
-        private void Start()
+        public static GameObject CreateRobot()
         {
-        }
-
-        // Update is called once per frame
-        private void Update()
-        {
+            return Instantiate(instance.RobotPrefab, new Vector3(0f, 20f, 0f), Quaternion.identity);
         }
     }
 }

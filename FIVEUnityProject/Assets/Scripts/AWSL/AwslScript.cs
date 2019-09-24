@@ -17,7 +17,7 @@ namespace FIVE.AWSL
 
         public string content;
         public int index;
-        internal Stmts rootStmts;
+        internal Stmts rootStmts = null;
 
         internal AwslScript(string script)
         {

@@ -5,7 +5,7 @@ namespace FIVE.Network
 {
     public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
     {
-        [SerializeField] private string PlayerNickName;
+        [SerializeField] private string PlayerNickName = "";
         private GameObject player;
         private PhotonView playerPhotonView;
         void Start()

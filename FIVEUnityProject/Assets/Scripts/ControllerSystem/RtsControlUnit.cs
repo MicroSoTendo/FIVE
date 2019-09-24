@@ -8,7 +8,7 @@ namespace FIVE.ControllerSystem
 
         private Vector3 currTarget;
         private Vector3 velocity;
-        private readonly float speed = 10f;
+        // private readonly float speed = 10f;
 
         private void Start()
         {

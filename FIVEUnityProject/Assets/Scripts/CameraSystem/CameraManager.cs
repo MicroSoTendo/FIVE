@@ -34,6 +34,17 @@ namespace FIVE.CameraSystem
         public static Camera AddCamera(string cameraName = null, Transform parent = null, bool enableAudioListener = false)
         {
             GameObject gameObject = Instantiate(instance.cameraPrefab);
+            if (enableAudioListener) //Make sure only one audio listener active simutaneously
+            {
+                foreach (Camera camerasValue in instance.cameras.Values)
+                {
+                    AudioListener audioListener = camerasValue.GetComponent<AudioListener>();
+                    if (audioListener != null)
+                    {
+                        audioListener.enabled = false;
+                    }
+                }
+            }
             gameObject.GetComponent<AudioListener>().enabled = enableAudioListener;
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera camera = gameObject.GetComponent<Camera>();
