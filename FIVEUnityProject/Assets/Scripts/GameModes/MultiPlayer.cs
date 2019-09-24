@@ -26,6 +26,7 @@ namespace FIVE.GameStates
             GameObject robot = RobotManager.CreateRobot();
             robot.SetActive(false);
             NetworkProxy.ProxyIt(robot, SyncModule.Transform);
+            robot.name = "P1";
         }
 
         private void OnJoinedLobby(object sender, EventArgs e)

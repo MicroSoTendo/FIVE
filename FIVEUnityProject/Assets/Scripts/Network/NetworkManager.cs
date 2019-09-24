@@ -51,13 +51,11 @@ namespace FIVE.Network
         public override void OnConnectedToMaster()
         {
             this.RaiseEvent<OnConnectedToMaster>();
-            //bool result = PhotonNetwork.JoinLobby();
         }
 
         public override void OnJoinedLobby()
         {
             this.RaiseEvent<OnJoinedLobby>();
-            //PhotonNetwork.JoinOrCreateRoom("Test Room", new RoomOptions(), new TypedLobby());
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -81,8 +79,6 @@ namespace FIVE.Network
         public override void OnJoinedRoom()
         {
             this.RaiseEvent<OnJoinedRoom>();
-            //GameObject multiPlayer = new GameObject("Multiplayer");
-            //multiPlayer.AddComponent<MultiplayersManager>();
         }
 
 
