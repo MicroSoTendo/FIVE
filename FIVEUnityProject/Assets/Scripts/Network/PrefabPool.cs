@@ -5,7 +5,6 @@ using FIVE.Network.Views;
 using Photon.Pun;
 using UnityEditor;
 using UnityEngine;
-using NetworkView = FIVE.Network.Views.NetworkView;
 
 namespace Assets.Scripts.PrefabPool
 {
@@ -14,19 +13,15 @@ namespace Assets.Scripts.PrefabPool
 
         public static PrefabPools Instance { get; } = new PrefabPools();
 
-        private readonly DefaultPool defaultPool = new DefaultPool();
         private readonly Dictionary<SyncModule, Action<GameObject>> addingViewsTable =
             new Dictionary<SyncModule, Action<GameObject>>
             {
                 {SyncModule.Animator, AddView<AnimatorView> },
-                {SyncModule.Transform, AddView<PhotonTransformView> },
+                {SyncModule.Transform, AddView<TransformView> },
                 {SyncModule.Rigidbody, AddView<RigidbodyView> },
             };
 
-        private readonly Dictionary<string, GameObject> hackDictionary = new Dictionary<string, GameObject>();
-
-        private bool isHacking = false;
-        private GameObject gameObjectBeingHacking;
+        private readonly Dictionary<string, SyncModule[]> hackDictionary = new Dictionary<string, SyncModule[]>();
 
         private PrefabPools() { }
 
@@ -50,40 +45,32 @@ namespace Assets.Scripts.PrefabPool
             }
         }
         
-        public void HackInstantiate(GameObject gameObject, params SyncModule[] syncModules)
+        public void HackInstantiate(GameObject givenPrefab, params SyncModule[] syncModules)
         {
-            if (!(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(gameObject, out string guid, out long _)))
+            if (!(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(givenPrefab, out string guid, out long _)))
             {
                 Debug.LogWarning("Networked objects need to be in asset database.");
                 return;
             }
-            
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            
-
-            //first-time network local object
-            SetPhotonView(gameObject);
-            SetPhotonView(prefab);
-
-            foreach (SyncModule syncModule in syncModules)
-            {
-                addingViewsTable[syncModule](gameObject);
-                addingViewsTable[syncModule](prefab);
-            }
-
-            isHacking = true;
-            gameObjectBeingHacking = gameObject;
+            hackDictionary.Add(guid, syncModules);
             PhotonNetwork.Instantiate(guid, Vector3.zero, Quaternion.identity);
         }
 
         //Only be invoked when receiving networking requests
         public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
         {
-            GameObject result = isHacking ? gameObjectBeingHacking : hackDictionary[prefabId];
-            gameObjectBeingHacking = null;
-            isHacking = false;
-            return result;
+            SyncModule[] syncModules = hackDictionary[prefabId];
+            string path = AssetDatabase.GUIDToAssetPath(prefabId);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            var instantiatedGameObject = GameObject.Instantiate(prefab, position, rotation);
+            instantiatedGameObject.SetActive(false);
+            //first-time network local object
+            SetPhotonView(instantiatedGameObject);
+            foreach (SyncModule syncModule in syncModules)
+            {
+                addingViewsTable[syncModule](instantiatedGameObject);
+            }
+            return instantiatedGameObject;
         }
 
         public void Destroy(GameObject gameObject)

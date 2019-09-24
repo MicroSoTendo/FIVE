@@ -23,10 +23,8 @@ namespace FIVE.GameStates
 
         private void OnJoinedRoom(object sender, EventArgs e)
         {
-            GameObject robot = RobotManager.CreateRobot();
-            robot.SetActive(false);
-            NetworkProxy.ProxyIt(robot, SyncModule.Transform);
-            robot.name = "P1";
+            GameObject robot = RobotManager.GetPrefab();
+            NetworkProxy.Instantiate(robot, SyncModule.Transform);
         }
 
         private void OnJoinedLobby(object sender, EventArgs e)

@@ -20,7 +20,7 @@ namespace FIVE.Network
         private readonly List<Component> observedComponents = null;
 
 
-        public static NetworkProxy ProxyIt(GameObject gameObject, params SyncModule[] syncModules)
+        public static NetworkProxy Instantiate(GameObject gameObject, params SyncModule[] syncModules)
         {
             if (!PhotonNetwork.IsConnected)
             {
