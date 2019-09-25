@@ -7,7 +7,6 @@ namespace FIVE.UI.Background
     {
         public BackgroundViewModel() : base()
         {
-            EventManager.Subscribe<OnSinglePlayerButtonClicked>((s, a) => { SetActive(false); });
         }
 
     }

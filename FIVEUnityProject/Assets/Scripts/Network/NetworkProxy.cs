@@ -3,32 +3,37 @@ using System.Collections.Generic;
 using Assets.Scripts.PrefabPool;
 using Photon.Pun;
 using UnityEngine;
-using FIVE.Network.Views;
-using NetworkView = FIVE.Network.Views.NetworkView;
 
 namespace FIVE.Network
 {
+    public enum SyncModule
+    {
+        Transform,
+        Animator,
+        Rigidbody,
+    }
+
     public class NetworkProxy
     {
         private static readonly ConcurrentDictionary<GameObject, ConcurrentQueue<NetworkProxy>> NetworkedObjects = new ConcurrentDictionary<GameObject, ConcurrentQueue<NetworkProxy>>();
         private readonly GameObject gameObject;
         private readonly List<Component> observedComponents = null;
 
-        public static bool TryCreateProxy(GameObject gameObject, out NetworkProxy proxy)
+
+        public static NetworkProxy Instantiate(GameObject gameObject, params SyncModule[] syncModules)
         {
             if (!PhotonNetwork.IsConnected)
             {
-                proxy = null;
-                return false;
+                return null;
             }
 
             if (!(PhotonNetwork.PrefabPool is PrefabPools))
             {
-                PhotonNetwork.PrefabPool = new PrefabPools();
+                PhotonNetwork.PrefabPool = PrefabPools.Instance;
             }
-
-            proxy = new NetworkProxy(gameObject);
-            return true;
+            PrefabPools.Instance.HackInstantiate(gameObject, syncModules);
+            var proxy = new NetworkProxy(gameObject);
+            return proxy;
 
         }
 

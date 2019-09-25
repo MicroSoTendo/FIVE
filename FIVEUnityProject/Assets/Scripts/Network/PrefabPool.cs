@@ -1,40 +1,81 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using FIVE.Network;
+using FIVE.Network.Views;
 using Photon.Pun;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.PrefabPool
 {
     public class PrefabPools : IPunPrefabPool
     {
-        public PrefabPools()
+
+        public static PrefabPools Instance { get; } = new PrefabPools();
+
+        private readonly Dictionary<SyncModule, Action<GameObject>> addingViewsTable =
+            new Dictionary<SyncModule, Action<GameObject>>
+            {
+                {SyncModule.Animator, AddView<AnimatorView> },
+                {SyncModule.Transform, AddView<TransformView> },
+                {SyncModule.Rigidbody, AddView<RigidbodyView> },
+            };
+
+        private readonly Dictionary<string, SyncModule[]> hackDictionary = new Dictionary<string, SyncModule[]>();
+
+        private PrefabPools() { }
+
+
+        private static void AddView<T>(GameObject gameObject) where T: Component
         {
+            var view = gameObject.AddComponent<T>();
+            gameObject.GetComponent<PhotonView>().ObservedComponents.Add(view);
         }
 
-        public readonly Dictionary<string, GameObject> ResourceCache = new Dictionary<string, GameObject>();
-        public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
+        private void SetPhotonView(GameObject gameObject)
         {
-            GameObject res = null;
-            bool cached = this.ResourceCache.TryGetValue(prefabId, out res);
-            if (!cached)
+            var view = gameObject.GetComponent<PhotonView>();
+            if (view == null)
             {
-                res = (GameObject)Resources.Load(prefabId, typeof(GameObject));
-                if (res == null)
-                {
-                    Debug.LogError("failed to load \"" + prefabId + "\" . Make sure it's in a \"Resources\" folder.");
-                }
-                else
-                {
-                    this.ResourceCache.Add(prefabId, res);
-                }
+                view = gameObject.AddComponent<PhotonView>();
+            }
+            if (view.ObservedComponents == null)
+            {
+                view.ObservedComponents = new List<Component>();
+            }
+        }
+        
+        public void HackInstantiate(GameObject givenPrefab, params SyncModule[] syncModules)
+        {
+            if (!(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(givenPrefab, out string guid, out long _)))
+            {
+                Debug.LogWarning("Networked objects need to be in asset database.");
+                return;
             }
 
-            bool wasActive = res.activeSelf;
-            if (wasActive) res.SetActive(false);
+            if (!hackDictionary.ContainsKey(guid))
+            {
+                hackDictionary.Add(guid, syncModules);
+            }
 
-            GameObject instance = GameObject.Instantiate(res, position, rotation) as GameObject;
+            PhotonNetwork.Instantiate(guid, Vector3.zero, Quaternion.identity);
+        }
 
-            if (wasActive) res.SetActive(true);
-            return instance;
+        //Only be invoked when receiving networking requests
+        public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
+        {
+            SyncModule[] syncModules = hackDictionary[prefabId];
+            string path = AssetDatabase.GUIDToAssetPath(prefabId);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            var instantiatedGameObject = GameObject.Instantiate(prefab, position, rotation);
+            instantiatedGameObject.SetActive(false);
+            //first-time network local object
+            SetPhotonView(instantiatedGameObject);
+            foreach (SyncModule syncModule in syncModules)
+            {
+                addingViewsTable[syncModule](instantiatedGameObject);
+            }
+            return instantiatedGameObject;
         }
 
         public void Destroy(GameObject gameObject)

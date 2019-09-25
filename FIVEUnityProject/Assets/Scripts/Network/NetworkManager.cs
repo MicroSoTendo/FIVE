@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using Assets.Scripts.PrefabPool;
 using FIVE.EventSystem;
 using FIVE.UI.StartupMenu;
 using Photon.Pun;
@@ -12,6 +13,11 @@ namespace FIVE.Network
     public class NetworkManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         private LobbyInfoModel lobbyInfoModel;
+
+        void Awake()
+        {
+            PhotonNetwork.PrefabPool = PrefabPools.Instance;
+        }
 
         void Start()
         {
@@ -39,37 +45,40 @@ namespace FIVE.Network
 
         public override void OnConnected()
         {
-            Debug.Log("OnConnected");
+            this.RaiseEvent<OnConnected>();
         }
 
         public override void OnConnectedToMaster()
         {
-            Debug.Log("OnConnectedToMaster");
-            bool result = PhotonNetwork.JoinLobby();
+            this.RaiseEvent<OnConnectedToMaster>();
         }
 
         public override void OnJoinedLobby()
         {
-            Debug.Log(nameof(OnJoinedLobby));
-            PhotonNetwork.JoinOrCreateRoom("Test Room", new RoomOptions(), new TypedLobby());
+            this.RaiseEvent<OnJoinedLobby>();
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            lobbyInfoModel.RoomsList.Clear();
-            roomList.ForEach(o => lobbyInfoModel.RoomsList.Add(o));
+            this.RaiseEvent<OnRoomListUpdate>(new OnRoomListUpdateEventArgs(roomList));
+            //lobbyInfoModel.RoomsList.Clear();
+            //roomList.ForEach(o => lobbyInfoModel.RoomsList.Add(o));
         }
 
         public void JoinRoom(string roomName)
         {
             PhotonNetwork.JoinRoom(roomName);
         }
+
+        public void JoinOrCreateRoom(string roomName)
+        {
+            PhotonNetwork.JoinOrCreateRoom(roomName, new RoomOptions(), new TypedLobby());
+        }
+
         
         public override void OnJoinedRoom()
         {
-            Debug.Log(nameof(OnJoinedRoom));
-            GameObject multiPlayer = new GameObject("Multiplayer");
-            multiPlayer.AddComponent<MultiplayersManager>();
+            this.RaiseEvent<OnJoinedRoom>();
         }
 
 
@@ -78,14 +87,14 @@ namespace FIVE.Network
             PhotonNetwork.CreateRoom(roomName, roomOptions);
         }
 
-        void Update()
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             
         }
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        public void JoinLobby()
         {
-            
+            PhotonNetwork.JoinLobby();
         }
     }
 }

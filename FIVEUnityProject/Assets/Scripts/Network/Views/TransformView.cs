@@ -66,7 +66,7 @@ namespace FIVE.Network.Views
             }
         }
 
-        private void Awake()
+        private void Start()
         {
             storedPosition = transform.position;
             networkPosition = Vector3.zero;

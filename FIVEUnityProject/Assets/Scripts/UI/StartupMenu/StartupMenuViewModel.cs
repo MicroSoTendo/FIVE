@@ -1,5 +1,6 @@
 using System;
 using FIVE.EventSystem;
+using FIVE.UI.Background;
 using FIVE.UI.Multiplayers;
 using UnityEngine;
 using FIVE.UI.MainGameDisplay;
@@ -38,12 +39,16 @@ namespace FIVE.UI.StartupMenu
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
             UIManager.GetViewModel<GameDisplayViewModel>().SetActive(true);
+            UIManager.GetViewModel<BackgroundViewModel>().SetActive(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnMultiPlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
+            UIManager.GetViewModel<GameDisplayViewModel>().SetActive(true);
+            UIManager.GetViewModel<BackgroundViewModel>().SetActive(false);
+            this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
         {

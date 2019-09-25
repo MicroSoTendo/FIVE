@@ -7,7 +7,6 @@ namespace FIVE.GameStates
         public void SwitchTo<T>() where T : GameMode
         {
             gameObject.AddComponent<T>().transform.SetParent(null);
-            Destroy(this);
         }
     }
 }

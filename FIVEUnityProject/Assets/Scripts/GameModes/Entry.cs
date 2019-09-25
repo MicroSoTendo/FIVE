@@ -60,7 +60,7 @@ namespace FIVE.GameStates
             loadingActions.Clear();
             this.RaiseEvent<OnLoadingFinished>(EventArgs.Empty);
             EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e)=>{SwitchTo<SinglePlayer>();});
-            EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e)=>{SwitchTo<MultiPlayer>();});
+            EventManager.Subscribe<OnMultiPlayersButtonClicked>((o, e)=>{SwitchTo<MultiPlayer>();});
         }
     }
 }
