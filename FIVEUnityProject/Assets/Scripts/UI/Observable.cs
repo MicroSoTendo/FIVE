@@ -1,35 +1,33 @@
+using System;
 using FIVE.EventSystem;
-
 using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace FIVE.UI
 {
-    public abstract class Observable : INotifyPropertyChanged
+    public abstract class Observable<TEventArgs> where TEventArgs : EventArgs
     {
-        public event PropertyChangedEventHandler PropertyChanged
+        public event EventHandler<TEventArgs> OnObservableChanged
         {
             add
             {
-                EventManager.Subscribe<OnPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(value);
+                EventManager.Subscribe<OnObservableChanged<TEventArgs>, TEventArgs>(value);
             }
 
             remove
             {
-                EventManager.Unsubscribe<OnPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(value);
+                EventManager.Unsubscribe<OnObservableChanged<TEventArgs>, TEventArgs>(value);
             }
         }
 
-        protected void OnPropertyChange(PropertyChangedEventArgs propertyChangedEventArgs)
+        protected void RaiseObservableChanged(TEventArgs observableChangedEventArgs)
         {
-            this.RaiseEvent<OnPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(
-                propertyChangedEventArgs);
+            this.RaiseEvent<OnObservableChanged<TEventArgs>, TEventArgs>(observableChangedEventArgs);
         }
 
-        protected async Task OnPropertyChangeAsync(PropertyChangedEventArgs propertyChangedEventArgs)
+        protected async Task RaiseObservableChangedAsync(TEventArgs propertyChangedEventArgs)
         {
-            await this.RaiseEventAsync<OnPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(
-                propertyChangedEventArgs);
+            await this.RaiseEventAsync<OnObservableChanged<TEventArgs>, TEventArgs>(propertyChangedEventArgs);
         }
     }
 }

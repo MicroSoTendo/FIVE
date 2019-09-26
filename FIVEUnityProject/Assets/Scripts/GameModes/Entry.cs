@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.Background;
-using FIVE.UI.MainGameDisplay;
+using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.SplashScreens;
 using FIVE.UI.StartupMenu;
@@ -32,7 +32,7 @@ namespace FIVE.GameStates
             });
             UIManager.AddViewModel<OptionsMenuViewModel>().SetActive(false);
             yield return null;
-            UIManager.AddViewModel<GameDisplayViewModel>().SetActive(false);
+            UIManager.AddViewModel<InGameDisplayViewModel>().SetActive(false);
             yield return null;
         }
 

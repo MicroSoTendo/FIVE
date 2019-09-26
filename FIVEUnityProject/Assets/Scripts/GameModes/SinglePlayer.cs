@@ -1,4 +1,8 @@
-﻿using FIVE.Robot;
+﻿using FIVE.Interactive;
+using FIVE.Robot;
+using FIVE.UI;
+using FIVE.UI.InGameDisplay;
+using UnityEngine;
 
 namespace FIVE.GameStates
 {
@@ -6,7 +10,11 @@ namespace FIVE.GameStates
     {
         void Start()
         {
-            RobotManager.CreateRobot();
+            GameObject robot = RobotManager.CreateRobot();
+            Inventory inventory = InventoryManager.AddInventory(robot);
+            InventoryViewModel inventoryViewModel = UIManager.AddViewModel<InventoryViewModel>();
+            inventoryViewModel.Inventory = inventory;
+            inventoryViewModel.SetActive(false);
         }
     }
 }

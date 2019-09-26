@@ -31,6 +31,11 @@ namespace FIVE.EventSystem
         {
             await EventManager.RaiseEventAsync<T>(sender, args);
         }
+        
+        public static async Task RaiseEventAsync<T, TEventArgs>(this object sender, EventArgs args)
+        {
+            await EventManager.RaiseEventAsync<T>(sender, args);
+        }
 
         public static async Task RaiseEventAsync<T, THandler, TEventArgs>(this object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>

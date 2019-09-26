@@ -119,6 +119,13 @@ namespace FIVE.EventSystem
             Instance.defaultHandlerNodes[typeof(T)].Remove(new HandlerNode<EventHandler>(handler, requiredMain));
         }
 
+        public static void Unsubscribe<T, TEventArgs>(EventHandler<TEventArgs> handler, bool requiredMain = true)
+            where T : IEventType
+        {
+            Assert.IsTrue(Instance.initialized);
+            Instance.dynamicHandlerNodes[typeof(T)].Remove(new HandlerNode<EventHandler<TEventArgs>>(handler, requiredMain));
+        }
+
         public static void Unsubscribe<T, THandler, TEventArgs>(THandler handler, bool requiresMain = true)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
@@ -198,6 +205,14 @@ namespace FIVE.EventSystem
         public static async Task RaiseEventAsync<T, THandler, TEventArgs>(object sender, TEventArgs args)
             where T : IEventType<THandler, TEventArgs>
             where THandler : Delegate
+            where TEventArgs : EventArgs
+        {
+            await RaiseEventAsync<T>(sender, args);
+        }        
+        
+        
+        public static async Task RaiseEventAsync<T, TEventArgs>(object sender, TEventArgs args)
+            where T : IEventType<TEventArgs>
             where TEventArgs : EventArgs
         {
             await RaiseEventAsync<T>(sender, args);
