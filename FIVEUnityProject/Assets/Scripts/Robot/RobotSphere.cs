@@ -118,7 +118,7 @@ namespace FIVE.Robot
 
             // energe loss
             energy -= Time.deltaTime;
-            Debug.Log(energy);
+            // Debug.Log(energy);
         }
 
         public void LateUpdate()
