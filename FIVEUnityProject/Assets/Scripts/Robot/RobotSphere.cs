@@ -1,8 +1,8 @@
-﻿using FIVE.ControllerSystem;
+﻿using FIVE.AWSL;
+using FIVE.CameraSystem;
+using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using UnityEngine;
-using FIVE.AWSL;
-using FIVE.CameraSystem;
 
 namespace FIVE.Robot
 {
@@ -31,6 +31,10 @@ namespace FIVE.Robot
         private AwslScript script;
         public bool scriptActive;
 
+        // Robot Status
+        private float energy; // 1 - 100
+        private float health;
+
         private void Awake()
         {
 
@@ -55,6 +59,9 @@ namespace FIVE.Robot
             // }
 
             scriptActive = false;
+
+            energy = 100f;
+            health = 100f;
         }
 
         private void Start()
@@ -65,8 +72,11 @@ namespace FIVE.Robot
 
         private void Update()
         {
-            currState = RobotState.Idle;
-            if (cc.velocity.magnitude != 0)
+            if (cc.velocity.magnitude == 0)
+            {
+                currState = RobotState.Idle;
+            }
+            else
             {
                 currState = RobotState.Walk;
             }
@@ -105,6 +115,10 @@ namespace FIVE.Robot
             {
                 fpsController.Update();
             }
+
+            // energe loss
+            energy -= Time.deltaTime;
+            Debug.Log(energy);
         }
 
         public void LateUpdate()

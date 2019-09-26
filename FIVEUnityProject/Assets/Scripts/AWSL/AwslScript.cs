@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FIVE.Robot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using FIVE.Robot;
 
 namespace FIVE.AWSL
 {
@@ -32,7 +32,6 @@ namespace FIVE.AWSL
 
         internal void Execute(GameObject gameObject)
         {
-            CharacterController cc = gameObject.GetComponent<CharacterController>();
             RobotSphere robotSphere = gameObject.GetComponent<RobotSphere>();
             if (ip < program.Count)
             {
@@ -41,24 +40,18 @@ namespace FIVE.AWSL
                 if (instruction.Item1 == Instruction.Forward)
                 {
                     robotSphere.Move(Movable.Move.Front, 1, true);
-                    //robotSphere.currState = RobotSphere.RobotState.Walk;
-                    //cc.SimpleMove(gameObject.transform.forward * 5.0f);
                 }
                 else if (instruction.Item1 == Instruction.Backward)
                 {
                     robotSphere.Move(Movable.Move.Front, 1, true);
-                    //robotSphere.currState = RobotSphere.RobotState.Walk;
-                    //cc.SimpleMove(-gameObject.transform.forward * 5.0f);
                 }
                 else if (instruction.Item1 == Instruction.Left)
                 {
                     robotSphere.Move(Movable.Move.Left, 1, true);
-                    //gameObject.transform.Rotate(new Vector3(0, 360 - instruction.Item2, 0));
                 }
                 else if (instruction.Item1 == Instruction.Right)
                 {
                     robotSphere.Move(Movable.Move.Right, 1, true);
-                    //gameObject.transform.Rotate(new Vector3(0, instruction.Item2, 0));
                 }
                 else if (instruction.Item1 == Instruction.Goto)
                 {
