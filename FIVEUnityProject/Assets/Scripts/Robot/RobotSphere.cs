@@ -1,8 +1,8 @@
-﻿using FIVE.ControllerSystem;
+﻿using FIVE.AWSL;
+using FIVE.CameraSystem;
+using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using UnityEngine;
-using FIVE.AWSL;
-using FIVE.CameraSystem;
 
 namespace FIVE.Robot
 {
@@ -70,11 +70,9 @@ namespace FIVE.Robot
 
         private void Update()
         {
-            //currState = RobotState.Idle;
             if (cc.velocity.magnitude == 0)
             {
                 currState = RobotState.Idle;
-                //currState = RobotState.Walk;
             }
             else
             {
