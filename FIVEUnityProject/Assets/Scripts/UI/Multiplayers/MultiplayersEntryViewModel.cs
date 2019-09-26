@@ -1,9 +1,8 @@
+using FIVE.Network;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using FIVE.EventSystem;
-using FIVE.Network;
-using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,14 +15,14 @@ namespace FIVE.UI.Multiplayers
         public MultiplayersEntryViewModel()
         {
             contentTransform = View.ContentTransform;
-            EventManager.Subscribe<OnPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(OnLobbyInfoChanged);
-            binder.Bind(View=>View.CreateButton.onClick).To(ViewModel=>ViewModel.OnCreateButtonClicked);
+            // EventManager.Subscribe<OnObservableChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>(OnLobbyInfoChanged);
+            binder.Bind(View => View.CreateButton.onClick).To(ViewModel => ViewModel.OnCreateButtonClicked);
         }
 
         private void OnLobbyInfoChanged(object sender, PropertyChangedEventArgs e)
         {
             var lobbyInfoModel = sender as LobbyInfoModel;
-            foreach (var roomInfo in lobbyInfoModel.RoomsList)
+            foreach (RoomInfo roomInfo in lobbyInfoModel.RoomsList)
             {
                 if (roomEntries.ContainsKey(roomInfo))
                 {
@@ -54,7 +53,7 @@ namespace FIVE.UI.Multiplayers
 
         private void OnCreateButtonClicked(object sender, EventArgs e)
         {
-            this.SetActive(false);
+            SetActive(false);
             UIManager.AddViewModel<CreateRoomViewModel>();
         }
 
