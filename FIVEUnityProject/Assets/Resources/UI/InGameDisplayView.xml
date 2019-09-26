@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="GameDisplayView">
+<Canvas name="InGameDisplayView">
     <Button name = "PlayerButton" Prefab = "EntityPrefabs/Btn_User" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(-350,300,0);}"/>
     <Button name = "Energy" Prefab = "EntityPrefabs/MenuButton" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(-100,300,0); sizeDelta:(350,100);}" Text = "Energy Bar"/>
     <Button name = "Inventory" Prefab = "EntityPrefabs/MenuButton" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(-200,-400,0); sizeDelta:(350,100);}" Text = "Ability"/>

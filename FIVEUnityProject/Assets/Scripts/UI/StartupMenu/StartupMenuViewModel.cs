@@ -3,7 +3,7 @@ using FIVE.EventSystem;
 using FIVE.UI.Background;
 using FIVE.UI.Multiplayers;
 using UnityEngine;
-using FIVE.UI.MainGameDisplay;
+using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
 
 namespace FIVE.UI.StartupMenu
@@ -29,16 +29,13 @@ namespace FIVE.UI.StartupMenu
 
             binder.Bind(view => view.ExitGameButton.onClick).
             To(viewModel => viewModel.OnExitButtonClicked);
-
-            //binder.Bind(view => view.TestInputField.text).
-            //To(viewMode => viewMode.TestInputFieldText, BindingMode.TwoWay);
         }
 
         private void OnSinglePlayerButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnSinglePlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<GameDisplayViewModel>().SetActive(true);
+            UIManager.GetViewModel<InGameDisplayViewModel>().SetActive(true);
             UIManager.GetViewModel<BackgroundViewModel>().SetActive(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
@@ -46,7 +43,7 @@ namespace FIVE.UI.StartupMenu
         {
             Debug.Log(nameof(OnMultiPlayerButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<GameDisplayViewModel>().SetActive(true);
+            UIManager.GetViewModel<InGameDisplayViewModel>().SetActive(true);
             UIManager.GetViewModel<BackgroundViewModel>().SetActive(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }

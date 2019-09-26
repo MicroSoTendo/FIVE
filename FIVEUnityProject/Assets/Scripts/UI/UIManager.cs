@@ -1,6 +1,6 @@
 using System;
 using FIVE.UI.Background;
-using FIVE.UI.MainGameDisplay;
+using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.StartupMenu;
 using System.Collections.Generic;

@@ -2,13 +2,11 @@
 using System;
 using UnityEngine;
 
-namespace FIVE.UI.MainGameDisplay
+namespace FIVE.UI.InGameDisplay
 {
-    public class GameDisplayViewModel : ViewModel<GameDisplayView, GameDisplayViewModel>
+    public class InGameDisplayViewModel : ViewModel<InGameDisplayView, InGameDisplayViewModel>
     {
-
-        public string TestInputFieldText { get; set; }
-        public GameDisplayViewModel() : base()
+        public InGameDisplayViewModel() : base()
         {
 
             binder.Bind(view => view.PlayerButton.onClick).
@@ -22,9 +20,6 @@ namespace FIVE.UI.MainGameDisplay
 
             binder.Bind(view => view.Option.onClick).
             To(viewModel => viewModel.OnOptionClicked);
-
-            //binder.Bind(view => view.TestInputField.text).
-            //To(viewMode => viewMode.TestInputFieldText, BindingMode.TwoWay);
         }
 
         private void OnPlayerButtonClicked(object sender, EventArgs eventArgs)
@@ -37,13 +32,12 @@ namespace FIVE.UI.MainGameDisplay
         }
         private void OnInventoryClicked(object sender, EventArgs eventArgs)
         {
-            Debug.Log(nameof(OnInventoryClicked));
+            UIManager.GetViewModel<InventoryViewModel>().SetActive(true);
         }
         private void OnOptionClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnOptionClicked));
             UIManager.GetViewModel<OptionsMenuViewModel>().SetActive(true);
-            //UIManager.Get(nameof(OptionBGView)).SetActive(true);
         }
 
     }
