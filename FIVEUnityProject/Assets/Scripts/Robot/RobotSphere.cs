@@ -65,8 +65,13 @@ namespace FIVE.Robot
 
         private void Update()
         {
-            currState = RobotState.Idle;
-            if (cc.velocity.magnitude != 0)
+            //currState = RobotState.Idle;
+            if (cc.velocity.magnitude == 0)
+            {
+                currState = RobotState.Idle;
+                //currState = RobotState.Walk;
+            }
+            else
             {
                 currState = RobotState.Walk;
             }
