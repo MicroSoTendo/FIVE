@@ -24,7 +24,7 @@ namespace FIVE.UI
             View = View<TView, TViewModel>.Create<TView>();
             binder = new Binder<TView, TViewModel>(View, this);
 #if DEBUG
-            //MainThreadDispatcher.ScheduleCoroutine(MonitorXML());
+            MainThreadDispatcher.ScheduleCoroutine(MonitorXML());
 #endif
         }
 #if DEBUG

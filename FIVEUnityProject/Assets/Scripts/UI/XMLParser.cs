@@ -66,7 +66,7 @@ namespace FIVE.UI
         private static List<(string, object)> PropertyParser(XmlAttribute attribute)
         {
             List<(string, object)> parsedObjects = new List<(string, object)>();
-            Regex r = new Regex(@"\s*([\w]+)\s*\:\s*([\w\,\-\+\(\)]+)\;\s*");
+            Regex r = new Regex(@"\s*([\w]+)\s*\:\s*([\w\.\,\-\+\(\)]+)\;\s*");
             MatchCollection matchCollection = r.Matches(attribute.InnerText);
             foreach (Match match in matchCollection)
             {
@@ -74,6 +74,7 @@ namespace FIVE.UI
                 string name = captures[1].Value;
                 string value = captures[2].Value;
                 object parsedValue = PropertyParserDictionary[name].DynamicInvoke(value);
+                Debug.Log($"Name = {name}, Value = {value}");
                 parsedObjects.Add((name, parsedValue));
             }
             return parsedObjects;
