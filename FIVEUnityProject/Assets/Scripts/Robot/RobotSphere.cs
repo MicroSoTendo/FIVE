@@ -33,6 +33,7 @@ namespace FIVE.Robot
 
         // Robot Status
         private float energy; // 1 - 100
+        private float health;
 
         private void Awake()
         {
@@ -60,6 +61,7 @@ namespace FIVE.Robot
             scriptActive = false;
 
             energy = 100f;
+            health = 100f;
         }
 
         private void Start()
