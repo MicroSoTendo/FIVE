@@ -11,15 +11,15 @@ namespace FIVE.AWSL
     {
         private static readonly Dictionary<string, FuncT> Funcs = new Dictionary<string, FuncT>
         {
-            { "forward", FuncForward },
-            { "backward", FuncBackward },
-            { "left", FuncLeft },
-            { "right", FuncRight },
+            { "forward", FuncMove(Movable.Move.Front) },
+            { "backward", FuncMove(Movable.Move.Back) },
+            { "left", FuncMove(Movable.Move.Left) },
+            { "right", FuncMove(Movable.Move.Right) },
+            { "+", FuncOp((a,b)=>a+b) },
+            { "-", FuncOp((a,b)=>a-b) },
+            { "*", FuncOp((a,b)=>a*b) },
+            { "/", FuncOp((a,b)=>a/b) },
             { "goto", FuncGoto },
-            { "+", FuncAdd },
-            { "-", FuncSub },
-            { "*", FuncMul },
-            { "/", FuncDiv },
         };
 
         public string Name;
@@ -50,62 +50,29 @@ namespace FIVE.AWSL
             }
         }
 
-        private static string FuncForward(RuntimeContext rc, ParamList args)
+        private static FuncT FuncMove(Movable.Move dir)
         {
-            rc.Robot.GetComponent<RobotSphere>().Move(Movable.Move.Front, (int)float.Parse(args[0]), true);
-            return null;
+            return (rc, args) =>
+            {
+                rc.Robot.GetComponent<RobotSphere>().Move(dir, (int)float.Parse(args[0]), true);
+                return null;
+            };
         }
 
-        private static string FuncBackward(RuntimeContext rc, ParamList args)
+        private static FuncT FuncOp(Func<float, float, float> op)
         {
-            rc.Robot.GetComponent<RobotSphere>().Move(Movable.Move.Back, (int)float.Parse(args[0]), true);
-            return null;
-        }
-
-        private static string FuncLeft(RuntimeContext rc, ParamList args)
-        {
-            rc.Robot.GetComponent<RobotSphere>().Move(Movable.Move.Left, (int)float.Parse(args[0]), true);
-            return null;
-        }
-
-        private static string FuncRight(RuntimeContext rc, ParamList args)
-        {
-            rc.Robot.GetComponent<RobotSphere>().Move(Movable.Move.Right, (int)float.Parse(args[0]), true);
-            return null;
+            return (_, args) =>
+            {
+                float a = float.Parse(args[0]);
+                float b = float.Parse(args[1]);
+                return op(a, b).ToString();
+            };
         }
 
         private static string FuncGoto(RuntimeContext rc, ParamList args)
         {
             rc.ExprP = int.Parse(args[0]);
             return null;
-        }
-
-        private static string FuncAdd(RuntimeContext _, ParamList args)
-        {
-            float a = float.Parse(args[0]);
-            float b = float.Parse(args[1]);
-            return (a + b).ToString();
-        }
-
-        private static string FuncSub(RuntimeContext _, ParamList args)
-        {
-            float a = float.Parse(args[0]);
-            float b = float.Parse(args[1]);
-            return (a - b).ToString();
-        }
-
-        private static string FuncMul(RuntimeContext _, ParamList args)
-        {
-            float a = float.Parse(args[0]);
-            float b = float.Parse(args[1]);
-            return (a * b).ToString();
-        }
-
-        private static string FuncDiv(RuntimeContext _, ParamList args)
-        {
-            float a = float.Parse(args[0]);
-            float b = float.Parse(args[1]);
-            return (a / b).ToString();
         }
     }
 }
