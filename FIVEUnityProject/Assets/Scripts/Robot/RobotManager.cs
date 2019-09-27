@@ -4,7 +4,7 @@ namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {
-        [SerializeField] private readonly GameObject RobotPrefab = null;
+        [SerializeField] private GameObject RobotPrefab = null;
         private static RobotManager instance;
         private void Awake()
         {
