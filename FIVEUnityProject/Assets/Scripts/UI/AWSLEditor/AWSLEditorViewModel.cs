@@ -1,7 +1,5 @@
 ﻿using System;
 using FIVE.EventSystem;
-using UnityEngine.InputSystem;
-
 namespace FIVE.UI.AWSLEditor
 {
     internal class AWSLEditorViewModel : ViewModel<AWSLEditorView, AWSLEditorViewModel>
