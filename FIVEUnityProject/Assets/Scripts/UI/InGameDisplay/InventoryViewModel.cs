@@ -22,13 +22,18 @@ namespace FIVE.UI.InGameDisplay
 
         private void ExitInventory(object sender, EventArgs e)
         {
-            SetActive(false);
+            SetEnabled(false);
         }
 
-        private void AddCell(string id, out GameObject cell, out RectTransform rectTransform)
+        private void AddCell(string id, out GameObject cell, out RectTransform rectTransform, out Transform contentTransform)
         {
             cell = View.AddUIElementFromResources<GameObject>("Cell", id, ContentTransform);
+            cell.transform.SetParent(ContentTransform);
             rectTransform = cell.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0, 1);
+            rectTransform.anchorMax = new Vector2(0, 1);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            contentTransform = cell.GetChildGameObject("Content").transform;
         }
 
         private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -40,15 +45,18 @@ namespace FIVE.UI.InGameDisplay
                     {
                         int verticalBarWidth = 20; //TODO: get by call
                         int cellWidth = 62; //TODO: get by call
-                        int totalColumns = (int)(ContentTransform.sizeDelta.x - verticalBarWidth) / cellWidth;
+                        //TODO:fix this long stuff
+                        int totalColumns = (int)(ContentTransform.gameObject.transform.parent.transform.parent.GetComponent<RectTransform>().rect.width
+                         - verticalBarWidth) / cellWidth;
                         int startingIndex = e.NewStartingIndex;
+                    
                         int x = startingIndex % totalColumns;
                         int y = startingIndex / totalColumns;
-                        AddCell($"Cell-{i + startingIndex}", out GameObject cell, out RectTransform rectTransform);
-                        rectTransform.anchorMin = new Vector2(0, 1);
-                        rectTransform.anchorMax = new Vector2(0, 1);
-                        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                        AddCell($"Cell-{i + startingIndex}", out GameObject cell, out RectTransform rectTransform, out Transform itemHolder);
                         rectTransform.anchoredPosition = new Vector2(34 + x * cellWidth, -34 - y * cellWidth);
+                        GameObject go = (GameObject)e.NewItems[i];
+                        go.transform.SetParent(itemHolder);
+                        go.transform.localPosition = new Vector3(0,0,0);
                     }
                     break;
                 case NotifyCollectionChangedAction.Move:

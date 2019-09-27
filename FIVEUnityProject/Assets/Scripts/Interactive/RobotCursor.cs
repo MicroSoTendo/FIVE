@@ -1,4 +1,4 @@
-﻿using FIVE.CameraSystem;
+﻿using FIVE.EventSystem;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -20,10 +20,13 @@ namespace FIVE.Interactive
             {
                 Transform objectHit = hit.transform;
                 Pickable p = objectHit.gameObject.GetComponent<Pickable>();
+                if (p != null)
+                {
+                    p.OnCursorOver();
+                }
                 if (Input.GetMouseButtonDown(1))
                 {
-                    Debug.Log(objectHit.gameObject);
-                    GameObject.Destroy(objectHit.gameObject);
+                    this.RaiseEvent<OnDropItemToInventory, DropedItemToInventoryEventArgs>(new DropedItemToInventoryEventArgs(gameObject, null, objectHit.gameObject));
                 }
             }
         }

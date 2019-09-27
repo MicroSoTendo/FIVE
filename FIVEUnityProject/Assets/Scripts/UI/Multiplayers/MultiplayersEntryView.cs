@@ -16,7 +16,6 @@ namespace FIVE.UI.Multiplayers
             CreateButton = GetUIElement<Button>("RightButton");
             //Better way?
             ContentTransform = ScrollWindow.transform.GetChild(3).transform.GetChild(0).transform.GetChild(0);
-            LoadResources();
         }
     }
 }
