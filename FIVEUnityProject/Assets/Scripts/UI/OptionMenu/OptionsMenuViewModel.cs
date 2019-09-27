@@ -56,7 +56,7 @@ namespace FIVE.UI.OptionsMenu
         private void OnResumeButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnResumeButtonClicked));
-            UIManager.GetViewModel<OptionsMenuViewModel>().SetActive(false);
+            UIManager.GetViewModel<OptionsMenuViewModel>().SetEnabled(false);
             //UIManager.Get(nameof(OptionBGView)).SetActive(false);
         }
         private void OnSoundOptionButtonClicked(object sender, EventArgs eventArgs)

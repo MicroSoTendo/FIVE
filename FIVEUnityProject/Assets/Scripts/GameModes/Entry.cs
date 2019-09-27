@@ -28,12 +28,12 @@ namespace FIVE.GameStates
             EventManager.Subscribe<OnFadedOut>(async (o, e) =>
             {
                 await Task.Delay(1800);
-                startupMenuViewModel.SetActive(true);
-                backgroundViewModel.SetActive(true);
+                startupMenuViewModel.SetEnabled(true);
+                backgroundViewModel.SetEnabled(true);
             });
-            UIManager.AddViewModel<OptionsMenuViewModel>().SetActive(false);
+            UIManager.AddViewModel<OptionsMenuViewModel>().SetEnabled(false);
             yield return null;
-            UIManager.AddViewModel<InGameDisplayViewModel>().SetActive(false);
+            UIManager.AddViewModel<InGameDisplayViewModel>().SetEnabled(false);
             yield return null;
             //UIManager.AddViewModel<CAttributeViewModel>().SetActive(false);
             //yield return null;

@@ -8,9 +8,14 @@ namespace FIVE.UI
     {
         protected View View { get; set; }
         public int SortingOrder { get => View.ViewCanvas.sortingOrder; set => View.ViewCanvas.sortingOrder = value; }
-        public void SetActive(bool value)
+        public void SetEnabled(bool value)
         {
-            View.ViewCanvas.gameObject.SetActive(value);
+            View.ViewCanvas.enabled = value;
+        }
+
+        public void ToggleEnabled()
+        {
+            View.ViewCanvas.enabled ^= true;
         }
     }
     public abstract class ViewModel<TView, TViewModel> : ViewModel

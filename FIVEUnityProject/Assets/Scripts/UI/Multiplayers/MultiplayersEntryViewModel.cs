@@ -53,7 +53,7 @@ namespace FIVE.UI.Multiplayers
 
         private void OnCreateButtonClicked(object sender, EventArgs e)
         {
-            SetActive(false);
+            SetEnabled(false);
             UIManager.AddViewModel<CreateRoomViewModel>();
         }
 

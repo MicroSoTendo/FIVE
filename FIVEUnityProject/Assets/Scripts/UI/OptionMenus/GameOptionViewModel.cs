@@ -29,22 +29,22 @@ namespace FIVE.UI.OptionMenus
         {
             Debug.Log(nameof(OnGameResolutionButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<InGameDisplayViewModel>().SetActive(true);
-            UIManager.GetViewModel<BackgroundViewModel>().SetActive(false);
+            UIManager.GetViewModel<InGameDisplayViewModel>().SetEnabled(true);
+            UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnFullScreenButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnFullScreenButtonClicked));
             View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<InGameDisplayViewModel>().SetActive(true);
-            UIManager.GetViewModel<BackgroundViewModel>().SetActive(false);
+            UIManager.GetViewModel<InGameDisplayViewModel>().SetEnabled(true);
+            UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnSoundOptionButtonClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnSoundOptionButtonClicked));
-            UIManager.GetViewModel<OptionsMenuViewModel>().SetActive(true);
+            UIManager.GetViewModel<OptionsMenuViewModel>().SetEnabled(true);
         }
         private void OnResumeButtonClicked(object sender, EventArgs eventArgs)
         {

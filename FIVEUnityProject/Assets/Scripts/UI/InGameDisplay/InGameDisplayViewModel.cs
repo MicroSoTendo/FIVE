@@ -32,12 +32,12 @@ namespace FIVE.UI.InGameDisplay
         }
         private void OnInventoryClicked(object sender, EventArgs eventArgs)
         {
-            UIManager.GetViewModel<InventoryViewModel>().SetActive(true);
+            UIManager.GetViewModel<InventoryViewModel>().ToggleEnabled();
         }
         private void OnOptionClicked(object sender, EventArgs eventArgs)
         {
             Debug.Log(nameof(OnOptionClicked));
-            UIManager.GetViewModel<OptionsMenuViewModel>().SetActive(true);
+            UIManager.GetViewModel<OptionsMenuViewModel>().SetEnabled(true);
         }
 
     }

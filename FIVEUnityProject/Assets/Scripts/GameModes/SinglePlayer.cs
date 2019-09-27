@@ -14,7 +14,7 @@ namespace FIVE.GameStates
             Inventory inventory = InventoryManager.AddInventory(robot);
             InventoryViewModel inventoryViewModel = UIManager.AddViewModel<InventoryViewModel>();
             inventoryViewModel.Inventory = inventory;
-            inventoryViewModel.SetActive(false);
+            inventoryViewModel.SetEnabled(false);
         }
     }
 }
