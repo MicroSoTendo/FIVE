@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Canvas name="AWSLEditorView" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
+  <Panel name="AWSLEditorPanel">
+    <InputField name="CodeInputField" RectTransform="{anchorMin:(0,0.1); anchorMax:(1,1); }"/>
+    <Button name="SaveButton" RectTransform="{anchorMin:(0.4,0.05); anchorMax:(0.4,0.05); }" Text="Save"/>
+    <Button name="CancelButton" RectTransform="{anchorMin:(0.4,0.05); anchorMax:(0.4,0.05); }" Text="Cancel"/>
+  </Panel>
+</Canvas>
