@@ -72,6 +72,8 @@ namespace FIVE.Robot
 
         private void Update()
         {
+            // update animation at beginning to ensure consistency
+            animator.Update(currState);
             if (cc.velocity.magnitude == 0)
             {
                 currState = RobotState.Idle;
@@ -106,7 +108,6 @@ namespace FIVE.Robot
                 return;
             }
 
-            animator.Update(currState);
             if (scriptActive)
             {
                 ExecuteScript();
