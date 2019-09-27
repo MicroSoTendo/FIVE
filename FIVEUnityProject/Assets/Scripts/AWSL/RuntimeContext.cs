@@ -8,6 +8,7 @@ namespace FIVE.AWSL
         public RobotSphere Robot;
         public List<Expr> Exprs;
         public int ExprP = 0;
+        public Dictionary<string, object> Vars = new Dictionary<string, object>();
 
         public bool Execute()
         {

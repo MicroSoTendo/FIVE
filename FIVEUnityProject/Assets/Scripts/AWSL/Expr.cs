@@ -1,11 +1,12 @@
 ﻿using FIVE.Robot;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FIVE.AWSL
 {
-    using FuncT = Func<RuntimeContext, List<string>, string>;
-    using ParamList = List<string>;
+    using FuncT = Func<RuntimeContext, List<object>, object>;
+    using ParamList = List<object>;
 
     internal class Expr
     {
@@ -19,60 +20,126 @@ namespace FIVE.AWSL
             { "-", FuncOp((a,b)=>a-b) },
             { "*", FuncOp((a,b)=>a*b) },
             { "/", FuncOp((a,b)=>a/b) },
+            { "==", FuncOp((a,b)=>a==b) },
+            { "<", FuncOp((a,b)=>a<b) },
+            { ">", FuncOp((a,b)=>a>b) },
+            { "print", FuncPrint },
             { "goto", FuncGoto },
+            { "if", FuncIf },
+            { "v", FuncVar },
         };
 
         public string Name;
-        public List<object> Params = new List<object>();
+        public ParamList Params = new ParamList();
 
-        public string Execute(RuntimeContext rc)
+        public object Execute(RuntimeContext rc)
         {
-            ParamList actualParams = new List<string>();
-            for (int ParamP = 0; ParamP < Params.Count; ParamP++)
-            {
-                if (Params[ParamP] is string)
-                {
-                    actualParams.Add(Params[ParamP] as string);
-                }
-                else if (Params[ParamP] is Expr)
-                {
-                    actualParams.Add((Params[ParamP] as Expr).Execute(rc));
-                }
-            }
-
-            if (Funcs.ContainsKey(Name))
-            {
-                return Funcs[Name](rc, actualParams);
-            }
-            else
-            {
-                return null;
-            }
+            return Funcs.ContainsKey(Name) ? Funcs[Name](rc, Params) : null;
         }
 
         private static FuncT FuncMove(Movable.Move dir)
         {
             return (rc, args) =>
             {
-                rc.Robot.GetComponent<RobotSphere>().Move(dir, (int)float.Parse(args[0]), true);
+                rc.Robot.GetComponent<RobotSphere>().Move(dir, EvalInt(rc, args[0]), true);
                 return null;
             };
         }
 
-        private static FuncT FuncOp(Func<float, float, float> op)
+        private static FuncT FuncOp<T>(Func<float, float, T> op)
         {
-            return (_, args) =>
+            return (rc, args) =>
             {
-                float a = float.Parse(args[0]);
-                float b = float.Parse(args[1]);
-                return op(a, b).ToString();
+                return op(EvalFloat(rc, args[0]), EvalFloat(rc, args[1]));
             };
         }
 
-        private static string FuncGoto(RuntimeContext rc, ParamList args)
+        private static object FuncGoto(RuntimeContext rc, ParamList args)
         {
-            rc.ExprP = int.Parse(args[0]);
+            rc.ExprP = EvalInt(rc, args[0]);
             return null;
+        }
+
+        private static object FuncIf(RuntimeContext rc, ParamList args)
+        {
+            return EvalBool(rc, args[0]) ? Eval(rc, args[1]) : Eval(rc, args[2]);
+        }
+
+        private static object FuncVar(RuntimeContext rc, ParamList args)
+        {
+            if (args.Count >= 2)
+            {
+                string k = EvalString(rc, args[0]);
+                object v = Eval(rc, args[1]);
+                rc.Vars[k] = v;
+                return v;
+            }
+            else
+            {
+                return rc.Vars[EvalString(rc, args[0])];
+            }
+        }
+
+        private static object FuncPrint(RuntimeContext rc, ParamList args)
+        {
+            string s = "AWSL Script: ";
+            foreach (object a in args)
+            {
+                s += EvalString(rc, a) + " ";
+            }
+            Debug.Log(s);
+            return null;
+        }
+
+        private static object Eval(RuntimeContext rc, object arg)
+        {
+            return arg is Expr a ? a.Execute(rc) : arg;
+        }
+
+        private static float EvalFloat(RuntimeContext rc, object arg)
+        {
+            arg = Eval(rc, arg);
+            switch (arg)
+            {
+                case string a:
+                    return float.Parse(a);
+
+                case float a:
+                    return a;
+
+                case int a:
+                    return a;
+
+                case null:
+                    return 0;
+
+                default:
+                    return 0;
+            }
+        }
+
+        private static int EvalInt(RuntimeContext rc, object arg)
+        {
+            return (int)EvalFloat(rc, arg);
+        }
+
+        private static bool EvalBool(RuntimeContext rc, object arg)
+        {
+            arg = Eval(rc, arg);
+            if (arg is bool a)
+            {
+                return a;
+            }
+            else
+            {
+                throw new Exception("Cannot cast to bool");
+            }
+        }
+
+        private static string EvalString(RuntimeContext rc, object arg)
+        {
+            arg = Eval(rc, arg);
+            return arg is string a ? a : arg.ToString();
         }
     }
 }
