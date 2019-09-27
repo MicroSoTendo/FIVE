@@ -10,15 +10,16 @@ namespace FIVE.Interactive
     public class DropedItemToInventoryEventArgs : EventArgs
     {
         public GameObject Picker { get; }
-        public int Index { get; }
+        public int? Index { get; }
         public GameObject Item { get; }
-        public DropedItemToInventoryEventArgs(GameObject picker, int index, GameObject item)
+        public DropedItemToInventoryEventArgs(GameObject picker, int? index, GameObject item)
         {
             Index = index;
             Item = item;
             Picker = picker;
         }
     }
+
     public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs> { }
 
     public class OnInventoryChanged : IEventType<NotifyCollectionChangedEventArgs> { }
@@ -40,13 +41,20 @@ namespace FIVE.Interactive
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-
+            sender.RaiseEvent<OnInventoryChanged, NotifyCollectionChangedEventArgs>(e);
         }
 
         private void OnDropItemToInventory(object sender, DropedItemToInventoryEventArgs e)
         {
             //TODO: Size checking
-            items.Insert(e.Index, e.Item);
+            if (e.Index != null)
+            {
+                items.Insert(e.Index.Value, e.Item);
+            }
+            else
+            {
+                items.Add(e.Item);
+            }
         }
 
 
