@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="MultiplayersEntry">
+<Canvas name="MultiplayersEntry"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
     <Resources>
         <Button name = "RoomEntry" Prefab = "EntityPrefabs/RoomEntry"/>
     </Resources>

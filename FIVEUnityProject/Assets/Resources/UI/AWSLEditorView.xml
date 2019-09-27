@@ -2,9 +2,9 @@
 <Canvas name="AWSLEditorView" 
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
         xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
-  <Panel name="AWSLEditorPanel">
-    <InputField name="CodeInputField" RectTransform="{anchorMin:(0,0.1); anchorMax:(1,1); }"/>
-    <Button name="SaveButton" RectTransform="{anchorMin:(0.4,0.05); anchorMax:(0.4,0.05); }" Text="Save"/>
-    <Button name="CancelButton" RectTransform="{anchorMin:(0.4,0.05); anchorMax:(0.4,0.05); }" Text="Cancel"/>
+  <Panel name="AWSLEditorPanel" RectTransform="{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); sizeDelta:(800,960);}">
+    <InputField name="CodeInputField" RectTransform="{anchorMin:(0,0.1); anchorMax:(1,1); anchoredPosition:(0,0); sizeDelta:(0,0);}"/>
+    <Button name="SaveButton" RectTransform="{anchorMin:(0.35,0.05); anchorMax:(0.35,0.05); sizeDelta:(150,50);}" Text="Save"/>
+    <Button name="CancelButton" RectTransform="{anchorMin:(0.65,0.05); anchorMax:(0.65,0.05); sizeDelta:(150,50);}" Text="Cancel"/>
   </Panel>
 </Canvas>

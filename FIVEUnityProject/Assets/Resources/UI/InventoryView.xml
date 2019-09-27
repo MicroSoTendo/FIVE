@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="InventoryView">
+<Canvas name="InventoryView"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
   <Resources>
     <Button name = "Cell" Prefab = "EntityPrefabs/UI/Inventory/Cell"/>
   </Resources>

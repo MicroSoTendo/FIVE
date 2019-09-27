@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Canvas>
-  <Text name="RoomName" Text="Room Name" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(-100,0,0);}"/>
-  <InputField name = "RoomNameInput" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(0,0,0);}"/>
-  <Button name = "CreateButton" Text = "Create" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(120,0,0); sizeDelta:(70,30);}" />
+<Canvas 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
+  <Text name="RoomName" Text="Room Name" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot:(0.5,0.5); anchoredPosition3D:(-100,0,0);}"/>
+  <InputField name = "RoomNameInput" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot:(0.5,0.5); anchoredPosition3D:(0,0,0);}"/>
+  <Button name = "CreateButton" Text = "Create" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot:(0.5,0.5); anchoredPosition3D:(120,0,0); sizeDelta:(70,30);}" />
 </Canvas>

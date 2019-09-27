@@ -16,6 +16,7 @@
         <xs:attribute type="xs:string" name="name" use="optional"/>
         <xs:attribute type="xs:string" name="Prefab" use="optional"/>
         <xs:attribute type="RectTransformType" name="RectTransform" use="optional"/>
+        <xs:attribute type="xs:string" name="Transform" use="optional"/>
     </xs:attributeGroup>
 
     <xs:group name="PossibleChild">
@@ -26,13 +27,15 @@
                 <xs:element type="ScrollRectType" name="ScrollRect" maxOccurs="unbounded" minOccurs="0" />
                 <xs:element type="InputFieldType" name="InputField" maxOccurs="unbounded" minOccurs="0" />
                 <xs:element type="GameObjectType" name="GameObject" maxOccurs="unbounded" minOccurs="0" />
+                <xs:element type="ImageType" name="Image" maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element type="TextType" name="Text" maxOccurs="unbounded" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>
 
     <xs:simpleType name="RectTransformType">
         <xs:restriction base="xs:token">
-            <xs:pattern value="\{([\w]+\s*\:\s*\(([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*\,\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*(,\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?))?\s*\)\;\s*)*\s*\}"/>
+            <xs:pattern value="\{((anchorMin|anchorMax|pivot|sizeDelta|anchoredPosition|anchoredPosition3D)\s*\:\s*\(([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*\,\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*(,\s*([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?))?\s*\)\;\s*)*\s*\}"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -83,7 +86,10 @@
     </xs:complexType>
 
     <xs:complexType name="ImageType">
-        <xs:attributeGroup ref="UIElementAttributes"/>
+        <xs:attribute type="RectTransformType" name="RectTransform" use ="optional"/>
+        <xs:attribute type="xs:string" name="Sprite" use ="optional"/>
+        <xs:attribute type="xs:string" name="NativeSize" use ="optional"/>
+        <xs:attribute type="xs:string" name="name" use ="optional"/>
     </xs:complexType>
 
     <xs:complexType name="ResourcesType">
@@ -98,12 +104,7 @@
     </xs:complexType>
 
     <xs:complexType name="GameObjectType">
-        <xs:sequence>
-            <xs:choice>
-                <xs:element type="TextType" name="Text" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element type="ButtonType" name="Button" maxOccurs="unbounded" minOccurs="0"/>
-            </xs:choice>
-        </xs:sequence>
+        <xs:group ref="PossibleChild"/>
         <xs:attribute type="xs:string" name="name" use="optional"/>
         <xs:attribute type="xs:string" name="Prefab" use="optional"/>
     </xs:complexType>

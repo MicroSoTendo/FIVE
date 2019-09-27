@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="GameOptionView">
+<Canvas name="GameOptionView"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
     <Button name = "GameResolutionButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,100,0);}" Text = "GameResolution"/>
     <Button name = "FullScreenButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,0,0);}" Text = "FullScreenButton"/>
     <Button name = "SoundOptionButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-100,0);}" Text = "Game Options"/>
