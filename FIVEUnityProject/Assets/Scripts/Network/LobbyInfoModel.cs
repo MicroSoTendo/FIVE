@@ -1,8 +1,6 @@
-using FIVE.UI;
 using Photon.Realtime;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 
 namespace FIVE.Network
 {
@@ -18,20 +16,12 @@ namespace FIVE.Network
         public bool IsConnecting
         {
             get => isConnecting;
-            set
-            {
-                isConnecting = value;
-                //OnPropertyChange(new PropertyChangedEventArgs(nameof(IsConnecting)));
-            }
+            set => isConnecting = value;//OnPropertyChange(new PropertyChangedEventArgs(nameof(IsConnecting)));
         }
         public bool IsConnected
         {
             get => isConnected;
-            set
-            {
-                isConnected = value; 
-                //OnPropertyChange(new PropertyChangedEventArgs(nameof(IsConnected)));
-            }
+            set => isConnected = value; //OnPropertyChange(new PropertyChangedEventArgs(nameof(IsConnected)));
         }
 
         private bool isConnecting;

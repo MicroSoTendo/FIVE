@@ -25,7 +25,7 @@ namespace FIVE.EventSystem
 
         private EventManager()
         {
-            var mainThreadDispatcther = new GameObject(nameof(MainThreadDispatcher));
+            GameObject mainThreadDispatcther = new GameObject(nameof(MainThreadDispatcher));
             dispatcher = mainThreadDispatcther.AddComponent<MainThreadDispatcher>();
             defaultHandlerNodes = new ConcurrentDictionary<Type, HandlerList<HandlerNode<EventHandler>>>();
             dynamicHandlerNodes = new ConcurrentDictionary<Type, HandlerList<HandlerNode>>();
@@ -137,7 +137,7 @@ namespace FIVE.EventSystem
 
         public static async Task RaiseEventAsync<T>(object sender, EventArgs args)
         {
-            var concreteTypeEventTask = Task.Run(() =>
+            Task concreteTypeEventTask = Task.Run(() =>
             {
                 foreach ((bool requiresMain, List<HandlerNode<EventHandler>> handlerNodes) in Instance.defaultHandlerNodes[typeof(T)])
                 {
@@ -149,7 +149,7 @@ namespace FIVE.EventSystem
                 }
             });
 
-            var concreteTypeEventTaskDynamicInvoke = Task.Run(() =>
+            Task concreteTypeEventTaskDynamicInvoke = Task.Run(() =>
             {
                 foreach ((bool requiresMain, List<HandlerNode> handlerNodes) in Instance.dynamicHandlerNodes[typeof(T)])
                 {
@@ -161,7 +161,7 @@ namespace FIVE.EventSystem
                 }
             });
 
-            var baseTypeEventTask = Task.Run(() =>
+            Task baseTypeEventTask = Task.Run(() =>
             {
                 Type baseType = typeof(T).BaseType;
                 Debug.Log(baseType.Name);
@@ -180,7 +180,7 @@ namespace FIVE.EventSystem
                 }
             });
 
-            var baseTypeEventTaskDynamicInvoke = Task.Run(() =>
+            Task baseTypeEventTaskDynamicInvoke = Task.Run(() =>
             {
                 Type baseType = typeof(T).BaseType;
                 Debug.Log(baseType.Name);
@@ -208,9 +208,9 @@ namespace FIVE.EventSystem
             where TEventArgs : EventArgs
         {
             await RaiseEventAsync<T>(sender, args);
-        }        
-        
-        
+        }
+
+
         public static async Task RaiseEventAsync<T, TEventArgs>(object sender, TEventArgs args)
             where T : IEventType<TEventArgs>
             where TEventArgs : EventArgs

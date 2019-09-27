@@ -1,7 +1,7 @@
 using System;
-using System.Xml;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -47,7 +47,11 @@ namespace FIVE.UI
         public void LoadResources(Dictionary<string, GameObject> resources)
         {
             XmlNode xmlNode = viewXml.SelectSingleNode("/Canvas/Resources");
-            if (xmlNode == null) return;
+            if (xmlNode == null)
+            {
+                return;
+            }
+
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
                 GameObject gameObject = DeserializeHelper(childNode);
@@ -89,7 +93,7 @@ namespace FIVE.UI
                     gameObject = Object.Instantiate(Resources.Load<GameObject>(primitivePath), parentCanvas.transform);
                 }
             }
-        
+
             //Set attributes to UIElement
             foreach (KeyValuePair<string, object> keyValue in parsedAttributes)
             {
@@ -105,7 +109,7 @@ namespace FIVE.UI
             //Set ChildNode
             foreach (XmlNode node in xmlNode.ChildNodes)
             {
-                var childRoot = gameObject.GetComponentsInChildren(PrimitiveHelper(node.Name))
+                GameObject childRoot = gameObject.GetComponentsInChildren(PrimitiveHelper(node.Name))
                     .FirstOrDefault(o => o.name == node.Attributes["name"].InnerText).gameObject;
                 DeserializeHelper(node, childRoot);
             }

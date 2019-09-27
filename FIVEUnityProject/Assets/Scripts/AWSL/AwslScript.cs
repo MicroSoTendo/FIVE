@@ -1,158 +1,37 @@
 ﻿using FIVE.Robot;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace FIVE.AWSL
 {
     [RequireComponent(typeof(RobotSphere))]
-    internal class AwslScript
+    internal class AWSLScript
     {
-        private enum Instruction
-        { Forward, Backward, Left, Right, Goto }
+        private readonly RuntimeContext rc;
 
-        private readonly List<Tuple<Instruction, int>> program;
-        private int ip; // instruction pointer
-
-        public string content;
-        public int index;
-        internal Stmts rootStmts = null;
-
-        internal AwslScript(string script)
+        internal AWSLScript(RobotSphere robot, string code)
         {
-            content = script.Trim();
-            index = 0;
-
-            program = new List<Tuple<Instruction, int>>();
-            ip = 0;
-
-            Parse();
-        }
-
-        internal void Execute(GameObject gameObject)
-        {
-            RobotSphere robotSphere = gameObject.GetComponent<RobotSphere>();
-            if (ip < program.Count)
+            try
             {
-                Tuple<Instruction, int> instruction = program[ip];
-
-                if (instruction.Item1 == Instruction.Forward)
-                {
-                    robotSphere.Move(Movable.Move.Front, 1, true);
-                }
-                else if (instruction.Item1 == Instruction.Backward)
-                {
-                    robotSphere.Move(Movable.Move.Front, 1, true);
-                }
-                else if (instruction.Item1 == Instruction.Left)
-                {
-                    robotSphere.Move(Movable.Move.Left, 1, true);
-                }
-                else if (instruction.Item1 == Instruction.Right)
-                {
-                    robotSphere.Move(Movable.Move.Right, 1, true);
-                }
-                else if (instruction.Item1 == Instruction.Goto)
-                {
-                    ip = instruction.Item2;
-                    ip--;
-                }
-                ip++;
+                rc = new Parser(code).Parse();
+                rc.Robot = robot;
             }
-            else
+            catch (Exception e)
             {
-                robotSphere.currState = RobotSphere.RobotState.Idle;
-                robotSphere.scriptActive = false;
+                Debug.LogError(e);
             }
         }
 
-        internal void Parse()
+        internal void Execute()
         {
-            while (index < content.Length)
+            try
             {
-                ParseStmt();
+                rc.Execute();
             }
-        }
-
-        private void ParseStmt()
-        {
-            SkipSpace();
-            if (content[index] != '(')
+            catch (Exception e)
             {
-                // ERROR
+                Debug.LogError(e);
             }
-            index++;
-
-            string word = GetWord();
-            index += word.Length;
-            SkipSpace();
-            string data = GetWord();
-            index += data.Length;
-            if (word == "forward")
-            {
-                int steps = Convert.ToInt32(data) * 50;
-                for (int i = 0; i < steps; i++)
-                {
-                    program.Add(new Tuple<Instruction, int>(Instruction.Forward, 1));
-                }
-            }
-            else if (word == "backward")
-            {
-                int steps = Convert.ToInt32(data) * 50;
-                for (int i = 0; i < steps; i++)
-                {
-                    program.Add(new Tuple<Instruction, int>(Instruction.Backward, 1));
-                }
-            }
-            else if (word == "left")
-            {
-                int steps = Convert.ToInt32(data);
-                for (int i = 0; i < steps / 3; i++)
-                {
-                    program.Add(new Tuple<Instruction, int>(Instruction.Left, 3));
-                }
-                program.Add(new Tuple<Instruction, int>(Instruction.Left, steps % 3));
-            }
-            else if (word == "right")
-            {
-                int steps = Convert.ToInt32(data);
-                for (int i = 0; i < steps / 3; i++)
-                {
-                    program.Add(new Tuple<Instruction, int>(Instruction.Right, 3));
-                }
-                program.Add(new Tuple<Instruction, int>(Instruction.Right, steps % 3));
-            }
-            else if (word == "goto")
-            {
-                program.Add(new Tuple<Instruction, int>(Instruction.Goto, Convert.ToInt32(data)));
-            }
-
-            SkipSpace();
-            if (content[index] != ')')
-            {
-                // ERROR
-            }
-            index++;
-        }
-
-        internal void SkipSpace()
-        {
-            while (index < content.Length && (content[index] == ' ' || content[index] == '\n' || content[index] == '\t'))
-            {
-                ++index;
-            }
-        }
-
-        // Return the first word ending in space
-        internal string GetWord()
-        {
-            int endIndex = index;
-            while (endIndex < content.Length && !Constants.AwslDelimiter.Contains(content[endIndex]))
-            {
-                endIndex++;
-            }
-            return content.Substring(index, endIndex - index);
         }
     }
 }

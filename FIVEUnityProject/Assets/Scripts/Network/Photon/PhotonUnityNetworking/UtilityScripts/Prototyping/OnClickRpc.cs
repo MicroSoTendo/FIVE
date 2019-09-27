@@ -29,12 +29,12 @@ namespace Photon.Pun.UtilityScripts
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            if (!PhotonNetwork.InRoom || (this.ModifierKey != KeyCode.None && !Input.GetKey(this.ModifierKey)) || eventData.button != this.Button)
+            if (!PhotonNetwork.InRoom || (ModifierKey != KeyCode.None && !Input.GetKey(ModifierKey)) || eventData.button != Button)
             {
                 return;
             }
-            
-            this.photonView.RPC("ClickRpc", this.Target);
+
+            photonView.RPC("ClickRpc", Target);
         }
 
 
@@ -48,9 +48,9 @@ namespace Photon.Pun.UtilityScripts
         public void ClickRpc()
         {
             //Debug.Log("ClickRpc Called");
-            this.StartCoroutine(this.ClickFlash());
+            StartCoroutine(ClickFlash());
         }
-        
+
         public IEnumerator ClickFlash()
         {
             if (isFlashing)
@@ -59,28 +59,32 @@ namespace Photon.Pun.UtilityScripts
             }
             isFlashing = true;
 
-            this.originalMaterial = GetComponent<Renderer>().material;
-            if (!this.originalMaterial.HasProperty("_EmissionColor"))
+            originalMaterial = GetComponent<Renderer>().material;
+            if (!originalMaterial.HasProperty("_EmissionColor"))
             {
                 Debug.LogWarning("Doesn't have emission, can't flash " + gameObject);
                 yield break;
             }
 
-            bool wasEmissive = this.originalMaterial.IsKeywordEnabled("_EMISSION");
-            this.originalMaterial.EnableKeyword("_EMISSION");
+            bool wasEmissive = originalMaterial.IsKeywordEnabled("_EMISSION");
+            originalMaterial.EnableKeyword("_EMISSION");
 
-            this.originalColor = this.originalMaterial.GetColor("_EmissionColor");
-            this.originalMaterial.SetColor("_EmissionColor", Color.white);
+            originalColor = originalMaterial.GetColor("_EmissionColor");
+            originalMaterial.SetColor("_EmissionColor", Color.white);
 
             for (float f = 0.0f; f <= 1.0f; f += 0.08f)
             {
-                Color lerped = Color.Lerp(Color.white, this.originalColor, f);
-                this.originalMaterial.SetColor("_EmissionColor", lerped);
+                Color lerped = Color.Lerp(Color.white, originalColor, f);
+                originalMaterial.SetColor("_EmissionColor", lerped);
                 yield return null;
             }
 
-            this.originalMaterial.SetColor("_EmissionColor", this.originalColor);
-            if (!wasEmissive) this.originalMaterial.DisableKeyword("_EMISSION");
+            originalMaterial.SetColor("_EmissionColor", originalColor);
+            if (!wasEmissive)
+            {
+                originalMaterial.DisableKeyword("_EMISSION");
+            }
+
             isFlashing = false;
         }
 

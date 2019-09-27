@@ -20,9 +20,6 @@ namespace FIVE.UI.OptionsMenu
             binder.Bind(view => view.ExitGameButton.onClick).
             To(viewModel => viewModel.OnExitButtonClicked);
 
-            //binder.Bind(view => view.SoundOptionButton.onClick).
-            //To(viewModel => viewModel.OnSoundOptionButtonClicked);
-
             binder.Bind(view => view.SoundOptionButton.onClick).
             To(viewModel => viewModel.OnSoundOptionButtonClicked);
 
@@ -39,7 +36,7 @@ namespace FIVE.UI.OptionsMenu
         private void OnSaveButtonClicked(object sender, EventArgs eventArgs)
         {
             View.ViewCanvas.gameObject.SetActive(false);
-           // UIManager.Get(nameof(GameOptionView)).SetActive(true);
+            // UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnSaveButtonClicked));
         }
         private void OnGameOptionButtonClicked(object sender, EventArgs eventArgs)

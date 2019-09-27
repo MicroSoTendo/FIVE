@@ -31,24 +31,24 @@ namespace Photon.Pun.UtilityScripts
         public GameObject Prefab;
 
         [SerializeField]
-		private InstantiateOption InstantiateType = InstantiateOption.Mine;
+        private readonly InstantiateOption InstantiateType = InstantiateOption.Mine;
 
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            if (!PhotonNetwork.InRoom || (this.ModifierKey != KeyCode.None && !Input.GetKey(this.ModifierKey)) || eventData.button != this.Button)
+            if (!PhotonNetwork.InRoom || (ModifierKey != KeyCode.None && !Input.GetKey(ModifierKey)) || eventData.button != Button)
             {
                 return;
             }
 
 
-            switch (this.InstantiateType)
+            switch (InstantiateType)
             {
                 case InstantiateOption.Mine:
-                    PhotonNetwork.Instantiate(this.Prefab.name, eventData.pointerCurrentRaycast.worldPosition + new Vector3(0, 0.5f, 0), Quaternion.identity, 0);
+                    PhotonNetwork.Instantiate(Prefab.name, eventData.pointerCurrentRaycast.worldPosition + new Vector3(0, 0.5f, 0), Quaternion.identity, 0);
                     break;
                 case InstantiateOption.Scene:
-                    PhotonNetwork.InstantiateSceneObject(this.Prefab.name, eventData.pointerCurrentRaycast.worldPosition + new Vector3(0, 0.5f, 0), Quaternion.identity, 0, null);
+                    PhotonNetwork.InstantiateSceneObject(Prefab.name, eventData.pointerCurrentRaycast.worldPosition + new Vector3(0, 0.5f, 0), Quaternion.identity, 0, null);
                     break;
             }
         }

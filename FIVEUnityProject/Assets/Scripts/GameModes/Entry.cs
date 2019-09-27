@@ -35,6 +35,8 @@ namespace FIVE.GameStates
             yield return null;
             UIManager.AddViewModel<InGameDisplayViewModel>().SetActive(false);
             yield return null;
+            //UIManager.AddViewModel<CAttributeViewModel>().SetActive(false);
+            //yield return null;
         }
 
         private void Awake()

@@ -8,13 +8,8 @@
 // <author>developer@exitgames.com</author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Photon.Pun.UtilityScripts
@@ -31,8 +26,10 @@ namespace Photon.Pun.UtilityScripts
     {
         public static void SetScore(this Player player, int newScore)
         {
-            Hashtable score = new Hashtable();  // using PUN's implementation of Hashtable
-            score[PunPlayerScores.PlayerScoreProp] = newScore;
+            Hashtable score = new Hashtable
+            {
+                [PunPlayerScores.PlayerScoreProp] = newScore
+            };  // using PUN's implementation of Hashtable
 
             player.SetCustomProperties(score);  // this locally sets the score and will sync it in-game asap.
         }
@@ -42,16 +39,17 @@ namespace Photon.Pun.UtilityScripts
             int current = player.GetScore();
             current = current + scoreToAddToCurrent;
 
-            Hashtable score = new Hashtable();  // using PUN's implementation of Hashtable
-            score[PunPlayerScores.PlayerScoreProp] = current;
+            Hashtable score = new Hashtable
+            {
+                [PunPlayerScores.PlayerScoreProp] = current
+            };  // using PUN's implementation of Hashtable
 
             player.SetCustomProperties(score);  // this locally sets the score and will sync it in-game asap.
         }
 
         public static int GetScore(this Player player)
         {
-            object score;
-            if (player.CustomProperties.TryGetValue(PunPlayerScores.PlayerScoreProp, out score))
+            if (player.CustomProperties.TryGetValue(PunPlayerScores.PlayerScoreProp, out object score))
             {
                 return (int)score;
             }

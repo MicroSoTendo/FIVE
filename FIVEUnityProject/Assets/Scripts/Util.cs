@@ -5,7 +5,6 @@ namespace FIVE
 {
     public static class Util
     {
-
         public static GameObject GetChildGameObject(this GameObject gameObject, string name)
         {
             for (int i = 0; i < gameObject.transform.childCount; i++)
@@ -29,7 +28,7 @@ namespace FIVE
 
         public static List<GameObject> GetChildGameObjects(this GameObject gameObject)
         {
-            var results = new List<GameObject>();
+            List<GameObject> results = new List<GameObject>();
             for (int i = 0; i < gameObject.transform.childCount; i++)
             {
                 GameObject child = gameObject.transform.GetChild(i).gameObject;

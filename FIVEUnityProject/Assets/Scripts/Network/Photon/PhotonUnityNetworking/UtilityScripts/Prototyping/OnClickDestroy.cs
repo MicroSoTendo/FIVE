@@ -41,23 +41,23 @@ namespace Photon.Pun.UtilityScripts
         public KeyCode ModifierKey;
 
         public bool DestroyByRpc;
-        
+
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            if (!PhotonNetwork.InRoom || (this.ModifierKey != KeyCode.None && !Input.GetKey(this.ModifierKey)) || eventData.button != this.Button )
+            if (!PhotonNetwork.InRoom || (ModifierKey != KeyCode.None && !Input.GetKey(ModifierKey)) || eventData.button != Button)
             {
                 return;
             }
 
 
-            if (this.DestroyByRpc)
+            if (DestroyByRpc)
             {
-                this.photonView.RPC("DestroyRpc", RpcTarget.AllBuffered);
+                photonView.RPC("DestroyRpc", RpcTarget.AllBuffered);
             }
             else
             {
-                PhotonNetwork.Destroy(this.gameObject);
+                PhotonNetwork.Destroy(gameObject);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Photon.Pun.UtilityScripts
         [PunRPC]
         public IEnumerator DestroyRpc()
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             yield return 0; // if you allow 1 frame to pass, the object's OnDestroy() method gets called and cleans up references.
         }
     }

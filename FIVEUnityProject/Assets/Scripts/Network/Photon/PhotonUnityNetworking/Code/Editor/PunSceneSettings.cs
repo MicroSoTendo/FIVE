@@ -45,7 +45,7 @@ namespace Photon.Pun
                 }
 
                 // Unity 4.3.4 does not yet have AssetDatabase.FindAssets(). Would be easier.
-                var result = Directory.GetFiles(Application.dataPath, "PunSceneSettings.cs", SearchOption.AllDirectories);
+                string[] result = Directory.GetFiles(Application.dataPath, "PunSceneSettings.cs", SearchOption.AllDirectories);
                 if (result.Length >= 1)
                 {
                     punSceneSettingsCsPath = Path.GetDirectoryName(result[0]);
@@ -72,7 +72,7 @@ namespace Photon.Pun
                     return instanceField;
                 }
 
-                instanceField = (PunSceneSettings) AssetDatabase.LoadAssetAtPath(PunSceneSettingsCsPath, typeof(PunSceneSettings));
+                instanceField = (PunSceneSettings)AssetDatabase.LoadAssetAtPath(PunSceneSettingsCsPath, typeof(PunSceneSettings));
                 if (instanceField == null)
                 {
                     instanceField = ScriptableObject.CreateInstance<PunSceneSettings>();

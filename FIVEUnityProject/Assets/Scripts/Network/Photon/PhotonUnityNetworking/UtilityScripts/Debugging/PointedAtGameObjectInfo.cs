@@ -7,14 +7,8 @@
 // <author>developer@exitgames.com</author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-
-using Photon.Pun;
-using Photon.Realtime;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -26,15 +20,14 @@ namespace Photon.Pun.UtilityScripts
         public static PointedAtGameObjectInfo Instance;
 
         public Text text;
+        private Transform focus;
 
-        Transform focus;
-
-        void Start()
+        private void Start()
         {
             if (Instance != null)
             {
                 Debug.LogWarning("PointedAtGameObjectInfo is already featured in the scene, gameobject is destroyed");
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
 
             Instance = this;
@@ -73,11 +66,11 @@ namespace Photon.Pun.UtilityScripts
 
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             if (focus != null)
             {
-                this.transform.position = Camera.main.WorldToScreenPoint(focus.position);
+                transform.position = Camera.main.WorldToScreenPoint(focus.position);
             }
         }
     }

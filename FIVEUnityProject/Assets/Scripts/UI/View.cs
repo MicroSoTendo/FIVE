@@ -55,7 +55,7 @@ namespace FIVE.UI
             nameToUIElementGameObjects.Remove(name);
             go.transform.SetParent(null);
             go.SetActive(false);
-            
+
             Debug.Log($"{nameof(RemoveUIElement)} {go.name}");
             GameObject.Destroy(go);
         }

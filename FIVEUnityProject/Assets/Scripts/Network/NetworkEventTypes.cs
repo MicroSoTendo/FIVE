@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using Photon.Realtime;
+using System;
+using System.Collections.Generic;
 
 namespace FIVE.Network
 {
@@ -13,7 +13,10 @@ namespace FIVE.Network
     public class OnRoomListUpdateEventArgs : EventArgs
     {
         public List<RoomInfo> RoomInfos { get; }
-        public OnRoomListUpdateEventArgs(List<RoomInfo> roomInfos) => RoomInfos = roomInfos;
+        public OnRoomListUpdateEventArgs(List<RoomInfo> roomInfos)
+        {
+            RoomInfos = roomInfos;
+        }
     }
 
     public abstract class OnRoomListUpdate : IEventType<OnRoomListUpdateEventArgs> { }

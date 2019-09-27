@@ -13,13 +13,11 @@
 
 namespace Photon.Realtime
 {
-    using System;
     using ExitGames.Client.Photon;
+    using System;
 
-    #if SUPPORTED_UNITY || NETFX_CORE
-    using Hashtable = ExitGames.Client.Photon.Hashtable;
-    using SupportClass = ExitGames.Client.Photon.SupportClass;
-    #endif
+#if SUPPORTED_UNITY || NETFX_CORE
+#endif
 
 
     /// <summary>
@@ -28,9 +26,9 @@ namespace Photon.Realtime
     /// <remarks>
     /// This is Serializable for Unity, so it can be included in ScriptableObject instances.
     /// </remarks>
-    #if !NETFX_CORE || SUPPORTED_UNITY
+#if !NETFX_CORE || SUPPORTED_UNITY
     [Serializable]
-    #endif
+#endif
     public class AppSettings
     {
         /// <summary>AppId for Realtime or PUN.</summary>
@@ -65,19 +63,19 @@ namespace Photon.Realtime
         public DebugLevel NetworkLogging = DebugLevel.ERROR;
 
         /// <summary>If true, the Server field contains a Master Server address (if any address at all).</summary>
-        public bool IsMasterServerAddress { get { return !this.UseNameServer; } }
+        public bool IsMasterServerAddress => !UseNameServer;
         /// <summary>If true, the client should fetch the region list from the Name Server and find the one with best ping.</summary>
         /// <remarks>See "Best Region" in the online docs.</remarks>
-        public bool IsBestRegion { get { return this.UseNameServer && string.IsNullOrEmpty(this.FixedRegion); } }
+        public bool IsBestRegion => UseNameServer && string.IsNullOrEmpty(FixedRegion);
         /// <summary>If true, the default nameserver address for the Photon Cloud should be used.</summary>
-        public bool IsDefaultNameServer { get { return this.UseNameServer && string.IsNullOrEmpty(this.Server); } }
+        public bool IsDefaultNameServer => UseNameServer && string.IsNullOrEmpty(Server);
         /// <summary>If true, the default ports for a protocol will be used.</summary>
-        public bool IsDefaultPort { get { return this.Port <= 0; } }
+        public bool IsDefaultPort => Port <= 0;
 
         /// <summary>ToString but with more details.</summary>
         public string ToStringFull()
         {
-            return string.Format("IsBestRegion: {0} IsDefaultNameServer: {1} IsDefaultPort: {2}", this.IsBestRegion, this.IsDefaultNameServer, this.IsDefaultPort);
+            return string.Format("IsBestRegion: {0} IsDefaultNameServer: {1} IsDefaultPort: {2}", IsBestRegion, IsDefaultNameServer, IsDefaultPort);
         }
     }
 }

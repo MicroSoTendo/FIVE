@@ -9,10 +9,7 @@ namespace FIVE.UI.InGameDisplay
         private GameObject item;
         public GameObject Item
         {
-            get
-            {
-                return item;
-            }
+            get => item;
             set
             {
                 if (value != null)
@@ -28,13 +25,14 @@ namespace FIVE.UI.InGameDisplay
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             contentTransform = gameObject.GetChildGameObject("Content").transform;
         }
-        void Update()
+
+        private void Update()
         {
-            
+
         }
     }
 }

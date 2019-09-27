@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FIVE
 {
     public class AvoidDestroy : MonoBehaviour
     {
-        void Awake() {
+        private void Awake()
+        {
             DontDestroyOnLoad(gameObject);
         }
     }

@@ -16,13 +16,10 @@
 
 namespace Photon.Realtime
 {
-    using System.Collections;
-    using ExitGames.Client.Photon;
 
-    #if SUPPORTED_UNITY || NETFX_CORE
+#if SUPPORTED_UNITY || NETFX_CORE
     using Hashtable = ExitGames.Client.Photon.Hashtable;
-    using SupportClass = ExitGames.Client.Photon.SupportClass;
-    #endif
+#endif
 
 
     /// <summary>
@@ -39,7 +36,7 @@ namespace Photon.Realtime
         public bool RemovedFromList;
 
         /// <summary>Backing field for property.</summary>
-        private Hashtable customProperties = new Hashtable();
+        private readonly Hashtable customProperties = new Hashtable();
 
         /// <summary>Backing field for property.</summary>
         protected byte maxPlayers = 0;
@@ -74,28 +71,16 @@ namespace Photon.Realtime
         /// <summary>Read-only "cache" of custom properties of a room. Set via Room.SetCustomProperties (not available for RoomInfo class!).</summary>
         /// <remarks>All keys are string-typed and the values depend on the game/application.</remarks>
         /// <see cref="Room.SetCustomProperties"/>
-        public Hashtable CustomProperties
-        {
-            get
-            {
-                return this.customProperties;
-            }
-        }
+        public Hashtable CustomProperties => customProperties;
 
         /// <summary>The name of a room. Unique identifier for a room/match (per AppId + game-Version).</summary>
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-        }
+        public string Name => name;
 
         /// <summary>
         /// Count of players currently in room. This property is overwritten by the Room class (used when you're in a Room).
         /// </summary>
         public int PlayerCount { get; private set; }
-        
+
         /// <summary>
         /// The limit of players for this room. This property is shown in lobby, too.
         /// If the room is full (players count == maxplayers), joining this room will fail.
@@ -104,13 +89,7 @@ namespace Photon.Realtime
         /// As part of RoomInfo this can't be set.
         /// As part of a Room (which the player joined), the setter will update the server and all clients.
         /// </remarks>
-        public byte MaxPlayers
-        {
-            get
-            {
-                return this.maxPlayers;
-            }
-        }
+        public byte MaxPlayers => maxPlayers;
 
         /// <summary>
         /// Defines if the room can be joined.
@@ -124,13 +103,7 @@ namespace Photon.Realtime
         /// As part of RoomInfo this can't be set.
         /// As part of a Room (which the player joined), the setter will update the server and all clients.
         /// </remarks>
-        public bool IsOpen
-        {
-            get
-            {
-                return this.isOpen;
-            }
-        }
+        public bool IsOpen => isOpen;
 
         /// <summary>
         /// Defines if the room is listed in its lobby.
@@ -141,13 +114,7 @@ namespace Photon.Realtime
         /// As part of RoomInfo this can't be set.
         /// As part of a Room (which the player joined), the setter will update the server and all clients.
         /// </remarks>
-        public bool IsVisible
-        {
-            get
-            {
-                return this.isVisible;
-            }
-        }
+        public bool IsVisible => isVisible;
 
         /// <summary>
         /// Constructs a RoomInfo to be used in room listings in lobby.
@@ -156,9 +123,9 @@ namespace Photon.Realtime
         /// <param name="roomProperties">Properties for this room.</param>
         protected internal RoomInfo(string roomName, Hashtable roomProperties)
         {
-            this.InternalCacheProperties(roomProperties);
+            InternalCacheProperties(roomProperties);
 
-            this.name = roomName;
+            name = roomName;
         }
 
         /// <summary>
@@ -167,7 +134,7 @@ namespace Photon.Realtime
         public override bool Equals(object other)
         {
             RoomInfo otherRoomInfo = other as RoomInfo;
-            return (otherRoomInfo != null && this.Name.Equals(otherRoomInfo.name));
+            return (otherRoomInfo != null && Name.Equals(otherRoomInfo.name));
         }
 
         /// <summary>
@@ -176,7 +143,7 @@ namespace Photon.Realtime
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return this.name.GetHashCode();
+            return name.GetHashCode();
         }
 
 
@@ -184,21 +151,21 @@ namespace Photon.Realtime
         /// <returns>Summary of this RoomInfo instance.</returns>
         public override string ToString()
         {
-            return string.Format("Room: '{0}' {1},{2} {4}/{3} players.", this.name, this.isVisible ? "visible" : "hidden", this.isOpen ? "open" : "closed", this.maxPlayers, this.PlayerCount);
+            return string.Format("Room: '{0}' {1},{2} {4}/{3} players.", name, isVisible ? "visible" : "hidden", isOpen ? "open" : "closed", maxPlayers, PlayerCount);
         }
 
         /// <summary>Returns most interesting room values as string, including custom properties.</summary>
         /// <returns>Summary of this RoomInfo instance.</returns>
         public string ToStringFull()
         {
-            return string.Format("Room: '{0}' {1},{2} {4}/{3} players.\ncustomProps: {5}", this.name, this.isVisible ? "visible" : "hidden", this.isOpen ? "open" : "closed", this.maxPlayers, this.PlayerCount, this.customProperties.ToStringFull());
+            return string.Format("Room: '{0}' {1},{2} {4}/{3} players.\ncustomProps: {5}", name, isVisible ? "visible" : "hidden", isOpen ? "open" : "closed", maxPlayers, PlayerCount, customProperties.ToStringFull());
         }
 
         /// <summary>Copies "well known" properties to fields (IsVisible, etc) and caches the custom properties (string-keys only) in a local hashtable.</summary>
         /// <param name="propertiesToCache">New or updated properties to store in this RoomInfo.</param>
         protected internal virtual void InternalCacheProperties(Hashtable propertiesToCache)
         {
-            if (propertiesToCache == null || propertiesToCache.Count == 0 || this.customProperties.Equals(propertiesToCache))
+            if (propertiesToCache == null || propertiesToCache.Count == 0 || customProperties.Equals(propertiesToCache))
             {
                 return;
             }
@@ -208,8 +175,8 @@ namespace Photon.Realtime
             // list updates will remove this game from the game listing
             if (propertiesToCache.ContainsKey(GamePropertyKey.Removed))
             {
-                this.RemovedFromList = (bool)propertiesToCache[GamePropertyKey.Removed];
-                if (this.RemovedFromList)
+                RemovedFromList = (bool)propertiesToCache[GamePropertyKey.Removed];
+                if (RemovedFromList)
                 {
                     return;
                 }
@@ -218,57 +185,57 @@ namespace Photon.Realtime
             // fetch the "well known" properties of the room, if available
             if (propertiesToCache.ContainsKey(GamePropertyKey.MaxPlayers))
             {
-                this.maxPlayers = (byte)propertiesToCache[GamePropertyKey.MaxPlayers];
+                maxPlayers = (byte)propertiesToCache[GamePropertyKey.MaxPlayers];
             }
 
             if (propertiesToCache.ContainsKey(GamePropertyKey.IsOpen))
             {
-                this.isOpen = (bool)propertiesToCache[GamePropertyKey.IsOpen];
+                isOpen = (bool)propertiesToCache[GamePropertyKey.IsOpen];
             }
 
             if (propertiesToCache.ContainsKey(GamePropertyKey.IsVisible))
             {
-                this.isVisible = (bool)propertiesToCache[GamePropertyKey.IsVisible];
+                isVisible = (bool)propertiesToCache[GamePropertyKey.IsVisible];
             }
 
             if (propertiesToCache.ContainsKey(GamePropertyKey.PlayerCount))
             {
-                this.PlayerCount = (int)((byte)propertiesToCache[GamePropertyKey.PlayerCount]);
+                PlayerCount = (byte)propertiesToCache[GamePropertyKey.PlayerCount];
             }
 
             if (propertiesToCache.ContainsKey(GamePropertyKey.CleanupCacheOnLeave))
             {
-                this.autoCleanUp = (bool)propertiesToCache[GamePropertyKey.CleanupCacheOnLeave];
+                autoCleanUp = (bool)propertiesToCache[GamePropertyKey.CleanupCacheOnLeave];
             }
 
             if (propertiesToCache.ContainsKey(GamePropertyKey.MasterClientId))
             {
-                this.masterClientId = (int)propertiesToCache[GamePropertyKey.MasterClientId];
+                masterClientId = (int)propertiesToCache[GamePropertyKey.MasterClientId];
             }
 
             if (propertiesToCache.ContainsKey(GamePropertyKey.PropsListedInLobby))
             {
-                this.propertiesListedInLobby = propertiesToCache[GamePropertyKey.PropsListedInLobby] as string[];
+                propertiesListedInLobby = propertiesToCache[GamePropertyKey.PropsListedInLobby] as string[];
             }
 
-            if (propertiesToCache.ContainsKey((byte)GamePropertyKey.ExpectedUsers))
+            if (propertiesToCache.ContainsKey(GamePropertyKey.ExpectedUsers))
             {
-                this.expectedUsers = (string[])propertiesToCache[GamePropertyKey.ExpectedUsers];
+                expectedUsers = (string[])propertiesToCache[GamePropertyKey.ExpectedUsers];
             }
 
-            if (propertiesToCache.ContainsKey((byte)GamePropertyKey.EmptyRoomTtl))
+            if (propertiesToCache.ContainsKey(GamePropertyKey.EmptyRoomTtl))
             {
-                this.emptyRoomTtl = (int)propertiesToCache[GamePropertyKey.EmptyRoomTtl];
+                emptyRoomTtl = (int)propertiesToCache[GamePropertyKey.EmptyRoomTtl];
             }
 
-            if (propertiesToCache.ContainsKey((byte)GamePropertyKey.PlayerTtl))
+            if (propertiesToCache.ContainsKey(GamePropertyKey.PlayerTtl))
             {
-                this.playerTtl = (int)propertiesToCache[GamePropertyKey.PlayerTtl];
+                playerTtl = (int)propertiesToCache[GamePropertyKey.PlayerTtl];
             }
 
             // merge the custom properties (from your application) to the cache (only string-typed keys will be kept)
-            this.customProperties.MergeStringKeys(propertiesToCache);
-            this.customProperties.StripKeysWithNullValues();
+            customProperties.MergeStringKeys(propertiesToCache);
+            customProperties.StripKeysWithNullValues();
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Photon.Pun
     using Photon.Realtime;
     using UnityEngine;
 
-    #if UNITY_5_5_OR_NEWER
+#if UNITY_5_5_OR_NEWER
     using UnityEngine.Profiling;
-    #endif
+#endif
 
 
     /// <summary>
@@ -36,8 +36,10 @@ namespace Photon.Pun
                     instance = FindObjectOfType<PhotonHandler>();
                     if (instance == null)
                     {
-                        GameObject obj = new GameObject();
-                        obj.name = "PhotonMono";
+                        GameObject obj = new GameObject
+                        {
+                            name = "PhotonMono"
+                        };
                         instance = obj.AddComponent<PhotonHandler>();
                     }
                 }
@@ -91,19 +93,19 @@ namespace Photon.Pun
                 return;
             }
 
-            this.Client = PhotonNetwork.NetworkingClient;
+            Client = PhotonNetwork.NetworkingClient;
 
             if (PhotonNetwork.PhotonServerSettings.EnableSupportLogger)
             {
-                this.supportLoggerComponent = this.gameObject.AddComponent<SupportLogger>();
-                this.supportLoggerComponent.Client = PhotonNetwork.NetworkingClient;
+                supportLoggerComponent = gameObject.AddComponent<SupportLogger>();
+                supportLoggerComponent.Client = PhotonNetwork.NetworkingClient;
             }
 
-            this.UpdateInterval = 1000 / PhotonNetwork.SendRate;
-            this.UpdateIntervalOnSerialize = 1000 / PhotonNetwork.SerializationRate;
+            UpdateInterval = 1000 / PhotonNetwork.SendRate;
+            UpdateIntervalOnSerialize = 1000 / PhotonNetwork.SerializationRate;
 
             PhotonNetwork.AddCallbackTarget(this);
-            this.StartFallbackSendAckThread();  // this is not done in the base class
+            StartFallbackSendAckThread();  // this is not done in the base class
         }
 
         protected void Start()
@@ -124,7 +126,7 @@ namespace Photon.Pun
         /// <summary>Called in intervals by UnityEngine. Affected by Time.timeScale.</summary>
         protected void FixedUpdate()
         {
-            this.Dispatch();
+            Dispatch();
         }
 
         /// <summary>Called in intervals by UnityEngine, after running the normal game code and physics.</summary>
@@ -133,20 +135,20 @@ namespace Photon.Pun
             // see MinimalTimeScaleToDispatchInFixedUpdate and FixedUpdate for explanation:
             if (Time.timeScale <= PhotonNetwork.MinimalTimeScaleToDispatchInFixedUpdate)
             {
-                this.Dispatch();
+                Dispatch();
             }
 
 
             int currentMsSinceStart = (int)(Time.realtimeSinceStartup * 1000); // avoiding Environment.TickCount, which could be negative on long-running platforms
-            if (PhotonNetwork.IsMessageQueueRunning && currentMsSinceStart > this.nextSendTickCountOnSerialize)
+            if (PhotonNetwork.IsMessageQueueRunning && currentMsSinceStart > nextSendTickCountOnSerialize)
             {
                 PhotonNetwork.RunViewUpdate();
-                this.nextSendTickCountOnSerialize = currentMsSinceStart + this.UpdateIntervalOnSerialize - SerializeRateFrameCorrection;
-                this.nextSendTickCount = 0; // immediately send when synchronization code was running
+                nextSendTickCountOnSerialize = currentMsSinceStart + UpdateIntervalOnSerialize - SerializeRateFrameCorrection;
+                nextSendTickCount = 0; // immediately send when synchronization code was running
             }
 
             currentMsSinceStart = (int)(Time.realtimeSinceStartup * 1000);
-            if (SendAsap || currentMsSinceStart > this.nextSendTickCount)
+            if (SendAsap || currentMsSinceStart > nextSendTickCount)
             {
                 SendAsap = false;
                 bool doSend = true;
@@ -160,7 +162,7 @@ namespace Photon.Pun
                     Profiler.EndSample();
                 }
 
-                this.nextSendTickCount = currentMsSinceStart + this.UpdateInterval;
+                nextSendTickCount = currentMsSinceStart + UpdateInterval;
             }
         }
 
@@ -206,24 +208,24 @@ namespace Photon.Pun
             PhotonNetwork.LoadLevelIfSynced();
         }
 
-        public void OnJoinedRoom(){}
+        public void OnJoinedRoom() { }
 
-        public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps){}
+        public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps) { }
 
-        public void OnMasterClientSwitched(Player newMasterClient){}
+        public void OnMasterClientSwitched(Player newMasterClient) { }
 
-        public void OnFriendListUpdate(System.Collections.Generic.List<FriendInfo> friendList){}
+        public void OnFriendListUpdate(System.Collections.Generic.List<FriendInfo> friendList) { }
 
-        public void OnCreateRoomFailed(short returnCode, string message){}
+        public void OnCreateRoomFailed(short returnCode, string message) { }
 
-        public void OnJoinRoomFailed(short returnCode, string message){}
+        public void OnJoinRoomFailed(short returnCode, string message) { }
 
-        public void OnJoinRandomFailed(short returnCode, string message){}
+        public void OnJoinRandomFailed(short returnCode, string message) { }
 
-        public void OnLeftRoom(){}
+        public void OnLeftRoom() { }
 
-        public void OnPlayerEnteredRoom(Player newPlayer){}
+        public void OnPlayerEnteredRoom(Player newPlayer) { }
 
-        public void OnPlayerLeftRoom(Player otherPlayer){}
+        public void OnPlayerLeftRoom(Player otherPlayer) { }
     }
 }

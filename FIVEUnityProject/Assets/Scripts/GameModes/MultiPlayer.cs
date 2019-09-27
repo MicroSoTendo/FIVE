@@ -1,7 +1,7 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using FIVE.Network;
 using FIVE.Robot;
+using System;
 using UnityEngine;
 
 namespace FIVE.GameStates
@@ -9,12 +9,13 @@ namespace FIVE.GameStates
     public class MultiPlayer : GameMode
     {
         private NetworkManager networkManager;
-        void Awake()
+
+        private void Awake()
         {
             networkManager = FindObjectOfType<NetworkManager>();
         }
 
-        void Start()
+        private void Start()
         {
             EventManager.Subscribe<OnConnectedToMaster>(OnConnectedToMaster);
             EventManager.Subscribe<OnJoinedLobby>(OnJoinedLobby);

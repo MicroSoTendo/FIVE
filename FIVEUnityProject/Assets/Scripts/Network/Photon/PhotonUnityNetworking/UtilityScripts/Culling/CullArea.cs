@@ -87,9 +87,9 @@ namespace Photon.Pun.UtilityScripts
         /// </summary>
         private void Awake()
         {
-            this.idCounter = this.FIRST_GROUP_ID;
+            idCounter = FIRST_GROUP_ID;
 
-            this.CreateCellHierarchy();
+            CreateCellHierarchy();
         }
 
         /// <summary>
@@ -97,14 +97,14 @@ namespace Photon.Pun.UtilityScripts
         /// </summary>
         public void OnDrawGizmos()
         {
-            this.idCounter = this.FIRST_GROUP_ID;
+            idCounter = FIRST_GROUP_ID;
 
-            if (this.RecreateCellHierarchy)
+            if (RecreateCellHierarchy)
             {
-                this.CreateCellHierarchy();
+                CreateCellHierarchy();
             }
 
-            this.DrawCells();
+            DrawCells();
         }
 
         /// <summary>
@@ -112,12 +112,12 @@ namespace Photon.Pun.UtilityScripts
         /// </summary>
         private void CreateCellHierarchy()
         {
-            if (!this.IsCellCountAllowed())
+            if (!IsCellCountAllowed())
             {
                 if (Debug.isDebugBuild)
                 {
-                    Debug.LogError("There are too many cells created by your subdivision options. Maximum allowed number of cells is " + (MAX_NUMBER_OF_ALLOWED_CELLS - this.FIRST_GROUP_ID) +
-                                   ". Current number of cells is " + this.CellCount + ".");
+                    Debug.LogError("There are too many cells created by your subdivision options. Maximum allowed number of cells is " + (MAX_NUMBER_OF_ALLOWED_CELLS - FIRST_GROUP_ID) +
+                                   ". Current number of cells is " + CellCount + ".");
                     return;
                 }
                 else
@@ -126,34 +126,34 @@ namespace Photon.Pun.UtilityScripts
                 }
             }
 
-            CellTreeNode rootNode = new CellTreeNode(this.idCounter++, CellTreeNode.ENodeType.Root, null);
+            CellTreeNode rootNode = new CellTreeNode(idCounter++, CellTreeNode.ENodeType.Root, null);
 
-            if (this.YIsUpAxis)
+            if (YIsUpAxis)
             {
-                this.Center = new Vector2(transform.position.x, transform.position.y);
-                this.Size = new Vector2(transform.localScale.x, transform.localScale.y);
+                Center = new Vector2(transform.position.x, transform.position.y);
+                Size = new Vector2(transform.localScale.x, transform.localScale.y);
 
-                rootNode.Center = new Vector3(this.Center.x, this.Center.y, 0.0f);
-                rootNode.Size = new Vector3(this.Size.x, this.Size.y, 0.0f);
-                rootNode.TopLeft = new Vector3((this.Center.x - (this.Size.x / 2.0f)), (this.Center.y - (this.Size.y / 2.0f)), 0.0f);
-                rootNode.BottomRight = new Vector3((this.Center.x + (this.Size.x / 2.0f)), (this.Center.y + (this.Size.y / 2.0f)), 0.0f);
+                rootNode.Center = new Vector3(Center.x, Center.y, 0.0f);
+                rootNode.Size = new Vector3(Size.x, Size.y, 0.0f);
+                rootNode.TopLeft = new Vector3((Center.x - (Size.x / 2.0f)), (Center.y - (Size.y / 2.0f)), 0.0f);
+                rootNode.BottomRight = new Vector3((Center.x + (Size.x / 2.0f)), (Center.y + (Size.y / 2.0f)), 0.0f);
             }
             else
             {
-                this.Center = new Vector2(transform.position.x, transform.position.z);
-                this.Size = new Vector2(transform.localScale.x, transform.localScale.z);
+                Center = new Vector2(transform.position.x, transform.position.z);
+                Size = new Vector2(transform.localScale.x, transform.localScale.z);
 
-                rootNode.Center = new Vector3(this.Center.x, 0.0f, this.Center.y);
-                rootNode.Size = new Vector3(this.Size.x, 0.0f, this.Size.y);
-                rootNode.TopLeft = new Vector3((this.Center.x - (this.Size.x / 2.0f)), 0.0f, (this.Center.y - (this.Size.y / 2.0f)));
-                rootNode.BottomRight = new Vector3((this.Center.x + (this.Size.x / 2.0f)), 0.0f, (this.Center.y + (this.Size.y / 2.0f)));
+                rootNode.Center = new Vector3(Center.x, 0.0f, Center.y);
+                rootNode.Size = new Vector3(Size.x, 0.0f, Size.y);
+                rootNode.TopLeft = new Vector3((Center.x - (Size.x / 2.0f)), 0.0f, (Center.y - (Size.y / 2.0f)));
+                rootNode.BottomRight = new Vector3((Center.x + (Size.x / 2.0f)), 0.0f, (Center.y + (Size.y / 2.0f)));
             }
 
-            this.CreateChildCells(rootNode, 1);
+            CreateChildCells(rootNode, 1);
 
-            this.CellTree = new CellTree(rootNode);
+            CellTree = new CellTree(rootNode);
 
-            this.RecreateCellHierarchy = false;
+            RecreateCellHierarchy = false;
         }
 
         /// <summary>
@@ -163,13 +163,13 @@ namespace Photon.Pun.UtilityScripts
         /// <param name="cellLevelInHierarchy">The cell level within the current hierarchy.</param>
         private void CreateChildCells(CellTreeNode parent, int cellLevelInHierarchy)
         {
-            if (cellLevelInHierarchy > this.NumberOfSubdivisions)
+            if (cellLevelInHierarchy > NumberOfSubdivisions)
             {
                 return;
             }
 
-            int rowCount = (int)this.Subdivisions[(cellLevelInHierarchy - 1)].x;
-            int columnCount = (int)this.Subdivisions[(cellLevelInHierarchy - 1)].y;
+            int rowCount = (int)Subdivisions[(cellLevelInHierarchy - 1)].x;
+            int columnCount = (int)Subdivisions[(cellLevelInHierarchy - 1)].y;
 
             float startX = parent.Center.x - (parent.Size.x / 2.0f);
             float width = parent.Size.x / rowCount;
@@ -180,9 +180,9 @@ namespace Photon.Pun.UtilityScripts
                 {
                     float xPos = startX + (row * width) + (width / 2.0f);
 
-                    CellTreeNode node = new CellTreeNode(this.idCounter++, (this.NumberOfSubdivisions == cellLevelInHierarchy) ? CellTreeNode.ENodeType.Leaf : CellTreeNode.ENodeType.Node, parent);
+                    CellTreeNode node = new CellTreeNode(idCounter++, (NumberOfSubdivisions == cellLevelInHierarchy) ? CellTreeNode.ENodeType.Leaf : CellTreeNode.ENodeType.Node, parent);
 
-                    if (this.YIsUpAxis)
+                    if (YIsUpAxis)
                     {
                         float startY = parent.Center.y - (parent.Size.y / 2.0f);
                         float height = parent.Size.y / columnCount;
@@ -207,7 +207,7 @@ namespace Photon.Pun.UtilityScripts
 
                     parent.AddChild(node);
 
-                    this.CreateChildCells(node, (cellLevelInHierarchy + 1));
+                    CreateChildCells(node, (cellLevelInHierarchy + 1));
                 }
             }
         }
@@ -217,13 +217,13 @@ namespace Photon.Pun.UtilityScripts
         /// </summary>
         private void DrawCells()
         {
-            if ((this.CellTree != null) && (this.CellTree.RootNode != null))
+            if ((CellTree != null) && (CellTree.RootNode != null))
             {
-                this.CellTree.RootNode.Draw();
+                CellTree.RootNode.Draw();
             }
             else
             {
-                this.RecreateCellHierarchy = true;
+                RecreateCellHierarchy = true;
             }
         }
 
@@ -236,15 +236,15 @@ namespace Photon.Pun.UtilityScripts
             int horizontalCells = 1;
             int verticalCells = 1;
 
-            foreach (Vector2 v in this.Subdivisions)
+            foreach (Vector2 v in Subdivisions)
             {
                 horizontalCells *= (int)v.x;
                 verticalCells *= (int)v.y;
             }
 
-            this.CellCount = horizontalCells * verticalCells;
+            CellCount = horizontalCells * verticalCells;
 
-            return (this.CellCount <= (MAX_NUMBER_OF_ALLOWED_CELLS - this.FIRST_GROUP_ID));
+            return (CellCount <= (MAX_NUMBER_OF_ALLOWED_CELLS - FIRST_GROUP_ID));
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Photon.Pun.UtilityScripts
         public List<byte> GetActiveCells(Vector3 position)
         {
             List<byte> activeCells = new List<byte>(0);
-            this.CellTree.RootNode.GetActiveCells(activeCells, this.YIsUpAxis, position);
+            CellTree.RootNode.GetActiveCells(activeCells, YIsUpAxis, position);
 
             return activeCells;
         }
@@ -284,7 +284,7 @@ namespace Photon.Pun.UtilityScripts
         /// <param name="root">The root node of the tree.</param>
         public CellTree(CellTreeNode root)
         {
-            this.RootNode = root;
+            RootNode = root;
         }
     }
 
@@ -347,11 +347,11 @@ namespace Photon.Pun.UtilityScripts
         /// <param name="parent">The parent node of the cell tree node.</param>
         public CellTreeNode(byte id, ENodeType nodeType, CellTreeNode parent)
         {
-            this.Id = id;
+            Id = id;
 
-            this.NodeType = nodeType;
+            NodeType = nodeType;
 
-            this.Parent = parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -360,12 +360,12 @@ namespace Photon.Pun.UtilityScripts
         /// <param name="child">The child which is added to the node.</param>
         public void AddChild(CellTreeNode child)
         {
-            if (this.Childs == null)
+            if (Childs == null)
             {
-                this.Childs = new List<CellTreeNode>(1);
+                Childs = new List<CellTreeNode>(1);
             }
 
-            this.Childs.Add(child);
+            Childs.Add(child);
         }
 
         /// <summary>
@@ -374,18 +374,18 @@ namespace Photon.Pun.UtilityScripts
         public void Draw()
         {
 #if UNITY_EDITOR
-        if (this.Childs != null)
-        {
-            foreach (CellTreeNode node in this.Childs)
+            if (Childs != null)
             {
-                node.Draw();
+                foreach (CellTreeNode node in Childs)
+                {
+                    node.Draw();
+                }
             }
-        }
 
-        Gizmos.color = new Color((this.NodeType == ENodeType.Root) ? 1 : 0, (this.NodeType == ENodeType.Node) ? 1 : 0, (this.NodeType == ENodeType.Leaf) ? 1 : 0);
-        Gizmos.DrawWireCube(this.Center, this.Size);
+            Gizmos.color = new Color((NodeType == ENodeType.Root) ? 1 : 0, (NodeType == ENodeType.Node) ? 1 : 0, (NodeType == ENodeType.Leaf) ? 1 : 0);
+            Gizmos.DrawWireCube(Center, Size);
 
-        UnityEditor.Handles.Label(this.Center, this.Id.ToString(), new GUIStyle() { fontStyle = FontStyle.Bold });
+            UnityEditor.Handles.Label(Center, Id.ToString(), new GUIStyle() { fontStyle = FontStyle.Bold });
 #endif
         }
 
@@ -397,22 +397,22 @@ namespace Photon.Pun.UtilityScripts
         /// <param name="position">The current position of the player.</param>
         public void GetActiveCells(List<byte> activeCells, bool yIsUpAxis, Vector3 position)
         {
-            if (this.NodeType != ENodeType.Leaf)
+            if (NodeType != ENodeType.Leaf)
             {
-                foreach (CellTreeNode node in this.Childs)
+                foreach (CellTreeNode node in Childs)
                 {
                     node.GetActiveCells(activeCells, yIsUpAxis, position);
                 }
             }
             else
             {
-                if (this.IsPointNearCell(yIsUpAxis, position))
+                if (IsPointNearCell(yIsUpAxis, position))
                 {
-                    if (this.IsPointInsideCell(yIsUpAxis, position))
+                    if (IsPointInsideCell(yIsUpAxis, position))
                     {
-                        activeCells.Insert(0, this.Id);
+                        activeCells.Insert(0, Id);
 
-                        CellTreeNode p = this.Parent;
+                        CellTreeNode p = Parent;
                         while (p != null)
                         {
                             activeCells.Insert(0, p.Id);
@@ -422,7 +422,7 @@ namespace Photon.Pun.UtilityScripts
                     }
                     else
                     {
-                        activeCells.Add(this.Id);
+                        activeCells.Add(Id);
                     }
                 }
             }
@@ -436,21 +436,21 @@ namespace Photon.Pun.UtilityScripts
         /// <returns>True if the point is inside the cell, false if the point is not inside the cell.</returns>
         public bool IsPointInsideCell(bool yIsUpAxis, Vector3 point)
         {
-            if ((point.x < this.TopLeft.x) || (point.x > this.BottomRight.x))
+            if ((point.x < TopLeft.x) || (point.x > BottomRight.x))
             {
                 return false;
             }
 
             if (yIsUpAxis)
             {
-                if ((point.y >= this.TopLeft.y) && (point.y <= this.BottomRight.y))
+                if ((point.y >= TopLeft.y) && (point.y <= BottomRight.y))
                 {
                     return true;
                 }
             }
             else
             {
-                if ((point.z >= this.TopLeft.z) && (point.z <= this.BottomRight.z))
+                if ((point.z >= TopLeft.z) && (point.z <= BottomRight.z))
                 {
                     return true;
                 }
@@ -467,12 +467,12 @@ namespace Photon.Pun.UtilityScripts
         /// <returns>True if the point is near the cell, false if the point is too far away.</returns>
         public bool IsPointNearCell(bool yIsUpAxis, Vector3 point)
         {
-            if (this.maxDistance == 0.0f)
+            if (maxDistance == 0.0f)
             {
-                this.maxDistance = (this.Size.x + this.Size.y + this.Size.z) / 2.0f;
+                maxDistance = (Size.x + Size.y + Size.z) / 2.0f;
             }
 
-            return ((point - this.Center).sqrMagnitude <= (this.maxDistance * this.maxDistance));
+            return ((point - Center).sqrMagnitude <= (maxDistance * maxDistance));
         }
     }
 }

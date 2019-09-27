@@ -1,13 +1,9 @@
-using System;
-using FIVE.UI.Background;
-using FIVE.UI.InGameDisplay;
-using FIVE.UI.OptionsMenu;
-using FIVE.UI.StartupMenu;
-using System.Collections.Generic;
-using System.Linq;
 using FIVE.EventSystem;
 using FIVE.GameStates;
 using FIVE.UI.SplashScreens;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,20 +15,29 @@ namespace FIVE.UI
         private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
         private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModelComparer());
 
-        public static bool TryGetViewModel(string name, out ViewModel viewModel) => NameToVMs.TryGetValue(name, out viewModel);
+        public static bool TryGetViewModel(string name, out ViewModel viewModel)
+        {
+            return NameToVMs.TryGetValue(name, out viewModel);
+        }
 
-        public static T GetViewModel<T>() where T : ViewModel => (T)TypeToVMs[typeof(T)].FirstOrDefault();
+        public static T GetViewModel<T>() where T : ViewModel
+        {
+            return (T)TypeToVMs[typeof(T)].FirstOrDefault();
+        }
 
-        public static SortedSet<ViewModel> GetViewModels<T>() where T : ViewModel => TypeToVMs[typeof(T)];
+        public static SortedSet<ViewModel> GetViewModels<T>() where T : ViewModel
+        {
+            return TypeToVMs[typeof(T)];
+        }
 
         private void Awake()
         {
-            var canvasGameObject = new GameObject { name = "LoadingSplashCanvas" };
+            GameObject canvasGameObject = new GameObject { name = "LoadingSplashCanvas" };
             Canvas canvas = canvasGameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasGameObject.AddComponent<CanvasScaler>();
             canvasGameObject.AddComponent<GraphicRaycaster>();
-            var startUpScreen = new StartUpScreen(canvasGameObject);
+            StartUpScreen startUpScreen = new StartUpScreen(canvasGameObject);
             StartCoroutine(startUpScreen.OnTransitioning());
             EventManager.Subscribe<OnLoadingFinished>((sender, args) => startUpScreen.DoFadingOut());
         }
@@ -43,7 +48,7 @@ namespace FIVE.UI
 
         public static T AddViewModel<T>(string name = null) where T : ViewModel, new()
         {
-            var newViewModel = new T();
+            T newViewModel = new T();
             NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
             if (!TypeToVMs.ContainsKey(typeof(T)))
             {

@@ -1,10 +1,8 @@
 ﻿using FIVE.EventSystem;
 using FIVE.UI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Data;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -42,7 +40,7 @@ namespace FIVE.Interactive
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            
+
         }
 
         private void OnDropItemToInventory(object sender, DropedItemToInventoryEventArgs e)
@@ -61,8 +59,8 @@ namespace FIVE.Interactive
         public void Add(GameObject item)
         {
             items.Add(item);
-        }        
-        
+        }
+
         public void Insert(int index, GameObject item)
         {
             items.Insert(index, item);

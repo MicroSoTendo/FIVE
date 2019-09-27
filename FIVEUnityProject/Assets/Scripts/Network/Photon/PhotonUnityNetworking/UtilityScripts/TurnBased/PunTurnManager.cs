@@ -8,14 +8,10 @@
 // <author>developer@exitgames.com</author>
 // ----------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using Photon.Realtime;
-
 using ExitGames.Client.Photon;
+using Photon.Realtime;
+using System.Collections.Generic;
+using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Photon.Pun.UtilityScripts
@@ -33,7 +29,7 @@ namespace Photon.Pun.UtilityScripts
         /// <value>The turn index</value>
         public int Turn
         {
-            get { return PhotonNetwork.CurrentRoom.GetTurn(); }
+            get => PhotonNetwork.CurrentRoom.GetTurn();
             private set
             {
 
@@ -53,48 +49,33 @@ namespace Photon.Pun.UtilityScripts
         /// Gets the elapsed time in the current turn in seconds
         /// </summary>
         /// <value>The elapsed time in the turn.</value>
-        public float ElapsedTimeInTurn
-        {
-            get { return ((float) (PhotonNetwork.ServerTimestamp - PhotonNetwork.CurrentRoom.GetTurnStart())) / 1000.0f; }
-        }
+        public float ElapsedTimeInTurn => (PhotonNetwork.ServerTimestamp - PhotonNetwork.CurrentRoom.GetTurnStart()) / 1000.0f;
 
 
         /// <summary>
         /// Gets the remaining seconds for the current turn. Ranges from 0 to TurnDuration
         /// </summary>
         /// <value>The remaining seconds fo the current turn</value>
-        public float RemainingSecondsInTurn
-        {
-            get { return Mathf.Max(0f, this.TurnDuration - this.ElapsedTimeInTurn); }
-        }
+        public float RemainingSecondsInTurn => Mathf.Max(0f, TurnDuration - ElapsedTimeInTurn);
 
 
         /// <summary>
         /// Gets a value indicating whether the turn is completed by all.
         /// </summary>
         /// <value><c>true</c> if this turn is completed by all; otherwise, <c>false</c>.</value>
-        public bool IsCompletedByAll
-        {
-            get { return PhotonNetwork.CurrentRoom != null && Turn > 0 && this.finishedPlayers.Count == PhotonNetwork.CurrentRoom.PlayerCount; }
-        }
+        public bool IsCompletedByAll => PhotonNetwork.CurrentRoom != null && Turn > 0 && finishedPlayers.Count == PhotonNetwork.CurrentRoom.PlayerCount;
 
         /// <summary>
         /// Gets a value indicating whether the current turn is finished by me.
         /// </summary>
         /// <value><c>true</c> if the current turn is finished by me; otherwise, <c>false</c>.</value>
-        public bool IsFinishedByMe
-        {
-            get { return this.finishedPlayers.Contains(PhotonNetwork.LocalPlayer); }
-        }
+        public bool IsFinishedByMe => finishedPlayers.Contains(PhotonNetwork.LocalPlayer);
 
         /// <summary>
         /// Gets a value indicating whether the current turn is over. That is the ElapsedTimeinTurn is greater or equal to the TurnDuration
         /// </summary>
         /// <value><c>true</c> if the current turn is over; otherwise, <c>false</c>.</value>
-        public bool IsOver
-        {
-            get { return this.RemainingSecondsInTurn <= 0f; }
-        }
+        public bool IsOver => RemainingSecondsInTurn <= 0f;
 
         /// <summary>
         /// The turn manager listener. Set this to your own script instance to catch Callbacks
@@ -128,14 +109,14 @@ namespace Photon.Pun.UtilityScripts
         #region MonoBehaviour CallBack
 
 
-        void Start(){}
+        private void Start() { }
 
-        void Update()
+        private void Update()
         {
-            if (Turn > 0 && this.IsOver && !_isOverCallProcessed)
+            if (Turn > 0 && IsOver && !_isOverCallProcessed)
             {
                 _isOverCallProcessed = true;
-                this.TurnManagerListener.OnTurnTimeEnds(this.Turn);
+                TurnManagerListener.OnTurnTimeEnds(Turn);
             }
 
         }
@@ -148,7 +129,7 @@ namespace Photon.Pun.UtilityScripts
         /// </summary>
         public void BeginTurn()
         {
-            Turn = this.Turn + 1; // note: this will set a property in the room, which is available to the other players.
+            Turn = Turn + 1; // note: this will set a property in the room, which is available to the other players.
         }
 
 
@@ -167,12 +148,14 @@ namespace Photon.Pun.UtilityScripts
             }
 
             // along with the actual move, we have to send which turn this move belongs to
-            Hashtable moveHt = new Hashtable();
-            moveHt.Add("turn", Turn);
-            moveHt.Add("move", move);
+            Hashtable moveHt = new Hashtable
+            {
+                { "turn", Turn },
+                { "move", move }
+            };
 
             byte evCode = (finished) ? EvFinalMove : EvMove;
-            PhotonNetwork.RaiseEvent(evCode, moveHt, new RaiseEventOptions() {CachingOption = EventCaching.AddToRoomCache}, SendOptions.SendReliable);
+            PhotonNetwork.RaiseEvent(evCode, moveHt, new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache }, SendOptions.SendReliable);
             if (finished)
             {
                 PhotonNetwork.LocalPlayer.SetFinishedTurn(Turn);
@@ -180,7 +163,7 @@ namespace Photon.Pun.UtilityScripts
 
             // the server won't send the event back to the origin (by default). to get the event, call it locally
             // (note: the order of events might be mixed up as we do this locally)
-			ProcessOnEvent(evCode, moveHt, PhotonNetwork.LocalPlayer.ActorNumber);
+            ProcessOnEvent(evCode, moveHt, PhotonNetwork.LocalPlayer.ActorNumber);
         }
 
         /// <summary>
@@ -190,7 +173,7 @@ namespace Photon.Pun.UtilityScripts
         /// <param name="player">The Player to check for</param>
         public bool GetPlayerFinishedTurn(Player player)
         {
-            if (player != null && this.finishedPlayers != null && this.finishedPlayers.Contains(player))
+            if (player != null && finishedPlayers != null && finishedPlayers.Contains(player))
             {
                 return true;
             }
@@ -200,43 +183,43 @@ namespace Photon.Pun.UtilityScripts
 
         #region Callbacks
 
-		// called internally
-		void ProcessOnEvent(byte eventCode, object content, int senderId)
-		{
-			Player sender = PhotonNetwork.CurrentRoom.GetPlayer(senderId);
-			switch (eventCode)
-			{
-			case EvMove:
-				{
-					Hashtable evTable = content as Hashtable;
-					int turn = (int)evTable["turn"];
-					object move = evTable["move"];
-					this.TurnManagerListener.OnPlayerMove(sender, turn, move);
+        // called internally
+        private void ProcessOnEvent(byte eventCode, object content, int senderId)
+        {
+            Player sender = PhotonNetwork.CurrentRoom.GetPlayer(senderId);
+            switch (eventCode)
+            {
+                case EvMove:
+                {
+                    Hashtable evTable = content as Hashtable;
+                    int turn = (int)evTable["turn"];
+                    object move = evTable["move"];
+                    TurnManagerListener.OnPlayerMove(sender, turn, move);
 
-					break;
-				}
-			case EvFinalMove:
-				{
-					Hashtable evTable = content as Hashtable;
-					int turn = (int)evTable["turn"];
-					object move = evTable["move"];
+                    break;
+                }
+                case EvFinalMove:
+                {
+                    Hashtable evTable = content as Hashtable;
+                    int turn = (int)evTable["turn"];
+                    object move = evTable["move"];
 
-					if (turn == this.Turn)
-					{
-						this.finishedPlayers.Add(sender);
+                    if (turn == Turn)
+                    {
+                        finishedPlayers.Add(sender);
 
-						this.TurnManagerListener.OnPlayerFinished(sender, turn, move);
+                        TurnManagerListener.OnPlayerFinished(sender, turn, move);
 
-					}
+                    }
 
-					if (IsCompletedByAll)
-					{
-						this.TurnManagerListener.OnTurnCompleted(this.Turn);
-					}
-					break;
-				}
-			}
-		}
+                    if (IsCompletedByAll)
+                    {
+                        TurnManagerListener.OnTurnCompleted(Turn);
+                    }
+                    break;
+                }
+            }
+        }
 
         /// <summary>
         /// Called by PhotonNetwork.OnEventCall registration
@@ -244,7 +227,7 @@ namespace Photon.Pun.UtilityScripts
 		/// <param name="photonEvent">Photon event.</param>
 		public void OnEvent(EventData photonEvent)
         {
-			this.ProcessOnEvent(photonEvent.Code, photonEvent.CustomData, photonEvent.Sender);
+            ProcessOnEvent(photonEvent.Code, photonEvent.CustomData, photonEvent.Sender);
         }
 
         /// <summary>
@@ -259,8 +242,8 @@ namespace Photon.Pun.UtilityScripts
             if (propertiesThatChanged.ContainsKey("Turn"))
             {
                 _isOverCallProcessed = false;
-                this.finishedPlayers.Clear();
-                this.TurnManagerListener.OnTurnBegins(this.Turn);
+                finishedPlayers.Clear();
+                TurnManagerListener.OnTurnBegins(Turn);
             }
         }
 
@@ -337,8 +320,10 @@ namespace Photon.Pun.UtilityScripts
                 return;
             }
 
-            Hashtable turnProps = new Hashtable();
-            turnProps[TurnPropKey] = turn;
+            Hashtable turnProps = new Hashtable
+            {
+                [TurnPropKey] = turn
+            };
             if (setStartTime)
             {
                 turnProps[TurnStartPropKey] = PhotonNetwork.ServerTimestamp;
@@ -359,7 +344,7 @@ namespace Photon.Pun.UtilityScripts
                 return 0;
             }
 
-            return (int) room.CustomProperties[TurnPropKey];
+            return (int)room.CustomProperties[TurnPropKey];
         }
 
 
@@ -375,7 +360,7 @@ namespace Photon.Pun.UtilityScripts
                 return 0;
             }
 
-            return (int) room.CustomProperties[TurnStartPropKey];
+            return (int)room.CustomProperties[TurnStartPropKey];
         }
 
         /// <summary>
@@ -392,7 +377,7 @@ namespace Photon.Pun.UtilityScripts
             }
 
             string propKey = FinishedTurnPropKey + player.ActorNumber;
-            return (int) room.CustomProperties[propKey];
+            return (int)room.CustomProperties[propKey];
         }
 
         /// <summary>
@@ -409,8 +394,10 @@ namespace Photon.Pun.UtilityScripts
             }
 
             string propKey = FinishedTurnPropKey + player.ActorNumber;
-            Hashtable finishedTurnProp = new Hashtable();
-            finishedTurnProp[propKey] = turn;
+            Hashtable finishedTurnProp = new Hashtable
+            {
+                [propKey] = turn
+            };
 
             room.SetCustomProperties(finishedTurnProp);
         }

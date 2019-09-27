@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="CAttributeView">
-    <Button name = "Equipments" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(-200,300,0);}" Text = "Player Image Here"/>
-    <Text name = "EnergyText"  Transform = "{localPosition:(-200,200,0);}" Text = "Energy Bar Here"/>
-    <Button name = "Inventory" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,200,0);}" Text = "Possible Inventory Here"/>
-    <Button name = "Option" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(200,-300,0);}" Text = "Option"/>
-    <Image name = "Background" sprite="Textures/UI/background" RectTransform = "{anchorMin:(0,0); anchorMax:(1,1); pivot(0.5,0.5); anchoredPosition3D:(0,0,0); sizeDelta:(0,0); }"/>
-    <Image name = "UserImage" sprite="Textures/UI/background" Transform = "{localPosition:(0,200,0);}"/>
+<Canvas name="CAttrubuteView">
+  <Button name = "SinglePlayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-120,0);}" Text = "Single Player" OnClick = "{Bind:OnSinglePlayerButtonClicked}"/>
+  <Button name = "MultiplayerButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-220,0);}" Text = "Multiple Players"/>
+  <Button name = "OptionsButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-320,0);}" Text = "Options"/>
+  <Button name = "ExitGameButton" Prefab = "EntityPrefabs/MenuButton" Transform = "{localPosition:(0,-420,0);}" Text = "Exit"/>
+  <Image name = "Logo" NativeSize = "true" Sprite = "Textures/UI/FIVE_LOGO" RectTransform = "{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); pivot(0.5,0.5); anchoredPosition3D:(0,200,0); sizeDelta:(579,355);}" />
 </Canvas>

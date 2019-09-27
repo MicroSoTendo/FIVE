@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE
@@ -41,18 +40,17 @@ namespace FIVE
         private Queue<Move> moves;
         private CharacterController cc;
 
-
-        void Start()
+        private void Start()
         {
             cc = GetComponent<CharacterController>();
             MoveSpeed = 15.0f;
             RotateSpeed = 30.0f;
 
             moves = new Queue<Move>();
-            MoveOnces = new MoveOnce[4] { this.Forward, this.Backward, this.TurnLeft, this.TurnRight, };
+            MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
         }
 
-        void Update()
+        private void Update()
         {
             if (moves.Count > 0)
             {

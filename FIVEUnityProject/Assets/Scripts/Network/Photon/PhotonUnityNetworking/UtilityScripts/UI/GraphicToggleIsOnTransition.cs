@@ -32,33 +32,33 @@ namespace Photon.Pun.UtilityScripts
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            this.isHover = true;
-            this._graphic.color = this.toggle.isOn ? this.HoverOnColor : this.HoverOffColor;
+            isHover = true;
+            _graphic.color = toggle.isOn ? HoverOnColor : HoverOffColor;
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            this.isHover = false;
-            this._graphic.color = this.toggle.isOn ? this.NormalOnColor : this.NormalOffColor;
+            isHover = false;
+            _graphic.color = toggle.isOn ? NormalOnColor : NormalOffColor;
         }
 
         public void OnEnable()
         {
-            this._graphic = this.GetComponent<Graphic>();
+            _graphic = GetComponent<Graphic>();
 
-            this.OnValueChanged(this.toggle.isOn);
+            OnValueChanged(toggle.isOn);
 
-            this.toggle.onValueChanged.AddListener(this.OnValueChanged);
+            toggle.onValueChanged.AddListener(OnValueChanged);
         }
 
         public void OnDisable()
         {
-            this.toggle.onValueChanged.RemoveListener(this.OnValueChanged);
+            toggle.onValueChanged.RemoveListener(OnValueChanged);
         }
 
         public void OnValueChanged(bool isOn)
         {
-            this._graphic.color = isOn ? (this.isHover ? this.HoverOnColor : this.HoverOnColor) : (this.isHover ? this.NormalOffColor : this.NormalOffColor);
+            _graphic.color = isOn ? (isHover ? HoverOnColor : HoverOnColor) : (isHover ? NormalOffColor : NormalOffColor);
         }
     }
 }

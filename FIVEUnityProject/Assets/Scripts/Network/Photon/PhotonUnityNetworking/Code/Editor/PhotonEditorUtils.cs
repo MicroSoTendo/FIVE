@@ -10,12 +10,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-
 using UnityEditor;
 using UnityEngine;
-
-using System.IO;
 
 
 namespace Photon.Pun
@@ -44,17 +42,17 @@ namespace Photon.Pun
             if (HasPun)
             {
                 // MOUNTING SYMBOLS
-                #if !PHOTON_UNITY_NETWORKING
+#if !PHOTON_UNITY_NETWORKING
                 AddScriptingDefineSymbolToAllBuildTargetGroups("PHOTON_UNITY_NETWORKING");
-                #endif
+#endif
 
-                #if !PUN_2_0_OR_NEWER
+#if !PUN_2_0_OR_NEWER
                 AddScriptingDefineSymbolToAllBuildTargetGroups("PUN_2_0_OR_NEWER");
-                #endif
+#endif
 
-                #if !PUN_2_OR_NEWER
+#if !PUN_2_OR_NEWER
                 AddScriptingDefineSymbolToAllBuildTargetGroups("PUN_2_OR_NEWER");
-                #endif
+#endif
             }
         }
 
@@ -74,7 +72,7 @@ namespace Photon.Pun
                     continue;
                 }
 
-                var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group).Split(';').Select(d => d.Trim()).ToList();
+                List<string> defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group).Split(';').Select(d => d.Trim()).ToList();
 
                 if (!defineSymbols.Contains(defineSymbol))
                 {
@@ -107,13 +105,13 @@ namespace Photon.Pun
                     continue;
                 }
 
-                var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group)
+                List<string> defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group)
                     .Split(';')
                     .Select(d => d.Trim())
                     .ToList();
 
                 List<string> newDefineSymbols = new List<string>();
-                foreach (var symbol in defineSymbols)
+                foreach (string symbol in defineSymbols)
                 {
                     if ("PHOTON_UNITY_NETWORKING".Equals(symbol) || symbol.StartsWith("PUN_2_"))
                     {
@@ -143,7 +141,7 @@ namespace Photon.Pun
         /// <param name="parentName">Parent name.</param>
         public static string GetParent(string path, string parentName)
         {
-            var dir = new DirectoryInfo(path);
+            DirectoryInfo dir = new DirectoryInfo(path);
 
             if (dir.Parent == null)
             {
@@ -163,19 +161,19 @@ namespace Photon.Pun
             return GetParent(dir.Parent.FullName, parentName);
         }
 
-		/// <summary>
-		/// Check if a GameObject is a prefab asset or part of a prefab asset, as opposed to an instance in the scene hierarchy
-		/// </summary>
-		/// <returns><c>true</c>, if a prefab asset or part of it, <c>false</c> otherwise.</returns>
-		/// <param name="go">The GameObject to check</param>
-		public static bool IsPrefab(GameObject go)
-		{
-            #if UNITY_2018_3_OR_NEWER
+        /// <summary>
+        /// Check if a GameObject is a prefab asset or part of a prefab asset, as opposed to an instance in the scene hierarchy
+        /// </summary>
+        /// <returns><c>true</c>, if a prefab asset or part of it, <c>false</c> otherwise.</returns>
+        /// <param name="go">The GameObject to check</param>
+        public static bool IsPrefab(GameObject go)
+        {
+#if UNITY_2018_3_OR_NEWER
             return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetPrefabStage(go) != null || EditorUtility.IsPersistent(go);
-            #else
+#else
             return EditorUtility.IsPersistent(go);
-			#endif
-		}
+#endif
+        }
 
         //https://forum.unity.com/threads/using-unitywebrequest-in-editor-tools.397466/#post-4485181
         public static void StartCoroutine(System.Collections.IEnumerator update)
@@ -205,20 +203,22 @@ namespace Photon.Pun
         {
             using (UnityEngine.Networking.UnityWebRequest w = UnityEngine.Networking.UnityWebRequest.Get(url))
             {
-                #if UNITY_2017_2_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
                 yield return w.SendWebRequest();
-                #else
+#else
                 yield return w.Send();
-                #endif
+#endif
 
                 while (w.isDone == false)
+                {
                     yield return null;
+                }
 
-                #if UNITY_2017_1_OR_NEWER
+#if UNITY_2017_1_OR_NEWER
                 if (w.isNetworkError || w.isHttpError)
-                #else
+#else
                 if (w.isError)
-                #endif
+#endif
                 {
                     if (errorCallback != null)
                     {

@@ -135,24 +135,24 @@ namespace Photon.Pun
 
 
         private static double lastWarning = 0;
-        private static bool postCompileActionsDone;
+        private static readonly bool postCompileActionsDone;
 
         // setup once on load
         static PhotonEditor()
         {
-            #if UNITY_2017_2_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
             EditorApplication.playModeStateChanged += PlaymodeStateChanged;
-            #else
+#else
             EditorApplication.playmodeStateChanged += PlaymodeStateChanged;
-            #endif
+#endif
 
-            #if (UNITY_2018 || UNITY_2018_1_OR_NEWER)
+#if (UNITY_2018 || UNITY_2018_1_OR_NEWER)
             EditorApplication.projectChanged += OnProjectChanged;
             EditorApplication.hierarchyChanged += OnInitialHierarchyChanged;
-            #else
+#else
             EditorApplication.projectWindowChanged += OnProjectChanged;
             EditorApplication.hierarchyWindowChanged += OnInitialHierarchyChanged;
-            #endif
+#endif
 
             CompilationPipeline.assemblyCompilationStarted += OnCompileStarted;
         }
@@ -161,7 +161,7 @@ namespace Photon.Pun
         // setup per window
         public PhotonEditor()
         {
-            this.minSize = this.preferredSize;
+            minSize = preferredSize;
         }
 
         [MenuItem("Window/Photon Unity Networking/PUN Wizard &p", false, 0)]
@@ -192,11 +192,11 @@ namespace Photon.Pun
 
         private static void OnInitialHierarchyChanged()
         {
-            #if (UNITY_2018 || UNITY_2018_1_OR_NEWER)
+#if (UNITY_2018 || UNITY_2018_1_OR_NEWER)
             EditorApplication.hierarchyChanged -= OnInitialHierarchyChanged;
-            #else
+#else
             EditorApplication.hierarchyWindowChanged -= OnInitialHierarchyChanged;
-            #endif
+#endif
 
             UpdateRpcList();
         }
@@ -242,11 +242,11 @@ namespace Photon.Pun
         }
 
         // called in editor on change of play-mode (used to show a message popup that connection settings are incomplete)
-        #if UNITY_2017_2_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
         private static void PlaymodeStateChanged(PlayModeStateChange state)
-        #else
+#else
         private static void PlaymodeStateChanged()
-        #endif
+#endif
         {
             if (EditorApplication.isPlaying || !EditorApplication.isPlayingOrWillChangePlaymode)
             {
@@ -278,9 +278,9 @@ namespace Photon.Pun
         // Window Update() callback. On-demand, when Window is open
         protected void Update()
         {
-            if (this.close)
+            if (close)
             {
-                this.Close();
+                Close();
             }
         }
 
@@ -295,25 +295,25 @@ namespace Photon.Pun
                 }
             }
 
-            PhotonSetupStates oldGuiState = this.photonSetupState; // used to fix an annoying Editor input field issue: wont refresh until focus is changed.
+            PhotonSetupStates oldGuiState = photonSetupState; // used to fix an annoying Editor input field issue: wont refresh until focus is changed.
 
             GUI.SetNextControlName(string.Empty);
-            this.scrollPos = GUILayout.BeginScrollView(this.scrollPos);
+            scrollPos = GUILayout.BeginScrollView(scrollPos);
 
 
-            if (this.photonSetupState == PhotonSetupStates.MainUi)
+            if (photonSetupState == PhotonSetupStates.MainUi)
             {
-                this.UiMainWizard();
+                UiMainWizard();
             }
             else
             {
-                this.UiSetupApp();
+                UiSetupApp();
             }
 
 
             GUILayout.EndScrollView();
 
-            if (oldGuiState != this.photonSetupState)
+            if (oldGuiState != photonSetupState)
             {
                 GUI.FocusControl(string.Empty);
             }
@@ -323,13 +323,13 @@ namespace Photon.Pun
         protected virtual void UiSetupApp()
         {
             GUI.skin.label.wordWrap = true;
-            if (!this.isSetupWizard)
+            if (!isSetupWizard)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button(CurrentLang.MainMenuButton, GUILayout.ExpandWidth(false)))
                 {
-                    this.photonSetupState = PhotonSetupStates.MainUi;
+                    photonSetupState = PhotonSetupStates.MainUi;
                 }
 
                 GUILayout.EndHorizontal();
@@ -337,7 +337,7 @@ namespace Photon.Pun
 
 
             // setup header
-            this.UiTitleBox(CurrentLang.SetupWizardTitle, BackgroundImage);
+            UiTitleBox(CurrentLang.SetupWizardTitle, BackgroundImage);
 
             // setup info text
             GUI.skin.label.richText = true;
@@ -346,36 +346,36 @@ namespace Photon.Pun
             // input of appid or mail
             EditorGUILayout.Separator();
             GUILayout.Label(CurrentLang.EmailOrAppIdLabel);
-            this.mailOrAppId = EditorGUILayout.TextField(this.mailOrAppId);
-            if (!string.IsNullOrEmpty(this.mailOrAppId))
+            mailOrAppId = EditorGUILayout.TextField(mailOrAppId);
+            if (!string.IsNullOrEmpty(mailOrAppId))
             {
-                this.mailOrAppId = this.mailOrAppId.Trim(); // note: we trim all input
-                if (PhotonEditor.IsValidEmail(this.mailOrAppId))
+                mailOrAppId = mailOrAppId.Trim(); // note: we trim all input
+                if (PhotonEditor.IsValidEmail(mailOrAppId))
                 {
                     // this should be a mail address
-                    this.minimumInput = true;
-                    this.useMail = this.minimumInput;
-                    this.useAppId = false;
+                    minimumInput = true;
+                    useMail = minimumInput;
+                    useAppId = false;
                 }
-                else if (ServerSettings.IsAppId(this.mailOrAppId))
+                else if (ServerSettings.IsAppId(mailOrAppId))
                 {
                     // this should be an appId
-                    this.minimumInput = true;
-                    this.useMail = false;
-                    this.useAppId = this.minimumInput;
+                    minimumInput = true;
+                    useMail = false;
+                    useAppId = minimumInput;
                 }
                 else
                 {
-                    this.minimumInput = false;
-                    this.useMail = false;
-                    this.useAppId = false;
+                    minimumInput = false;
+                    useMail = false;
+                    useAppId = false;
                 }
             }
             else
             {
-                this.minimumInput = false;
-                this.useMail = false;
-                this.useAppId = false;
+                minimumInput = false;
+                useMail = false;
+                useAppId = false;
             }
 
             // button to skip setup
@@ -383,27 +383,27 @@ namespace Photon.Pun
             GUILayout.FlexibleSpace();
             if (GUILayout.Button(CurrentLang.SkipButton, GUILayout.Width(100)))
             {
-                this.photonSetupState = PhotonSetupStates.GoEditPhotonServerSettings;
-                this.useSkip = true;
-                this.useMail = false;
-                this.useAppId = false;
+                photonSetupState = PhotonSetupStates.GoEditPhotonServerSettings;
+                useSkip = true;
+                useMail = false;
+                useAppId = false;
             }
 
             // SETUP button
-            EditorGUI.BeginDisabledGroup(!this.minimumInput);
+            EditorGUI.BeginDisabledGroup(!minimumInput);
             if (GUILayout.Button(CurrentLang.SetupButton, GUILayout.Width(100)))
             {
-                this.useSkip = false;
+                useSkip = false;
                 GUIUtility.keyboardControl = 0;
-                if (this.useMail)
+                if (useMail)
                 {
-                    this.RegisterWithEmail(this.mailOrAppId); // sets state
+                    RegisterWithEmail(mailOrAppId); // sets state
                 }
-                if (this.useAppId)
+                if (useAppId)
                 {
-                    this.photonSetupState = PhotonSetupStates.GoEditPhotonServerSettings;
+                    photonSetupState = PhotonSetupStates.GoEditPhotonServerSettings;
                     Undo.RecordObject(PhotonNetwork.PhotonServerSettings, "Update PhotonServerSettings for PUN");
-                    PhotonNetwork.PhotonServerSettings.UseCloud(this.mailOrAppId);
+                    PhotonNetwork.PhotonServerSettings.UseCloud(mailOrAppId);
                     PhotonEditor.SaveSettings();
                 }
             }
@@ -413,7 +413,7 @@ namespace Photon.Pun
 
 
             // existing account needs to fetch AppId online
-            if (this.photonSetupState == PhotonSetupStates.EmailAlreadyRegistered)
+            if (photonSetupState == PhotonSetupStates.EmailAlreadyRegistered)
             {
                 // button to open dashboard and get the AppId
                 GUILayout.Space(15);
@@ -424,32 +424,32 @@ namespace Photon.Pun
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button(new GUIContent(CurrentLang.OpenCloudDashboardText, CurrentLang.OpenCloudDashboardTooltip), GUILayout.Width(205)))
                 {
-                    Application.OpenURL(string.Concat(UrlCloudDashboard, Uri.EscapeUriString(this.mailOrAppId)));
-                    this.mailOrAppId = string.Empty;
+                    Application.OpenURL(string.Concat(UrlCloudDashboard, Uri.EscapeUriString(mailOrAppId)));
+                    mailOrAppId = string.Empty;
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
             }
 
 
-            if (this.photonSetupState == PhotonSetupStates.GoEditPhotonServerSettings)
+            if (photonSetupState == PhotonSetupStates.GoEditPhotonServerSettings)
             {
-                if (!this.highlightedSettings)
+                if (!highlightedSettings)
                 {
-                    this.highlightedSettings = true;
+                    highlightedSettings = true;
                     HighlightSettings();
                 }
 
                 GUILayout.Space(15);
-                if (this.useSkip)
+                if (useSkip)
                 {
                     GUILayout.Label(CurrentLang.SkipRegistrationInfo);
                 }
-                else if (this.useMail)
+                else if (useMail)
                 {
                     GUILayout.Label(CurrentLang.RegisteredNewAccountInfo);
                 }
-                else if (this.useAppId)
+                else if (useAppId)
                 {
                     GUILayout.Label(CurrentLang.AppliedToSettingsInfo);
                 }
@@ -465,7 +465,7 @@ namespace Photon.Pun
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button(CurrentLang.CloseWindowButton, GUILayout.Width(205)))
                 {
-                    this.close = true;
+                    close = true;
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
@@ -495,7 +495,7 @@ namespace Photon.Pun
             GUILayout.Space(15);
 
             // title
-            this.UiTitleBox(CurrentLang.PUNWizardLabel, BackgroundImage);
+            UiTitleBox(CurrentLang.PUNWizardLabel, BackgroundImage);
 
             // wizard info text
             GUILayout.Label(CurrentLang.WizardMainWindowInfo);
@@ -512,11 +512,11 @@ namespace Photon.Pun
             }
             if (GUILayout.Button(new GUIContent(CurrentLang.OpenCloudDashboardText, CurrentLang.OpenCloudDashboardTooltip)))
             {
-                Application.OpenURL(UrlCloudDashboard + Uri.EscapeUriString(this.mailOrAppId));
+                Application.OpenURL(UrlCloudDashboard + Uri.EscapeUriString(mailOrAppId));
             }
             if (GUILayout.Button(new GUIContent(CurrentLang.SetupButton, CurrentLang.SetupServerCloudLabel)))
             {
-                this.photonSetupState = PhotonSetupStates.RegisterForPhotonCloud;
+                photonSetupState = PhotonSetupStates.RegisterForPhotonCloud;
             }
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
@@ -580,15 +580,15 @@ namespace Photon.Pun
             EditorUtility.ClearProgressBar();
             if (client.ReturnCode == 0)
             {
-                this.mailOrAppId = client.AppId;
-                PhotonNetwork.PhotonServerSettings.UseCloud(this.mailOrAppId, null);
+                mailOrAppId = client.AppId;
+                PhotonNetwork.PhotonServerSettings.UseCloud(mailOrAppId, null);
                 if (PhotonEditorUtils.HasVoice)
                 {
                     PhotonNetwork.PhotonServerSettings.AppSettings.AppIdVoice = client.AppId2;
                 }
                 PhotonEditor.SaveSettings();
 
-                this.photonSetupState = PhotonSetupStates.GoEditPhotonServerSettings;
+                photonSetupState = PhotonSetupStates.GoEditPhotonServerSettings;
             }
             else
             {
@@ -596,12 +596,12 @@ namespace Photon.Pun
 
                 if (client.Message.Contains("registered"))
                 {
-                    this.photonSetupState = PhotonSetupStates.EmailAlreadyRegistered;
+                    photonSetupState = PhotonSetupStates.EmailAlreadyRegistered;
                 }
                 else
                 {
                     EditorUtility.DisplayDialog(CurrentLang.ErrorTextTitle, client.Message, CurrentLang.OkButton);
-                    this.photonSetupState = PhotonSetupStates.RegisterForPhotonCloud;
+                    photonSetupState = PhotonSetupStates.RegisterForPhotonCloud;
                 }
             }
         }
@@ -662,11 +662,11 @@ namespace Photon.Pun
             List<string> allRpcs = new List<string>();
 
 
-            #if UNITY_2019_2_OR_NEWER
+#if UNITY_2019_2_OR_NEWER
 
             // we can make use of the new TypeCache to find methods with PunRPC attribute
-            var extractedMethods = TypeCache.GetMethodsWithAttribute<PunRPC>();
-            foreach (var methodInfo in extractedMethods)
+            TypeCache.MethodCollection extractedMethods = TypeCache.GetMethodsWithAttribute<PunRPC>();
+            foreach (MethodInfo methodInfo in extractedMethods)
             {
                 allRpcs.Add(methodInfo.Name);
                 if (!serverSettings.RpcList.Contains(methodInfo.Name))
@@ -675,15 +675,15 @@ namespace Photon.Pun
                 }
             }
 
-            #else
+#else
 
             System.Reflection.Assembly[] assemblies;
 
-            #if NET_4_6
+#if NET_4_6
             assemblies = System.AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic).ToArray();
-            #else
+#else
             assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-            #endif
+#endif
 
             foreach (var assembly in assemblies)
             {
@@ -701,7 +701,7 @@ namespace Photon.Pun
                 additionalRpcs.AddRange(additional);
             }
 
-            #endif
+#endif
 
 
             if (additionalRpcs.Count <= 0)

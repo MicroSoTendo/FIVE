@@ -17,18 +17,14 @@
 
 namespace Photon.Realtime
 {
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using ExitGames.Client.Photon;
 
-    #if SUPPORTED_UNITY
-    using UnityEngine;
-    #endif
-    #if SUPPORTED_UNITY || NETFX_CORE
+#if SUPPORTED_UNITY
+#endif
+#if SUPPORTED_UNITY || NETFX_CORE
     using Hashtable = ExitGames.Client.Photon.Hashtable;
     using SupportClass = ExitGames.Client.Photon.SupportClass;
-    #endif
+#endif
 
 
     /// <summary>
@@ -50,10 +46,7 @@ namespace Photon.Realtime
 
         /// <summary>Identifier of this player in current room. Also known as: actorNumber or actorNumber. It's -1 outside of rooms.</summary>
         /// <remarks>The ID is assigned per room and only valid in that context. It will change even on leave and re-join. IDs are never re-used per room.</remarks>
-        public int ActorNumber
-        {
-            get { return this.actorNumber; }
-        }
+        public int ActorNumber => actorNumber;
 
 
         /// <summary>Only one player is controlled by each client. Others are not local.</summary>
@@ -70,23 +63,20 @@ namespace Photon.Realtime
         /// </remarks>
         public string NickName
         {
-            get
-            {
-                return this.nickName;
-            }
+            get => nickName;
             set
             {
-                if (!string.IsNullOrEmpty(this.nickName) && this.nickName.Equals(value))
+                if (!string.IsNullOrEmpty(nickName) && nickName.Equals(value))
                 {
                     return;
                 }
 
-                this.nickName = value;
+                nickName = value;
 
                 // update a room, if we changed our nickName locally
-                if (this.IsLocal)
+                if (IsLocal)
                 {
-                    this.SetPlayerNameProperty();
+                    SetPlayerNameProperty();
                 }
             }
         }
@@ -105,12 +95,12 @@ namespace Photon.Realtime
         {
             get
             {
-                if (this.RoomReference == null)
+                if (RoomReference == null)
                 {
                     return false;
                 }
 
-                return this.ActorNumber == this.RoomReference.MasterClientId;
+                return ActorNumber == RoomReference.MasterClientId;
             }
         }
 
@@ -157,12 +147,12 @@ namespace Photon.Realtime
         /// <param name="playerProperties">A Hashtable of custom properties to be synced. Must use String-typed keys and serializable datatypes as values.</param>
         protected internal Player(string nickName, int actorNumber, bool isLocal, Hashtable playerProperties)
         {
-            this.IsLocal = isLocal;
+            IsLocal = isLocal;
             this.actorNumber = actorNumber;
-            this.NickName = nickName;
+            NickName = nickName;
 
-            this.CustomProperties = new Hashtable();
-            this.InternalCacheProperties(playerProperties);
+            CustomProperties = new Hashtable();
+            InternalCacheProperties(playerProperties);
         }
 
 
@@ -173,19 +163,19 @@ namespace Photon.Realtime
         /// <returns>Player or null.</returns>
         public Player Get(int id)
         {
-            if (this.RoomReference == null)
+            if (RoomReference == null)
             {
                 return null;
             }
 
-            return this.RoomReference.GetPlayer(id);
+            return RoomReference.GetPlayer(id);
         }
 
         /// <summary>Gets this Player's next Player, as sorted by ActorNumber (Player.ID). Wraps around.</summary>
         /// <returns>Player or null.</returns>
         public Player GetNext()
         {
-            return GetNextFor(this.ActorNumber);
+            return GetNextFor(ActorNumber);
         }
 
         /// <summary>Gets a Player's next Player, as sorted by ActorNumber (Player.ID). Wraps around.</summary>
@@ -207,12 +197,12 @@ namespace Photon.Realtime
         /// <returns>Player or null.</returns>
         public Player GetNextFor(int currentPlayerId)
         {
-            if (this.RoomReference == null || this.RoomReference.Players == null || this.RoomReference.Players.Count < 2)
+            if (RoomReference == null || RoomReference.Players == null || RoomReference.Players.Count < 2)
             {
                 return null;
             }
 
-            Dictionary<int, Player> players = this.RoomReference.Players;
+            Dictionary<int, Player> players = RoomReference.Players;
             int nextHigherId = int.MaxValue;    // we look for the next higher ID
             int lowestId = currentPlayerId;     // if we are the player with the highest ID, there is no higher and we return to the lowest player's id
 
@@ -243,7 +233,7 @@ namespace Photon.Realtime
         /// </remarks>
         public virtual void InternalCacheProperties(Hashtable properties)
         {
-            if (properties == null || properties.Count == 0 || this.CustomProperties.Equals(properties))
+            if (properties == null || properties.Count == 0 || CustomProperties.Equals(properties))
             {
                 return;
             }
@@ -253,33 +243,33 @@ namespace Photon.Realtime
                 string nameInServersProperties = (string)properties[ActorProperties.PlayerName];
                 if (nameInServersProperties != null)
                 {
-                    if (this.IsLocal)
+                    if (IsLocal)
                     {
                         // the local playername is different than in the properties coming from the server
                         // so the local nickName was changed and the server is outdated -> update server
                         // update property instead of using the outdated nickName coming from server
-                        if (!nameInServersProperties.Equals(this.nickName))
+                        if (!nameInServersProperties.Equals(nickName))
                         {
-                            this.SetPlayerNameProperty();
+                            SetPlayerNameProperty();
                         }
                     }
                     else
                     {
-                        this.NickName = nameInServersProperties;
+                        NickName = nameInServersProperties;
                     }
                 }
             }
             if (properties.ContainsKey(ActorProperties.UserId))
             {
-                this.UserId = (string)properties[ActorProperties.UserId];
+                UserId = (string)properties[ActorProperties.UserId];
             }
             if (properties.ContainsKey(ActorProperties.IsInactive))
             {
-                this.IsInactive = (bool)properties[ActorProperties.IsInactive]; //TURNBASED new well-known propery for players
+                IsInactive = (bool)properties[ActorProperties.IsInactive]; //TURNBASED new well-known propery for players
             }
 
-            this.CustomProperties.MergeStringKeys(properties);
-            this.CustomProperties.StripKeysWithNullValues();
+            CustomProperties.MergeStringKeys(properties);
+            CustomProperties.StripKeysWithNullValues();
         }
 
 
@@ -288,7 +278,7 @@ namespace Photon.Realtime
         /// </summary>
         public override string ToString()
         {
-            return (string.IsNullOrEmpty(this.NickName) ? this.ActorNumber.ToString() : this.nickName) + " " + SupportClass.DictionaryToString(this.CustomProperties);
+            return (string.IsNullOrEmpty(NickName) ? ActorNumber.ToString() : nickName) + " " + SupportClass.DictionaryToString(CustomProperties);
         }
 
         /// <summary>
@@ -300,7 +290,7 @@ namespace Photon.Realtime
         /// </remarks>
         public string ToStringFull()
         {
-            return string.Format("#{0:00} '{1}'{2} {3}", this.ActorNumber, this.NickName, this.IsInactive ? " (inactive)" : "", this.CustomProperties.ToStringFull());
+            return string.Format("#{0:00} '{1}'{2} {3}", ActorNumber, NickName, IsInactive ? " (inactive)" : "", CustomProperties.ToStringFull());
         }
 
         /// <summary>
@@ -309,7 +299,7 @@ namespace Photon.Realtime
         public override bool Equals(object p)
         {
             Player pp = p as Player;
-            return (pp != null && this.GetHashCode() == pp.GetHashCode());
+            return (pp != null && GetHashCode() == pp.GetHashCode());
         }
 
         /// <summary>
@@ -317,7 +307,7 @@ namespace Photon.Realtime
         /// </summary>
         public override int GetHashCode()
         {
-            return this.ActorNumber;
+            return ActorNumber;
         }
 
         /// <summary>
@@ -325,13 +315,13 @@ namespace Photon.Realtime
         /// </summary>
         protected internal void ChangeLocalID(int newID)
         {
-            if (!this.IsLocal)
+            if (!IsLocal)
             {
                 //Debug.LogError("ERROR You should never change Player IDs!");
                 return;
             }
 
-            this.actorNumber = newID;
+            actorNumber = newID;
         }
 
 
@@ -394,21 +384,21 @@ namespace Photon.Realtime
 
             if (noCas)
             {
-                this.CustomProperties.Merge(customProps);
-                this.CustomProperties.StripKeysWithNullValues();
+                CustomProperties.Merge(customProps);
+                CustomProperties.StripKeysWithNullValues();
             }
 
-            if (this.RoomReference != null)
+            if (RoomReference != null)
             {
-                if (this.RoomReference.IsOffline)
+                if (RoomReference.IsOffline)
                 {
                     // invoking callbacks
-                    this.RoomReference.LoadBalancingClient.InRoomCallbackTargets.OnPlayerPropertiesUpdate(this, customProps);
+                    RoomReference.LoadBalancingClient.InRoomCallbackTargets.OnPlayerPropertiesUpdate(this, customProps);
                 }
                 else
                 {
                     // send (sync) these new values if in online room
-                    this.RoomReference.LoadBalancingClient.LoadBalancingPeer.OpSetPropertiesOfActor(this.actorNumber, customProps, customPropsToCheck, webFlags);
+                    RoomReference.LoadBalancingClient.LoadBalancingPeer.OpSetPropertiesOfActor(actorNumber, customProps, customPropsToCheck, webFlags);
                 }
             }
         }
@@ -417,11 +407,13 @@ namespace Photon.Realtime
         /// <summary>Uses OpSetPropertiesOfActor to sync this player's NickName (server is being updated with this.NickName).</summary>
         private void SetPlayerNameProperty()
         {
-            if (this.RoomReference != null && !this.RoomReference.IsOffline)
+            if (RoomReference != null && !RoomReference.IsOffline)
             {
-                Hashtable properties = new Hashtable();
-                properties[ActorProperties.PlayerName] = this.nickName;
-                this.RoomReference.LoadBalancingClient.LoadBalancingPeer.OpSetPropertiesOfActor(this.ActorNumber, properties);
+                Hashtable properties = new Hashtable
+                {
+                    [ActorProperties.PlayerName] = nickName
+                };
+                RoomReference.LoadBalancingClient.LoadBalancingPeer.OpSetPropertiesOfActor(ActorNumber, properties);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace FIVE.TerrainSystem
 
         public void ConstructArea(GameObject o)
         {
-            var mesh = new Mesh();
+            Mesh mesh = new Mesh();
             mesh.Clear();
             mesh.vertices = GroundVertices;
             mesh.triangles = GroundTriangles;

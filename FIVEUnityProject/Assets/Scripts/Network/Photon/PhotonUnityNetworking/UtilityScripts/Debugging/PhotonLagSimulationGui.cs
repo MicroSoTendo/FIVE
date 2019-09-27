@@ -11,11 +11,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-using UnityEngine;
-
-using Photon.Pun;
-using Photon.Realtime;
 using ExitGames.Client.Photon;
+using UnityEngine;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -40,23 +37,23 @@ namespace Photon.Pun.UtilityScripts
 
         public void Start()
         {
-            this.Peer = PhotonNetwork.NetworkingClient.LoadBalancingPeer;
+            Peer = PhotonNetwork.NetworkingClient.LoadBalancingPeer;
         }
 
         public void OnGUI()
         {
-            if (!this.Visible)
+            if (!Visible)
             {
                 return;
             }
 
-            if (this.Peer == null)
+            if (Peer == null)
             {
-                this.WindowRect = GUILayout.Window(this.WindowId, this.WindowRect, this.NetSimHasNoPeerWindow, "Netw. Sim.");
+                WindowRect = GUILayout.Window(WindowId, WindowRect, NetSimHasNoPeerWindow, "Netw. Sim.");
             }
             else
             {
-                this.WindowRect = GUILayout.Window(this.WindowId, this.WindowRect, this.NetSimWindow, "Netw. Sim.");
+                WindowRect = GUILayout.Window(WindowId, WindowRect, NetSimWindow, "Netw. Sim.");
             }
         }
 
@@ -67,40 +64,40 @@ namespace Photon.Pun.UtilityScripts
 
         private void NetSimWindow(int windowId)
         {
-            GUILayout.Label(string.Format("Rtt:{0,4} +/-{1,3}", this.Peer.RoundTripTime, this.Peer.RoundTripTimeVariance));
+            GUILayout.Label(string.Format("Rtt:{0,4} +/-{1,3}", Peer.RoundTripTime, Peer.RoundTripTimeVariance));
 
-            bool simEnabled = this.Peer.IsSimulationEnabled;
+            bool simEnabled = Peer.IsSimulationEnabled;
             bool newSimEnabled = GUILayout.Toggle(simEnabled, "Simulate");
             if (newSimEnabled != simEnabled)
             {
-                this.Peer.IsSimulationEnabled = newSimEnabled;
+                Peer.IsSimulationEnabled = newSimEnabled;
             }
 
-            float inOutLag = this.Peer.NetworkSimulationSettings.IncomingLag;
+            float inOutLag = Peer.NetworkSimulationSettings.IncomingLag;
             GUILayout.Label("Lag " + inOutLag);
             inOutLag = GUILayout.HorizontalSlider(inOutLag, 0, 500);
 
-            this.Peer.NetworkSimulationSettings.IncomingLag = (int)inOutLag;
-            this.Peer.NetworkSimulationSettings.OutgoingLag = (int)inOutLag;
+            Peer.NetworkSimulationSettings.IncomingLag = (int)inOutLag;
+            Peer.NetworkSimulationSettings.OutgoingLag = (int)inOutLag;
 
-            float inOutJitter = this.Peer.NetworkSimulationSettings.IncomingJitter;
+            float inOutJitter = Peer.NetworkSimulationSettings.IncomingJitter;
             GUILayout.Label("Jit " + inOutJitter);
             inOutJitter = GUILayout.HorizontalSlider(inOutJitter, 0, 100);
 
-            this.Peer.NetworkSimulationSettings.IncomingJitter = (int)inOutJitter;
-            this.Peer.NetworkSimulationSettings.OutgoingJitter = (int)inOutJitter;
+            Peer.NetworkSimulationSettings.IncomingJitter = (int)inOutJitter;
+            Peer.NetworkSimulationSettings.OutgoingJitter = (int)inOutJitter;
 
-            float loss = this.Peer.NetworkSimulationSettings.IncomingLossPercentage;
+            float loss = Peer.NetworkSimulationSettings.IncomingLossPercentage;
             GUILayout.Label("Loss " + loss);
             loss = GUILayout.HorizontalSlider(loss, 0, 10);
 
-            this.Peer.NetworkSimulationSettings.IncomingLossPercentage = (int)loss;
-            this.Peer.NetworkSimulationSettings.OutgoingLossPercentage = (int)loss;
+            Peer.NetworkSimulationSettings.IncomingLossPercentage = (int)loss;
+            Peer.NetworkSimulationSettings.OutgoingLossPercentage = (int)loss;
 
             // if anything was clicked, the height of this window is likely changed. reduce it to be layouted again next frame
             if (GUI.changed)
             {
-                this.WindowRect.height = 100;
+                WindowRect.height = 100;
             }
 
             GUI.DragWindow();

@@ -23,12 +23,13 @@ namespace FIVE.Robot
 
         // Script References
         private RobotFreeAnim animator;
+
         private FpsController fpsController;
         private Camera fpsCamera;
         private Camera thirdPersonCamera;
         private Movable movable;
 
-        private AwslScript script;
+        private AWSLScript script;
         public bool scriptActive;
 
         // Robot Status
@@ -37,7 +38,6 @@ namespace FIVE.Robot
 
         private void Awake()
         {
-
             GameObject eye = gameObject.GetChildGameObject(nameof(eye));
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), eye.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
@@ -72,6 +72,8 @@ namespace FIVE.Robot
 
         private void Update()
         {
+            // update animation at beginning to ensure consistency
+            animator.Update(currState);
             if (cc.velocity.magnitude == 0)
             {
                 currState = RobotState.Idle;
@@ -100,13 +102,12 @@ namespace FIVE.Robot
                 if (code.Saved)
                 {
                     editingCode = false;
-                    script = new AwslScript(code.Code);
+                    script = new AWSLScript(this, code.Code);
                     scriptActive = true;
                 }
                 return;
             }
 
-            animator.Update(currState);
             if (scriptActive)
             {
                 ExecuteScript();
@@ -145,7 +146,7 @@ namespace FIVE.Robot
 
         private void ExecuteScript()
         {
-            script.Execute(gameObject);
+            script.Execute();
         }
     }
 }

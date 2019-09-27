@@ -8,7 +8,7 @@ namespace FIVE.GameStates
 {
     public class SinglePlayer : GameMode
     {
-        void Start()
+        private void Start()
         {
             GameObject robot = RobotManager.CreateRobot();
             Inventory inventory = InventoryManager.AddInventory(robot);

@@ -8,19 +8,16 @@
 // <author>developer@exitgames.com</author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Photon.Pun.UtilityScripts
 {
     /// <summary>
     /// This component will instantiate a network GameObject when a room is joined
     /// </summary>
-	public class OnJoinedInstantiate : MonoBehaviour , IConnectionCallbacks , IMatchmakingCallbacks , ILobbyCallbacks
+	public class OnJoinedInstantiate : MonoBehaviour, IConnectionCallbacks, IMatchmakingCallbacks, ILobbyCallbacks
     {
         public Transform SpawnPosition;
         public float PositionOffset = 2.0f;
@@ -38,22 +35,22 @@ namespace Photon.Pun.UtilityScripts
 
         public void OnJoinedRoom()
         {
-            if (this.PrefabsToInstantiate != null)
+            if (PrefabsToInstantiate != null)
             {
-                foreach (GameObject o in this.PrefabsToInstantiate)
+                foreach (GameObject o in PrefabsToInstantiate)
                 {
                     Debug.Log("Instantiating: " + o.name);
 
                     Vector3 spawnPos = Vector3.up;
-                    if (this.SpawnPosition != null)
+                    if (SpawnPosition != null)
                     {
-                        spawnPos = this.SpawnPosition.position;
+                        spawnPos = SpawnPosition.position;
                     }
 
                     Vector3 random = Random.insideUnitSphere;
                     random.y = 0;
                     random = random.normalized;
-                    Vector3 itempos = spawnPos + this.PositionOffset * random;
+                    Vector3 itempos = spawnPos + PositionOffset * random;
 
                     PhotonNetwork.Instantiate(o.name, itempos, Quaternion.identity, 0);
                 }
@@ -64,19 +61,19 @@ namespace Photon.Pun.UtilityScripts
         {
         }
 
-		public void OnCustomAuthenticationResponse (Dictionary<string, object> data)
-		{
-		}
+        public void OnCustomAuthenticationResponse(Dictionary<string, object> data)
+        {
+        }
 
-		public void OnCustomAuthenticationFailed (string debugMessage)
-		{
-		}
+        public void OnCustomAuthenticationFailed(string debugMessage)
+        {
+        }
 
         public void OnConnectedToMaster()
         {
         }
 
-		public void OnDisconnected(DisconnectCause cause)
+        public void OnDisconnected(DisconnectCause cause)
         {
         }
 
@@ -100,9 +97,9 @@ namespace Photon.Pun.UtilityScripts
         {
         }
 
-		public void OnLobbyStatisticsUpdate (List<TypedLobbyInfo> lobbyStatistics)
-		{
-		}
+        public void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
+        {
+        }
 
         public void OnCreatedRoom()
         {

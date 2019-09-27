@@ -1,12 +1,10 @@
-﻿using FIVE.EventSystem;
-using FIVE.UI.StartupMenu;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {
-        [SerializeField] private GameObject RobotPrefab = null;
+        [SerializeField] private readonly GameObject RobotPrefab = null;
         private static RobotManager instance;
         private void Awake()
         {

@@ -65,8 +65,8 @@ namespace FIVE.UI
 
         private static List<(string, object)> PropertyParser(XmlAttribute attribute)
         {
-            var parsedObjects = new List<(string, object)>();
-            var r = new Regex(@"\s*([\w]+)\s*\:\s*([\w\,\-\+\(\)]+)\;\s*");
+            List<(string, object)> parsedObjects = new List<(string, object)>();
+            Regex r = new Regex(@"\s*([\w]+)\s*\:\s*([\w\,\-\+\(\)]+)\;\s*");
             MatchCollection matchCollection = r.Matches(attribute.InnerText);
             foreach (Match match in matchCollection)
             {
@@ -92,8 +92,8 @@ namespace FIVE.UI
         {
             //TODO: Finish
             string text = xmlAttribute.InnerText;
-            var directBindRegex = new Regex(@"\{Binding\s+([\w_]+)\s*\}");
-            var pathBindRegex = new Regex(@"\{Binding\s+([\w_]+)\s*,\s*Path\s*\=\s*([\w_]+)\}");
+            Regex directBindRegex = new Regex(@"\{Binding\s+([\w_]+)\s*\}");
+            Regex pathBindRegex = new Regex(@"\{Binding\s+([\w_]+)\s*,\s*Path\s*\=\s*([\w_]+)\}");
 
             return true;
         }
@@ -195,7 +195,7 @@ namespace FIVE.UI
 
         private static Dictionary<string, object> ParseAttributes(XmlAttributeCollection attributes)
         {
-            var parsedAttributes = new Dictionary<string, object>();
+            Dictionary<string, object> parsedAttributes = new Dictionary<string, object>();
             foreach (XmlAttribute attribute in attributes)
             {
                 string name = attribute.Name;

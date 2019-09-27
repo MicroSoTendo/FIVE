@@ -12,13 +12,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
-using UnityEngine;
-
-using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -35,9 +32,9 @@ namespace Photon.Pun.UtilityScripts
 
         public void Start()
         {
-            if (this.AutoConnect)
+            if (AutoConnect)
             {
-                this.ConnectNow();
+                ConnectNow();
             }
         }
 
@@ -45,7 +42,7 @@ namespace Photon.Pun.UtilityScripts
         {
             Debug.Log("ConnectAndJoinRandom.ConnectNow() will now call: PhotonNetwork.ConnectUsingSettings().");
             PhotonNetwork.ConnectUsingSettings();
-            PhotonNetwork.GameVersion = this.Version + "." + SceneManagerHelper.ActiveSceneBuildIndex;
+            PhotonNetwork.GameVersion = Version + "." + SceneManagerHelper.ActiveSceneBuildIndex;
         }
 
 
@@ -74,7 +71,7 @@ namespace Photon.Pun.UtilityScripts
         // the following methods are implemented to give you some context. re-implement them as needed.
         public override void OnDisconnected(DisconnectCause cause)
         {
-			Debug.Log("OnDisconnected("+cause+")");
+            Debug.Log("OnDisconnected(" + cause + ")");
         }
 
         public override void OnJoinedRoom()

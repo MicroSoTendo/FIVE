@@ -7,8 +7,8 @@
 // <author>developer@exitgames.com</author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using UnityEngine;
 using Photon.Realtime;
+using UnityEngine;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -35,21 +35,21 @@ namespace Photon.Pun.UtilityScripts
         private Rect GuiRect = new Rect();
         private static StatesGui Instance;
 
-        void Awake()
+        private void Awake()
         {
             if (Instance != null)
             {
-                DestroyImmediate(this.gameObject);
+                DestroyImmediate(gameObject);
                 return;
             }
             if (DontDestroy)
             {
                 Instance = this;
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             if (DontDestroy && Instance == this)
             {
@@ -58,9 +58,9 @@ namespace Photon.Pun.UtilityScripts
 
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
-            Rect GuiOffsetRuntime = new Rect(this.GuiOffset);
+            Rect GuiOffsetRuntime = new Rect(GuiOffset);
 
             if (GuiOffsetRuntime.x < 0)
             {
@@ -73,9 +73,9 @@ namespace Photon.Pun.UtilityScripts
             GUILayout.BeginArea(GuiRect);
 
             GUILayout.BeginHorizontal();
-            if (this.ServerTimestamp)
+            if (ServerTimestamp)
             {
-                GUILayout.Label((((double)PhotonNetwork.ServerTimestamp) / 1000d).ToString("F3"));
+                GUILayout.Label((PhotonNetwork.ServerTimestamp / 1000d).ToString("F3"));
             }
 
             if (Server)
@@ -104,7 +104,7 @@ namespace Photon.Pun.UtilityScripts
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GUILayout.Label(this.RoomProps ? PhotonNetwork.CurrentRoom.ToStringFull() : PhotonNetwork.CurrentRoom.ToString());
+                    GUILayout.Label(RoomProps ? PhotonNetwork.CurrentRoom.ToStringFull() : PhotonNetwork.CurrentRoom.ToString());
                 }
                 else
                 {
@@ -114,7 +114,7 @@ namespace Photon.Pun.UtilityScripts
 
 
 
-            if (this.LocalPlayer)
+            if (LocalPlayer)
             {
                 GUILayout.Label(PlayerToString(PhotonNetwork.LocalPlayer));
             }
@@ -179,7 +179,7 @@ namespace Photon.Pun.UtilityScripts
                 Debug.LogError("nwp is null");
                 return "";
             }
-            return string.Format("#{0:00} '{1}'{5} {4}{2} {3} {6}", player.ActorNumber + "/userId:<" + player.UserId + ">", player.NickName, player.IsMasterClient ? "(master)" : "", this.PlayerProps ? player.CustomProperties.ToStringFull() : "", (PhotonNetwork.LocalPlayer.ActorNumber == player.ActorNumber) ? "(you)" : "", player.UserId, player.IsInactive ? " / Is Inactive" : "");
+            return string.Format("#{0:00} '{1}'{5} {4}{2} {3} {6}", player.ActorNumber + "/userId:<" + player.UserId + ">", player.NickName, player.IsMasterClient ? "(master)" : "", PlayerProps ? player.CustomProperties.ToStringFull() : "", (PhotonNetwork.LocalPlayer.ActorNumber == player.ActorNumber) ? "(you)" : "", player.UserId, player.IsInactive ? " / Is Inactive" : "");
         }
     }
 }
