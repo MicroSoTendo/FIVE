@@ -31,6 +31,9 @@ namespace FIVE.Robot
         private AwslScript script;
         public bool scriptActive;
 
+        // Robot Status
+        private float energy; // 1 - 100
+
         private void Awake()
         {
 
@@ -55,6 +58,8 @@ namespace FIVE.Robot
             // }
 
             scriptActive = false;
+
+            energy = 100f;
         }
 
         private void Start()
@@ -110,6 +115,10 @@ namespace FIVE.Robot
             {
                 fpsController.Update();
             }
+
+            // energe loss
+            energy -= Time.deltaTime;
+            Debug.Log(energy);
         }
 
         public void LateUpdate()
