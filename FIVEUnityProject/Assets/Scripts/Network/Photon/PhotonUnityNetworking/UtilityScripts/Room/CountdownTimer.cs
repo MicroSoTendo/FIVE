@@ -13,11 +13,9 @@
 // <author>developer@exitgames.com</author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using ExitGames.Client.Photon;
 using UnityEngine;
 using UnityEngine.UI;
-
-using ExitGames.Client.Photon;
-using Photon.Pun;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -91,9 +89,8 @@ namespace Photon.Pun.UtilityScripts
 
         public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
-            object startTimeFromProps;
 
-            if (propertiesThatChanged.TryGetValue(CountdownStartTime, out startTimeFromProps))
+            if (propertiesThatChanged.TryGetValue(CountdownStartTime, out object startTimeFromProps))
             {
                 isTimerRunning = true;
                 startTime = (float)startTimeFromProps;

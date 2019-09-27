@@ -1,5 +1,5 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +17,7 @@ namespace FIVE.UI.SplashScreens
 
         private GameObject TBoundary, TColor, S1Boundary, S1Color, S2Boundary, S2Color;
 
-        private GameObject canvas;
+        private readonly GameObject canvas;
         private float width, height, unitWidth;
         private MoveInAnimation genmtt, wallymtt, laurencemtt, wenmtt, yumtt;
         #endregion

@@ -1,7 +1,6 @@
-using System;
+using FIVE.EventSystem;
 using System.Collections;
 using System.IO;
-using FIVE.EventSystem;
 using UnityEngine;
 namespace FIVE.UI
 {
@@ -31,10 +30,11 @@ namespace FIVE.UI
 #if DEBUG
         private IEnumerator MonitorXML()
         {
-            var fileSystemWatcher =
+            FileSystemWatcher fileSystemWatcher =
                 new FileSystemWatcher(Application.dataPath + "/Resources/UI/")
                 {
-                    Filter = "*.xml", EnableRaisingEvents = true
+                    Filter = "*.xml",
+                    EnableRaisingEvents = true
                 };
             fileSystemWatcher.Changed += OnFileUpdated;
             while (true)
@@ -50,7 +50,7 @@ namespace FIVE.UI
                 MainThreadDispatcher.ScheduleCoroutine(Func());
                 IEnumerator Func()
                 {
-                    var newView = new TView();
+                    TView newView = new TView();
                     yield return null;
                     View.Unload();
                     yield return null;

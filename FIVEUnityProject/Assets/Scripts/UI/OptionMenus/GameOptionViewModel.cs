@@ -1,10 +1,9 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using FIVE.UI.Background;
-using FIVE.UI.Multiplayers;
-using UnityEngine;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
+using System;
+using UnityEngine;
 
 namespace FIVE.UI.OptionMenus
 {

@@ -28,7 +28,7 @@ namespace Photon.Pun
         {
             //base.OnInspectorGUI();
 
-            if (this.m_Animator == null)
+            if (m_Animator == null)
             {
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label("GameObject doesn't have an Animator component to synchronize");
@@ -36,25 +36,25 @@ namespace Photon.Pun
                 return;
             }
 
-            this.DrawWeightInspector();
+            DrawWeightInspector();
 
-            if (this.GetLayerCount() == 0)
+            if (GetLayerCount() == 0)
             {
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label("Animator doesn't have any layers setup to synchronize");
                 GUILayout.EndVertical();
             }
 
-            this.DrawParameterInspector();
+            DrawParameterInspector();
 
-            if (this.GetParameterCount() == 0)
+            if (GetParameterCount() == 0)
             {
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label("Animator doesn't have any parameters setup to synchronize");
                 GUILayout.EndVertical();
             }
 
-            this.serializedObject.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
 
             //GUILayout.Label( "m_SynchronizeLayers " + serializedObject.FindProperty( "m_SynchronizeLayers" ).arraySize );
             //GUILayout.Label( "m_SynchronizeParameters " + serializedObject.FindProperty( "m_SynchronizeParameters" ).arraySize );
@@ -63,17 +63,17 @@ namespace Photon.Pun
 
         private int GetLayerCount()
         {
-            return (this.m_Controller == null) ? 0 : this.m_Controller.layers.Length;
+            return (m_Controller == null) ? 0 : m_Controller.layers.Length;
         }
 
         private int GetParameterCount()
         {
-            return (this.m_Controller == null) ? 0 : this.m_Controller.parameters.Length;
+            return (m_Controller == null) ? 0 : m_Controller.parameters.Length;
         }
 
         private AnimatorControllerParameter GetAnimatorControllerParameter(int i)
         {
-            return this.m_Controller.parameters[i];
+            return m_Controller.parameters[i];
         }
 
 
@@ -93,17 +93,17 @@ namespace Photon.Pun
 
         private void OnEnable()
         {
-            this.m_Target = (PhotonAnimatorView)this.target;
-            this.m_Animator = this.m_Target.GetComponent<Animator>();
+            m_Target = (PhotonAnimatorView)target;
+            m_Animator = m_Target.GetComponent<Animator>();
 
-            this.m_Controller = this.GetEffectiveController(this.m_Animator) as AnimatorController;
+            m_Controller = GetEffectiveController(m_Animator) as AnimatorController;
 
-            this.CheckIfStoredParametersExist();
+            CheckIfStoredParametersExist();
         }
 
         private void DrawWeightInspector()
         {
-            SerializedProperty foldoutProperty = this.serializedObject.FindProperty("ShowLayerWeightsInspector");
+            SerializedProperty foldoutProperty = serializedObject.FindProperty("ShowLayerWeightsInspector");
             foldoutProperty.boolValue = PhotonGUI.ContainerHeaderFoldout("Synchronize Layer Weights", foldoutProperty.boolValue);
 
             if (foldoutProperty.boolValue == false)
@@ -112,16 +112,16 @@ namespace Photon.Pun
             }
 
             float lineHeight = 20;
-            Rect containerRect = PhotonGUI.ContainerBody(this.GetLayerCount() * lineHeight);
+            Rect containerRect = PhotonGUI.ContainerBody(GetLayerCount() * lineHeight);
 
-            for (int i = 0; i < this.GetLayerCount(); ++i)
+            for (int i = 0; i < GetLayerCount(); ++i)
             {
-                if (this.m_Target.DoesLayerSynchronizeTypeExist(i) == false)
+                if (m_Target.DoesLayerSynchronizeTypeExist(i) == false)
                 {
-                    this.m_Target.SetLayerSynchronized(i, PhotonAnimatorView.SynchronizeType.Disabled);
+                    m_Target.SetLayerSynchronized(i, PhotonAnimatorView.SynchronizeType.Disabled);
                 }
 
-                PhotonAnimatorView.SynchronizeType syncType = this.m_Target.GetLayerSynchronizeType(i);
+                PhotonAnimatorView.SynchronizeType syncType = m_Target.GetLayerSynchronizeType(i);
 
                 Rect elementRect = new Rect(containerRect.xMin, containerRect.yMin + i * lineHeight, containerRect.width, lineHeight);
 
@@ -131,25 +131,25 @@ namespace Photon.Pun
                 Rect popupRect = new Rect(elementRect.xMin + EditorGUIUtility.labelWidth, elementRect.yMin + 2, elementRect.width - EditorGUIUtility.labelWidth - 5, EditorGUIUtility.singleLineHeight);
                 syncType = (PhotonAnimatorView.SynchronizeType)EditorGUI.EnumPopup(popupRect, syncType);
 
-                if (i < this.GetLayerCount() - 1)
+                if (i < GetLayerCount() - 1)
                 {
                     Rect splitterRect = new Rect(elementRect.xMin + 2, elementRect.yMax, elementRect.width - 4, 1);
                     PhotonGUI.DrawSplitter(splitterRect);
                 }
 
-                if (syncType != this.m_Target.GetLayerSynchronizeType(i))
+                if (syncType != m_Target.GetLayerSynchronizeType(i))
                 {
-                    Undo.RecordObject(this.target, "Modify Synchronize Layer Weights");
-                    this.m_Target.SetLayerSynchronized(i, syncType);
+                    Undo.RecordObject(target, "Modify Synchronize Layer Weights");
+                    m_Target.SetLayerSynchronized(i, syncType);
                 }
             }
         }
 
         private bool DoesParameterExist(string name)
         {
-            for (int i = 0; i < this.GetParameterCount(); ++i)
+            for (int i = 0; i < GetParameterCount(); ++i)
             {
-                if (this.GetAnimatorControllerParameter(i).name == name)
+                if (GetAnimatorControllerParameter(i).name == name)
                 {
                     return true;
                 }
@@ -160,15 +160,15 @@ namespace Photon.Pun
 
         private void CheckIfStoredParametersExist()
         {
-            var syncedParams = this.m_Target.GetSynchronizedParameters();
+            List<PhotonAnimatorView.SynchronizedParameter> syncedParams = m_Target.GetSynchronizedParameters();
             List<string> paramsToRemove = new List<string>();
 
             for (int i = 0; i < syncedParams.Count; ++i)
             {
                 string parameterName = syncedParams[i].Name;
-                if (this.DoesParameterExist(parameterName) == false)
+                if (DoesParameterExist(parameterName) == false)
                 {
-                    Debug.LogWarning("Parameter '" + this.m_Target.GetSynchronizedParameters()[i].Name + "' doesn't exist anymore. Removing it from the list of synchronized parameters");
+                    Debug.LogWarning("Parameter '" + m_Target.GetSynchronizedParameters()[i].Name + "' doesn't exist anymore. Removing it from the list of synchronized parameters");
                     paramsToRemove.Add(parameterName);
                 }
             }
@@ -177,7 +177,7 @@ namespace Photon.Pun
             {
                 foreach (string param in paramsToRemove)
                 {
-                    this.m_Target.GetSynchronizedParameters().RemoveAll(item => item.Name == param);
+                    m_Target.GetSynchronizedParameters().RemoveAll(item => item.Name == param);
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace Photon.Pun
             // flag to expose a note in Interface if one or more trigger(s) are synchronized
             bool isUsingTriggers = false;
 
-            SerializedProperty foldoutProperty = this.serializedObject.FindProperty("ShowParameterInspector");
+            SerializedProperty foldoutProperty = serializedObject.FindProperty("ShowParameterInspector");
             foldoutProperty.boolValue = PhotonGUI.ContainerHeaderFoldout("Synchronize Parameters", foldoutProperty.boolValue);
 
             if (foldoutProperty.boolValue == false)
@@ -197,20 +197,20 @@ namespace Photon.Pun
             }
 
             float lineHeight = 20;
-            Rect containerRect = PhotonGUI.ContainerBody(this.GetParameterCount() * lineHeight);
+            Rect containerRect = PhotonGUI.ContainerBody(GetParameterCount() * lineHeight);
 
-            for (int i = 0; i < this.GetParameterCount(); i++)
+            for (int i = 0; i < GetParameterCount(); i++)
             {
                 AnimatorControllerParameter parameter = null;
-                parameter = this.GetAnimatorControllerParameter(i);
+                parameter = GetAnimatorControllerParameter(i);
 
                 string defaultValue = "";
 
                 if (parameter.type == AnimatorControllerParameterType.Bool)
                 {
-                    if (Application.isPlaying && this.m_Animator.gameObject.activeInHierarchy)
+                    if (Application.isPlaying && m_Animator.gameObject.activeInHierarchy)
                     {
-                        defaultValue += this.m_Animator.GetBool(parameter.name);
+                        defaultValue += m_Animator.GetBool(parameter.name);
                     }
                     else
                     {
@@ -219,9 +219,9 @@ namespace Photon.Pun
                 }
                 else if (parameter.type == AnimatorControllerParameterType.Float)
                 {
-                    if (Application.isPlaying && this.m_Animator.gameObject.activeInHierarchy)
+                    if (Application.isPlaying && m_Animator.gameObject.activeInHierarchy)
                     {
-                        defaultValue += this.m_Animator.GetFloat(parameter.name).ToString("0.00");
+                        defaultValue += m_Animator.GetFloat(parameter.name).ToString("0.00");
                     }
                     else
                     {
@@ -230,9 +230,9 @@ namespace Photon.Pun
                 }
                 else if (parameter.type == AnimatorControllerParameterType.Int)
                 {
-                    if (Application.isPlaying && this.m_Animator.gameObject.activeInHierarchy)
+                    if (Application.isPlaying && m_Animator.gameObject.activeInHierarchy)
                     {
-                        defaultValue += this.m_Animator.GetInteger(parameter.name);
+                        defaultValue += m_Animator.GetInteger(parameter.name);
                     }
                     else
                     {
@@ -241,9 +241,9 @@ namespace Photon.Pun
                 }
                 else if (parameter.type == AnimatorControllerParameterType.Trigger)
                 {
-                    if (Application.isPlaying && this.m_Animator.gameObject.activeInHierarchy)
+                    if (Application.isPlaying && m_Animator.gameObject.activeInHierarchy)
                     {
-                        defaultValue += this.m_Animator.GetBool(parameter.name);
+                        defaultValue += m_Animator.GetBool(parameter.name);
                     }
                     else
                     {
@@ -251,12 +251,12 @@ namespace Photon.Pun
                     }
                 }
 
-                if (this.m_Target.DoesParameterSynchronizeTypeExist(parameter.name) == false)
+                if (m_Target.DoesParameterSynchronizeTypeExist(parameter.name) == false)
                 {
-                    this.m_Target.SetParameterSynchronized(parameter.name, (PhotonAnimatorView.ParameterType)parameter.type, PhotonAnimatorView.SynchronizeType.Disabled);
+                    m_Target.SetParameterSynchronized(parameter.name, (PhotonAnimatorView.ParameterType)parameter.type, PhotonAnimatorView.SynchronizeType.Disabled);
                 }
 
-                PhotonAnimatorView.SynchronizeType value = this.m_Target.GetParameterSynchronizeType(parameter.name);
+                PhotonAnimatorView.SynchronizeType value = m_Target.GetParameterSynchronizeType(parameter.name);
 
                 // check if using trigger and actually synchronizing it
                 if (value != PhotonAnimatorView.SynchronizeType.Disabled && parameter.type == AnimatorControllerParameterType.Trigger)
@@ -272,16 +272,16 @@ namespace Photon.Pun
                 Rect popupRect = new Rect(elementRect.xMin + EditorGUIUtility.labelWidth, elementRect.yMin + 2, elementRect.width - EditorGUIUtility.labelWidth - 5, EditorGUIUtility.singleLineHeight);
                 value = (PhotonAnimatorView.SynchronizeType)EditorGUI.EnumPopup(popupRect, value);
 
-                if (i < this.GetParameterCount() - 1)
+                if (i < GetParameterCount() - 1)
                 {
                     Rect splitterRect = new Rect(elementRect.xMin + 2, elementRect.yMax, elementRect.width - 4, 1);
                     PhotonGUI.DrawSplitter(splitterRect);
                 }
 
-                if (value != this.m_Target.GetParameterSynchronizeType(parameter.name))
+                if (value != m_Target.GetParameterSynchronizeType(parameter.name))
                 {
-                    Undo.RecordObject(this.target, "Modify Synchronize Parameter " + parameter.name);
-                    this.m_Target.SetParameterSynchronized(parameter.name, (PhotonAnimatorView.ParameterType)parameter.type, value);
+                    Undo.RecordObject(target, "Modify Synchronize Parameter " + parameter.name);
+                    m_Target.SetParameterSynchronized(parameter.name, (PhotonAnimatorView.ParameterType)parameter.type, value);
                 }
             }
 

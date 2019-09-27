@@ -9,8 +9,8 @@
 // ----------------------------------------------------------------------------
 
 
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace Photon.Pun
 {
@@ -18,7 +18,7 @@ namespace Photon.Pun
     {
         #region Styles
 
-        static GUIStyle m_DefaultTitleStyle;
+        private static GUIStyle m_DefaultTitleStyle;
 
         public static GUIStyle DefaultTitleStyle
         {
@@ -26,11 +26,13 @@ namespace Photon.Pun
             {
                 if (m_DefaultTitleStyle == null)
                 {
-                    m_DefaultTitleStyle = new GUIStyle();
-                    m_DefaultTitleStyle.border = new RectOffset(2, 2, 2, 1);
-                    m_DefaultTitleStyle.margin = new RectOffset(5, 5, 5, 0);
-                    m_DefaultTitleStyle.padding = new RectOffset(5, 5, 0, 0);
-                    m_DefaultTitleStyle.alignment = TextAnchor.MiddleLeft;
+                    m_DefaultTitleStyle = new GUIStyle
+                    {
+                        border = new RectOffset(2, 2, 2, 1),
+                        margin = new RectOffset(5, 5, 5, 0),
+                        padding = new RectOffset(5, 5, 0, 0),
+                        alignment = TextAnchor.MiddleLeft
+                    };
                     m_DefaultTitleStyle.normal.background = ReorderableListResources.texTitleBackground;
                     m_DefaultTitleStyle.normal.textColor = EditorGUIUtility.isProSkin
                         ? new Color(0.8f, 0.8f, 0.8f)
@@ -41,7 +43,7 @@ namespace Photon.Pun
             }
         }
 
-        static GUIStyle m_DefaultContainerStyle;
+        private static GUIStyle m_DefaultContainerStyle;
 
         public static GUIStyle DefaultContainerStyle
         {
@@ -49,10 +51,12 @@ namespace Photon.Pun
             {
                 if (m_DefaultContainerStyle == null)
                 {
-                    m_DefaultContainerStyle = new GUIStyle();
-                    m_DefaultContainerStyle.border = new RectOffset(2, 2, 1, 2);
-                    m_DefaultContainerStyle.margin = new RectOffset(5, 5, 5, 5);
-                    m_DefaultContainerStyle.padding = new RectOffset(1, 1, 2, 2);
+                    m_DefaultContainerStyle = new GUIStyle
+                    {
+                        border = new RectOffset(2, 2, 1, 2),
+                        margin = new RectOffset(5, 5, 5, 5),
+                        padding = new RectOffset(1, 1, 2, 2)
+                    };
                     m_DefaultContainerStyle.normal.background = ReorderableListResources.texContainerBackground;
                 }
 
@@ -60,7 +64,7 @@ namespace Photon.Pun
             }
         }
 
-        static GUIStyle m_DefaultAddButtonStyle;
+        private static GUIStyle m_DefaultAddButtonStyle;
 
         public static GUIStyle DefaultAddButtonStyle
         {
@@ -68,9 +72,11 @@ namespace Photon.Pun
             {
                 if (m_DefaultAddButtonStyle == null)
                 {
-                    m_DefaultAddButtonStyle = new GUIStyle();
-                    m_DefaultAddButtonStyle.fixedWidth = 30;
-                    m_DefaultAddButtonStyle.fixedHeight = 16;
+                    m_DefaultAddButtonStyle = new GUIStyle
+                    {
+                        fixedWidth = 30,
+                        fixedHeight = 16
+                    };
                     m_DefaultAddButtonStyle.normal.background = ReorderableListResources.texAddButton;
                     m_DefaultAddButtonStyle.active.background = ReorderableListResources.texAddButtonActive;
                 }
@@ -79,7 +85,7 @@ namespace Photon.Pun
             }
         }
 
-        static GUIStyle m_DefaultRemoveButtonStyle;
+        private static GUIStyle m_DefaultRemoveButtonStyle;
 
         public static GUIStyle DefaultRemoveButtonStyle
         {
@@ -87,9 +93,11 @@ namespace Photon.Pun
             {
                 if (m_DefaultRemoveButtonStyle == null)
                 {
-                    m_DefaultRemoveButtonStyle = new GUIStyle();
-                    m_DefaultRemoveButtonStyle.fixedWidth = 30;
-                    m_DefaultRemoveButtonStyle.fixedHeight = 20;
+                    m_DefaultRemoveButtonStyle = new GUIStyle
+                    {
+                        fixedWidth = 30,
+                        fixedHeight = 20
+                    };
                     m_DefaultRemoveButtonStyle.active.background = ReorderableListResources.CreatePixelTexture("Dark Pixel (List GUI)", new Color32(18, 18, 18, 255));
                     m_DefaultRemoveButtonStyle.imagePosition = ImagePosition.ImageOnly;
                     m_DefaultRemoveButtonStyle.alignment = TextAnchor.MiddleCenter;
@@ -99,7 +107,7 @@ namespace Photon.Pun
             }
         }
 
-        static GUIStyle m_DefaultContainerRowStyle;
+        private static GUIStyle m_DefaultContainerRowStyle;
 
         public static GUIStyle DefaultContainerRowStyle
         {
@@ -107,11 +115,13 @@ namespace Photon.Pun
             {
                 if (m_DefaultContainerRowStyle == null)
                 {
-                    m_DefaultContainerRowStyle = new GUIStyle();
-                    m_DefaultContainerRowStyle.border = new RectOffset(2, 2, 2, 2);
+                    m_DefaultContainerRowStyle = new GUIStyle
+                    {
+                        border = new RectOffset(2, 2, 2, 2),
 
-                    m_DefaultContainerRowStyle.margin = new RectOffset(5, 5, 5, 5);
-                    m_DefaultContainerRowStyle.padding = new RectOffset(1, 1, 2, 2);
+                        margin = new RectOffset(5, 5, 5, 5),
+                        padding = new RectOffset(1, 1, 2, 2)
+                    };
                     m_DefaultContainerRowStyle.normal.background = ReorderableListResources.texContainerBackground;
                 }
 
@@ -119,7 +129,7 @@ namespace Photon.Pun
             }
         }
 
-        static GUIStyle m_FoldoutBold;
+        private static GUIStyle m_FoldoutBold;
 
         public static GUIStyle FoldoutBold
         {
@@ -127,15 +137,17 @@ namespace Photon.Pun
             {
                 if (m_FoldoutBold == null)
                 {
-                    m_FoldoutBold = new GUIStyle(EditorStyles.foldout);
-                    m_FoldoutBold.fontStyle = FontStyle.Bold;
+                    m_FoldoutBold = new GUIStyle(EditorStyles.foldout)
+                    {
+                        fontStyle = FontStyle.Bold
+                    };
                 }
 
                 return m_FoldoutBold;
             }
         }
 
-        static GUIStyle m_RichLabel;
+        private static GUIStyle m_RichLabel;
 
         public static GUIStyle RichLabel
         {
@@ -143,9 +155,11 @@ namespace Photon.Pun
             {
                 if (m_RichLabel == null)
                 {
-                    m_RichLabel = new GUIStyle(GUI.skin.label);
-                    m_RichLabel.richText = true;
-                    m_RichLabel.wordWrap = true;
+                    m_RichLabel = new GUIStyle(GUI.skin.label)
+                    {
+                        richText = true,
+                        wordWrap = true
+                    };
                 }
 
                 return m_RichLabel;
@@ -157,11 +171,11 @@ namespace Photon.Pun
 
         internal static string GetIconPath(string iconFileName)
         {
-            string _thisIconPath = PhotonNetwork.FindAssetPath ("PhotonGUI");
+            string _thisIconPath = PhotonNetwork.FindAssetPath("PhotonGUI");
 
             if (string.IsNullOrEmpty(_thisIconPath))
             {
-                _thisIconPath = "Assets/Photon/PhotonUnityNetworking/Code/Editor/"+iconFileName;
+                _thisIconPath = "Assets/Photon/PhotonUnityNetworking/Code/Editor/" + iconFileName;
             }
             else
             {
@@ -170,8 +184,8 @@ namespace Photon.Pun
 
             return _thisIconPath;
         }
-        
-        static Texture2D m_HelpIcon;
+
+        private static Texture2D m_HelpIcon;
 
         public static Texture2D HelpIcon
         {
@@ -182,15 +196,14 @@ namespace Photon.Pun
                     m_HelpIcon = AssetDatabase.LoadAssetAtPath(GetIconPath("help.png"), typeof(Texture2D)) as Texture2D;
                 }
 
-                
+
                 return m_HelpIcon;
             }
         }
-        
-        
-        static Texture2D m_CopyIcon;
-        static Texture2D m_CopyIconPro;
-        
+
+        private static Texture2D m_CopyIcon;
+        private static Texture2D m_CopyIconPro;
+
         public static Texture2D CopyIcon
         {
             get
@@ -204,7 +217,7 @@ namespace Photon.Pun
 
                     return m_CopyIconPro;
                 }
-                
+
                 if (m_CopyIcon == null)
                 {
                     m_CopyIcon = AssetDatabase.LoadAssetAtPath(GetIconPath("CopyIcon.png"), typeof(Texture2D)) as Texture2D;
@@ -294,7 +307,7 @@ namespace Photon.Pun
 
         #region Implementation
 
-        static Rect DoContainerBody(float height)
+        private static Rect DoContainerBody(float height)
         {
             Rect controlRect = EditorGUILayout.GetControlRect(false, height);
             controlRect.yMin -= 3;
@@ -310,7 +323,7 @@ namespace Photon.Pun
             return controlRect;
         }
 
-        static bool DoContainerHeaderToggle(string headline, bool toggle)
+        private static bool DoContainerHeaderToggle(string headline, bool toggle)
         {
             Rect rect = DoContainerHeader(headline, 27, 15);
             Rect toggleRect = new Rect(rect.xMin + 5, rect.yMin + 5, EditorGUIUtility.labelWidth, rect.height);
@@ -318,8 +331,7 @@ namespace Photon.Pun
             return EditorGUI.Toggle(toggleRect, toggle);
         }
 
-
-        static bool DoContainerHeaderFoldout(string headline, bool foldout)
+        private static bool DoContainerHeaderFoldout(string headline, bool foldout)
         {
             Rect rect = DoContainerHeader("", 27, 0f);
             Rect foldoutRect = new Rect(rect.xMin + 15, rect.yMin + 5, rect.width, rect.height);
@@ -327,7 +339,7 @@ namespace Photon.Pun
             return EditorGUI.Foldout(foldoutRect, foldout, headline, FoldoutBold);
         }
 
-        static Rect DoContainerHeader(string headline, float height, float contentOffset)
+        private static Rect DoContainerHeader(string headline, float height, float contentOffset)
         {
             GUILayout.Space(5);
             Rect controlRect = EditorGUILayout.GetControlRect(false, height);

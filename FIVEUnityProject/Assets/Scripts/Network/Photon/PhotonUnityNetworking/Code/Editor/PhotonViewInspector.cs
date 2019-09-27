@@ -8,11 +8,10 @@
 // <author>developer@exitgames.com</author>
 // ----------------------------------------------------------------------------
 
+using Photon.Realtime;
 using System;
 using UnityEditor;
 using UnityEngine;
-
-using Photon.Realtime;
 
 namespace Photon.Pun
 {
@@ -23,17 +22,17 @@ namespace Photon.Pun
 
         public override void OnInspectorGUI()
         {
-            this.m_Target = (PhotonView)this.target;
-			bool isProjectPrefab = PhotonEditorUtils.IsPrefab(this.m_Target.gameObject);
+            m_Target = (PhotonView)target;
+            bool isProjectPrefab = PhotonEditorUtils.IsPrefab(m_Target.gameObject);
 
-            if (this.m_Target.ObservedComponents == null)
+            if (m_Target.ObservedComponents == null)
             {
-                this.m_Target.ObservedComponents = new System.Collections.Generic.List<Component>();
+                m_Target.ObservedComponents = new System.Collections.Generic.List<Component>();
             }
 
-            if (this.m_Target.ObservedComponents.Count == 0)
+            if (m_Target.ObservedComponents.Count == 0)
             {
-                this.m_Target.ObservedComponents.Add(null);
+                m_Target.ObservedComponents.Add(null);
             }
 
             EditorGUILayout.BeginHorizontal();
@@ -43,13 +42,13 @@ namespace Photon.Pun
             {
                 EditorGUILayout.LabelField("Owner:", "Set at runtime");
             }
-            else if (!this.m_Target.IsOwnerActive)
+            else if (!m_Target.IsOwnerActive)
             {
                 EditorGUILayout.LabelField("Owner", "Scene");
             }
             else
             {
-                Player owner = this.m_Target.Owner;
+                Player owner = m_Target.Owner;
                 string ownerInfo = (owner != null) ? owner.NickName : "<no Player found>";
 
                 if (string.IsNullOrEmpty(ownerInfo))
@@ -57,20 +56,20 @@ namespace Photon.Pun
                     ownerInfo = "<no playername set>";
                 }
 
-                EditorGUILayout.LabelField("Owner", "[" + this.m_Target.OwnerActorNr + "] " + ownerInfo);
+                EditorGUILayout.LabelField("Owner", "[" + m_Target.OwnerActorNr + "] " + ownerInfo);
             }
 
             // ownership requests
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            OwnershipOption own = (OwnershipOption) EditorGUILayout.EnumPopup(this.m_Target.OwnershipTransfer, GUILayout.Width(100), GUILayout.MinWidth(75));
-            if (own != this.m_Target.OwnershipTransfer)
+            OwnershipOption own = (OwnershipOption)EditorGUILayout.EnumPopup(m_Target.OwnershipTransfer, GUILayout.Width(100), GUILayout.MinWidth(75));
+            if (own != m_Target.OwnershipTransfer)
             {
                 // jf: fixed 5 and up prefab not accepting changes if you quit Unity straight after change.
                 // not touching the define nor the rest of the code to avoid bringing more problem than solving.
-                EditorUtility.SetDirty(this.m_Target);
+                EditorUtility.SetDirty(m_Target);
 
-                Undo.RecordObject(this.m_Target, "Change PhotonView Ownership Transfer");
-                this.m_Target.OwnershipTransfer = own;
+                Undo.RecordObject(m_Target, "Change PhotonView Ownership Transfer");
+                m_Target.OwnershipTransfer = own;
             }
             EditorGUI.EndDisabledGroup();
 
@@ -84,15 +83,15 @@ namespace Photon.Pun
             }
             else if (EditorApplication.isPlaying)
             {
-                EditorGUILayout.LabelField("View ID", this.m_Target.ViewID.ToString());
+                EditorGUILayout.LabelField("View ID", m_Target.ViewID.ToString());
             }
             else
             {
-                int idValue = EditorGUILayout.IntField("View ID [1.." + (PhotonNetwork.MAX_VIEW_IDS - 1) + "]", this.m_Target.ViewID);
-                if (this.m_Target.ViewID != idValue)
+                int idValue = EditorGUILayout.IntField("View ID [1.." + (PhotonNetwork.MAX_VIEW_IDS - 1) + "]", m_Target.ViewID);
+                if (m_Target.ViewID != idValue)
                 {
-                    Undo.RecordObject(this.m_Target, "Change PhotonView viewID");
-                    this.m_Target.ViewID = idValue;
+                    Undo.RecordObject(m_Target, "Change PhotonView viewID");
+                    m_Target.ViewID = idValue;
                 }
             }
 
@@ -100,24 +99,24 @@ namespace Photon.Pun
             if (EditorApplication.isPlaying)
             {
                 string masterClientHint = PhotonNetwork.IsMasterClient ? "(master)" : "";
-                EditorGUILayout.Toggle("Controlled locally: " + masterClientHint, this.m_Target.IsMine);
+                EditorGUILayout.Toggle("Controlled locally: " + masterClientHint, m_Target.IsMine);
             }
 
             // ViewSynchronization (reliability)
-            if (this.m_Target.Synchronization == ViewSynchronization.Off)
+            if (m_Target.Synchronization == ViewSynchronization.Off)
             {
                 GUI.color = Color.grey;
             }
 
-            EditorGUILayout.PropertyField(this.serializedObject.FindProperty("Synchronization"), new GUIContent("Observe option:"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Synchronization"), new GUIContent("Observe option:"));
 
-            if (this.m_Target.Synchronization != ViewSynchronization.Off && this.m_Target.ObservedComponents.FindAll(item => item != null).Count == 0)
+            if (m_Target.Synchronization != ViewSynchronization.Off && m_Target.ObservedComponents.FindAll(item => item != null).Count == 0)
             {
-				EditorGUILayout.HelpBox("Setting the synchronization option only makes sense if you observe something.", MessageType.Warning);
-			}
+                EditorGUILayout.HelpBox("Setting the synchronization option only makes sense if you observe something.", MessageType.Warning);
+            }
 
             GUI.color = Color.white;
-            this.DrawObservedComponentsList();
+            DrawObservedComponentsList();
 
             // Cleanup: save and fix look
             if (GUI.changed)
@@ -132,9 +131,9 @@ namespace Photon.Pun
         {
             int count = 0;
 
-            for (int i = 0; i < this.m_Target.ObservedComponents.Count; ++i)
+            for (int i = 0; i < m_Target.ObservedComponents.Count; ++i)
             {
-                if (this.m_Target.ObservedComponents[i] != null)
+                if (m_Target.ObservedComponents[i] != null)
                 {
                     count++;
                 }
@@ -146,7 +145,7 @@ namespace Photon.Pun
         private void DrawObservedComponentsList()
         {
             GUILayout.Space(5);
-            SerializedProperty listProperty = this.serializedObject.FindProperty("ObservedComponents");
+            SerializedProperty listProperty = serializedObject.FindProperty("ObservedComponents");
 
             if (listProperty == null)
             {
@@ -156,8 +155,8 @@ namespace Photon.Pun
             float containerElementHeight = 22;
             float containerHeight = listProperty.arraySize * containerElementHeight;
 
-            bool isOpen = PhotonGUI.ContainerHeaderFoldout("Observed Components (" + this.GetObservedComponentsCount() + ")", this.serializedObject.FindProperty("ObservedComponentsFoldoutOpen").boolValue);
-            this.serializedObject.FindProperty("ObservedComponentsFoldoutOpen").boolValue = isOpen;
+            bool isOpen = PhotonGUI.ContainerHeaderFoldout("Observed Components (" + GetObservedComponentsCount() + ")", serializedObject.FindProperty("ObservedComponentsFoldoutOpen").boolValue);
+            serializedObject.FindProperty("ObservedComponentsFoldoutOpen").boolValue = isOpen;
 
             if (isOpen == false)
             {
@@ -167,7 +166,7 @@ namespace Photon.Pun
             //Texture2D statsIcon = AssetDatabase.LoadAssetAtPath( "Assets/Photon Unity Networking/Editor/PhotonNetwork/PhotonViewStats.png", typeof( Texture2D ) ) as Texture2D;
 
             Rect containerRect = PhotonGUI.ContainerBody(containerHeight);
-            bool wasObservedComponentsEmpty = this.m_Target.ObservedComponents.FindAll(item => item != null).Count == 0;
+            bool wasObservedComponentsEmpty = m_Target.ObservedComponents.FindAll(item => item != null).Count == 0;
             if (isOpen == true)
             {
                 for (int i = 0; i < listProperty.arraySize; ++i)
@@ -200,11 +199,11 @@ namespace Photon.Pun
                             {
 
                                 // try to get an existing PhotonTransformView ( we don't want any duplicates...)
-                                PhotonTransformView _ptv = this.m_Target.gameObject.GetComponent<PhotonTransformView>();
+                                PhotonTransformView _ptv = m_Target.gameObject.GetComponent<PhotonTransformView>();
                                 if (_ptv == null)
                                 {
                                     // no ptv yet, we create one and enable position and rotation, no scaling, as it's too rarely needed to take bandwidth for nothing
-                                    _ptv = Undo.AddComponent<PhotonTransformView>(this.m_Target.gameObject);
+                                    _ptv = Undo.AddComponent<PhotonTransformView>(m_Target.gameObject);
                                 }
                                 // switch observe from transform to _ptv
                                 listProperty.GetArrayElementAtIndex(i).objectReferenceValue = _ptv;
@@ -230,11 +229,11 @@ namespace Photon.Pun
                             {
 
                                 // try to get an existing PhotonRigidbody2DView ( we don't want any duplicates...)
-                                PhotonRigidbody2DView _prb2dv = this.m_Target.gameObject.GetComponent<PhotonRigidbody2DView>();
+                                PhotonRigidbody2DView _prb2dv = m_Target.gameObject.GetComponent<PhotonRigidbody2DView>();
                                 if (_prb2dv == null)
                                 {
                                     // no _prb2dv yet, we create one
-                                    _prb2dv = Undo.AddComponent<PhotonRigidbody2DView>(this.m_Target.gameObject);
+                                    _prb2dv = Undo.AddComponent<PhotonRigidbody2DView>(m_Target.gameObject);
                                 }
                                 // switch observe from transform to _prb2dv
                                 listProperty.GetArrayElementAtIndex(i).objectReferenceValue = _prb2dv;
@@ -244,11 +243,11 @@ namespace Photon.Pun
                             {
 
                                 // try to get an existing PhotonAnimatorView ( we don't want any duplicates...)
-                                PhotonAnimatorView _pav = this.m_Target.gameObject.GetComponent<PhotonAnimatorView>();
+                                PhotonAnimatorView _pav = m_Target.gameObject.GetComponent<PhotonAnimatorView>();
                                 if (_pav == null)
                                 {
                                     // no _pav yet, we create one
-                                    _pav = Undo.AddComponent<PhotonAnimatorView>(this.m_Target.gameObject);
+                                    _pav = Undo.AddComponent<PhotonAnimatorView>(m_Target.gameObject);
                                 }
                                 // switch observe from transform to _prb2dv
                                 listProperty.GetArrayElementAtIndex(i).objectReferenceValue = _pav;
@@ -257,9 +256,9 @@ namespace Photon.Pun
                             else if (!typeof(IPunObservable).IsAssignableFrom(_newType))
                             {
                                 bool _ignore = false;
-                                #if PLAYMAKER
+#if PLAYMAKER
                                 _ignore = _newType == typeof(PlayMakerFSM);// Photon Integration for PlayMaker will swap at runtime to a proxy using iPunObservable.
-                                #endif
+#endif
 
                                 if (_newType == null || _newType == typeof(Rigidbody) || _newType == typeof(Rigidbody2D))
                                 {
@@ -304,22 +303,22 @@ namespace Photon.Pun
                 listProperty.InsertArrayElementAtIndex(Mathf.Max(0, listProperty.arraySize - 1));
             }
 
-            this.serializedObject.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
 
-            bool isObservedComponentsEmpty = this.m_Target.ObservedComponents.FindAll(item => item != null).Count == 0;
+            bool isObservedComponentsEmpty = m_Target.ObservedComponents.FindAll(item => item != null).Count == 0;
 
-            if (wasObservedComponentsEmpty == true && isObservedComponentsEmpty == false && this.m_Target.Synchronization == ViewSynchronization.Off)
+            if (wasObservedComponentsEmpty == true && isObservedComponentsEmpty == false && m_Target.Synchronization == ViewSynchronization.Off)
             {
-                Undo.RecordObject(this.m_Target, "Change PhotonView");
-                this.m_Target.Synchronization = ViewSynchronization.UnreliableOnChange;
-                this.serializedObject.Update();
+                Undo.RecordObject(m_Target, "Change PhotonView");
+                m_Target.Synchronization = ViewSynchronization.UnreliableOnChange;
+                serializedObject.Update();
             }
 
             if (wasObservedComponentsEmpty == false && isObservedComponentsEmpty == true)
             {
-                Undo.RecordObject(this.m_Target, "Change PhotonView");
-                this.m_Target.Synchronization = ViewSynchronization.Off;
-                this.serializedObject.Update();
+                Undo.RecordObject(m_Target, "Change PhotonView");
+                m_Target.Synchronization = ViewSynchronization.Off;
+                serializedObject.Update();
             }
         }
     }

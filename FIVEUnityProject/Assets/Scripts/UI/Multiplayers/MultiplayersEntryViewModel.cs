@@ -21,7 +21,7 @@ namespace FIVE.UI.Multiplayers
 
         private void OnLobbyInfoChanged(object sender, PropertyChangedEventArgs e)
         {
-            var lobbyInfoModel = sender as LobbyInfoModel;
+            LobbyInfoModel lobbyInfoModel = sender as LobbyInfoModel;
             foreach (RoomInfo roomInfo in lobbyInfoModel.RoomsList)
             {
                 if (roomEntries.ContainsKey(roomInfo))

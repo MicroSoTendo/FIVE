@@ -1,7 +1,6 @@
 ﻿using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.Background;
-using FIVE.UI.CAttribute;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.SplashScreens;

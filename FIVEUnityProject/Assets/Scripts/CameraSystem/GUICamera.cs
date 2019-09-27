@@ -1,12 +1,12 @@
-﻿using UnityEngine;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using System;
+using UnityEngine;
 
 namespace FIVE.CameraSystem
 {
     public class GUICamera : MonoBehaviour
     {
-        void Awake()
+        private void Awake()
         {
             EventManager.Subscribe<OnLoadingGameMode>(OnLoadingGameMode);
         }

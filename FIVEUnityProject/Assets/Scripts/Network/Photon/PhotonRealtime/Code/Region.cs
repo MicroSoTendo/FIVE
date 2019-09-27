@@ -15,12 +15,8 @@
 
 namespace Photon.Realtime
 {
-    using ExitGames.Client.Photon;
-
-    #if SUPPORTED_UNITY || NETFX_CORE
-    using Hashtable = ExitGames.Client.Photon.Hashtable;
-    using SupportClass = ExitGames.Client.Photon.SupportClass;
-    #endif
+#if SUPPORTED_UNITY || NETFX_CORE
+#endif
 
 
     public class Region
@@ -34,56 +30,56 @@ namespace Photon.Realtime
 
         public int Ping { get; set; }
 
-        public bool WasPinged { get { return this.Ping != int.MaxValue; } }
+        public bool WasPinged => Ping != int.MaxValue;
 
         public Region(string code, string address)
         {
-            this.SetCodeAndCluster(code);
-            this.HostAndPort = address;
-            this.Ping = int.MaxValue;
+            SetCodeAndCluster(code);
+            HostAndPort = address;
+            Ping = int.MaxValue;
         }
 
         public Region(string code, int ping)
         {
-            this.SetCodeAndCluster(code);
-            this.Ping = ping;
+            SetCodeAndCluster(code);
+            Ping = ping;
         }
 
         private void SetCodeAndCluster(string codeAsString)
         {
             if (codeAsString == null)
             {
-                this.Code = "";
-                this.Cluster = "";
+                Code = "";
+                Cluster = "";
                 return;
             }
 
             codeAsString = codeAsString.ToLower();
             int slash = codeAsString.IndexOf('/');
-            this.Code = slash <= 0 ? codeAsString : codeAsString.Substring(0, slash);
-            this.Cluster = slash <= 0 ? "" : codeAsString.Substring(1, slash);
+            Code = slash <= 0 ? codeAsString : codeAsString.Substring(0, slash);
+            Cluster = slash <= 0 ? "" : codeAsString.Substring(1, slash);
         }
 
         public override string ToString()
         {
-            return this.ToString(false);
+            return ToString(false);
         }
 
         public string ToString(bool compact = false)
         {
-            string regionCluster = this.Code;
-            if (!string.IsNullOrEmpty(this.Cluster))
+            string regionCluster = Code;
+            if (!string.IsNullOrEmpty(Cluster))
             {
-                regionCluster += "/" + this.Cluster;
+                regionCluster += "/" + Cluster;
             }
 
             if (compact)
             {
-                return string.Format("{0}:{1}", regionCluster, this.Ping);
+                return string.Format("{0}:{1}", regionCluster, Ping);
             }
             else
             {
-                return string.Format("{0}[{2}]: {1}ms ", regionCluster, this.Ping, this.HostAndPort);
+                return string.Format("{0}[{2}]: {1}ms ", regionCluster, Ping, HostAndPort);
             }
         }
     }

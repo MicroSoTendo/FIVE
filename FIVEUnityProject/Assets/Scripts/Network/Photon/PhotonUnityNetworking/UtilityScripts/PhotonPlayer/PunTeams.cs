@@ -12,14 +12,10 @@
 // <author>developer@exitgames.com</author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
-
 using UnityEngine;
-
-using Photon.Pun;
-using Photon.Realtime;
-using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Photon.Pun.UtilityScripts
@@ -50,7 +46,7 @@ namespace Photon.Pun.UtilityScripts
         {
             PlayersPerTeam = new Dictionary<Team, List<Player>>();
             Array enumVals = Enum.GetValues(typeof(Team));
-            foreach (var enumVal in enumVals)
+            foreach (object enumVal in enumVals)
             {
                 PlayersPerTeam[(Team)enumVal] = new List<Player>();
             }
@@ -66,7 +62,7 @@ namespace Photon.Pun.UtilityScripts
         public override void OnJoinedRoom()
         {
 
-            this.UpdateTeams();
+            UpdateTeams();
         }
 
         public override void OnLeftRoom()
@@ -78,17 +74,17 @@ namespace Photon.Pun.UtilityScripts
         /// <remarks>Called by PUN. See enum MonoBehaviourPunCallbacks for an explanation.</remarks>
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
-            this.UpdateTeams();
+            UpdateTeams();
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
-            this.UpdateTeams();
+            UpdateTeams();
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
-            this.UpdateTeams();
+            UpdateTeams();
         }
 
         #endregion
@@ -97,7 +93,7 @@ namespace Photon.Pun.UtilityScripts
         public void UpdateTeams()
         {
             Array enumVals = Enum.GetValues(typeof(Team));
-            foreach (var enumVal in enumVals)
+            foreach (object enumVal in enumVals)
             {
                 PlayersPerTeam[(Team)enumVal].Clear();
             }
@@ -118,8 +114,7 @@ namespace Photon.Pun.UtilityScripts
         /// <returns>PunTeam.Team.none if no team was found (yet).</returns>
         public static PunTeams.Team GetTeam(this Player player)
         {
-            object teamId;
-            if (player.CustomProperties.TryGetValue(PunTeams.TeamPlayerProp, out teamId))
+            if (player.CustomProperties.TryGetValue(PunTeams.TeamPlayerProp, out object teamId))
             {
                 return (PunTeams.Team)teamId;
             }

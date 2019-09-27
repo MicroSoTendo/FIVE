@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using FIVE.Network;
+﻿using FIVE.Network;
 using FIVE.Network.Views;
 using Photon.Pun;
+using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,15 +26,15 @@ namespace Assets.Scripts.PrefabPool
         private PrefabPools() { }
 
 
-        private static void AddView<T>(GameObject gameObject) where T: Component
+        private static void AddView<T>(GameObject gameObject) where T : Component
         {
-            var view = gameObject.AddComponent<T>();
+            T view = gameObject.AddComponent<T>();
             gameObject.GetComponent<PhotonView>().ObservedComponents.Add(view);
         }
 
         private void SetPhotonView(GameObject gameObject)
         {
-            var view = gameObject.GetComponent<PhotonView>();
+            PhotonView view = gameObject.GetComponent<PhotonView>();
             if (view == null)
             {
                 view = gameObject.AddComponent<PhotonView>();
@@ -44,7 +44,7 @@ namespace Assets.Scripts.PrefabPool
                 view.ObservedComponents = new List<Component>();
             }
         }
-        
+
         public void HackInstantiate(GameObject givenPrefab, params SyncModule[] syncModules)
         {
             if (!(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(givenPrefab, out string guid, out long _)))
@@ -67,7 +67,7 @@ namespace Assets.Scripts.PrefabPool
             SyncModule[] syncModules = hackDictionary[prefabId];
             string path = AssetDatabase.GUIDToAssetPath(prefabId);
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            var instantiatedGameObject = GameObject.Instantiate(prefab, position, rotation);
+            GameObject instantiatedGameObject = GameObject.Instantiate(prefab, position, rotation);
             instantiatedGameObject.SetActive(false);
             //first-time network local object
             SetPhotonView(instantiatedGameObject);

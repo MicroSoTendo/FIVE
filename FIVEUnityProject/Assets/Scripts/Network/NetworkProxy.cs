@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Assets.Scripts.PrefabPool;
+﻿using Assets.Scripts.PrefabPool;
 using Photon.Pun;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.Network
@@ -32,7 +32,7 @@ namespace FIVE.Network
                 PhotonNetwork.PrefabPool = PrefabPools.Instance;
             }
             PrefabPools.Instance.HackInstantiate(gameObject, syncModules);
-            var proxy = new NetworkProxy(gameObject);
+            NetworkProxy proxy = new NetworkProxy(gameObject);
             return proxy;
 
         }
@@ -47,7 +47,7 @@ namespace FIVE.Network
             return PhotonNetwork.IsConnected;
         }
 
-        public T AddObservable<T>() 
+        public T AddObservable<T>()
             where T : Component, IPunObservable, new()
         {
             T observable = new T();

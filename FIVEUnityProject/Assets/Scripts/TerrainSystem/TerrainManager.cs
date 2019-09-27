@@ -49,9 +49,9 @@ namespace FIVE.TerrainSystem
                 return;
             }
 
-            var pos = new Vector3(x * AreaData.size, 0f, y * AreaData.size);
+            Vector3 pos = new Vector3(x * AreaData.size, 0f, y * AreaData.size);
 
-            var ad = new AreaData(pos);
+            AreaData ad = new AreaData(pos);
             Areas[(x, y)] = ad;
 
             GameObject o = Instantiate(Ground, pos, Quaternion.identity);

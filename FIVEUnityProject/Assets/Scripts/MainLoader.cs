@@ -4,8 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+
 #if UNITY_EDITOR
+
 using UnityEditorInternal;
+
 #endif
 
 namespace FIVE
@@ -14,6 +17,7 @@ namespace FIVE
     {
         [HideInInspector]
         public List<GameObject> InfrastructuresOnAwake;
+
         [HideInInspector]
         public List<GameObject> InfrastructuresOnStart;
 
@@ -39,7 +43,9 @@ namespace FIVE
             this.RaiseEvent<OnMainLoaderDestroyed>(EventArgs.Empty);
         }
     }
+
 #if UNITY_EDITOR
+
     [CustomEditor(typeof(MainLoader))]
     public class MainLoaderEditor : Editor
     {
@@ -60,7 +66,6 @@ namespace FIVE
 
             onAwakeLoadingList.onAddCallback += OnAdd;
             onStartLoadingList.onAddCallback += OnAdd;
-
 
             onAwakeLoadingList.onRemoveCallback += RemoveItem;
             onStartLoadingList.onRemoveCallback += RemoveItem;
@@ -96,12 +101,12 @@ namespace FIVE
 
         private void RemoveItem(ReorderableList list)
         {
-            if(list == onAwakeLoadingList)
+            if (list == onAwakeLoadingList)
             {
                 MainLoader.InfrastructuresOnAwake.RemoveAt(list.index);
             }
 
-            if(list == onStartLoadingList)
+            if (list == onStartLoadingList)
             {
                 MainLoader.InfrastructuresOnStart.RemoveAt(list.index);
             }
@@ -119,18 +124,19 @@ namespace FIVE
 
             if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == onAwakePickerWindowId)
             {
-                var selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
+                GameObject selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
                 onAwakePickerWindowId = -1;
                 MainLoader.InfrastructuresOnAwake.Add(selectedObject);
             }
 
             if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == onStartPickerWindowId)
             {
-                var selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
+                GameObject selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
                 onStartPickerWindowId = -1;
                 MainLoader.InfrastructuresOnStart.Add(selectedObject);
             }
         }
     }
+
 #endif
 }

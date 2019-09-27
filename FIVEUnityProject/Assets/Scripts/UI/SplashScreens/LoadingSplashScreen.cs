@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FIVE.EventSystem;
+using System;
 using System.Collections;
-using FIVE.EventSystem;
 using UnityEngine;
 
 namespace FIVE.UI.SplashScreens
@@ -10,7 +10,10 @@ namespace FIVE.UI.SplashScreens
     public class OnProgressUpdatedEventArgs : EventArgs
     {
         public float Progress { get; }
-        public OnProgressUpdatedEventArgs(float progress) => Progress = progress;
+        public OnProgressUpdatedEventArgs(float progress)
+        {
+            Progress = progress;
+        }
     }
 
     public abstract class LoadingSplashScreen : SplashScreen

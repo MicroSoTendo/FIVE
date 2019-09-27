@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Photon.Pun;
+﻿using Photon.Pun;
 using UnityEngine;
 
 namespace FIVE.Network.Views
@@ -108,7 +103,7 @@ namespace FIVE.Network.Views
         {
             networkPosition = (Vector3)s.ReceiveNext();
             direction = (Vector3)s.ReceiveNext();
-            transform.position = this.networkPosition;
+            transform.position = networkPosition;
             distance = 0f;
             OnReading -= FirstReadPosition;
             OnReading += ReadPosition;

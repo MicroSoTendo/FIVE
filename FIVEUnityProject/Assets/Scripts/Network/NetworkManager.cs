@@ -1,12 +1,12 @@
 ﻿
-using System;
-using System.Collections.Generic;
 using Assets.Scripts.PrefabPool;
 using FIVE.EventSystem;
 using FIVE.UI.StartupMenu;
 using Photon.Pun;
-using UnityEngine;
 using Photon.Realtime;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace FIVE.Network
 {
@@ -14,24 +14,24 @@ namespace FIVE.Network
     {
         private LobbyInfoModel lobbyInfoModel;
 
-        void Awake()
+        private void Awake()
         {
             PhotonNetwork.PrefabPool = PrefabPools.Instance;
         }
 
-        void Start()
+        private void Start()
         {
             EventManager.Subscribe<OnMultiPlayersButtonClicked>(Initialize);
             lobbyInfoModel = new LobbyInfoModel();
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 
-        void Initialize(object sender, EventArgs args)
+        private void Initialize(object sender, EventArgs args)
         {
             bool connectingResult = PhotonNetwork.ConnectUsingSettings();
             Debug.Log(connectingResult ? "Initialize" : "fail to connect");
         }
-        
+
         public void SetPlayerName(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -75,7 +75,7 @@ namespace FIVE.Network
             PhotonNetwork.JoinOrCreateRoom(roomName, new RoomOptions(), new TypedLobby());
         }
 
-        
+
         public override void OnJoinedRoom()
         {
             this.RaiseEvent<OnJoinedRoom>();
@@ -89,7 +89,7 @@ namespace FIVE.Network
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            
+
         }
 
         public void JoinLobby()

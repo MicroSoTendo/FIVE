@@ -8,7 +8,7 @@ namespace FIVE.UI.Multiplayers
         public Button JoinButton { get; }
         public Button CreateButton { get; }
         public Transform ContentTransform { get; }
-    
+
         public MultiplayersEntryView()
         {
             ScrollWindow = AddUIElement<GameObject>(nameof(ScrollWindow));

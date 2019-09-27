@@ -11,10 +11,10 @@
 
 #if UNITY_EDITOR
 
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Photon.Pun
 {
@@ -66,29 +66,29 @@ namespace Photon.Pun
         /// <param name="callback">Called when the result is available.</param>
         public void RegisterByEmail(string email, Origin origin, string serviceType, Action<AccountService> callback = null)
         {
-            this.registrationCallback = callback;
-            this.AppId = string.Empty;
-            this.AppId2 = string.Empty;
-            this.Message = string.Empty;
-            this.ReturnCode = -1;
+            registrationCallback = callback;
+            AppId = string.Empty;
+            AppId2 = string.Empty;
+            Message = string.Empty;
+            ReturnCode = -1;
 
-            string url = this.RegistrationUri(email, (byte) origin, serviceType);
+            string url = RegistrationUri(email, (byte)origin, serviceType);
             PhotonEditorUtils.StartCoroutine(
-                PhotonEditorUtils.HttpGet(url, 
-                    (s) => 
+                PhotonEditorUtils.HttpGet(url,
+                    (s) =>
                     {
-                        this.ParseResult(s);
-                        if (this.registrationCallback != null)
+                        ParseResult(s);
+                        if (registrationCallback != null)
                         {
-                            this.registrationCallback(this);
+                            registrationCallback(this);
                         }
-                    }, 
-                    (e) => 
-                    { 
-                        this.Message = e; 
-                        if (this.registrationCallback != null)
+                    },
+                    (e) =>
+                    {
+                        Message = e;
+                        if (registrationCallback != null)
                         {
-                            this.registrationCallback(this);
+                            registrationCallback(this);
                         }
                     })
                 );
@@ -120,38 +120,38 @@ namespace Photon.Pun
         {
             if (string.IsNullOrEmpty(result))
             {
-                this.Message = "Server's response was empty. Please register through account website during this service interruption.";
+                Message = "Server's response was empty. Please register through account website during this service interruption.";
                 return;
             }
 
             try
             {
                 AccountServiceResponse res = UnityEngine.JsonUtility.FromJson<AccountServiceResponse>(result);
-                this.ReturnCode = res.ReturnCode;
-                this.Message = res.Message;
-                if (this.ReturnCode == 0)
+                ReturnCode = res.ReturnCode;
+                Message = res.Message;
+                if (ReturnCode == 0)
                 {
                     // returnCode == 0 means: all ok. message is new AppId
-                    this.AppId = this.Message;
+                    AppId = Message;
                     if (PhotonEditorUtils.HasVoice)
                     {
-                        this.AppId2 = res.MessageDetailed;
+                        AppId2 = res.MessageDetailed;
                     }
                 }
                 else
                 {
                     // any error gives returnCode != 0
-                    this.AppId = string.Empty;
+                    AppId = string.Empty;
                     if (PhotonEditorUtils.HasVoice)
                     {
-                        this.AppId2 = string.Empty;
+                        AppId2 = string.Empty;
                     }
                 }
             }
             catch (Exception ex) // probably JSON parsing exception, check if returned string is valid JSON
             {
-                this.ReturnCode = -1;
-                this.Message = ex.Message;
+                ReturnCode = -1;
+                Message = ex.Message;
             }
         }
 

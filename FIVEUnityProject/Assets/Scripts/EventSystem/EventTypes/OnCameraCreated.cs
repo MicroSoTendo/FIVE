@@ -14,7 +14,7 @@ namespace FIVE.EventSystem
 
         public OnCameraCreatedArgs(string id, Camera camera)
         {
-            this.Id = id;
+            Id = id;
             Camera = camera;
         }
     }

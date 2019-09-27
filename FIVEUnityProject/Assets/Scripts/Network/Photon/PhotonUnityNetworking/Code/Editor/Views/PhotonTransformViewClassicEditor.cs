@@ -99,19 +99,19 @@ namespace Photon.Pun
 
         private void SetupSerializedProperties()
         {
-            this.m_SynchronizePositionProperty = serializedObject.FindProperty("m_PositionModel.SynchronizeEnabled");
-            this.m_SynchronizeRotationProperty = serializedObject.FindProperty("m_RotationModel.SynchronizeEnabled");
-            this.m_SynchronizeScaleProperty = serializedObject.FindProperty("m_ScaleModel.SynchronizeEnabled");
+            m_SynchronizePositionProperty = serializedObject.FindProperty("m_PositionModel.SynchronizeEnabled");
+            m_SynchronizeRotationProperty = serializedObject.FindProperty("m_RotationModel.SynchronizeEnabled");
+            m_SynchronizeScaleProperty = serializedObject.FindProperty("m_ScaleModel.SynchronizeEnabled");
         }
 
         private void DrawSynchronizePositionHeader()
         {
-            DrawHeader("Synchronize Position", this.m_SynchronizePositionProperty);
+            DrawHeader("Synchronize Position", m_SynchronizePositionProperty);
         }
 
         private void DrawSynchronizePositionData()
         {
-            if (this.m_SynchronizePositionProperty == null || this.m_SynchronizePositionProperty.boolValue == false)
+            if (m_SynchronizePositionProperty == null || m_SynchronizePositionProperty.boolValue == false)
             {
                 return;
             }
@@ -130,9 +130,9 @@ namespace Photon.Pun
                 case PhotonTransformViewPositionModel.InterpolateOptions.Lerp:
                     containerHeight += EDITOR_LINE_HEIGHT;
                     break;
-                /*case PhotonTransformViewPositionModel.InterpolateOptions.MoveTowardsComplex:
-                    containerHeight += EDITOR_LINE_HEIGHT*3;
-                    break;*/
+                    /*case PhotonTransformViewPositionModel.InterpolateOptions.MoveTowardsComplex:
+                        containerHeight += EDITOR_LINE_HEIGHT*3;
+                        break;*/
             }
 
             if (extrapolateOption != PhotonTransformViewPositionModel.ExtrapolateOptions.Disabled)
@@ -147,12 +147,12 @@ namespace Photon.Pun
                     break;
             }
 
-            if (this.m_InterpolateHelpOpen == true)
+            if (m_InterpolateHelpOpen == true)
             {
                 containerHeight += GetInterpolateHelpBoxHeight();
             }
 
-            if (this.m_ExtrapolateHelpOpen == true)
+            if (m_ExtrapolateHelpOpen == true)
             {
                 containerHeight += GetExtrapolateHelpBoxHeight();
             }
@@ -224,8 +224,8 @@ namespace Photon.Pun
         private void DrawSynchronizePositionDataExtrapolation(ref Rect propertyRect, SerializedProperty extrapolatePositionProperty,
                                                               PhotonTransformViewPositionModel.ExtrapolateOptions extrapolateOption)
         {
-            DrawPropertyWithHelpIcon(ref propertyRect, ref this.m_ExtrapolateHelpOpen, extrapolatePositionProperty, EXTRAPOLATE_TOOLTIP);
-            DrawHelpBox(ref propertyRect, this.m_ExtrapolateHelpOpen, GetExtrapolateHelpBoxHeight(), EXTRAPOLATE_HELP, EXTRAPOLATE_HELP_URL);
+            DrawPropertyWithHelpIcon(ref propertyRect, ref m_ExtrapolateHelpOpen, extrapolatePositionProperty, EXTRAPOLATE_TOOLTIP);
+            DrawHelpBox(ref propertyRect, m_ExtrapolateHelpOpen, GetExtrapolateHelpBoxHeight(), EXTRAPOLATE_HELP, EXTRAPOLATE_HELP_URL);
 
             if (extrapolateOption != PhotonTransformViewPositionModel.ExtrapolateOptions.Disabled)
             {
@@ -256,8 +256,8 @@ namespace Photon.Pun
         private void DrawSynchronizePositionDataInterpolation(ref Rect propertyRect, SerializedProperty interpolatePositionProperty,
                                                               PhotonTransformViewPositionModel.InterpolateOptions interpolateOption)
         {
-            DrawPropertyWithHelpIcon(ref propertyRect, ref this.m_InterpolateHelpOpen, interpolatePositionProperty, INTERPOLATE_TOOLTIP);
-            DrawHelpBox(ref propertyRect, this.m_InterpolateHelpOpen, GetInterpolateHelpBoxHeight(), INTERPOLATE_HELP, INTERPOLATE_HELP_URL);
+            DrawPropertyWithHelpIcon(ref propertyRect, ref m_InterpolateHelpOpen, interpolatePositionProperty, INTERPOLATE_TOOLTIP);
+            DrawHelpBox(ref propertyRect, m_InterpolateHelpOpen, GetInterpolateHelpBoxHeight(), INTERPOLATE_HELP, INTERPOLATE_HELP_URL);
 
             switch (interpolateOption)
             {
@@ -272,36 +272,36 @@ namespace Photon.Pun
                     propertyRect.y += EDITOR_LINE_HEIGHT;
                     break;
 
-                /*case PhotonTransformViewPositionModel.InterpolateOptions.MoveTowardsComplex:
-                    Rect curveRect = new Rect(propertyRect.xMin, propertyRect.yMin, propertyRect.width - 100, propertyRect.height);
-                    EditorGUI.PropertyField(curveRect, serializedObject.FindProperty("m_PositionModel.InterpolateSpeedCurve"), new GUIContent("MoveTowards Speed Curve"));
-    
-                    Rect labelRect = new Rect(propertyRect.xMax - 95, propertyRect.yMin, 10, propertyRect.height);
-                    GUI.Label(labelRect, "x");
-    
-                    Rect multiplierRect = new Rect(propertyRect.xMax - 80, propertyRect.yMin, 80, propertyRect.height);
-                    EditorGUI.PropertyField(multiplierRect, serializedObject.FindProperty("m_PositionModel.InterpolateMoveTowardsSpeed"), GUIContent.none);
-                    propertyRect.y += EDITOR_LINE_HEIGHT;
-    
-                    EditorGUI.PropertyField(propertyRect, serializedObject.FindProperty("m_PositionModel.InterpolateMoveTowardsAcceleration"),
-                        new GUIContent("Acceleration"));
-                    propertyRect.y += EDITOR_LINE_HEIGHT;
-    
-                    EditorGUI.PropertyField(propertyRect, serializedObject.FindProperty("m_PositionModel.InterpolateMoveTowardsDeceleration"),
-                        new GUIContent("Deceleration"));
-                    propertyRect.y += EDITOR_LINE_HEIGHT;
-                    break;*/
+                    /*case PhotonTransformViewPositionModel.InterpolateOptions.MoveTowardsComplex:
+                        Rect curveRect = new Rect(propertyRect.xMin, propertyRect.yMin, propertyRect.width - 100, propertyRect.height);
+                        EditorGUI.PropertyField(curveRect, serializedObject.FindProperty("m_PositionModel.InterpolateSpeedCurve"), new GUIContent("MoveTowards Speed Curve"));
+
+                        Rect labelRect = new Rect(propertyRect.xMax - 95, propertyRect.yMin, 10, propertyRect.height);
+                        GUI.Label(labelRect, "x");
+
+                        Rect multiplierRect = new Rect(propertyRect.xMax - 80, propertyRect.yMin, 80, propertyRect.height);
+                        EditorGUI.PropertyField(multiplierRect, serializedObject.FindProperty("m_PositionModel.InterpolateMoveTowardsSpeed"), GUIContent.none);
+                        propertyRect.y += EDITOR_LINE_HEIGHT;
+
+                        EditorGUI.PropertyField(propertyRect, serializedObject.FindProperty("m_PositionModel.InterpolateMoveTowardsAcceleration"),
+                            new GUIContent("Acceleration"));
+                        propertyRect.y += EDITOR_LINE_HEIGHT;
+
+                        EditorGUI.PropertyField(propertyRect, serializedObject.FindProperty("m_PositionModel.InterpolateMoveTowardsDeceleration"),
+                            new GUIContent("Deceleration"));
+                        propertyRect.y += EDITOR_LINE_HEIGHT;
+                        break;*/
             }
         }
 
         private void DrawSynchronizeRotationHeader()
         {
-            DrawHeader("Synchronize Rotation", this.m_SynchronizeRotationProperty);
+            DrawHeader("Synchronize Rotation", m_SynchronizeRotationProperty);
         }
 
         private void DrawSynchronizeRotationData()
         {
-            if (this.m_SynchronizeRotationProperty == null || this.m_SynchronizeRotationProperty.boolValue == false)
+            if (m_SynchronizeRotationProperty == null || m_SynchronizeRotationProperty.boolValue == false)
             {
                 return;
             }
@@ -320,7 +320,7 @@ namespace Photon.Pun
                     break;
             }
 
-            if (this.m_InterpolateRotationHelpOpen == true)
+            if (m_InterpolateRotationHelpOpen == true)
             {
                 containerHeight += GetInterpolateHelpBoxHeight();
             }
@@ -328,8 +328,8 @@ namespace Photon.Pun
             Rect rect = PhotonGUI.ContainerBody(containerHeight);
             Rect propertyRect = new Rect(rect.xMin + 5, rect.yMin + 2, rect.width - 10, EditorGUIUtility.singleLineHeight);
 
-            DrawPropertyWithHelpIcon(ref propertyRect, ref this.m_InterpolateRotationHelpOpen, interpolateRotationProperty, INTERPOLATE_TOOLTIP);
-            DrawHelpBox(ref propertyRect, this.m_InterpolateRotationHelpOpen, GetInterpolateHelpBoxHeight(), INTERPOLATE_HELP, INTERPOLATE_HELP_URL);
+            DrawPropertyWithHelpIcon(ref propertyRect, ref m_InterpolateRotationHelpOpen, interpolateRotationProperty, INTERPOLATE_TOOLTIP);
+            DrawHelpBox(ref propertyRect, m_InterpolateRotationHelpOpen, GetInterpolateHelpBoxHeight(), INTERPOLATE_HELP, INTERPOLATE_HELP_URL);
 
             switch (interpolateOption)
             {
@@ -345,12 +345,12 @@ namespace Photon.Pun
 
         private void DrawSynchronizeScaleHeader()
         {
-            DrawHeader("Synchronize Scale", this.m_SynchronizeScaleProperty);
+            DrawHeader("Synchronize Scale", m_SynchronizeScaleProperty);
         }
 
         private void DrawSynchronizeScaleData()
         {
-            if (this.m_SynchronizeScaleProperty == null || this.m_SynchronizeScaleProperty.boolValue == false)
+            if (m_SynchronizeScaleProperty == null || m_SynchronizeScaleProperty.boolValue == false)
             {
                 return;
             }
@@ -368,7 +368,7 @@ namespace Photon.Pun
                     break;
             }
 
-            if (this.m_InterpolateScaleHelpOpen == true)
+            if (m_InterpolateScaleHelpOpen == true)
             {
                 containerHeight += GetInterpolateHelpBoxHeight();
             }
@@ -376,8 +376,8 @@ namespace Photon.Pun
             Rect rect = PhotonGUI.ContainerBody(containerHeight);
             Rect propertyRect = new Rect(rect.xMin + 5, rect.yMin + 2, rect.width - 10, EditorGUIUtility.singleLineHeight);
 
-            DrawPropertyWithHelpIcon(ref propertyRect, ref this.m_InterpolateScaleHelpOpen, interpolateScaleProperty, INTERPOLATE_TOOLTIP);
-            DrawHelpBox(ref propertyRect, this.m_InterpolateScaleHelpOpen, GetInterpolateHelpBoxHeight(), INTERPOLATE_HELP, INTERPOLATE_HELP_URL);
+            DrawPropertyWithHelpIcon(ref propertyRect, ref m_InterpolateScaleHelpOpen, interpolateScaleProperty, INTERPOLATE_TOOLTIP);
+            DrawHelpBox(ref propertyRect, m_InterpolateScaleHelpOpen, GetInterpolateHelpBoxHeight(), INTERPOLATE_HELP, INTERPOLATE_HELP_URL);
 
             switch (interpolateOption)
             {

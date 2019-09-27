@@ -19,7 +19,7 @@ namespace FIVE.AWSL
 
         public RuntimeContext Parse()
         {
-            var exprs = new List<Expr>();
+            List<Expr> exprs = new List<Expr>();
 
             while (true)
             {
@@ -39,7 +39,7 @@ namespace FIVE.AWSL
 
         private Expr ParseExpr()
         {
-            var expr = new Expr();
+            Expr expr = new Expr();
 
             (TokenType, int) token = PeekToken();
             if (token.Item1 == TokenType.END)

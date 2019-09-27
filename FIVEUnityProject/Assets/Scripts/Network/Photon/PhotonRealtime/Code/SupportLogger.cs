@@ -19,19 +19,17 @@
 namespace Photon.Realtime
 {
     using System.Text;
-    using System.Collections;
     using System.Collections.Generic;
 
     using Stopwatch = System.Diagnostics.Stopwatch;
 
-    #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
     using UnityEngine;
-    #endif
+#endif
 
-    #if SUPPORTED_UNITY || NETFX_CORE
+#if SUPPORTED_UNITY || NETFX_CORE
     using Hashtable = ExitGames.Client.Photon.Hashtable;
-    using SupportClass = ExitGames.Client.Photon.SupportClass;
-    #endif
+#endif
 
     /// <summary>
     /// Helper class to debug log basic information about Photon client and vital traffic statistics.
@@ -39,18 +37,18 @@ namespace Photon.Realtime
     /// <remarks>
     /// Set SupportLogger.Client for this to work.
     /// </remarks>
-    #if SUPPORTED_UNITY
-	[AddComponentMenu("")] // hide from Unity Menus and searches
-	public class SupportLogger : MonoBehaviour, IConnectionCallbacks , IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks
-    #else
+#if SUPPORTED_UNITY
+    [AddComponentMenu("")] // hide from Unity Menus and searches
+    public class SupportLogger : MonoBehaviour, IConnectionCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, ILobbyCallbacks
+#else
 	public class SupportLogger : IConnectionCallbacks, IInRoomCallbacks, IMatchmakingCallbacks , ILobbyCallbacks
-    #endif
+#endif
     {
         /// <summary>
         /// Toggle to enable or disable traffic statistics logging.
         /// </summary>
         public bool LogTrafficStats = true;
-        private bool loggedStillOfflineMessage;
+        private readonly bool loggedStillOfflineMessage;
 
         private LoadBalancingClient client;
 
@@ -64,86 +62,86 @@ namespace Photon.Realtime
         /// </summary>
         public LoadBalancingClient Client
         {
-            get { return this.client; }
+            get => client;
             set
             {
-                if (this.client != value)
+                if (client != value)
                 {
-                    if (this.client != null)
+                    if (client != null)
                     {
-                        this.client.RemoveCallbackTarget(this);
+                        client.RemoveCallbackTarget(this);
                     }
-                    this.client = value;
-                    this.client.AddCallbackTarget(this);
+                    client = value;
+                    client.AddCallbackTarget(this);
                 }
             }
         }
 
 
-        #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
         protected void Start()
         {
-            if (this.startStopwatch == null)
+            if (startStopwatch == null)
             {
-                this.startStopwatch = new Stopwatch();
-                this.startStopwatch.Start();
+                startStopwatch = new Stopwatch();
+                startStopwatch.Start();
             }
 
-            this.InvokeRepeating("TrackValues", 0.5f, 0.5f);
+            InvokeRepeating("TrackValues", 0.5f, 0.5f);
         }
 
         protected void OnApplicationPause(bool pause)
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnApplicationPause: " + pause + " connected: " + this.client.IsConnected);
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnApplicationPause: " + pause + " connected: " + client.IsConnected);
         }
 
         protected void OnApplicationQuit()
         {
-            this.CancelInvoke();
+            CancelInvoke();
         }
-        #endif
+#endif
 
         public void StartLogStats()
         {
-            #if SUPPORTED_UNITY
-            this.InvokeRepeating("LogStats", 10, 10);
-            #else
+#if SUPPORTED_UNITY
+            InvokeRepeating("LogStats", 10, 10);
+#else
             Debug.Log("Not implemented for non-Unity projects.");
-            #endif
+#endif
         }
 
         public void StopLogStats()
         {
-            #if SUPPORTED_UNITY
-            this.CancelInvoke("LogStats");
-            #else
+#if SUPPORTED_UNITY
+            CancelInvoke("LogStats");
+#else
             Debug.Log("Not implemented for non-Unity projects.");
-            #endif
+#endif
         }
 
 
         private string GetFormattedTimestamp()
         {
-            if (this.startStopwatch == null)
+            if (startStopwatch == null)
             {
-                this.startStopwatch = new Stopwatch();
-                this.startStopwatch.Start();
+                startStopwatch = new Stopwatch();
+                startStopwatch.Start();
             }
-            return string.Format("[{0}.{1}]", this.startStopwatch.Elapsed.Seconds, this.startStopwatch.Elapsed.Milliseconds);
+            return string.Format("[{0}.{1}]", startStopwatch.Elapsed.Seconds, startStopwatch.Elapsed.Milliseconds);
         }
 
 
         // called via InvokeRepeatedly
         private void TrackValues()
         {
-            int currentRtt = this.client.LoadBalancingPeer.RoundTripTime;
-            if (currentRtt > this.pingMax)
+            int currentRtt = client.LoadBalancingPeer.RoundTripTime;
+            if (currentRtt > pingMax)
             {
-                this.pingMax = currentRtt;
+                pingMax = currentRtt;
             }
-            if (currentRtt < this.pingMin)
+            if (currentRtt < pingMin)
             {
-                this.pingMin = currentRtt;
+                pingMin = currentRtt;
             }
         }
 
@@ -153,14 +151,14 @@ namespace Photon.Realtime
         /// </summary>
         public void LogStats()
         {
-            if (this.client.State == ClientState.PeerCreated)
+            if (client.State == ClientState.PeerCreated)
             {
                 return;
             }
 
-            if (this.LogTrafficStats)
+            if (LogTrafficStats)
             {
-                Debug.Log(this.GetFormattedTimestamp() + " SupportLogger " + this.client.LoadBalancingPeer.VitalStatsToString(false) + " Ping min/max: " + this.pingMin + "/" + this.pingMax);
+                Debug.Log(GetFormattedTimestamp() + " SupportLogger " + client.LoadBalancingPeer.VitalStatsToString(false) + " Ping min/max: " + pingMin + "/" + pingMax);
             }
         }
 
@@ -171,13 +169,13 @@ namespace Photon.Realtime
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendFormat("{0} SupportLogger Info: ", this.GetFormattedTimestamp());
+            sb.AppendFormat("{0} SupportLogger Info: ", GetFormattedTimestamp());
             sb.AppendFormat("AppID: \"{0}\" AppVersion: \"{1}\" PeerID: {2} ",
-                string.IsNullOrEmpty(this.client.AppId) || this.client.AppId.Length < 8
-                    ? this.client.AppId
-                    : string.Concat(this.client.AppId.Substring(0, 8), "***"), this.client.AppVersion, this.client.LoadBalancingPeer.PeerID);
+                string.IsNullOrEmpty(client.AppId) || client.AppId.Length < 8
+                    ? client.AppId
+                    : string.Concat(client.AppId.Substring(0, 8), "***"), client.AppVersion, client.LoadBalancingPeer.PeerID);
             //NOTE: this.client.LoadBalancingPeer.ServerIpAddress requires Photon3Unity3d.dll v4.1.2.5 and up
-            sb.AppendFormat("NameServer: {0} Server: {1} IP: {2} Region: {3}", this.client.NameServerHost, this.client.CurrentServerAddress, this.client.LoadBalancingPeer.ServerIpAddress, this.client.CloudRegion);
+            sb.AppendFormat("NameServer: {0} Server: {1} IP: {2} Region: {3}", client.NameServerHost, client.CurrentServerAddress, client.LoadBalancingPeer.ServerIpAddress, client.CloudRegion);
 
             Debug.Log(sb.ToString());
         }
@@ -185,47 +183,47 @@ namespace Photon.Realtime
 
         public void OnConnected()
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnConnected().");
-            this.pingMax = 0;
-            this.pingMin = this.client.LoadBalancingPeer.RoundTripTime;
-            this.LogBasics();
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnConnected().");
+            pingMax = 0;
+            pingMin = client.LoadBalancingPeer.RoundTripTime;
+            LogBasics();
 
-            if (this.LogTrafficStats)
+            if (LogTrafficStats)
             {
-                this.client.LoadBalancingPeer.TrafficStatsEnabled = false;
-                this.client.LoadBalancingPeer.TrafficStatsEnabled = true;
-                this.StartLogStats();
+                client.LoadBalancingPeer.TrafficStatsEnabled = false;
+                client.LoadBalancingPeer.TrafficStatsEnabled = true;
+                StartLogStats();
             }
         }
 
         public void OnConnectedToMaster()
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnConnectedToMaster().");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnConnectedToMaster().");
         }
 
         public void OnFriendListUpdate(List<FriendInfo> friendList)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnFriendListUpdate(friendList).");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnFriendListUpdate(friendList).");
         }
 
         public void OnJoinedLobby()
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnJoinedLobby(" + this.client.CurrentLobby + ").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnJoinedLobby(" + client.CurrentLobby + ").");
         }
 
         public void OnLeftLobby()
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnLeftLobby().");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnLeftLobby().");
         }
 
         public void OnCreateRoomFailed(short returnCode, string message)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnCreateRoomFailed(" + returnCode+","+message+").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnCreateRoomFailed(" + returnCode + "," + message + ").");
         }
 
         public void OnJoinedRoom()
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnJoinedRoom(" + this.client.CurrentRoom + "). " + this.client.CurrentLobby + " GameServer:" + this.client.GameServerAddress);
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnJoinedRoom(" + client.CurrentRoom + "). " + client.CurrentLobby + " GameServer:" + client.GameServerAddress);
         }
 
         public void OnJoinRoomFailed(short returnCode, string message)
@@ -234,77 +232,77 @@ namespace Photon.Realtime
 
         public void OnJoinRandomFailed(short returnCode, string message)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnJoinRandomFailed(" + returnCode+","+message+").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnJoinRandomFailed(" + returnCode + "," + message + ").");
         }
 
         public void OnCreatedRoom()
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnCreatedRoom(" + this.client.CurrentRoom + "). " + this.client.CurrentLobby + " GameServer:" + this.client.GameServerAddress);
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnCreatedRoom(" + client.CurrentRoom + "). " + client.CurrentLobby + " GameServer:" + client.GameServerAddress);
         }
 
         public void OnLeftRoom()
         {
-            Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnLeftRoom().");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnLeftRoom().");
         }
 
-		public void OnDisconnected(DisconnectCause cause)
+        public void OnDisconnected(DisconnectCause cause)
         {
-            this.StopLogStats();
+            StopLogStats();
 
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnDisconnected(" + cause + ").");
-			this.LogBasics();
-            this.LogStats();
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnDisconnected(" + cause + ").");
+            LogBasics();
+            LogStats();
         }
 
         public void OnRegionListReceived(RegionHandler regionHandler)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnRegionListReceived(regionHandler).");
-            this.LogBasics();
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnRegionListReceived(regionHandler).");
+            LogBasics();
         }
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnRoomListUpdate(roomList). roomList.Count: " + roomList.Count);
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnRoomListUpdate(roomList). roomList.Count: " + roomList.Count);
         }
 
         public void OnPlayerEnteredRoom(Player newPlayer)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnPlayerEnteredRoom(" + newPlayer+").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnPlayerEnteredRoom(" + newPlayer + ").");
         }
 
         public void OnPlayerLeftRoom(Player otherPlayer)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnPlayerLeftRoom(" + otherPlayer+").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnPlayerLeftRoom(" + otherPlayer + ").");
         }
 
         public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnRoomPropertiesUpdate(propertiesThatChanged).");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnRoomPropertiesUpdate(propertiesThatChanged).");
         }
 
         public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnPlayerPropertiesUpdate(targetPlayer,changedProps).");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnPlayerPropertiesUpdate(targetPlayer,changedProps).");
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnMasterClientSwitched(" + newMasterClient+").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnMasterClientSwitched(" + newMasterClient + ").");
         }
 
         public void OnCustomAuthenticationResponse(Dictionary<string, object> data)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnCustomAuthenticationResponse(" + data.ToStringFull()+").");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnCustomAuthenticationResponse(" + data.ToStringFull() + ").");
         }
 
-		public void OnCustomAuthenticationFailed (string debugMessage)
-		{
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnCustomAuthenticationFailed(" + debugMessage+").");
-		}
+        public void OnCustomAuthenticationFailed(string debugMessage)
+        {
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnCustomAuthenticationFailed(" + debugMessage + ").");
+        }
 
         public void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
         {
-			Debug.Log(this.GetFormattedTimestamp() + " SupportLogger OnLobbyStatisticsUpdate(lobbyStatistics).");
+            Debug.Log(GetFormattedTimestamp() + " SupportLogger OnLobbyStatisticsUpdate(lobbyStatistics).");
         }
 
 

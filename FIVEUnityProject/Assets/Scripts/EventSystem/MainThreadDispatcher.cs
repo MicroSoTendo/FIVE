@@ -11,7 +11,7 @@ namespace FIVE.EventSystem
         private static readonly ConcurrentQueue<Action> ScheduledActions = new ConcurrentQueue<Action>();
         private static readonly ConcurrentQueue<IEnumerator> ScheduledCoroutine = new ConcurrentQueue<IEnumerator>();
         private Action onUpdate = () => { };
-        private void Awake() 
+        private void Awake()
         {
             DontDestroyOnLoad(this);
         }

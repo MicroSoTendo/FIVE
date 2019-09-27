@@ -10,9 +10,6 @@
 
 using UnityEngine;
 
-using Photon.Pun;
-using Photon.Realtime;
-
 namespace Photon.Pun.UtilityScripts
 {
     /// <summary>
@@ -25,7 +22,7 @@ namespace Photon.Pun.UtilityScripts
         public void Awake()
         {
             bool observed = false;
-            foreach (Component observedComponent in this.photonView.ObservedComponents)
+            foreach (Component observedComponent in photonView.ObservedComponents)
             {
                 if (observedComponent == this)
                 {
@@ -63,8 +60,8 @@ namespace Photon.Pun.UtilityScripts
             if (!photonView.IsMine)
             {
                 //Update remote player (smooth this, this looks good, at the cost of some accuracy)
-                transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * this.SmoothingDelay);
-                transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * this.SmoothingDelay);
+                transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * SmoothingDelay);
+                transform.rotation = Quaternion.Lerp(transform.rotation, correctPlayerRot, Time.deltaTime * SmoothingDelay);
             }
         }
 

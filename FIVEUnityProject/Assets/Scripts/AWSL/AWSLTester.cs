@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using FIVE.AWSL;
 using UnityEngine;
-using FIVE.AWSL;
 
 public class AWSLTester : MonoBehaviour
 {

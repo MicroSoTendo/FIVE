@@ -7,7 +7,7 @@ namespace FIVE.UI.Multiplayers
         public Text RoomName { get; }
         public InputField RoomNameInput { get; }
 
-        public Button CreateButton {get;}
+        public Button CreateButton { get; }
         public CreateRoomView()
         {
             RoomName = AddUIElement<Text>("RoomName");

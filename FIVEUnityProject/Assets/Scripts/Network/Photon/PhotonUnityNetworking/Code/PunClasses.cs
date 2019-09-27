@@ -23,14 +23,13 @@
 
 namespace Photon.Pun
 {
+    using ExitGames.Client.Photon;
+    using Photon.Realtime;
     using System;
     using System.Collections.Generic;
     using System.Reflection;
-    using ExitGames.Client.Photon;
     using UnityEngine;
     using UnityEngine.SceneManagement;
-    using Photon.Realtime;
-    using SupportClassPun = ExitGames.Client.Photon.SupportClass;
 
 
 
@@ -192,11 +191,11 @@ namespace Photon.Pun
         {
             get
             {
-                if (this.pvCache == null)
+                if (pvCache == null)
                 {
-                    this.pvCache = PhotonView.Get(this);
+                    pvCache = PhotonView.Get(this);
                 }
-                return this.pvCache;
+                return pvCache;
             }
         }
     }
@@ -218,7 +217,7 @@ namespace Photon.Pun
     /// </remarks>
     /// \ingroup callbacks
     // the documentation for the interface methods becomes inherited when Doxygen builds it.
-    public class MonoBehaviourPunCallbacks : MonoBehaviourPun, IConnectionCallbacks , IMatchmakingCallbacks , IInRoomCallbacks, ILobbyCallbacks, IWebRpcCallback
+    public class MonoBehaviourPunCallbacks : MonoBehaviourPun, IConnectionCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, ILobbyCallbacks, IWebRpcCallback
     {
         public virtual void OnEnable()
         {
@@ -499,7 +498,7 @@ namespace Photon.Pun
         /// this won't be called!
         /// </remarks>
         /// <param name="debugMessage">Contains a debug message why authentication failed. This has to be fixed during development.</param>
-        public virtual void OnCustomAuthenticationFailed (string debugMessage)
+        public virtual void OnCustomAuthenticationFailed(string debugMessage)
         {
         }
 
@@ -530,9 +529,9 @@ namespace Photon.Pun
 
         public PhotonMessageInfo(Player player, int timestamp, PhotonView view)
         {
-            this.Sender = player;
-            this.timeInt = timestamp;
-            this.photonView = view;
+            Sender = player;
+            timeInt = timestamp;
+            photonView = view;
         }
 
         [Obsolete("Use SentServerTime instead.")]
@@ -540,7 +539,7 @@ namespace Photon.Pun
         {
             get
             {
-                uint u = (uint) this.timeInt;
+                uint u = (uint)timeInt;
                 double t = u;
                 return t / 1000.0d;
             }
@@ -550,20 +549,17 @@ namespace Photon.Pun
         {
             get
             {
-                uint u = (uint)this.timeInt;
+                uint u = (uint)timeInt;
                 double t = u;
                 return t / 1000.0d;
             }
         }
 
-        public int SentServerTimestamp
-        {
-            get { return this.timeInt; }
-        }
+        public int SentServerTimestamp => timeInt;
 
         public override string ToString()
         {
-            return string.Format("[PhotonMessageInfo: Sender='{1}' Senttime={0}]", this.SentServerTime, this.Sender);
+            return string.Format("[PhotonMessageInfo: Sender='{1}' Senttime={0}]", SentServerTime, Sender);
         }
     }
 
@@ -610,84 +606,78 @@ namespace Photon.Pun
         public bool IsWriting { get; private set; }
 
         /// <summary>If true, this client should read data send by another client.</summary>
-        public bool IsReading
-        {
-            get { return !this.IsWriting; }
-        }
+        public bool IsReading => !IsWriting;
 
         /// <summary>Count of items in the stream.</summary>
-        public int Count
-        {
-            get { return this.IsWriting ? this.writeData.Count : this.readData.Length; }
-        }
+        public int Count => IsWriting ? writeData.Count : readData.Length;
 
         /// <summary>
         /// Creates a stream and initializes it. Used by PUN internally.
         /// </summary>
         public PhotonStream(bool write, object[] incomingData)
         {
-            this.IsWriting = write;
+            IsWriting = write;
 
             if (!write && incomingData != null)
             {
-                this.readData = incomingData;
+                readData = incomingData;
             }
         }
 
         public void SetReadStream(object[] incomingData, byte pos = 0)
         {
-            this.readData = incomingData;
-            this.currentItem = pos;
-            this.IsWriting = false;
+            readData = incomingData;
+            currentItem = pos;
+            IsWriting = false;
         }
 
         internal void SetWriteStream(List<object> newWriteData, byte pos = 0)
         {
             if (pos != newWriteData.Count)
             {
-                throw new Exception("SetWriteStream failed, because count does not match position value. pos: "+ pos + " newWriteData.Count:" + newWriteData.Count);
+                throw new Exception("SetWriteStream failed, because count does not match position value. pos: " + pos + " newWriteData.Count:" + newWriteData.Count);
             }
-            this.writeData = newWriteData;
-            this.currentItem = pos;
-            this.IsWriting = true;
+            writeData = newWriteData;
+            currentItem = pos;
+            IsWriting = true;
         }
 
         internal List<object> GetWriteStream()
         {
-            return this.writeData;
+            return writeData;
         }
 
 
         [Obsolete("Either SET the writeData with an empty List or use Clear().")]
         internal void ResetWriteStream()
         {
-            this.writeData.Clear();
+            writeData.Clear();
         }
 
         /// <summary>Read next piece of data from the stream when IsReading is true.</summary>
         public object ReceiveNext()
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
                 Debug.LogError("Error: you cannot read this stream that you are writing!");
                 return null;
             }
 
-            object obj = this.readData[this.currentItem];
-            this.currentItem++;
+            object obj = readData[currentItem];
+            currentItem++;
             return obj;
         }
 
         /// <summary>Read next piece of data from the stream without advancing the "current" item.</summary>
         public object PeekNext()
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
                 Debug.LogError("Error: you cannot read this stream that you are writing!");
                 return null;
             }
 
-            object obj = this.readData[this.currentItem];
+            object obj = readData[currentItem];
             //this.currentItem++;
             return obj;
         }
@@ -695,22 +685,25 @@ namespace Photon.Pun
         /// <summary>Add another piece of data to send it when IsWriting is true.</summary>
         public void SendNext(object obj)
         {
-            if (!this.IsWriting)
+            if (!IsWriting)
             {
                 Debug.LogError("Error: you cannot write/send to this stream that you are reading!");
                 return;
             }
 
-            this.writeData.Add(obj);
+            writeData.Add(obj);
         }
 
         [Obsolete("writeData is a list now. Use and re-use it directly.")]
         public bool CopyToListAndClear(List<object> target)
         {
-            if (!this.IsWriting) return false;
+            if (!IsWriting)
+            {
+                return false;
+            }
 
-            target.AddRange(this.writeData);
-            this.writeData.Clear();
+            target.AddRange(writeData);
+            writeData.Clear();
 
             return true;
         }
@@ -718,7 +711,7 @@ namespace Photon.Pun
         /// <summary>Turns the stream into a new object[].</summary>
         public object[] ToArray()
         {
-            return this.IsWriting ? this.writeData.ToArray() : this.readData;
+            return IsWriting ? writeData.ToArray() : readData;
         }
 
         /// <summary>
@@ -726,16 +719,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref bool myBool)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(myBool);
+                writeData.Add(myBool);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    myBool = (bool) this.readData[this.currentItem];
-                    this.currentItem++;
+                    myBool = (bool)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -745,16 +738,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref int myInt)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(myInt);
+                writeData.Add(myInt);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    myInt = (int) this.readData[this.currentItem];
-                    this.currentItem++;
+                    myInt = (int)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -764,16 +757,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref string value)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(value);
+                writeData.Add(value);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    value = (string) this.readData[this.currentItem];
-                    this.currentItem++;
+                    value = (string)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -783,16 +776,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref char value)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(value);
+                writeData.Add(value);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    value = (char) this.readData[this.currentItem];
-                    this.currentItem++;
+                    value = (char)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -802,16 +795,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref short value)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(value);
+                writeData.Add(value);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    value = (short) this.readData[this.currentItem];
-                    this.currentItem++;
+                    value = (short)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -821,16 +814,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref float obj)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(obj);
+                writeData.Add(obj);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    obj = (float) this.readData[this.currentItem];
-                    this.currentItem++;
+                    obj = (float)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -840,16 +833,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref Player obj)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(obj);
+                writeData.Add(obj);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    obj = (Player) this.readData[this.currentItem];
-                    this.currentItem++;
+                    obj = (Player)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -859,16 +852,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref Vector3 obj)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(obj);
+                writeData.Add(obj);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    obj = (Vector3) this.readData[this.currentItem];
-                    this.currentItem++;
+                    obj = (Vector3)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -878,16 +871,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref Vector2 obj)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(obj);
+                writeData.Add(obj);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    obj = (Vector2) this.readData[this.currentItem];
-                    this.currentItem++;
+                    obj = (Vector2)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -897,16 +890,16 @@ namespace Photon.Pun
         /// </summary>
         public void Serialize(ref Quaternion obj)
         {
-            if (this.IsWriting)
+            if (IsWriting)
             {
-                this.writeData.Add(obj);
+                writeData.Add(obj);
             }
             else
             {
-                if (this.readData.Length > this.currentItem)
+                if (readData.Length > currentItem)
                 {
-                    obj = (Quaternion) this.readData[this.currentItem];
-                    this.currentItem++;
+                    obj = (Quaternion)readData[currentItem];
+                    currentItem++;
                 }
             }
         }
@@ -924,19 +917,13 @@ namespace Photon.Pun
             }
         }
 
-        public static int ActiveSceneBuildIndex
-        {
-            get { return SceneManager.GetActiveScene().buildIndex; }
-        }
+        public static int ActiveSceneBuildIndex => SceneManager.GetActiveScene().buildIndex;
 
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         /// <summary>In Editor, we can access the active scene's name.</summary>
-        public static string EditorActiveSceneName
-        {
-            get { return SceneManager.GetActiveScene().name; }
-        }
-        #endif
+        public static string EditorActiveSceneName => SceneManager.GetActiveScene().name;
+#endif
     }
 
 
@@ -953,7 +940,7 @@ namespace Photon.Pun
     {
         /// <summary>Contains a GameObject per prefabId, to speed up instantiation.</summary>
         public readonly Dictionary<string, GameObject> ResourceCache = new Dictionary<string, GameObject>();
-        
+
         /// <summary>Returns an inactive instance of a networked GameObject, to be used by PUN.</summary>
         /// <param name="prefabId">String identifier for the networked object.</param>
         /// <param name="position">Location of the new object.</param>
@@ -961,8 +948,7 @@ namespace Photon.Pun
         /// <returns></returns>
         public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
         {
-            GameObject res = null;
-            bool cached = this.ResourceCache.TryGetValue(prefabId, out res);
+            bool cached = ResourceCache.TryGetValue(prefabId, out GameObject res);
             if (!cached)
             {
                 res = (GameObject)Resources.Load(prefabId, typeof(GameObject));
@@ -972,16 +958,23 @@ namespace Photon.Pun
                 }
                 else
                 {
-                    this.ResourceCache.Add(prefabId, res);
+                    ResourceCache.Add(prefabId, res);
                 }
             }
 
             bool wasActive = res.activeSelf;
-            if (wasActive) res.SetActive(false);
+            if (wasActive)
+            {
+                res.SetActive(false);
+            }
 
-            GameObject instance =GameObject.Instantiate(res, position, rotation) as GameObject;
+            GameObject instance = GameObject.Instantiate(res, position, rotation) as GameObject;
 
-            if (wasActive) res.SetActive(true);
+            if (wasActive)
+            {
+                res.SetActive(true);
+            }
+
             return instance;
         }
 
@@ -1001,8 +994,7 @@ namespace Photon.Pun
 
         public static ParameterInfo[] GetCachedParemeters(this MethodInfo mo)
         {
-            ParameterInfo[] result;
-            bool cached = ParametersOfMethods.TryGetValue(mo, out result);
+            bool cached = ParametersOfMethods.TryGetValue(mo, out ParameterInfo[] result);
 
             if (!cached)
             {

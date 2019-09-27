@@ -1,10 +1,9 @@
-using System;
 using FIVE.EventSystem;
 using FIVE.UI.Background;
-using FIVE.UI.Multiplayers;
-using UnityEngine;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
+using System;
+using UnityEngine;
 
 namespace FIVE.UI.StartupMenu
 {
@@ -21,9 +20,9 @@ namespace FIVE.UI.StartupMenu
             binder.Bind(view => view.MultiplayerButton.onClick).
             To(viewModel => viewModel.OnMultiPlayerButtonClicked);
 
-            binder.Bind(v=>v.MultiplayerButton.onClick).
+            binder.Bind(v => v.MultiplayerButton.onClick).
             ToBroadcast<OnMultiPlayersButtonClicked>();
-            
+
             binder.Bind(view => view.OptionsButton.onClick).
             To(viewModel => viewModel.OnOptionsButtonClicked);
 

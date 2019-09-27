@@ -36,7 +36,7 @@ namespace FIVE.UI.OptionsMenu
         private void OnSaveButtonClicked(object sender, EventArgs eventArgs)
         {
             View.ViewCanvas.gameObject.SetActive(false);
-           // UIManager.Get(nameof(GameOptionView)).SetActive(true);
+            // UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnSaveButtonClicked));
         }
         private void OnGameOptionButtonClicked(object sender, EventArgs eventArgs)

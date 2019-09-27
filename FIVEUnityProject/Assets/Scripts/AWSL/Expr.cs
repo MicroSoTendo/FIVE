@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace FIVE.AWSL
 {
-    using ParamList = List<string>;
     using FuncT = Func<RuntimeContext, List<string>, string>;
+    using ParamList = List<string>;
 
     internal class Expr
     {
@@ -27,7 +27,7 @@ namespace FIVE.AWSL
 
         public string Execute(RuntimeContext rc)
         {
-            var actualParams = new List<string>();
+            ParamList actualParams = new List<string>();
             for (int ParamP = 0; ParamP < Params.Count; ParamP++)
             {
                 if (Params[ParamP] is string)

@@ -1,5 +1,5 @@
-﻿using System;
-using Photon.Pun;
+﻿using Photon.Pun;
+using System;
 using UnityEngine;
 
 namespace FIVE.Network.Views
@@ -7,11 +7,14 @@ namespace FIVE.Network.Views
     public abstract class NetworkView : MonoBehaviour, IPunObservable
     {
         protected PhotonView PhotonView { get; private set; }
+
         protected event Action<PhotonStream, PhotonMessageInfo> OnSending;
+
         protected event Action<PhotonStream, PhotonMessageInfo> OnReading;
+
         protected void SetStreamingDelegate(
             Action<PhotonStream, PhotonMessageInfo> sendingHandler,
-            Action<PhotonStream, PhotonMessageInfo> readingHandler, 
+            Action<PhotonStream, PhotonMessageInfo> readingHandler,
             bool value)
         {
             if (value)

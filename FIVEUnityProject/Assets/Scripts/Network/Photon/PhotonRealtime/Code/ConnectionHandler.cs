@@ -19,16 +19,16 @@ namespace Photon.Realtime
     using System;
     using SupportClass = ExitGames.Client.Photon.SupportClass;
 
-    #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
     using UnityEngine;
-    #endif
+#endif
 
 
-    #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
     public class ConnectionHandler : MonoBehaviour
-    #else
+#else
     public class ConnectionHandler
-    #endif
+#endif
     {
         /// <summary>
         /// Photon client to log information and statistics from.
@@ -48,17 +48,14 @@ namespace Photon.Realtime
         /// <summary>Counts how often the Fallback Thread called SendAcksOnly, which is purely of interest to monitor if the game logic called SendOutgoingCommands as intended.</summary>
         public int CountSendAcksOnly { get; private set; }
 
-        public bool FallbackThreadRunning
-        {
-            get { return this.fallbackThreadId < 255; }
-        }
+        public bool FallbackThreadRunning => fallbackThreadId < 255;
 
 
-        #if SUPPORTED_UNITY
+#if SUPPORTED_UNITY
 
         /// <summary>Keeps the ConnectionHandler, even if a new scene gets loaded.</summary>
         public bool ApplyDontDestroyOnLoad = true;
-        
+
         /// <summary>Indicates that the app is closing. Set in OnApplicationQuit().</summary>
         [NonSerialized]
         public static bool AppQuits;
@@ -73,97 +70,97 @@ namespace Photon.Realtime
         /// <summary></summary>
         protected virtual void Awake()
         {
-            if (this.ApplyDontDestroyOnLoad)
+            if (ApplyDontDestroyOnLoad)
             {
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
         }
 
         /// <summary>Called by Unity when the application gets closed. Disconnects if OnApplicationQuit() was called before.</summary>
         protected virtual void OnDisable()
         {
-            this.StopFallbackSendAckThread();
+            StopFallbackSendAckThread();
 
             if (AppQuits)
             {
-                if (this.Client != null && this.Client.IsConnected)
+                if (Client != null && Client.IsConnected)
                 {
-                    this.Client.Disconnect();
-                    this.Client.LoadBalancingPeer.StopThread();
+                    Client.Disconnect();
+                    Client.LoadBalancingPeer.StopThread();
                 }
 
                 SupportClass.StopAllBackgroundCalls();
             }
         }
 
-        #endif
+#endif
 
 
         public void StartFallbackSendAckThread()
         {
-            #if !UNITY_WEBGL
-            if (this.FallbackThreadRunning)
+#if !UNITY_WEBGL
+            if (FallbackThreadRunning)
             {
                 return;
             }
 
-            #if UNITY_SWITCH
+#if UNITY_SWITCH
             this.fallbackThreadId = SupportClass.StartBackgroundCalls(this.RealtimeFallbackThread, 50);  // as workaround, we don't name the Thread.
-            #else
-            this.fallbackThreadId = SupportClass.StartBackgroundCalls(this.RealtimeFallbackThread, 50, "RealtimeFallbackThread");
-            #endif
-            #endif
+#else
+            fallbackThreadId = SupportClass.StartBackgroundCalls(RealtimeFallbackThread, 50, "RealtimeFallbackThread");
+#endif
+#endif
         }
 
         public void StopFallbackSendAckThread()
         {
-            #if !UNITY_WEBGL
-            if (!this.FallbackThreadRunning)
+#if !UNITY_WEBGL
+            if (!FallbackThreadRunning)
             {
                 return;
             }
 
-            SupportClass.StopBackgroundCalls(this.fallbackThreadId);
-            this.fallbackThreadId = 255;
-            #endif
+            SupportClass.StopBackgroundCalls(fallbackThreadId);
+            fallbackThreadId = 255;
+#endif
         }
 
 
         /// <summary>A thread which runs independent from the Update() calls. Keeps connections online while loading or in background. See PhotonNetwork.BackgroundTimeout.</summary>
         public bool RealtimeFallbackThread()
         {
-            if (this.Client != null)
+            if (Client != null)
             {
-                if (!this.Client.IsConnected)
+                if (!Client.IsConnected)
                 {
-                    this.didSendAcks = false;
+                    didSendAcks = false;
                     return true;
                 }
 
-                if (this.Client.LoadBalancingPeer.ConnectionTime - this.Client.LoadBalancingPeer.LastSendOutgoingTime > 100)
+                if (Client.LoadBalancingPeer.ConnectionTime - Client.LoadBalancingPeer.LastSendOutgoingTime > 100)
                 {
-                    if (this.didSendAcks)
+                    if (didSendAcks)
                     {
                         // check if the client should disconnect after some seconds in background
-                        this.deltaSinceStartedToAck = Environment.TickCount - this.startedAckingTimestamp;
-                        if (this.deltaSinceStartedToAck > this.KeepAliveInBackground)
+                        deltaSinceStartedToAck = Environment.TickCount - startedAckingTimestamp;
+                        if (deltaSinceStartedToAck > KeepAliveInBackground)
                         {
                             return true;
                         }
                     }
                     else
                     {
-                        this.startedAckingTimestamp = Environment.TickCount;
+                        startedAckingTimestamp = Environment.TickCount;
                     }
 
 
-                    this.didSendAcks = true;
-                    this.CountSendAcksOnly++;
-                    this.Client.LoadBalancingPeer.SendAcksOnly();
+                    didSendAcks = true;
+                    CountSendAcksOnly++;
+                    Client.LoadBalancingPeer.SendAcksOnly();
                 }
                 else
                 {
-                    this.didSendAcks = false;
+                    didSendAcks = false;
                 }
             }
 

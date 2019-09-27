@@ -13,10 +13,8 @@ namespace Photon.Chat
     using System.Collections.Generic;
     using System.Text;
 
-    #if SUPPORTED_UNITY || NETFX_CORE
-    using Hashtable = ExitGames.Client.Photon.Hashtable;
-    using SupportClass = ExitGames.Client.Photon.SupportClass;
-    #endif
+#if SUPPORTED_UNITY || NETFX_CORE
+#endif
 
 
     /// <summary>
@@ -46,7 +44,7 @@ namespace Photon.Chat
         public bool IsPrivate { get; protected internal set; }
 
         /// <summary>Count of messages this client still buffers/knows for this channel.</summary>
-        public int MessageCount { get { return this.Messages.Count; } }
+        public int MessageCount => Messages.Count;
 
         /// <summary>
         /// ID of the last message received.
@@ -67,45 +65,45 @@ namespace Photon.Chat
         /// <summary>Used internally to create new channels. This does NOT create a channel on the server! Use ChatClient.Subscribe.</summary>
         public ChatChannel(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         /// <summary>Used internally to add messages to this channel.</summary>
         public void Add(string sender, object message, int msgId)
         {
-            this.Senders.Add(sender);
-            this.Messages.Add(message);
-            this.LastMsgId = msgId;
-            this.TruncateMessages();
+            Senders.Add(sender);
+            Messages.Add(message);
+            LastMsgId = msgId;
+            TruncateMessages();
         }
 
         /// <summary>Used internally to add messages to this channel.</summary>
         public void Add(string[] senders, object[] messages, int lastMsgId)
         {
-            this.Senders.AddRange(senders);
-            this.Messages.AddRange(messages);
-            this.LastMsgId = lastMsgId;
-            this.TruncateMessages();
+            Senders.AddRange(senders);
+            Messages.AddRange(messages);
+            LastMsgId = lastMsgId;
+            TruncateMessages();
         }
 
         /// <summary>Reduces the number of locally cached messages in this channel to the MessageLimit (if set).</summary>
         public void TruncateMessages()
         {
-            if (this.MessageLimit <= 0 || this.Messages.Count <= this.MessageLimit)
+            if (MessageLimit <= 0 || Messages.Count <= MessageLimit)
             {
                 return;
             }
 
-            int excessCount = this.Messages.Count - this.MessageLimit;
-            this.Senders.RemoveRange(0, excessCount);
-            this.Messages.RemoveRange(0, excessCount);
+            int excessCount = Messages.Count - MessageLimit;
+            Senders.RemoveRange(0, excessCount);
+            Messages.RemoveRange(0, excessCount);
         }
 
         /// <summary>Clear the local cache of messages currently stored. This frees memory but doesn't affect the server.</summary>
         public void ClearMessages()
         {
-            this.Senders.Clear();
-            this.Messages.Clear();
+            Senders.Clear();
+            Messages.Clear();
         }
 
         /// <summary>Provides a string-representation of all messages in this channel.</summary>
@@ -113,9 +111,9 @@ namespace Photon.Chat
         public string ToStringMessages()
         {
             StringBuilder txt = new StringBuilder();
-            for (int i = 0; i < this.Messages.Count; i++)
+            for (int i = 0; i < Messages.Count; i++)
             {
-                txt.AppendLine(string.Format("{0}: {1}", this.Senders[i], this.Messages[i]));
+                txt.AppendLine(string.Format("{0}: {1}", Senders[i], Messages[i]));
             }
             return txt.ToString();
         }
@@ -124,32 +122,31 @@ namespace Photon.Chat
         {
             if (newProperties != null && newProperties.Count > 0)
             {
-                if (this.properties == null)
+                if (properties == null)
                 {
-                    this.properties = new Dictionary<object, object>(newProperties.Count);
+                    properties = new Dictionary<object, object>(newProperties.Count);
                 }
-                foreach (var k in newProperties.Keys)
+                foreach (object k in newProperties.Keys)
                 {
                     if (newProperties[k] == null)
                     {
-                        if (this.properties.ContainsKey(k))
+                        if (properties.ContainsKey(k))
                         {
-                            this.properties.Remove(k);
+                            properties.Remove(k);
                         }
                     }
                     else
                     {
-                        this.properties[k] = newProperties[k];
+                        properties[k] = newProperties[k];
                     }
                 }
-                object temp;
-                if (this.properties.TryGetValue(ChannelWellKnownProperties.PublishSubscribers, out temp))
+                if (properties.TryGetValue(ChannelWellKnownProperties.PublishSubscribers, out object temp))
                 {
-                    this.PublishSubscribers = (bool)temp;
+                    PublishSubscribers = (bool)temp;
                 }
-                if (this.properties.TryGetValue(ChannelWellKnownProperties.MaxSubscribers, out temp))
+                if (properties.TryGetValue(ChannelWellKnownProperties.MaxSubscribers, out temp))
                 {
-                    this.MaxSubscribers = (int)temp;
+                    MaxSubscribers = (int)temp;
                 }
             }
         }
@@ -162,15 +159,15 @@ namespace Photon.Chat
             }
             for (int i = 0; i < users.Length; i++)
             {
-                this.Subscribers.Add(users[i]);
+                Subscribers.Add(users[i]);
             }
         }
 
         internal void ClearProperties()
         {
-            if (this.properties != null && this.properties.Count > 0)
+            if (properties != null && properties.Count > 0)
             {
-                this.properties.Clear();
+                properties.Clear();
             }
         }
     }

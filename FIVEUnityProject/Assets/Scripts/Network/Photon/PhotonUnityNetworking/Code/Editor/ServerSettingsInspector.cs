@@ -8,15 +8,12 @@
 // <author>developer@exitgames.com</author>
 // ----------------------------------------------------------------------------
 
-using System;
+using ExitGames.Client.Photon;
+using Photon.Pun;
 using UnityEditor;
 using UnityEngine;
 
-using Photon.Pun;
-
-using ExitGames.Client.Photon;
-
-[CustomEditor(typeof (ServerSettings))]
+[CustomEditor(typeof(ServerSettings))]
 public class ServerSettingsInspector : Editor
 {
     private string versionPhoton;
@@ -31,21 +28,21 @@ public class ServerSettingsInspector : Editor
 
     public void Awake()
     {
-        this.versionPhoton = System.Reflection.Assembly.GetAssembly(typeof(PhotonPeer)).GetName().Version.ToString();
+        versionPhoton = System.Reflection.Assembly.GetAssembly(typeof(PhotonPeer)).GetName().Version.ToString();
     }
 
 
     public override void OnInspectorGUI()
     {
-        SerializedObject sObj = new SerializedObject(this.target);
-        ServerSettings settings = this.target as ServerSettings;
+        SerializedObject sObj = new SerializedObject(target);
+        ServerSettings settings = target as ServerSettings;
 
 
         EditorGUI.BeginChangeCheck();
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel(new GUIContent("Version", "Version of PUN and Photon3Unity3d.dll."));
-        EditorGUILayout.LabelField("Pun: " + PhotonNetwork.PunVersion + " Photon lib: " + this.versionPhoton);
+        EditorGUILayout.LabelField("Pun: " + PhotonNetwork.PunVersion + " Photon lib: " + versionPhoton);
         GUILayout.FlexibleSpace();
         if (GUILayout.Button(PhotonGUI.HelpIcon, GUIStyle.none))
         {
@@ -55,62 +52,62 @@ public class ServerSettingsInspector : Editor
 
 
 
-        SerializedProperty showSettingsProp = this.serializedObject.FindProperty("ShowSettings");
+        SerializedProperty showSettingsProp = serializedObject.FindProperty("ShowSettings");
         bool showSettings = EditorGUILayout.Foldout(showSettingsProp.boolValue, new GUIContent("Settings", "Core Photon Server/Cloud settings."));
         if (showSettings != settings.ShowSettings)
         {
             showSettingsProp.boolValue = showSettings;
         }
-        
+
         if (showSettingsProp.boolValue)
         {
-            SerializedProperty settingsSp = this.serializedObject.FindProperty("AppSettings");
+            SerializedProperty settingsSp = serializedObject.FindProperty("AppSettings");
 
             EditorGUI.indentLevel++;
 
             //Realtime APP ID
-            this.BuildAppIdField(settingsSp.FindPropertyRelative("AppIdRealtime"));
-            
+            BuildAppIdField(settingsSp.FindPropertyRelative("AppIdRealtime"));
+
             if (PhotonEditorUtils.HasChat)
             {
-                this.BuildAppIdField(settingsSp.FindPropertyRelative("AppIdChat"));
+                BuildAppIdField(settingsSp.FindPropertyRelative("AppIdChat"));
             }
             if (PhotonEditorUtils.HasVoice)
             {
-                this.BuildAppIdField(settingsSp.FindPropertyRelative("AppIdVoice"));
+                BuildAppIdField(settingsSp.FindPropertyRelative("AppIdVoice"));
             }
 
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("AppVersion"));
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("UseNameServer"), new GUIContent("Use Name Server", "Photon Cloud requires this checked.\nUncheck for Photon Server SDK (OnPremise)."));
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("FixedRegion"), new GUIContent("Fixed Region", "Photon Cloud setting, needs a Name Server.\nDefine one region to always connect to.\nLeave empty to use the best region from a server-side region list."));
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("Server"), new GUIContent("Server", "Typically empty for Photon Cloud.\nFor Photon OnPremise, enter your host name or IP. Also uncheck \"Use Name Server\" for older Photon OnPremise servers."));
-            EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("Port"), new GUIContent("Port","Use 0 for Photon Cloud.\nOnPremise uses 5055 for UDP and 4530 for TCP."));
+            EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("Port"), new GUIContent("Port", "Use 0 for Photon Cloud.\nOnPremise uses 5055 for UDP and 4530 for TCP."));
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("Protocol"), new GUIContent("Protocol", "Use UDP where possible.\nWSS works on WebGL and Xbox exports.\nDefine WEBSOCKET for use on other platforms."));
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("EnableLobbyStatistics"), new GUIContent("Enable Lobby Statistics", "When using multiple room lists (lobbies), the server can send info about their usage."));
             EditorGUILayout.PropertyField(settingsSp.FindPropertyRelative("NetworkLogging"), new GUIContent("Network Logging", "Log level for the Photon libraries."));
             EditorGUI.indentLevel--;
         }
 
-        EditorGUILayout.PropertyField(this.serializedObject.FindProperty("PunLogging"), new GUIContent("PUN Logging", "Log level for the PUN layer."));
-        EditorGUILayout.PropertyField(this.serializedObject.FindProperty("EnableSupportLogger"), new GUIContent("Enable Support Logger", "Logs additional info for debugging.\nUse this when you submit bugs to the Photon Team."));
-        EditorGUILayout.PropertyField(this.serializedObject.FindProperty("RunInBackground"), new GUIContent("Run In Background", "Enables apps to keep the connection without focus. Android and iOS ignore this."));
-        EditorGUILayout.PropertyField(this.serializedObject.FindProperty("StartInOfflineMode"), new GUIContent("Start In Offline Mode", "Simulates an online connection.\nPUN can be used as usual."));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("PunLogging"), new GUIContent("PUN Logging", "Log level for the PUN layer."));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("EnableSupportLogger"), new GUIContent("Enable Support Logger", "Logs additional info for debugging.\nUse this when you submit bugs to the Photon Team."));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("RunInBackground"), new GUIContent("Run In Background", "Enables apps to keep the connection without focus. Android and iOS ignore this."));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("StartInOfflineMode"), new GUIContent("Start In Offline Mode", "Simulates an online connection.\nPUN can be used as usual."));
 
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel(new GUIContent("Best Region Preference", "Clears the Best Region of the editor.\n.Best region is used if Fixed Region is empty."));
-        
+
         if (!string.IsNullOrEmpty(PhotonNetwork.BestRegionSummaryInPreferences))
         {
-            this.regionsPrefsList = PhotonNetwork.BestRegionSummaryInPreferences.Split(';');
-            this.prefLabel = string.Format("'{0}' ping:{1}ms ", this.regionsPrefsList[0], this.regionsPrefsList[1]);
+            regionsPrefsList = PhotonNetwork.BestRegionSummaryInPreferences.Split(';');
+            prefLabel = string.Format("'{0}' ping:{1}ms ", regionsPrefsList[0], regionsPrefsList[1]);
         }
         else
         {
-            this.prefLabel = notAvailableLabel;
+            prefLabel = notAvailableLabel;
         }
 
-        GUILayout.Label(this.prefLabel, GUILayout.ExpandWidth(false));
+        GUILayout.Label(prefLabel, GUILayout.ExpandWidth(false));
 
         if (GUILayout.Button("Reset", EditorStyles.miniButton))
         {
@@ -127,14 +124,14 @@ public class ServerSettingsInspector : Editor
 
 
 
-        this.showRpcs = EditorGUILayout.Foldout(this.showRpcs, new GUIContent("RPCs", "RPC shortcut list."));
+        showRpcs = EditorGUILayout.Foldout(showRpcs, new GUIContent("RPCs", "RPC shortcut list."));
 
-        if (this.showRpcs)
+        if (showRpcs)
         {
             // first time check to get the rpc has proper
-            if (string.IsNullOrEmpty(this.rpcCrc))
+            if (string.IsNullOrEmpty(rpcCrc))
             {
-                this.rpcCrc = this.RpcListHashCode().ToString("X");
+                rpcCrc = RpcListHashCode().ToString("X");
             }
 
 
@@ -145,14 +142,14 @@ public class ServerSettingsInspector : Editor
             EditorGUILayout.PrefixLabel("List CRC");
 
             EditorGUI.indentLevel--;
-            if (GUILayout.Button(PhotonGUI.CopyIcon, GUIStyle.none,GUILayout.ExpandWidth(false)))
+            if (GUILayout.Button(PhotonGUI.CopyIcon, GUIStyle.none, GUILayout.ExpandWidth(false)))
             {
-                Debug.Log("RPC-List HashCode copied into your ClipBoard: " + this.rpcCrc + ". Make sure clients that send each other RPCs have the same RPC-List.");
-                EditorGUIUtility.systemCopyBuffer = this.rpcCrc;
+                Debug.Log("RPC-List HashCode copied into your ClipBoard: " + rpcCrc + ". Make sure clients that send each other RPCs have the same RPC-List.");
+                EditorGUIUtility.systemCopyBuffer = rpcCrc;
             }
-            EditorGUILayout.SelectableLabel(this.rpcCrc, GUILayout.MaxHeight(16),GUILayout.ExpandWidth(false));
-            
-            
+            EditorGUILayout.SelectableLabel(rpcCrc, GUILayout.MaxHeight(16), GUILayout.ExpandWidth(false));
+
+
             EditorGUI.indentLevel++;
             EditorGUILayout.EndHorizontal();
 
@@ -162,7 +159,7 @@ public class ServerSettingsInspector : Editor
             if (GUILayout.Button("Refresh RPCs", EditorStyles.miniButton))
             {
                 PhotonEditor.UpdateRpcList();
-                this.Repaint();
+                Repaint();
             }
 
             if (GUILayout.Button("Clear RPCs", EditorStyles.miniButton))
@@ -183,10 +180,10 @@ public class ServerSettingsInspector : Editor
         if (EditorGUI.EndChangeCheck())
         {
             sObj.ApplyModifiedProperties();
-            this.serializedObject.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
 
             // cache the rpc hash
-            this.rpcCrc = this.RpcListHashCode().ToString("X");
+            rpcCrc = RpcListHashCode().ToString("X");
         }
     }
 

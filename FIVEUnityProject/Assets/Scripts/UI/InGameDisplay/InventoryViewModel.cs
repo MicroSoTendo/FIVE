@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Specialized;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
 using FIVE.Interactive;
+using System;
+using System.Collections.Specialized;
 using UnityEngine;
 
 namespace FIVE.UI.InGameDisplay
@@ -17,7 +17,7 @@ namespace FIVE.UI.InGameDisplay
             EventManager.Subscribe<OnInventoryChanged, NotifyCollectionChangedEventArgs>(OnInventoryChanged);
             Content = View.InventoryScrollView.GetChildGameObject("InventoryContent");
             ContentTransform = Content.GetComponent<RectTransform>();
-            binder.Bind(v=>v.ExitButton.onClick).To(vm=>vm.ExitInventory);
+            binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
         }
 
         private void ExitInventory(object sender, EventArgs e)
@@ -45,7 +45,7 @@ namespace FIVE.UI.InGameDisplay
                         int x = startingIndex % totalColumns;
                         int y = startingIndex / totalColumns;
                         AddCell($"Cell-{i + startingIndex}", out GameObject cell, out RectTransform rectTransform);
-                        rectTransform.anchorMin = new Vector2(0,1);
+                        rectTransform.anchorMin = new Vector2(0, 1);
                         rectTransform.anchorMax = new Vector2(0, 1);
                         rectTransform.pivot = new Vector2(0.5f, 0.5f);
                         rectTransform.anchoredPosition = new Vector2(34 + x * cellWidth, -34 - y * cellWidth);

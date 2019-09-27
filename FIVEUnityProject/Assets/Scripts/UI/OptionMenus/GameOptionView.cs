@@ -1,7 +1,7 @@
 ﻿using UnityEngine.UI;
 
 namespace FIVE.UI.OptionMenus
-{ 
+{
     public class GameOptionView : View<GameOptionView, GameOptionViewModel>
     {
         public GameOptionView()
