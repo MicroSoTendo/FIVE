@@ -20,9 +20,6 @@ namespace FIVE.UI.OptionsMenu
             binder.Bind(view => view.ExitGameButton.onClick).
             To(viewModel => viewModel.OnExitButtonClicked);
 
-            //binder.Bind(view => view.SoundOptionButton.onClick).
-            //To(viewModel => viewModel.OnSoundOptionButtonClicked);
-
             binder.Bind(view => view.SoundOptionButton.onClick).
             To(viewModel => viewModel.OnSoundOptionButtonClicked);
 

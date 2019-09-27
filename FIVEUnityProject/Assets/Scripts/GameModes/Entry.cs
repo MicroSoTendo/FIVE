@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.Background;
+using FIVE.UI.CAttribute;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.SplashScreens;
@@ -34,6 +35,8 @@ namespace FIVE.GameStates
             yield return null;
             UIManager.AddViewModel<InGameDisplayViewModel>().SetActive(false);
             yield return null;
+            //UIManager.AddViewModel<CAttributeViewModel>().SetActive(false);
+            //yield return null;
         }
 
         void Awake()
