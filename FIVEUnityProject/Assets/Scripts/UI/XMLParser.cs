@@ -39,7 +39,6 @@ namespace FIVE.UI
                 {"NativeSize", (Action<GameObject,bool>)((g, b) => {
                     if (b)
                     {
-                        Debug.Log("SetToNative");
                         g.GetComponent<Image>().SetNativeSize();
                     }})},
                 {nameof(Text), (Action<GameObject, List<(string, object)>>)TextHandler},
@@ -74,7 +73,6 @@ namespace FIVE.UI
                 string name = captures[1].Value;
                 string value = captures[2].Value;
                 object parsedValue = PropertyParserDictionary[name].DynamicInvoke(value);
-                Debug.Log($"Name = {name}, Value = {value}");
                 parsedObjects.Add((name, parsedValue));
             }
             return parsedObjects;

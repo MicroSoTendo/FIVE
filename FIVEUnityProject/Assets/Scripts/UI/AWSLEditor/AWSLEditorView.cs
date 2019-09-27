@@ -4,13 +4,13 @@ namespace FIVE.UI.AWSLEditor
 {
     internal class AWSLEditorView : View<AWSLEditorView, AWSLEditorViewModel>
     {
+        [UIElement]
         public GameObject AWSLEditorPanel { get; set; }
+        [UIElement]
         public InputField CodeInputField { get; set; }
-        public Text Text { get; set; }
-
-        public AWSLEditorView()
-        {
-
-        }
+        [UIElement]
+        public Button SaveButton { get; set; }
+        [UIElement]
+        public Button CancelButton { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FIVE.Interactive;
 using FIVE.Robot;
 using FIVE.UI;
+using FIVE.UI.AWSLEditor;
 using FIVE.UI.InGameDisplay;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace FIVE.GameStates
             InventoryViewModel inventoryViewModel = UIManager.AddViewModel<InventoryViewModel>();
             inventoryViewModel.Inventory = inventory;
             inventoryViewModel.SetEnabled(false);
+            AWSLEditorViewModel awslEditorViewModel = UIManager.AddViewModel<AWSLEditorViewModel>();
+            awslEditorViewModel.SetEnabled(false);
         }
     }
 }

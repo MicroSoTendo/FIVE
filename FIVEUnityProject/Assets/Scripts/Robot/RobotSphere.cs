@@ -1,7 +1,9 @@
-﻿using FIVE.AWSL;
+﻿using System;
+using FIVE.AWSL;
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
+using FIVE.UI.AWSLEditor;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -16,8 +18,8 @@ namespace FIVE.Robot
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
 
-        private bool editingCode = false;
-        private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
+        //private bool editingCode = false;
+        //private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
         private CharacterController cc;
 
@@ -68,10 +70,24 @@ namespace FIVE.Robot
         {
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
+            EventManager.Subscribe<OnCodeEditorSaved, CodeEditorSavedEventArgs>(OnCodeSaved);
         }
+
+        private void OnCodeSaved(object sender, CodeEditorSavedEventArgs e)
+        {
+            script = new AWSLScript(this, e.Code);
+            scriptActive = true;
+        }
+
 
         private void Update()
         {
+            // TODO: Make network non-invasive
+            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
+            // {
+            //     return;
+            // }
+
             // update animation at beginning to ensure consistency
             animator.Update(currState);
             if (cc.velocity.magnitude == 0)
@@ -83,29 +99,9 @@ namespace FIVE.Robot
                 currState = RobotState.Walk;
             }
 
-            // TODO: Make network non-invasive
-            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            // {
-            //     return;
-            // }
-
             if (Input.GetKey(KeyCode.E))
             {
-                editingCode = true;
-                code.Saved = false;
-                this.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(code);
-                return;
-            }
-
-            if (editingCode)
-            {
-                if (code.Saved)
-                {
-                    editingCode = false;
-                    script = new AWSLScript(this, code.Code);
-                    scriptActive = true;
-                }
-                return;
+                this.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(new LauncherEditorArgs());
             }
 
             if (scriptActive)

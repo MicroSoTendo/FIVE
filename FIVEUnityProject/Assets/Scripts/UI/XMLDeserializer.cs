@@ -13,6 +13,7 @@ namespace FIVE.UI
         private readonly XmlDocument viewXml;
         private readonly Canvas parentCanvas;
         private readonly string xmlText;
+        private readonly Dictionary<XmlNode, GameObject> deserializedGameObjects = new Dictionary<XmlNode, GameObject>();
         public XMLDeserializer(XmlDocument viewXml, Canvas parentCanvas)
         {
             this.viewXml = viewXml;
@@ -42,8 +43,6 @@ namespace FIVE.UI
             }
         }
 
-        //private void 
-
         public void LoadResources(Dictionary<string, GameObject> resources)
         {
             XmlNode xmlNode = viewXml.SelectSingleNode("/Canvas/Resources");
@@ -59,60 +58,61 @@ namespace FIVE.UI
             }
         }
 
-        public void Deserialize(string name, out GameObject gameObject)
+        public void Deserialize(string name, out GameObject deserializedUIElement)
         {
             //Try find definition in Xml
-            XmlNode xmlNode = viewXml.SelectSingleNode($"/Canvas/*[@name='{name}']");
+            XmlNode xmlNode = viewXml.SelectSingleNode($"/Canvas//*[@name='{name}']");
             if (xmlNode == null)
             {
-                gameObject = default;
+                deserializedUIElement = default;
+                Debug.LogWarning($"{nameof(Deserialize)} failing. {nameof(name)} = {name}");
                 return;
             }
-            gameObject = DeserializeHelper(xmlNode);
+            GameObject go = DeserializeHelper(xmlNode);
+            deserializedGameObjects.Add(xmlNode, go);
+            deserializedUIElement = go;
         }
 
-
-        private GameObject DeserializeHelper(XmlNode xmlNode, GameObject root = null, bool isResource = false)
+        private GameObject DeserializeHelper(XmlNode xmlNode, bool isResource = false)
         {
-            GameObject gameObject = root;
-            //Load attributes
+            GameObject uiElement = null;
             Dictionary<string, object> parsedAttributes = ParseAttributes(xmlNode.Attributes);
             string typeName = xmlNode.Name;
             //Check if load from prefab
-            if (gameObject == null)
+            if (parsedAttributes.ContainsKey("Prefab"))
             {
-                if (parsedAttributes.ContainsKey("Prefab"))
-                {
-                    gameObject = isResource ? parsedAttributes["Prefab"] as GameObject : Object.Instantiate(parsedAttributes["Prefab"] as GameObject, parentCanvas.transform);
-                    parsedAttributes.Remove("Prefab");
-                }
-                else
-                {
-                    string primitivePath = $"EntityPrefabs/UIPrimitives/{typeName}";
-                    gameObject = Object.Instantiate(Resources.Load<GameObject>(primitivePath), parentCanvas.transform);
-                }
+                uiElement = isResource ? parsedAttributes["Prefab"] as GameObject : Object.Instantiate(parsedAttributes["Prefab"] as GameObject, parentCanvas.transform);
+                parsedAttributes.Remove("Prefab");
+            }
+            else
+            {
+                string primitivePath = $"EntityPrefabs/UIPrimitives/{typeName}";
+                uiElement = Object.Instantiate(Resources.Load<GameObject>(primitivePath), parentCanvas.transform);
             }
 
-            //Set attributes to UIElement
+            if (xmlNode.ParentNode != null && deserializedGameObjects.ContainsKey(xmlNode.ParentNode))
+            {
+                uiElement.transform.SetParent(deserializedGameObjects[xmlNode.ParentNode].transform);
+            }
+
+            //Apply Attributes to UIElement
             foreach (KeyValuePair<string, object> keyValue in parsedAttributes)
             {
                 if (AttributeHandler.ContainsKey(keyValue.Key))
                 {
-                    AttributeHandler[keyValue.Key].DynamicInvoke(gameObject, keyValue.Value);
+                    AttributeHandler[keyValue.Key].DynamicInvoke(uiElement, keyValue.Value);
                 }
                 else
                 {
-                    GeneralPropertyHandler(gameObject, keyValue.Key, keyValue.Value as List<(string, object)>);
+                    GeneralPropertyHandler(uiElement, keyValue.Key, keyValue.Value as List<(string, object)>);
                 }
             }
-            //Set ChildNode
-            foreach (XmlNode node in xmlNode.ChildNodes)
+
+            if (uiElement == null)
             {
-                GameObject childRoot = gameObject.GetComponentsInChildren(PrimitiveHelper(node.Name))
-                    .FirstOrDefault(o => o.name == node.Attributes["name"].InnerText).gameObject;
-                DeserializeHelper(node, childRoot);
+                Debug.LogWarning(xmlNode.Name + " gives null");
             }
-            return gameObject;
+            return uiElement;
         }
     }
 }

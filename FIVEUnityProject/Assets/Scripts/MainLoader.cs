@@ -26,7 +26,6 @@ namespace FIVE
             this.RaiseEvent<OnMainLoaderAwake>(EventArgs.Empty);
             InfrastructuresOnAwake.ForEach(v =>
             {
-                Debug.Log(v.name + " Loaded");
                 DontDestroyOnLoad(Instantiate(v));
             });
         }

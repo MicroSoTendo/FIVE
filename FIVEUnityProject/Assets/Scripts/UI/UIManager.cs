@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace FIVE.UI
@@ -40,7 +41,9 @@ namespace FIVE.UI
             StartUpScreen startUpScreen = new StartUpScreen(canvasGameObject);
             StartCoroutine(startUpScreen.OnTransitioning());
             EventManager.Subscribe<OnLoadingFinished>((sender, args) => startUpScreen.DoFadingOut());
+
         }
+
 
         private void Start()
         {
@@ -65,6 +68,10 @@ namespace FIVE.UI
             {
                 return x.SortingOrder - y.SortingOrder;
             }
+        }
+
+        private void Update()
+        {
         }
     }
 }

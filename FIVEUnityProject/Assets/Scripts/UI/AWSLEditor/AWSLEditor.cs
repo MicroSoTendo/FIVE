@@ -17,12 +17,12 @@ namespace FIVE.AWSL
         private void Awake()
         {
             enabled = false;
-            EventManager.Subscribe<DoLaunchEditor, LauncherEditorArgs>((sender, args) =>
-            {
-                code = args;
-                newCode = code.Code;
-                enabled = true;
-            });
+            //EventManager.Subscribe<DoLaunchEditor, LauncherEditorArgs>((sender, args) =>
+            //{
+            //    code = args;
+            //    //newCode = code.Code;
+            //    enabled = true;
+            //});
         }
 
         private void Start()
@@ -64,13 +64,13 @@ namespace FIVE.AWSL
             if (GUI.Button(new Rect(20, h - 80, (w - 40) / 2, 60), "Save", ButtonStyle))
             {
                 enabled = false;
-                code.Code = newCode;
-                code.Saved = true;
+                //code.Code = newCode;
+                //code.Saved = true;
             }
             if (GUI.Button(new Rect(20 + (w - 40) / 2, h - 80, (w - 40) / 2, 60), "Cancel", ButtonStyle))
             {
                 enabled = false;
-                code.Saved = false;
+                //code.Saved = false;
             }
         }
     }

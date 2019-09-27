@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +32,27 @@ namespace FIVE.UI
 #endif
             xmlDeserializer = new XMLDeserializer(xmlText, ViewCanvas);
             ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            AutoLoad();
             LoadResources();
+        }
+
+        private void AutoLoad()
+        {
+            IEnumerable<PropertyInfo> uiElementPropertyInfos = GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false));
+            foreach (PropertyInfo uiElementPropertyInfo in uiElementPropertyInfos)
+            {
+                Type type = uiElementPropertyInfo.PropertyType;
+                string propertyName = uiElementPropertyInfo.Name;
+                string xmlNodeName = uiElementPropertyInfo.GetCustomAttribute<UIElementAttribute>().Path;
+                uiElementPropertyInfo.SetValue(this, AddUIElement(xmlNodeName ?? propertyName, type));
+            }
+        }
+
+        public object AddUIElement(string name, Type type)
+        {
+            xmlDeserializer.Deserialize(name, out GameObject gameObject);
+            nameToUIElementGameObjects.Add(name, gameObject);
+            return gameObject.GetType() == type ? gameObject : (object)gameObject.GetComponent(type);
         }
 
         public T AddUIElement<T>(string name)
