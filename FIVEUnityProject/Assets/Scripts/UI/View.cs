@@ -31,6 +31,7 @@ namespace FIVE.UI
 #endif
             xmlDeserializer = new XMLDeserializer(xmlText, ViewCanvas);
             ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            LoadResources();
         }
 
         public T AddUIElement<T>(string name)
@@ -44,6 +45,7 @@ namespace FIVE.UI
         {
             GameObject prefab = CanvasResources[resourceName];
             GameObject gameObject = GameObject.Instantiate(prefab, parent);
+            gameObject.SetActive(true);
             gameObject.name = gameObjectName;
             nameToUIElementGameObjects.Add(gameObjectName, gameObject);
             return gameObject is T go ? go : gameObject.GetComponent<T>();

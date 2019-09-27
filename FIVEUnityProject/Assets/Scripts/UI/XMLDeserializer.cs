@@ -54,8 +54,7 @@ namespace FIVE.UI
 
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
-                GameObject gameObject = DeserializeHelper(childNode);
-                gameObject.SetActive(false);
+                GameObject gameObject = DeserializeHelper(childNode, isResource: true);
                 resources.Add(gameObject.name, gameObject);
             }
         }
@@ -73,7 +72,7 @@ namespace FIVE.UI
         }
 
 
-        private GameObject DeserializeHelper(XmlNode xmlNode, GameObject root = null)
+        private GameObject DeserializeHelper(XmlNode xmlNode, GameObject root = null, bool isResource = false)
         {
             GameObject gameObject = root;
             //Load attributes
@@ -84,7 +83,7 @@ namespace FIVE.UI
             {
                 if (parsedAttributes.ContainsKey("Prefab"))
                 {
-                    gameObject = Object.Instantiate(parsedAttributes["Prefab"] as GameObject, parentCanvas.transform);
+                    gameObject = isResource ? parsedAttributes["Prefab"] as GameObject : Object.Instantiate(parsedAttributes["Prefab"] as GameObject, parentCanvas.transform);
                     parsedAttributes.Remove("Prefab");
                 }
                 else
