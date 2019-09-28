@@ -13,39 +13,53 @@ namespace FIVE.UI
         where TViewModel : ViewModel<TView, TViewModel>
     {
 
-        private readonly View<TView, TViewModel> view;
-        private readonly ViewModel<TView, TViewModel> viewModel;
+        private readonly List<IBindingSource> bindingSources = new List<IBindingSource>();
+        private View<TView, TViewModel> view;
+        private ViewModel<TView, TViewModel> viewModel;
 
         public Binder(View<TView, TViewModel> view, ViewModel<TView, TViewModel> viewModel)
         {
             this.view = view;
             this.viewModel = viewModel;
         }
-        private readonly List<Binding> bindings;
-
-        public class BindingSource<TSource> where TSource : class
+        public interface IBindingSource
         {
-            public Expression<Func<TView, TSource>> Expression { get; }
+            void ReBind(View view, ViewModel viewModel);
+        }
+        public class BindingSource<TSource> : IBindingSource
+            where TSource : class
+        {
+            private Expression<Func<TView, TSource>> expression;
+            private MonoBehaviour uiElement;
+            private object bindingMember;
+            private Action bindingAction;
+            private ViewModel<TView, TViewModel> viewModel;
 
-            public MonoBehaviour UIElement;
-            public object BindingMember;
-
-            private readonly ViewModel<TView, TViewModel> viewModel;
-            public BindingSource(Expression<Func<TView, TSource>> expression,
+            public BindingSource(
+                Expression<Func<TView, TSource>> expression,
                 View<TView, TViewModel> view,
                 ViewModel<TView, TViewModel> viewModel)
             {
-                Expression = expression;
+                SetSourceInfo(expression, view, viewModel);
+            }
+
+            private void SetSourceInfo(
+                Expression<Func<TView, TSource>> expression,
+                View<TView, TViewModel> view,
+                ViewModel<TView, TViewModel> viewModel)
+            {
+                this.expression = expression;
                 if (expression.Body is MemberExpression memberExpression)
                 {
                     MemberExpression uiElementExp = memberExpression.Expression as MemberExpression;
                     PropertyInfo uiElementProperty = uiElementExp.Member as PropertyInfo;
-                    UIElement = uiElementProperty.GetValue(view) as MonoBehaviour;
+                    uiElement = uiElementProperty.GetValue(view) as MonoBehaviour;
                     PropertyInfo bindingMemberProperty = memberExpression.Member as PropertyInfo;
-                    BindingMember = bindingMemberProperty.GetValue(UIElement);
+                    bindingMember = bindingMemberProperty.GetValue(uiElement);
                 }
                 this.viewModel = viewModel;
             }
+
             public void To<TTarget>(Expression<Func<TViewModel, TTarget>> expression,
                 BindingMode bindingMode = BindingMode.OneWay)
             {
@@ -54,31 +68,51 @@ namespace FIVE.UI
             public void To(Expression<Func<TViewModel, EventHandler>> expression,
                 BindingMode bindingMode = BindingMode.OneWay)
             {
-                if (BindingMember is Button.ButtonClickedEvent clickEvent)
+                bindingAction = () =>
                 {
-                    Func<TViewModel, EventHandler> compiledFunc = expression.Compile();
-                    clickEvent.AddListener(delegate { compiledFunc(viewModel as TViewModel)(UIElement, EventArgs.Empty); });
-                }
+                    if (bindingMember is Button.ButtonClickedEvent clickEvent)
+                    {
+                        Func<TViewModel, EventHandler> compiledFunc = expression.Compile();
+                        clickEvent.AddListener(delegate
+                        {
+                            compiledFunc(viewModel as TViewModel)(uiElement, EventArgs.Empty);
+                        });
+                    }
+                };
+                bindingAction();
             }
 
             public void ToBroadcast<T>()
             {
                 //TODO: Implement other objects event
-                if (BindingMember is Button.ButtonClickedEvent clickEvent)
+                if (bindingMember is Button.ButtonClickedEvent clickEvent)
                 {
-                    clickEvent.AddListener(async () => { await UIElement.gameObject.RaiseEventAsync<T>(EventArgs.Empty); });
+                    clickEvent.AddListener(async () => { await uiElement.gameObject.RaiseEventAsync<T>(EventArgs.Empty); });
                 }
             }
-        }
 
-        private class Binding
-        {
-            //Expression<Func<TView, TSource>>[] sourceExpressions;
+            public void ReBind(View v, ViewModel vm)
+            {
+                SetSourceInfo(expression, (View<TView, TViewModel>)v, (ViewModel<TView, TViewModel>)vm);
+                bindingAction();
+            }
         }
 
         public BindingSource<TSource> Bind<TSource>(Expression<Func<TView, TSource>> expression) where TSource : class
         {
-            return new BindingSource<TSource>(expression, view, viewModel);
+            BindingSource<TSource> bindingSource = new BindingSource<TSource>(expression, view, viewModel);
+            bindingSources.Add(bindingSource);
+            return bindingSource;
+        }
+
+        public void ReBind(View<TView, TViewModel> newView, ViewModel<TView, TViewModel> newViewModel)
+        {
+            view = newView;
+            viewModel = newViewModel;
+            foreach (IBindingSource bindingSource in bindingSources)
+            {
+                bindingSource.ReBind(newView, newViewModel);
+            }
         }
     }
 }

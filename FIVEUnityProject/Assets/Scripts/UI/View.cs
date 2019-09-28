@@ -32,19 +32,48 @@ namespace FIVE.UI
 #endif
             xmlDeserializer = new XMLDeserializer(xmlText, ViewCanvas);
             ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            AutoLoad();
+            AutoLoad(this);
             LoadResources();
         }
 
-        private void AutoLoad()
+        private static void AutoLoad(View view)
         {
-            IEnumerable<PropertyInfo> uiElementPropertyInfos = GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false));
-            foreach (PropertyInfo uiElementPropertyInfo in uiElementPropertyInfos)
+            IEnumerable<PropertyInfo> uiElementPropertyInfos = view.GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false));
+            foreach (PropertyInfo uiProperty in uiElementPropertyInfos)
             {
-                Type type = uiElementPropertyInfo.PropertyType;
-                string propertyName = uiElementPropertyInfo.Name;
-                string xmlNodeName = uiElementPropertyInfo.GetCustomAttribute<UIElementAttribute>().Path;
-                uiElementPropertyInfo.SetValue(this, AddUIElement(xmlNodeName ?? propertyName, type));
+                Type type = uiProperty.PropertyType;
+                string propertyName = uiProperty.Name;
+                UIElementAttribute attribute = uiProperty.GetCustomAttribute<UIElementAttribute>();
+                switch (attribute.TargetType)
+                {
+                    case TargetType.Default:
+                        uiProperty.SetValue(view, view.AddUIElement(propertyName, type));
+                        break;
+                    case TargetType.XML:
+                        break;
+                    case TargetType.Property:
+                        PropertyInfo parent = uiElementPropertyInfos.First(prop => prop.Name == attribute.Path);
+                        GameObject childRoot;
+                        if (parent.GetValue(view) is GameObject go)
+                        {
+                            childRoot = go.GetChildGameObject(propertyName);
+                        }
+                        else if(parent.GetValue(view) is Component c)
+                        {
+                            childRoot = c.gameObject;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                        uiProperty.SetValue(view, type == typeof(GameObject) ? 
+                            childRoot : (object)childRoot.GetComponent(type));
+                        break;
+                    case TargetType.Field:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
 

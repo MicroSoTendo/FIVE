@@ -5,13 +5,10 @@ namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryView : View<InventoryView, InventoryViewModel>
     {
+        [UIElement]
         public GameObject InventoryScrollView { get; set; }
+        [UIElement(nameof(InventoryScrollView), TargetType.Property)]
         public Button ExitButton { get; set; }
-        public InventoryView()
-        {
-            InventoryScrollView = AddUIElement<GameObject>(nameof(InventoryScrollView));
-            ExitButton = InventoryScrollView.gameObject.GetChildGameObject(nameof(ExitButton)).GetComponent<Button>();
-        }
 
     }
 }

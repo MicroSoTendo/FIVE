@@ -61,6 +61,8 @@ namespace FIVE.UI
                     yield return null;
                     View = newView;
                     yield return null;
+                    binder.ReBind(View, this);
+                    yield return null;
                 }
             }
         }
