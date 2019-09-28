@@ -16,17 +16,20 @@ namespace FIVE.UI.AWSLEditor
         private void ToggleEditor(object sender, EventArgs e)
         {
             ToggleEnabled();
+            UIManager.SetCursor(IsEnabled ? UIManager.CursorType.Regular : UIManager.CursorType.Aim);
         }
 
         public void OnSaveButtonClicked(object sender, EventArgs e)
         {
             this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeText));
             SetEnabled(false);
+            UIManager.SetCursor(UIManager.CursorType.Aim);
         }
 
         public void OnCancelButtonClicked(object sender, EventArgs e)
         {
             SetEnabled(false);
+            UIManager.SetCursor(UIManager.CursorType.Aim);
         }
     }
 }
