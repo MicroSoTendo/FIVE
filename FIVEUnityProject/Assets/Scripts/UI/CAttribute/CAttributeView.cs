@@ -6,11 +6,11 @@ namespace FIVE.UI.CAttribute
     {
         public CAttributeView()
         {
-            Background = AddUIElement<Image>(nameof(Background));
-            PlayerButton = AddUIElement<Button>(nameof(PlayerButton));
-            Energy = AddUIElement<Button>(nameof(Energy));
-            Inventory = AddUIElement<Button>(nameof(Inventory));
-            Option = AddUIElement<Button>(nameof(Option));
+            //Background = AddUIElement<Image>(nameof(Background));
+            //PlayerButton = AddUIElement<Button>(nameof(PlayerButton));
+            //Energy = AddUIElement<Button>(nameof(Energy));
+            //Inventory = AddUIElement<Button>(nameof(Inventory));
+            //Option = AddUIElement<Button>(nameof(Option));
             //TestInputField = AddUIElement<InputField>(nameof(TestInputField));
         }
         public Image Background { get; }

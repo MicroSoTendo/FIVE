@@ -1,5 +1,6 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using System;
+
 namespace FIVE.UI.AWSLEditor
 {
     internal class AWSLEditorViewModel : ViewModel<AWSLEditorView, AWSLEditorViewModel>

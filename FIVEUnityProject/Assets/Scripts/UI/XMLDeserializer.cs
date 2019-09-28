@@ -100,7 +100,7 @@ namespace FIVE.UI
             {
                 if (AttributeHandler.ContainsKey(keyValue.Key))
                 {
-                    AttributeHandler[keyValue.Key].DynamicInvoke(uiElement, keyValue.Value);
+                    AttributeHandler[keyValue.Key](uiElement, keyValue.Value);
                 }
                 else
                 {

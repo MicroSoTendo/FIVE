@@ -10,12 +10,12 @@ namespace FIVE.UI.Multiplayers
         public Button CreateButton { get; }
         public CreateRoomView()
         {
-            RoomName = AddUIElement<Text>("RoomName");
-            RoomName.color = Color.white;
-            RoomNameInput = AddUIElement<InputField>("RoomNameInput");
-            RoomNameInput.caretColor = Color.white;
-            RoomName.alignment = TextAnchor.MiddleLeft;
-            CreateButton = AddUIElement<Button>("CreateButton");
+            //RoomName = AddUIElement<Text>("RoomName");
+            //RoomName.color = Color.white;
+            //RoomNameInput = AddUIElement<InputField>("RoomNameInput");
+            //RoomNameInput.caretColor = Color.white;
+            //RoomName.alignment = TextAnchor.MiddleLeft;
+            //CreateButton = AddUIElement<Button>("CreateButton");
         }
     }
 }
