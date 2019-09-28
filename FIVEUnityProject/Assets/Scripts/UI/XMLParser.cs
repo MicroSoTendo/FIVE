@@ -11,42 +11,41 @@ namespace FIVE.UI
 {
     public partial class XMLDeserializer
     {
-        private static readonly Dictionary<string, Func<XmlAttribute, object>> AttributeParser;
-        private static readonly Dictionary<string, Func<string, object>> ComplexAttributeParsers;
-
-        static XMLDeserializer()
+        private static readonly Dictionary<string, Func<XmlAttribute, object>> AttributeParser = new Dictionary<string, Func<XmlAttribute, object>>
         {
+            {"name", x => x.InnerText },
+            {"Prefab", PrefabParser},
+            {"NativeSize", a =>
+                {
+                    bool.TryParse(a.InnerText, out bool result);
+                    return result;
+                }
+            },
+            {nameof(Text), TextParser},
+            {nameof(Sprite), SpriteParser},
+            {nameof(Transform), ComplexAttributeParser},
+            {nameof(RectTransform), ComplexAttributeParser},
+            {"lineType", EnumParser<InputField.LineType>},
+            {"alignment", EnumParser<TextAnchor>},
+        };
 
-            AttributeParser = new Dictionary<string, Func<XmlAttribute, object>>
-            {
-                {"name", x => x.InnerText },
-                {"Prefab", PrefabParser},
-                {"NativeSize", a =>
-                    {
-                        bool.TryParse(a.InnerText, out bool result);
-                        return result;
-                    }
-                },
-                {nameof(Text), TextParser},
-                {nameof(Sprite), SpriteParser},
-                {nameof(Transform), ComplexAttributeParser},
-                {nameof(RectTransform), ComplexAttributeParser},
-                {"lineType", attribute => Enum.Parse(typeof(InputField.LineType), attribute.InnerText)},
-            };
+        private static readonly Dictionary<string, Func<string, object>> ComplexAttributeParsers = new Dictionary<string, Func<string, object>>()
+        {
+            {"anchorMin", Vector2Parser},
+            {"anchorMax", Vector2Parser},
+            {"pivot", Vector2Parser},
+            {"sizeDelta", Vector2Parser},
+            {"anchoredPosition", Vector2Parser},
+            {"anchoredPosition3D", Vector3Parser},
+            {"localPosition", Vector3Parser},
+            {"position", Vector3Parser},
+            {"offsetMax", Vector2Parser},
+            {"offsetMin", Vector2Parser},
+        };
 
-            ComplexAttributeParsers = new Dictionary<string, Func<string, object>>()
-            {
-                {"anchorMin", Vector2Parser},
-                {"anchorMax", Vector2Parser},
-                {"pivot", Vector2Parser},
-                {"sizeDelta", Vector2Parser},
-                {"anchoredPosition", Vector2Parser},
-                {"anchoredPosition3D", Vector3Parser},
-                {"localPosition", Vector3Parser},
-                {"position", Vector3Parser},
-                {"offsetMax", Vector2Parser},
-                {"offsetMin", Vector2Parser},
-            };
+        private static object EnumParser<T>(XmlAttribute attribute)
+        {
+            return Enum.Parse(typeof(T), attribute.InnerText);
         }
 
         private static object ComplexAttributeParser(XmlAttribute attribute)

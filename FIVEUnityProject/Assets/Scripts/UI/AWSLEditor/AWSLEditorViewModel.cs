@@ -1,5 +1,6 @@
 ﻿using FIVE.EventSystem;
 using System;
+using UnityEngine;
 
 namespace FIVE.UI.AWSLEditor
 {
@@ -11,6 +12,7 @@ namespace FIVE.UI.AWSLEditor
         {
             binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);
             binder.Bind(v => v.CancelButton.onClick).To(vm => vm.OnCancelButtonClicked);
+            View.LineNumber.alignment = TextAnchor.UpperRight;
             EventManager.Subscribe<DoToggleEditor>(ToggleEditor);
         }
 

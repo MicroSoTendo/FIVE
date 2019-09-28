@@ -89,6 +89,7 @@
     </xs:complexType>
 
     <xs:complexType name="InputFieldType">
+        <xs:group ref="PossibleChild"/>
         <xs:attributeGroup ref="UIElementAttributes"/>
         <xs:attribute type="xs:string" name="Text" use="optional"/>
         <xs:attribute type="lineTypeType" name="lineType" use="optional"/>
@@ -107,9 +108,27 @@
         </xs:sequence>
     </xs:complexType>
     
+    <xs:simpleType name="TextAnchorType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="UpperLeft"/>
+            <xs:enumeration value="UpperCenter"/>
+            <xs:enumeration value="UpperRight"/>
+            <xs:enumeration value="MiddleLeft"/>
+            <xs:enumeration value="MiddleCenter"/>
+            <xs:enumeration value="MiddleRight"/>
+            <xs:enumeration value="LowerLeft"/>
+            <xs:enumeration value="LowerCenter"/>
+            <xs:enumeration value="LowerRight"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="TextType">
         <xs:attributeGroup ref="UIElementAttributes"/>
         <xs:attribute type="xs:string" name="Text" use="optional"/>
+        <xs:attribute type="xs:string" name="font" use="optional"/>
+        <xs:attribute type="xs:string" name="fontStyle" use="optional"/>
+        <xs:attribute type="xs:float" name="fontSize" use="optional"/>
+        <xs:attribute type="TextAnchorType" name="alignment" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="GameObjectType">

@@ -17,7 +17,13 @@ namespace FIVE.UI
                 {nameof(Sprite), SpriteHandler},
                 {nameof(RectTransform), RectTransformHandler},
                 {"lineType", LineTypeHandler },
+                {"alignment", TextalignmentHandler },
             };
+
+        private static void TextalignmentHandler(GameObject go, object value)
+        {
+            go.GetComponent<Text>().alignment = (TextAnchor)value;
+        }
 
         private static void LineTypeHandler(GameObject go, object value)
         {
