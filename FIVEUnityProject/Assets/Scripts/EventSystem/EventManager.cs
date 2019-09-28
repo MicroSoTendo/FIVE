@@ -14,6 +14,7 @@ namespace FIVE.EventSystem
     {
         private static EventManager Instance { get; } = new EventManager();
         private readonly ConcurrentDictionary<Type, HandlerList<HandlerNode<EventHandler>>> defaultHandlerNodes;
+        private readonly ConcurrentDictionary<Type, Task> timedEventDictionary;
         private readonly ConcurrentDictionary<Type, HandlerList<HandlerNode>> dynamicHandlerNodes;
         private readonly ConcurrentQueue<Action> scheduledAsync = new ConcurrentQueue<Action>();
         private readonly ConcurrentQueue<Action> scheduledMainThread = new ConcurrentQueue<Action>();
@@ -29,6 +30,7 @@ namespace FIVE.EventSystem
             dispatcher = mainThreadDispatcther.AddComponent<MainThreadDispatcher>();
             defaultHandlerNodes = new ConcurrentDictionary<Type, HandlerList<HandlerNode<EventHandler>>>();
             dynamicHandlerNodes = new ConcurrentDictionary<Type, HandlerList<HandlerNode>>();
+            timedEventDictionary = new ConcurrentDictionary<Type, Task>();
             asynchronousTimeOut = 16;
         }
 
@@ -220,6 +222,49 @@ namespace FIVE.EventSystem
 
         public static void RaiseEvent<T>(object sender, EventArgs args) where T : IEventType
         {
+            RaiseEventInternal<T>(sender, args);
+        }
+
+        public static void RaiseEvent<T, TEventArgs>(object sender, TEventArgs args)
+            where T : IEventType<TEventArgs>
+            where TEventArgs : EventArgs
+        {
+            RaiseEvent<T>(sender, args);
+        }
+
+        public static void RaiseEventFixed<T>(object sender, EventArgs e, int millisecondsDelay)
+        {
+            ConcurrentDictionary<Type, Task> lookUp = Instance.timedEventDictionary;
+            void RaiseLocal()
+            {
+                RaiseEventInternal<T>(sender, e);
+            }
+            if (lookUp.TryGetValue(typeof(T), out Task task))
+            {
+                if (task.IsCompleted)
+                {
+                    RaiseLocal();
+                    lookUp[typeof(T)] = Task.Run(async () => { await Task.Delay(millisecondsDelay); });
+                }
+            }
+            else
+            {
+                RaiseLocal();
+                lookUp.TryAdd(typeof(T), Task.Run(async () => { await Task.Delay(millisecondsDelay); }));
+            }
+        }
+
+        public static void RaiseEvent<T, THandler, TEventArgs>(object sender, TEventArgs args)
+            where T : IEventType<THandler, TEventArgs>
+            where THandler : Delegate
+            where TEventArgs : EventArgs
+        {
+            RaiseEvent<T>(sender, args);
+        }
+
+
+        private static void RaiseEventInternal<T>(object sender, EventArgs args)
+        {
             foreach ((bool requiresMain, List<HandlerNode<EventHandler>> handlerNodes) in Instance.defaultHandlerNodes[typeof(T)])
             {
                 ConcurrentQueue<Action> queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
@@ -236,21 +281,6 @@ namespace FIVE.EventSystem
                     queue.Enqueue(delegate { handlerNode.Handler.DynamicInvoke(sender, args); });
                 }
             }
-        }
-
-        public static void RaiseEvent<T, TEventArgs>(object sender, TEventArgs args)
-            where T : IEventType<TEventArgs>
-            where TEventArgs : EventArgs
-        {
-            RaiseEvent<T>(sender, args);
-        }
-
-        public static void RaiseEvent<T, THandler, TEventArgs>(object sender, TEventArgs args)
-            where T : IEventType<THandler, TEventArgs>
-            where THandler : Delegate
-            where TEventArgs : EventArgs
-        {
-            RaiseEvent<T>(sender, args);
         }
     }
 }

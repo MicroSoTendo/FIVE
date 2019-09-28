@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using FIVE.AWSL;
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
@@ -64,6 +65,7 @@ namespace FIVE.Robot
 
             battery = new Battery();
             health = 100f;
+            StartCoroutine(ToggleEditorCoroutine());
         }
 
         private void Start()
@@ -79,6 +81,17 @@ namespace FIVE.Robot
             scriptActive = true;
         }
 
+        private IEnumerator ToggleEditorCoroutine()
+        {
+            while (true)
+            {
+                if (Input.GetKey(KeyCode.E))
+                {
+                    this.RaiseEventFixed<DoToggleEditor>(new LauncherEditorArgs(), 300);
+                }
+                yield return null;
+            }
+        }
 
         private void Update()
         {
@@ -99,10 +112,6 @@ namespace FIVE.Robot
                 currState = RobotState.Walk;
             }
 
-            if (Input.GetKey(KeyCode.E))
-            {
-                this.RaiseEvent<DoLaunchEditor, LauncherEditorArgs>(new LauncherEditorArgs());
-            }
 
             if (scriptActive)
             {

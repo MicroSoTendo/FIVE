@@ -9,6 +9,11 @@ namespace FIVE.EventSystem
         public static void RaiseEvent<T>(this object sender, EventArgs args = null) where T : IEventType
         {
             EventManager.RaiseEvent<T>(sender, args ?? EventArgs.Empty);
+        }        
+        
+        public static void RaiseEventFixed<T>(this object sender, EventArgs args = null, int millisecondsDelay = 0) where T : IEventType
+        {
+            EventManager.RaiseEventFixed<T>(sender, args ?? EventArgs.Empty, millisecondsDelay);
         }
 
         public static void RaiseEvent<T, TEventArgs>(this object sender, TEventArgs args)
