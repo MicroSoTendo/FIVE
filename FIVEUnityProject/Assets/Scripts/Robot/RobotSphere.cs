@@ -33,7 +33,7 @@ namespace FIVE.Robot
         public bool scriptActive;
 
         // Robot Status
-        private Battery battery;
+        public Battery battery;
         private float health;
 
         private void Awake()
