@@ -15,6 +15,36 @@ namespace FIVE.UI
         private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
         private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModelComparer());
 
+        private static Texture2D cursorTexture;
+
+
+        public enum CursorType
+        {
+            Aim,
+            Regular,
+            Hidden
+        }
+
+        public static void SetCursor(CursorType cursorType)
+        {
+            switch (cursorType)
+            {
+                case CursorType.Aim:
+                    Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+                    Cursor.visible = true;
+                    break;
+                case CursorType.Regular:
+                    Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                    Cursor.visible = true;
+                    break;
+                case CursorType.Hidden:
+                    Cursor.visible = false;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(cursorType), cursorType, null);
+            }
+        }
+
         public static bool TryGetViewModel(string name, out ViewModel viewModel)
         {
             return NameToVMs.TryGetValue(name, out viewModel);
@@ -40,7 +70,7 @@ namespace FIVE.UI
             StartUpScreen startUpScreen = new StartUpScreen(canvasGameObject);
             StartCoroutine(startUpScreen.OnTransitioning());
             EventManager.Subscribe<OnLoadingFinished>((sender, args) => startUpScreen.DoFadingOut());
-
+            cursorTexture = Resources.Load<Texture2D>("Textures/UI/Cursor");
         }
 
 

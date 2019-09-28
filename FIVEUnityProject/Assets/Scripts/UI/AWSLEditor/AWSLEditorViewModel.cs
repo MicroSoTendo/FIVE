@@ -10,10 +10,10 @@ namespace FIVE.UI.AWSLEditor
         {
             binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);
             binder.Bind(v => v.CancelButton.onClick).To(vm => vm.OnCancelButtonClicked);
-            EventManager.Subscribe<DoLaunchEditor>(LaunchEditor);
+            EventManager.Subscribe<DoToggleEditor>(ToggleEditor);
         }
 
-        private void LaunchEditor(object sender, EventArgs e)
+        private void ToggleEditor(object sender, EventArgs e)
         {
             ToggleEnabled();
         }
@@ -21,6 +21,7 @@ namespace FIVE.UI.AWSLEditor
         public void OnSaveButtonClicked(object sender, EventArgs e)
         {
             this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeText));
+            SetEnabled(false);
         }
 
         public void OnCancelButtonClicked(object sender, EventArgs e)

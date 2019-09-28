@@ -1,22 +1,25 @@
 ﻿using FIVE.EventSystem;
+using FIVE.UI;
 using UnityEngine;
 
 namespace FIVE.Interactive
 {
     internal class RobotCursor : MonoBehaviour
     {
-        private Texture2D cursorTexture;
-        void Awake()
+        void OnEnable()
         {
-            cursorTexture = Resources.Load<Texture2D>("Textures/UI/Cursor");
-            Cursor.visible = true;
-            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+            UIManager.SetCursor(UIManager.CursorType.Aim);
+        }
+
+        void OnDisable()
+        {
+            UIManager.SetCursor(UIManager.CursorType.Regular);
         }
 
         void Update()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Physics.SphereCast(ray, 1, maxDistance: 100, hitInfo: out RaycastHit hit))
             {
                 Transform objectHit = hit.transform;
                 Pickable p = objectHit.gameObject.GetComponent<Pickable>();
