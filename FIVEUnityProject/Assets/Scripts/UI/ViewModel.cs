@@ -17,6 +17,8 @@ namespace FIVE.UI
         {
             View.ViewCanvas.enabled ^= true;
         }
+
+        public bool IsEnabled => View.ViewCanvas.enabled;
     }
     public abstract class ViewModel<TView, TViewModel> : ViewModel
         where TView : View<TView, TViewModel>, new()
