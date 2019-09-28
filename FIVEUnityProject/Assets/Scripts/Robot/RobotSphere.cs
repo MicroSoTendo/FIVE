@@ -33,7 +33,7 @@ namespace FIVE.Robot
         public bool scriptActive;
 
         // Robot Status
-        private float energy; // 1 - 100
+        private Battery battery;
         private float health;
 
         private void Awake()
@@ -60,7 +60,7 @@ namespace FIVE.Robot
 
             scriptActive = false;
 
-            energy = 100f;
+            battery = new Battery();
             health = 100f;
         }
 
@@ -117,8 +117,8 @@ namespace FIVE.Robot
                 fpsController.Update();
             }
 
-            // energe loss
-            energy -= Time.deltaTime;
+            // energe change
+            battery.Update();
             //Debug.Log(energy);
         }
 
