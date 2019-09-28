@@ -32,11 +32,11 @@ namespace FIVE.ControllerSystem
             }
             if (Input.GetKey(KeyCode.A))
             {
-                robotSphere.Move(Movable.Move.Left, 1);
+                robotSphere.Move(Movable.Move.Left, 5);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                robotSphere.Move(Movable.Move.Right, 1);
+                robotSphere.Move(Movable.Move.Right, 5);
             }
         }
     }

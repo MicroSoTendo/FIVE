@@ -119,7 +119,7 @@ namespace FIVE.Robot
 
             // energe loss
             energy -= Time.deltaTime;
-            // Debug.Log(energy);
+            //Debug.Log(energy);
         }
 
         public void LateUpdate()
@@ -140,7 +140,7 @@ namespace FIVE.Robot
             }
             else
             {
-                movable.MoveOnces[(int)move]();
+                movable.MoveOnces[(int)move](steps);
             }
         }
 

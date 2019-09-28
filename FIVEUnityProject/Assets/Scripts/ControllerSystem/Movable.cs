@@ -28,7 +28,7 @@ namespace FIVE
             get; set;
         }
 
-        public delegate void MoveOnce();
+        public delegate void MoveOnce(int steps);
         public MoveOnce[] MoveOnces
         {
             get;
@@ -55,7 +55,7 @@ namespace FIVE
             if (moves.Count > 0)
             {
                 Move move = moves.Dequeue();
-                MoveOnces[(int)move]();
+                MoveOnces[(int)move](1);
             }
             //if (MoveTarget != null && Vector3.Distance(transform.position, MoveTarget) > 0.5f)
             //{
@@ -71,26 +71,26 @@ namespace FIVE
             }
         }
 
-        public void Forward()
+        public void Forward(int steps)
         {
             cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
         }
 
-        public void Backward()
+        public void Backward(int steps)
         {
             cc.SimpleMove(-gameObject.transform.forward * MoveSpeed);
         }
 
-        public void TurnLeft()
+        public void TurnLeft(int steps)
         {
             Debug.Log("Turn Left");
-            gameObject.transform.Rotate(0, -5, 0);
+            gameObject.transform.Rotate(0, -steps, 0);
         }
 
-        public void TurnRight()
+        public void TurnRight(int steps)
         {
             Debug.Log("Turn Right");
-            gameObject.transform.Rotate(0, 5, 0);
+            gameObject.transform.Rotate(0, steps, 0);
         }
     }
 }
