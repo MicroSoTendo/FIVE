@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SkyBoxTime : MonoBehaviour
 {
 
-    public float time = 50000;
+    public float time;
     public TimeSpan currenttime;
     public Transform SunTransform;
     public Light Sun;
