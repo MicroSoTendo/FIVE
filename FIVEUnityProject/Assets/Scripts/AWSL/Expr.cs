@@ -31,6 +31,8 @@ namespace FIVE.AWSL
             { "do", FuncDo },
             { "v", FuncVar },
             { "var", FuncVar },
+            { "defun", FuncDefun },
+            { "call", FuncCall },
         };
 
         public string Name;
@@ -98,6 +100,20 @@ namespace FIVE.AWSL
             {
                 return rc.Vars[EvalString(rc, args[0])];
             }
+        }
+
+        private static object FuncDefun(RuntimeContext rc, ParamList args)
+        {
+            if (args[1] is Expr a)
+            {
+                rc.Funcs[EvalString(rc, args[0])] = a;
+            }
+            return null;
+        }
+
+        private static object FuncCall(RuntimeContext rc, ParamList args)
+        {
+            return rc.Funcs[EvalString(rc, args[0])].Execute(rc);
         }
 
         private static object FuncPrint(RuntimeContext rc, ParamList args)

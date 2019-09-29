@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections;
-using FIVE.AWSL;
+﻿using FIVE.AWSL;
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.AWSLEditor;
+using System.Collections;
 using UnityEngine;
 
 namespace FIVE.Robot
 {
     [RequireComponent(typeof(Movable))]
+    [RequireComponent(typeof(Battery))]
+    [RequireComponent(typeof(Cpu))]
     public class RobotSphere : MonoBehaviour
     {
         public enum RobotState { Idle, Walk, Jump, Open };
@@ -22,6 +23,11 @@ namespace FIVE.Robot
 
 
         private CharacterController cc;
+
+        // Robot Components
+        public Battery Battery;
+
+        public Cpu Cpu;
 
         // Script References
         private RobotFreeAnim animator;
@@ -35,8 +41,6 @@ namespace FIVE.Robot
         private bool scriptActive;
 
         // Robot Status
-        public Battery battery;
-
         private float health;
 
         private void Awake()
@@ -63,7 +67,9 @@ namespace FIVE.Robot
 
             scriptActive = false;
 
-            battery = new Battery();
+            Battery = GetComponent<Battery>();
+            Cpu = GetComponent<Cpu>();
+
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
         }
@@ -117,8 +123,6 @@ namespace FIVE.Robot
                 movable.ClearSchedule();
                 fpsController.Update();
             }
-            battery.Update();
-            //Debug.Log(energy);
         }
 
         public void LateUpdate()

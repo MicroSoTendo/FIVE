@@ -21,7 +21,7 @@ namespace FIVE
             RobotSphere robotSphere = other.gameObject.GetComponent<Robot.RobotSphere>();
             if (robotSphere != null)
             {
-                robotSphere.battery.Charge(ChargeSpeed);
+                robotSphere.Battery.Charge(ChargeSpeed);
             }
         }
 
@@ -30,7 +30,7 @@ namespace FIVE
             RobotSphere robotSphere = other.gameObject.GetComponent<Robot.RobotSphere>();
             if (robotSphere != null)
             {
-                robotSphere.battery.UnCharge();
+                robotSphere.Battery.UnCharge();
             }
         }
     }
