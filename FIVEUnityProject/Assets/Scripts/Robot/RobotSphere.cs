@@ -20,8 +20,6 @@ namespace FIVE.Robot
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
 
-        //private bool editingCode = false;
-        //private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
         private CharacterController cc;
 

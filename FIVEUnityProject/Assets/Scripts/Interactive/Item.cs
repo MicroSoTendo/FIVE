@@ -1,7 +1,9 @@
 ﻿using FIVE.UI;
 using FIVE.UI.InGameDisplay;
 using System;
+using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace FIVE.Interactive
 {
@@ -14,9 +16,15 @@ namespace FIVE.Interactive
             public string Description;
         }
 
-
+        private (byte R, byte G, byte B) color;
         private ItemDialogViewModel cachedVM;
+        private Renderer renderer;
         private ItemInfo itemInfo;
+
+        void Awake()
+        {
+            renderer = GetComponent<Renderer>();
+        }
         public bool IsPickable { get; set; }
         public ItemInfo Info
         {
@@ -28,8 +36,31 @@ namespace FIVE.Interactive
             }
         }
 
+        private IEnumerator Flashing()
+        {
+            while (true)
+            {
+                color.R = (byte)Random.Range(0, 255);
+                color.G = (byte)Random.Range(0, 255);
+                color.B = (byte)Random.Range(0, 255);
 
-        public void ShowInfo()
+                renderer.material.color = new Color32(color.R, color.G, color.B, 255);
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+
+        public void OnMouseOver()
+        {
+            StartCoroutine(Flashing());
+        }
+
+        public void OnMouseExit()
+        {
+            StopCoroutine(Flashing());
+            renderer.material.color = new Color32(255, 255, 255, 255);
+        }
+
+        private void ShowInfo()
         {
             if (cachedVM != null)
             {
@@ -46,12 +77,6 @@ namespace FIVE.Interactive
         public void DismissInfo()
         {
             cachedVM?.SetEnabled(false);
-        }
-
-        public void OnCursorOver()
-        {
-            //TODO: Shinning boundary
-            //TODO: Show info
         }
 
         private void Update()
