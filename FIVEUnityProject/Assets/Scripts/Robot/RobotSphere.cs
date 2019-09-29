@@ -33,7 +33,7 @@ namespace FIVE.Robot
         private Movable movable;
 
         private AWSLScript script;
-        public bool scriptActive;
+        private bool scriptActive;
 
         // Robot Status
         public Battery battery;
