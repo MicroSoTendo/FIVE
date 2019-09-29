@@ -79,7 +79,7 @@ namespace FIVE.UI
                         });
                     }
                 };
-                bindingAction();
+                MainThreadDispatcher.Schedule(bindingAction);
             }
 
             public void ToBroadcast<T>()

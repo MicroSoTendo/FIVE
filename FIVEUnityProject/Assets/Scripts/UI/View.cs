@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,17 +13,17 @@ namespace FIVE.UI
     {
         public Canvas ViewCanvas { get; set; }
         public Dictionary<string, GameObject> CanvasResources { get; }
-        protected GameObject canvasGameObject;
+        protected GameObject CanvasGO;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
         protected Dictionary<string, GameObject> nameToUIElementGameObjects;
         protected XMLDeserializer xmlDeserializer;
         protected View()
         {
-            canvasGameObject = new GameObject { name = GetType().Name };
-            ViewCanvas = canvasGameObject.AddComponent<Canvas>();
-            canvasScaler = canvasGameObject.AddComponent<CanvasScaler>();
-            graphicRaycaster = canvasGameObject.AddComponent<GraphicRaycaster>();
+            CanvasGO = new GameObject { name = GetType().Name };
+            ViewCanvas = CanvasGO.AddComponent<Canvas>();
+            canvasScaler = CanvasGO.AddComponent<CanvasScaler>();
+            graphicRaycaster = CanvasGO.AddComponent<GraphicRaycaster>();
             nameToUIElementGameObjects = new Dictionary<string, GameObject>();
             CanvasResources = new Dictionary<string, GameObject>();
 #if DEBUG
@@ -107,14 +108,12 @@ namespace FIVE.UI
             nameToUIElementGameObjects.Remove(name);
             go.transform.SetParent(null);
             go.SetActive(false);
-
-            Debug.Log($"{nameof(RemoveUIElement)} {go.name}");
             GameObject.Destroy(go);
         }
 
         public T GetUIElement<T>(string name, bool includeInactive = false) where T : MonoBehaviour
         {
-            return canvasGameObject.GetComponentsInChildren(typeof(T), includeInactive).Cast<T>().FirstOrDefault(child => child.name == name);
+            return CanvasGO.GetComponentsInChildren(typeof(T), includeInactive).Cast<T>().FirstOrDefault(child => child.name == name);
         }
 #if DEBUG
         public void Unload()
@@ -127,18 +126,41 @@ namespace FIVE.UI
 
             foreach (GameObject gameObject in CanvasResources.Values)
             {
-
                 gameObject.SetActive(false);
                 GameObject.Destroy(gameObject);
             }
+
             nameToUIElementGameObjects.Clear();
             CanvasResources.Clear();
-            GameObject.Destroy(canvasGameObject);
+            GameObject.Destroy(CanvasGO);
         }
 #endif
         protected void LoadResources()
         {
             xmlDeserializer.LoadResources(CanvasResources);
+        }
+
+        protected static readonly Dictionary<Type, ConstructorInfo> CachedViews = new Dictionary<Type, ConstructorInfo>();
+        protected static bool Initialized = false;
+        public static IEnumerator Initialize()
+        {
+            IEnumerable<Type> types = 
+                from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    from type in assembly.GetTypes()
+                    where typeof(View).IsAssignableFrom(type)
+                    select type;
+            yield return null;
+            foreach(Type t in types)
+            {
+                var ctor = t.GetConstructor(Type.EmptyTypes);
+                yield return null;
+                if (ctor != null && ctor.IsPublic)
+                {
+                    CachedViews.Add(t, ctor);
+                }
+                yield return null;
+            }
+            Initialized = true;
         }
     }
 
@@ -146,14 +168,14 @@ namespace FIVE.UI
         where TView : View<TView, TViewModel>, new()
         where TViewModel : ViewModel<TView, TViewModel>
     {
-        private static readonly Dictionary<Type, View> CachedViews = new Dictionary<Type, View>();
         public static T Create<T>() where T : View<TView, TViewModel>, new()
         {
-            T newView = new T();
-            if (CachedViews.ContainsKey(typeof(T)))
+            if(CachedViews.ContainsKey(typeof(T)))
             {
-                return CachedViews[typeof(T)] as T;
+                T v = (T)CachedViews[typeof(T)].Invoke(null);
+                return v;
             }
+            T newView = new T();
             return newView;
         }
     }

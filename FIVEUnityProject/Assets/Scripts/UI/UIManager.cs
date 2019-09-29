@@ -76,6 +76,7 @@ namespace FIVE.UI
 
         private void Start()
         {
+            StartCoroutine(View.Initialize());
         }
 
         public static T AddViewModel<T>(string name = null) where T : ViewModel, new()
