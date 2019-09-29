@@ -97,7 +97,7 @@ namespace FIVE.Robot
 
         private void Update()
         {
-            if (UIManager.GetViewModel<AWSLEditorViewModel>().IsEnabled)
+            if (UIManager.GetViewModel<AWSLEditorViewModel>()?.IsEnabled ?? false)
             {
                 return;
             }

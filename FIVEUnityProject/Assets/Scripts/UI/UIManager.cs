@@ -52,7 +52,11 @@ namespace FIVE.UI
 
         public static T GetViewModel<T>() where T : ViewModel
         {
-            return (T)TypeToVMs[typeof(T)].FirstOrDefault();
+            if (TypeToVMs.TryGetValue(typeof(T), out SortedSet<ViewModel> values))
+            {
+                return (T)values.First();
+            }
+            return null;
         }
 
         public static SortedSet<ViewModel> GetViewModels<T>() where T : ViewModel

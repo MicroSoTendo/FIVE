@@ -58,7 +58,7 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
-            if (UIManager.GetViewModel<AWSLEditorViewModel>().IsEnabled)
+            if (UIManager.GetViewModel<AWSLEditorViewModel>()?.IsEnabled ?? false)
             {
                 return;
             }
