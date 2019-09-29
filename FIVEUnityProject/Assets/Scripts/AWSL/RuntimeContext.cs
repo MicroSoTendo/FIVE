@@ -15,7 +15,7 @@ namespace FIVE.AWSL
         {
             if (ExprP < Exprs.Count)
             {
-                Physics.SphereCast(Robot.transform.position, 0.05f, Robot.transform.forward, out RaycastHit hitinfo);
+                Physics.SphereCast(Robot.transform.position + Vector3.up * 0.005f, 0.05f, Robot.transform.forward, out RaycastHit hitinfo);
                 Vars["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
                 Exprs[ExprP++].Execute(this);
