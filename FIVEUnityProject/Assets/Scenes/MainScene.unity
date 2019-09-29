@@ -484,11 +484,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
-        type: 3}
-      propertyPath: m_Name
-      value: Directional Light
-      objectReference: {fileID: 0}
     - target: {fileID: 3772496688967652343, guid: b49d8b618ff84b34ca0a1d92887e3c88,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -544,6 +539,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
+        type: 3}
+      propertyPath: m_Name
+      value: Directional Light
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b49d8b618ff84b34ca0a1d92887e3c88, type: 3}
 --- !u!1001 &8704385011591812967
@@ -561,17 +561,17 @@ PrefabInstance:
     - target: {fileID: 8704385010068657839, guid: abb5c8d8aef7e424aa39229fdddb13a2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 23.18565
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8704385010068657839, guid: abb5c8d8aef7e424aa39229fdddb13a2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -26.887163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8704385010068657839, guid: abb5c8d8aef7e424aa39229fdddb13a2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -25.365444
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8704385010068657839, guid: abb5c8d8aef7e424aa39229fdddb13a2,
         type: 3}
