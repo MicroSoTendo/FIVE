@@ -23,10 +23,13 @@ namespace FIVE.AWSL
             { "==", FuncOp((a,b)=>a==b) },
             { "<", FuncOp((a,b)=>a<b) },
             { ">", FuncOp((a,b)=>a>b) },
+            { "<=", FuncOp((a,b)=>a<=b) },
+            { ">=", FuncOp((a,b)=>a>=b) },
             { "print", FuncPrint },
             { "goto", FuncGoto },
             { "if", FuncIf },
             { "v", FuncVar },
+            { "var", FuncVar },
         };
 
         public string Name;
