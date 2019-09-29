@@ -22,15 +22,16 @@ namespace FIVE.AWSL
             }
         }
 
-        internal void Execute()
+        internal bool Execute()
         {
             try
             {
-                rc.Execute();
+                return rc.Execute();
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
+                return true;
             }
         }
     }

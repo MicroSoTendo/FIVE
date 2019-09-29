@@ -37,6 +37,7 @@ namespace FIVE.Robot
 
         // Robot Status
         public Battery battery;
+
         private float health;
 
         private void Awake()
@@ -112,7 +113,6 @@ namespace FIVE.Robot
                 currState = RobotState.Walk;
             }
 
-
             if (scriptActive)
             {
                 ExecuteScript();
@@ -151,7 +151,7 @@ namespace FIVE.Robot
 
         private void ExecuteScript()
         {
-            script.Execute();
+            scriptActive = !script.Execute();
         }
     }
 }
