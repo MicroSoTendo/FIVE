@@ -6,23 +6,23 @@ public class ClickSound : MonoBehaviour
 {
     public AudioClip sound;
 
-    private Button button => GetComponent<Button>();
+    private Button Button => GetComponent<Button>();
 
-    private AudioSource source => GetComponent<AudioSource>();
+    private AudioSource Source => GetComponent<AudioSource>();
 
     private void Start()
     {
         gameObject.AddComponent<AudioSource>();
 
-        source.clip = sound;
+        Source.clip = sound;
 
-        source.playOnAwake = false;
+        Source.playOnAwake = false;
 
-        button.onClick.AddListener(() => PlaySoud());
+        Button.onClick.AddListener(() => PlaySoud());
     }
 
     private void PlaySoud()
     {
-        source.PlayOneShot(sound);
+        Source.PlayOneShot(sound);
     }
 }

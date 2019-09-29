@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BackGound : MonoBehaviour
+public class Backgound : MonoBehaviour
 {
     public AudioClip audios;
-   private AudioSource auz;
+    private AudioSource auz;
 
     private void Start()
     {
@@ -16,11 +14,9 @@ public class BackGound : MonoBehaviour
 
     private void Update()
     {
-        
     }
 
-    private void executeScript()
+    private void ExecuteScript()
     {
-
     }
 }
