@@ -10,6 +10,7 @@ namespace FIVE.AWSL
         public List<Expr> Exprs;
         public int ExprP = 0;
         public Dictionary<string, object> Vars = new Dictionary<string, object>();
+        public Dictionary<string, Expr> Funcs = new Dictionary<string, Expr>();
 
         public bool Execute()
         {
