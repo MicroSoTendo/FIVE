@@ -9,7 +9,7 @@ namespace FIVE.UI.AWSLEditor
     internal class AWSLEditorViewModel : ViewModel<AWSLEditorView, AWSLEditorViewModel>
     {
         public string CodeText => View.CodeText.text;
-
+        public bool IsFocused => View.CodeInputField.isFocused;
         public AWSLEditorViewModel()
         {
             binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);

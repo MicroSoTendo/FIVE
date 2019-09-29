@@ -87,9 +87,12 @@ namespace FIVE.Robot
         {
             while (true)
             {
-                if (Input.GetKey(KeyCode.E))
+                if (!UIManager.GetViewModel<AWSLEditorViewModel>()?.IsFocused ?? true)
                 {
-                    this.RaiseEventFixed<DoToggleEditor>(new LauncherEditorArgs(), 300);
+                    if (Input.GetKey(KeyCode.E))
+                    {
+                        this.RaiseEventFixed<DoToggleEditor>(new LauncherEditorArgs(), 300);
+                    }
                 }
                 yield return null;
             }
