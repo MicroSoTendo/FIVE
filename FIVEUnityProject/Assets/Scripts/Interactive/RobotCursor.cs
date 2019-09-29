@@ -22,7 +22,7 @@ namespace FIVE.Interactive
             if (Physics.SphereCast(ray, 1, maxDistance: 100, hitInfo: out RaycastHit hit))
             {
                 Transform objectHit = hit.transform;
-                Pickable p = objectHit.gameObject.GetComponent<Pickable>();
+                Item p = objectHit.gameObject.GetComponent<Item>();
                 if (p != null)
                 {
                     p.OnCursorOver();

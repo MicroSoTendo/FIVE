@@ -2,8 +2,10 @@ using FIVE.EventSystem;
 using FIVE.GameStates;
 using FIVE.UI.SplashScreens;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,13 +13,12 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
+        private static readonly Dictionary<Type, ConstructorInfo> VmConstructorInfos = new Dictionary<Type, ConstructorInfo>();
         private static readonly Dictionary<string, ViewModel> NameToVMs = new Dictionary<string, ViewModel>();
         private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
         private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModelComparer());
 
         private static Texture2D cursorTexture;
-
-
         public enum CursorType
         {
             Aim,
@@ -50,8 +51,12 @@ namespace FIVE.UI
             return NameToVMs.TryGetValue(name, out viewModel);
         }
 
-        public static T GetViewModel<T>() where T : ViewModel
+        public static T GetViewModel<T>(string name = null) where T : ViewModel
         {
+            if (name != null)
+            {
+                return (T)NameToVMs[name];
+            }
             if (TypeToVMs.TryGetValue(typeof(T), out SortedSet<ViewModel> values))
             {
                 return (T)values.First();
@@ -80,17 +85,44 @@ namespace FIVE.UI
 
         private void Start()
         {
+            StartCoroutine(Initialize());
             StartCoroutine(View.Initialize());
+        }
+
+        private IEnumerator Initialize()
+        {
+            IEnumerable<Type> types =
+                from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                from type in assembly.GetTypes()
+                where typeof(ViewModel).IsAssignableFrom(type)
+                select type;
+            foreach (Type type in types)
+            {
+                if (type.IsAbstract)
+                {
+                    continue;
+                }
+                VmConstructorInfos.Add(type, type.GetConstructor(Type.EmptyTypes));
+                yield return null;
+            }
         }
 
         public static T AddViewModel<T>(string name = null) where T : ViewModel, new()
         {
-            T newViewModel = new T();
-            NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
+            T newViewModel;
+            if (VmConstructorInfos.TryGetValue(typeof(T), out ConstructorInfo ctor))
+            {
+                newViewModel = (T)ctor.Invoke(null);
+            }
+            else
+            {
+                newViewModel = new T();
+            }
             if (!TypeToVMs.ContainsKey(typeof(T)))
             {
                 TypeToVMs.Add(typeof(T), new SortedSet<ViewModel>(new ViewModelComparer()));
             }
+            NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
             TypeToVMs[typeof(T)].Add(newViewModel);
             LayerSortedVMs.Add(newViewModel);
             return newViewModel;
@@ -102,10 +134,6 @@ namespace FIVE.UI
             {
                 return x.SortingOrder - y.SortingOrder;
             }
-        }
-
-        private void Update()
-        {
         }
     }
 }
