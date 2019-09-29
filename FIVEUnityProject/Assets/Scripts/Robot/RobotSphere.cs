@@ -4,6 +4,7 @@ using FIVE.AWSL;
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
+using FIVE.UI;
 using FIVE.UI.AWSLEditor;
 using UnityEngine;
 
@@ -96,6 +97,10 @@ namespace FIVE.Robot
 
         private void Update()
         {
+            if (UIManager.GetViewModel<AWSLEditorViewModel>().IsEnabled)
+            {
+                return;
+            }
             // TODO: Make network non-invasive
             // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
             // {

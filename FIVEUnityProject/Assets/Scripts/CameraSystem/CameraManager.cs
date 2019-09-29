@@ -1,6 +1,8 @@
 ﻿using FIVE.EventSystem;
 using System.Collections.Generic;
 using System.Linq;
+using FIVE.UI;
+using FIVE.UI.AWSLEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -56,6 +58,10 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
+            if (UIManager.GetViewModel<AWSLEditorViewModel>().IsEnabled)
+            {
+                return;
+            }
             if (Input.GetKeyUp(KeyCode.C) && cameras.Count > 0)
             {
                 foreach (Camera c in cameras.Values)
