@@ -4,7 +4,7 @@
         xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
   <Panel name="AWSLEditorPanel" RectTransform="{anchorMin:(0.5,0.5); anchorMax:(0.5,0.5); sizeDelta:(800,960);}">
     <InputField name="CodeInputField" Prefab="EntityPrefabs/UI/CodeEditor/InputField" RectTransform="{anchorMin:(0.05,0.1); anchorMax:(1,1); anchoredPosition:(0,0); sizeDelta:(0,0);}" lineType="MultiLineNewline">
-      <Text fontSize="18" font="SpaceMono-Regular"/>
+      <Text fontSize="18" font="SpaceMono-Regular" Text=""/>
     </InputField>
     <Button name="SaveButton" RectTransform="{anchorMin:(0.35,0.05); anchorMax:(0.35,0.05); sizeDelta:(150,50);}" Text="Save"/>
     <Button name="CancelButton" RectTransform="{anchorMin:(0.65,0.05); anchorMax:(0.65,0.05); sizeDelta:(150,50);}" Text="Cancel"/>

@@ -18,7 +18,19 @@ namespace FIVE.UI
                 {nameof(RectTransform), RectTransformHandler},
                 {"lineType", LineTypeHandler },
                 {"alignment", TextalignmentHandler },
+                {"font", FontHandler },
+                {"fontSize", FontSizeHandler },
             };
+
+        private static void FontSizeHandler(GameObject go, object value)
+        {
+            go.GetComponent<Text>().fontSize = (int)value;
+        }
+
+        private static void FontHandler(GameObject go, object value)
+        {
+            go.GetComponent<Text>().font = (Font)value;
+        }
 
         private static void TextalignmentHandler(GameObject go, object value)
         {
@@ -52,9 +64,6 @@ namespace FIVE.UI
                 listOfAttribtues[0].Item2 as string;
         }
 
-
-
-
         private static void TransformHandler(GameObject gameObject, object parsedObjects)
         {
             foreach ((string name, object value) in (List<(string, object)>)parsedObjects)
@@ -82,6 +91,7 @@ namespace FIVE.UI
                 }
             }
         }
+
         private static void RectTransformHandler(GameObject gameObject, object parsedObjects)
         {
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
@@ -110,6 +120,7 @@ namespace FIVE.UI
                 }
             }
         }
+
         private static void SpriteHandler(GameObject gameObject, object sprite)
         {
             gameObject.GetComponent<Image>().sprite = (Sprite)sprite;

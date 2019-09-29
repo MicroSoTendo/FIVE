@@ -39,7 +39,7 @@ namespace FIVE.UI
 
         private static void AutoLoad(View view)
         {
-            IEnumerable<PropertyInfo> uiElementPropertyInfos = view.GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false));
+            IEnumerable<PropertyInfo> uiElementPropertyInfos = view.GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false)).ToArray();
             foreach (PropertyInfo uiProperty in uiElementPropertyInfos)
             {
                 Type type = uiProperty.PropertyType;
@@ -54,9 +54,9 @@ namespace FIVE.UI
                         break;
                     case TargetType.Property:
                         PropertyInfo parent = uiElementPropertyInfos.First(prop => prop.Name == attribute.Path);
-                        GameObject parentGO = (parent.GetValue(view) as MonoBehaviour)?.gameObject ?? parent.GetValue(view) as GameObject;
-                        GameObject childRoot = parentGO.GetComponentsInChildren(type, true).Where(c=>c.name == propertyName).First().gameObject;
-                        uiProperty.SetValue(view, type == typeof(GameObject) ? 
+                        GameObject parentGo = (parent.GetValue(view) as MonoBehaviour)?.gameObject ?? parent.GetValue(view) as GameObject;
+                        GameObject childRoot = parentGo.GetComponentsInChildren(type, true).First(c => c.name == propertyName).gameObject;
+                        uiProperty.SetValue(view, type == typeof(GameObject) ?
                             childRoot : (object)childRoot.GetComponent(type));
                         break;
                     case TargetType.Field:
@@ -130,18 +130,17 @@ namespace FIVE.UI
         }
 
         protected static readonly Dictionary<Type, ConstructorInfo> CachedViews = new Dictionary<Type, ConstructorInfo>();
-        protected static bool Initialized = false;
         public static IEnumerator Initialize()
         {
-            IEnumerable<Type> types = 
+            IEnumerable<Type> types =
                 from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    from type in assembly.GetTypes()
-                    where typeof(View).IsAssignableFrom(type)
-                    select type;
+                from type in assembly.GetTypes()
+                where typeof(View).IsAssignableFrom(type)
+                select type;
             yield return null;
-            foreach(Type t in types)
+            foreach (Type t in types)
             {
-                var ctor = t.GetConstructor(Type.EmptyTypes);
+                ConstructorInfo ctor = t.GetConstructor(Type.EmptyTypes);
                 yield return null;
                 if (ctor != null && ctor.IsPublic)
                 {
@@ -149,7 +148,6 @@ namespace FIVE.UI
                 }
                 yield return null;
             }
-            Initialized = true;
         }
     }
 
@@ -159,7 +157,7 @@ namespace FIVE.UI
     {
         public static T Create<T>() where T : View<TView, TViewModel>, new()
         {
-            if(CachedViews.ContainsKey(typeof(T)))
+            if (CachedViews.ContainsKey(typeof(T)))
             {
                 T v = (T)CachedViews[typeof(T)].Invoke(null);
                 return v;

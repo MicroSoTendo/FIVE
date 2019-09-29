@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -65,7 +66,6 @@ namespace FIVE.UI
             if (xmlNode == null)
             {
                 deserializedUIElement = default;
-                Debug.LogWarning($"{nameof(Deserialize)} failing. {nameof(name)} = {name}");
                 return;
             }
             GameObject go = DeserializeHelper(xmlNode);
@@ -78,8 +78,9 @@ namespace FIVE.UI
             GameObject uiElement = null;
             Dictionary<string, object> parsedAttributes = ParseAttributes(xmlNode.Attributes);
             string typeName = xmlNode.Name;
+            bool isPrefab = parsedAttributes.ContainsKey("Prefab");
             //Check if load from prefab
-            if (parsedAttributes.ContainsKey("Prefab"))
+            if (isPrefab)
             {
                 uiElement = isResource ? parsedAttributes["Prefab"] as GameObject : Object.Instantiate(parsedAttributes["Prefab"] as GameObject, parentCanvas.transform);
                 parsedAttributes.Remove("Prefab");
@@ -108,10 +109,11 @@ namespace FIVE.UI
                 }
             }
 
-            if (uiElement == null)
-            {
-                Debug.LogWarning(xmlNode.Name + " gives null");
-            }
+            //foreach (XmlNode node in xmlNode.ChildNodes)
+            //{
+            //    DeserializeHelper(node, false);
+            //}
+
             return uiElement;
         }
     }

@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
-using Match = System.Text.RegularExpressions.Match;
 
 namespace FIVE.UI
 {
@@ -27,9 +26,22 @@ namespace FIVE.UI
             {nameof(RectTransform), ComplexAttributeParser},
             {"lineType", EnumParser<InputField.LineType>},
             {"alignment", EnumParser<TextAnchor>},
+            {"font", FontParser},
+            {"fontSize", FontParser},
         };
 
-        private static readonly Dictionary<string, Func<string, object>> ComplexAttributeParsers = new Dictionary<string, Func<string, object>>()
+        private static object FontParser(XmlAttribute attr)
+        {
+            return Resources.Load<Font>($"Fonts/{attr.InnerText}");
+        }
+
+        private static object NumberParser(XmlAttribute attr)
+        {
+            return float.Parse(attr.InnerText);
+        }
+
+        private static readonly Dictionary<string, Func<string, object>> ComplexAttributeParsers = 
+            new Dictionary<string, Func<string, object>>()
         {
             {"anchorMin", Vector2Parser},
             {"anchorMax", Vector2Parser},
