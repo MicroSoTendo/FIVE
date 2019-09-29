@@ -1,0 +1,1112 @@
+fileFormatVersion: 2
+guid: ae6f903d0df0e844e96834e19f5c0f77
+timeCreated: 1500481756
+licenseType: Store
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: chest_jnt
+    100002: FredTheRobot
+    100004: head_jnt
+    100006: hip_jnt
+    100008: l_arm_jnt
+    100010: l_armEnd_jnt
+    100012: l_armRotate_jnt
+    100014: l_armTwist_jnt
+    100016: l_eye_jnt
+    100018: l_finger1Mid_jnt
+    100020: l_finger1Start_jnt
+    100022: l_finger2Mid_jnt
+    100024: l_finger2Start_jnt
+    100026: l_finger3Mid_jnt
+    100028: l_finger3Start_jnt
+    100030: l_leg_ankle_jnt
+    100032: l_leg_hip_jnt
+    100034: l_leg_knee_jnt
+    100036: l_shoulder_jnt
+    100038: mouth_center_jnt
+    100040: mouth_con_jnt
+    100042: mouth_left_jnt
+    100044: mouth_right_jnt
+    100046: r_arm_jnt
+    100048: r_armEnd_jnt
+    100050: r_armRotate_jnt
+    100052: r_armTwist_jnt
+    100054: r_eye_jnt
+    100056: r_finger1Mid_jnt
+    100058: r_finger1Start_jnt
+    100060: r_finger2Mid_jnt
+    100062: r_finger2Start_jnt
+    100064: r_finger3Mid_jnt
+    100066: r_finger3Start_jnt
+    100068: r_leg_ankle_jnt
+    100070: r_leg_hip_jnt
+    100072: r_leg_knee_jnt
+    100074: r_shoulder_jnt
+    100076: //RootNode
+    100078: root_jnt
+    400000: chest_jnt
+    400002: FredTheRobot
+    400004: head_jnt
+    400006: hip_jnt
+    400008: l_arm_jnt
+    400010: l_armEnd_jnt
+    400012: l_armRotate_jnt
+    400014: l_armTwist_jnt
+    400016: l_eye_jnt
+    400018: l_finger1Mid_jnt
+    400020: l_finger1Start_jnt
+    400022: l_finger2Mid_jnt
+    400024: l_finger2Start_jnt
+    400026: l_finger3Mid_jnt
+    400028: l_finger3Start_jnt
+    400030: l_leg_ankle_jnt
+    400032: l_leg_hip_jnt
+    400034: l_leg_knee_jnt
+    400036: l_shoulder_jnt
+    400038: mouth_center_jnt
+    400040: mouth_con_jnt
+    400042: mouth_left_jnt
+    400044: mouth_right_jnt
+    400046: r_arm_jnt
+    400048: r_armEnd_jnt
+    400050: r_armRotate_jnt
+    400052: r_armTwist_jnt
+    400054: r_eye_jnt
+    400056: r_finger1Mid_jnt
+    400058: r_finger1Start_jnt
+    400060: r_finger2Mid_jnt
+    400062: r_finger2Start_jnt
+    400064: r_finger3Mid_jnt
+    400066: r_finger3Start_jnt
+    400068: r_leg_ankle_jnt
+    400070: r_leg_hip_jnt
+    400072: r_leg_knee_jnt
+    400074: r_shoulder_jnt
+    400076: //RootNode
+    400078: root_jnt
+    4300000: FredTheRobot
+    7400000: HeadSpin
+    7400002: WakeUp
+    7400004: Idle_01
+    7400006: SpinAttack
+    7400008: SpinArmAttack
+    7400010: HitFront
+    7400012: HitBack
+    7400014: Wave
+    7400016: Idle_02
+    9500000: //RootNode
+    13700000: FredTheRobot
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 3
+    animationRotationError: .100000001
+    animationPositionError: .100000001
+    animationScaleError: .100000001
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: HeadSpin
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: WakeUp
+      takeName: Take 001
+      firstFrame: 41
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle_01
+      takeName: Take 001
+      firstFrame: 75
+      lastFrame: 90
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: SpinAttack
+      takeName: Take 001
+      firstFrame: 91
+      lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: SpinArmAttack
+      takeName: Take 001
+      firstFrame: 121
+      lastFrame: 135
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: HitFront
+      takeName: Take 001
+      firstFrame: 136
+      lastFrame: 145
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: HitBack
+      takeName: Take 001
+      firstFrame: 146
+      lastFrame: 155
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Wave
+      takeName: Take 001
+      firstFrame: 156
+      lastFrame: 180
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle_02
+      takeName: Take 001
+      firstFrame: 180
+      lastFrame: 200
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: FredTheRobot
+        weight: 1
+      - path: root_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/l_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_center_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_left_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/mouth_con_jnt/mouth_right_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/head_jnt/r_eye_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger1Start_jnt/l_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger2Start_jnt/l_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/l_shoulder_jnt/l_armRotate_jnt/l_armTwist_jnt/l_arm_jnt/l_armEnd_jnt/l_finger3Start_jnt/l_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger1Start_jnt/r_finger1Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger2Start_jnt/r_finger2Mid_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt
+        weight: 1
+      - path: root_jnt/hip_jnt/chest_jnt/r_shoulder_jnt/r_armRotate_jnt/r_armTwist_jnt/r_arm_jnt/r_armEnd_jnt/r_finger3Start_jnt/r_finger3Mid_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/l_leg_hip_jnt/l_leg_knee_jnt/l_leg_ankle_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt
+        weight: 1
+      - path: root_jnt/r_leg_hip_jnt/r_leg_knee_jnt/r_leg_ankle_jnt
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 1
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: root_jnt
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 9e9e088933061514c8a44ddab2018d98,
+    type: 3}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

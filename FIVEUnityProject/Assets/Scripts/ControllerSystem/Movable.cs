@@ -63,6 +63,11 @@ namespace FIVE
             //}
         }
 
+        public void ClearSchedule()
+        {
+            moves.Clear();
+        }
+
         public void ScheduleMove(Move move, int steps)
         {
             for (int i = 0; i < steps; i++)

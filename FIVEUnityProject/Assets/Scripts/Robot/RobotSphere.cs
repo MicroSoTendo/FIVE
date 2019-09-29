@@ -79,6 +79,7 @@ namespace FIVE.Robot
 
         private void OnCodeSaved(object sender, CodeEditorSavedEventArgs e)
         {
+            movable.ClearSchedule();
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
         }
@@ -115,6 +116,7 @@ namespace FIVE.Robot
             }
             else
             {
+                movable.ClearSchedule();
                 fpsController.Update();
             }
             battery.Update();

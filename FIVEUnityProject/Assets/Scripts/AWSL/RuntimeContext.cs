@@ -1,5 +1,6 @@
 ﻿using FIVE.Robot;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FIVE.AWSL
 {
@@ -14,6 +15,9 @@ namespace FIVE.AWSL
         {
             if (ExprP < Exprs.Count)
             {
+                Physics.SphereCast(Robot.transform.position + Vector3.up * 0.005f, 0.05f, Robot.transform.forward, out RaycastHit hitinfo);
+                Vars["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
+
                 Exprs[ExprP++].Execute(this);
                 Robot.currState = RobotSphere.RobotState.Walk;
             }
