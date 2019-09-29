@@ -28,6 +28,7 @@ namespace FIVE.AWSL
             { "print", FuncPrint },
             { "goto", FuncGoto },
             { "if", FuncIf },
+            { "do", FuncDo },
             { "v", FuncVar },
             { "var", FuncVar },
         };
@@ -66,6 +67,22 @@ namespace FIVE.AWSL
         private static object FuncIf(RuntimeContext rc, ParamList args)
         {
             return EvalBool(rc, args[0]) ? Eval(rc, args[1]) : Eval(rc, args[2]);
+        }
+
+        private static object FuncDo(RuntimeContext rc, ParamList args)
+        {
+            if (args.Count > 0)
+            {
+                for (int i = 0; i < args.Count - 1; i++)
+                {
+                    Eval(rc, args[i]);
+                }
+                return Eval(rc, args[args.Count - 1]);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static object FuncVar(RuntimeContext rc, ParamList args)
