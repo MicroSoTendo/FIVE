@@ -59,8 +59,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="ss"></xs:complexType>
-
     <xs:simpleType name="BracketedType">
         <xs:restriction base="xs:string">
             <xs:pattern value="\{.*\}"/>

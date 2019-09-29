@@ -9,7 +9,7 @@ namespace FIVE.UI.AWSLEditor
         [UIElement]
         public InputField CodeInputField { get; set; }
         [UIElement(nameof(CodeInputField), TargetType.Property)]
-        public Text CodeText { get; set; }
+        public CodeText CodeText { get; set; }
         [UIElement]
         public Button SaveButton { get; set; }
         [UIElement]

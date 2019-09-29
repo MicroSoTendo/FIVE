@@ -54,19 +54,8 @@ namespace FIVE.UI
                         break;
                     case TargetType.Property:
                         PropertyInfo parent = uiElementPropertyInfos.First(prop => prop.Name == attribute.Path);
-                        GameObject childRoot;
-                        if (parent.GetValue(view) is GameObject go)
-                        {
-                            childRoot = go.GetChildGameObject(propertyName);
-                        }
-                        else if(parent.GetValue(view) is Component c)
-                        {
-                            childRoot = c.gameObject;
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        GameObject parentGO = (parent.GetValue(view) as MonoBehaviour)?.gameObject ?? parent.GetValue(view) as GameObject;
+                        GameObject childRoot = parentGO.GetComponentsInChildren(type, true).Where(c=>c.name == propertyName).First().gameObject;
                         uiProperty.SetValue(view, type == typeof(GameObject) ? 
                             childRoot : (object)childRoot.GetComponent(type));
                         break;

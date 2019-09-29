@@ -1,19 +1,32 @@
-﻿using FIVE.EventSystem;
+﻿using System.Text;
+using System.Linq;
+using FIVE.EventSystem;
 using System;
-using UnityEngine;
 
 namespace FIVE.UI.AWSLEditor
 {
+    internal class OnCodeTextChanged : IEventType { }
     internal class AWSLEditorViewModel : ViewModel<AWSLEditorView, AWSLEditorViewModel>
     {
-        public string CodeText => View.CodeInputField.text;
+        public string CodeText => View.CodeText.text;
 
         public AWSLEditorViewModel()
         {
             binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);
             binder.Bind(v => v.CancelButton.onClick).To(vm => vm.OnCancelButtonClicked);
-            View.LineNumber.alignment = TextAnchor.UpperRight;
             EventManager.Subscribe<DoToggleEditor>(ToggleEditor);
+            EventManager.Subscribe<OnCodeTextChanged>(UpdateLineNumber);
+        }
+
+        private void UpdateLineNumber(object sender, EventArgs e)
+        {
+            int numberOfLines = CodeText.Count(c => c == '\n');
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i < numberOfLines + 2; i++)
+            {
+                sb.AppendLine(i.ToString());
+            }
+            View.LineNumber.text = sb.ToString();
         }
 
         private void ToggleEditor(object sender, EventArgs e)
