@@ -2,30 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Battery
+public class Battery : MonoBehaviour
 {
-    private float capacity;
+    public float Capacity;
     private float currEnergy;
     private bool isCharging;
-    private int dechargeSpeed;
+    public int DechargeSpeed;
     private int chargeSpeed;
 
-    public Battery(float capacity = 100.0f)
+    public void Start()
     {
-        this.capacity = capacity;
-        currEnergy = capacity;
-        dechargeSpeed = 1;
+        Capacity = 100.0f;
+        currEnergy = Capacity;
+        DechargeSpeed = 1;
     }
 
     public void Update()
     {
         if (isCharging)
         {
-            currEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, capacity);
+            currEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, Capacity);
         }
         else
         {
-            currEnergy -= Mathf.Clamp(dechargeSpeed * Time.deltaTime, 0, capacity);
+            currEnergy -= Mathf.Clamp(DechargeSpeed * Time.deltaTime, 0, Capacity);
         }
     }
 

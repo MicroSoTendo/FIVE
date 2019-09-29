@@ -25,6 +25,9 @@ namespace FIVE.Robot
 
         private CharacterController cc;
 
+        // Robot Components
+        public Battery battery;
+
         // Script References
         private RobotFreeAnim animator;
 
@@ -37,8 +40,6 @@ namespace FIVE.Robot
         private bool scriptActive;
 
         // Robot Status
-        public Battery battery;
-
         private float health;
 
         private void Awake()
