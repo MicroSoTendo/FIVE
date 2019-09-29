@@ -100,26 +100,14 @@ namespace FIVE.Robot
 
         private void Update()
         {
+            //Block user input when editor is up
             if (UIManager.GetViewModel<AWSLEditorViewModel>()?.IsEnabled ?? false)
             {
                 return;
             }
-            // TODO: Make network non-invasive
-            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            // {
-            //     return;
-            // }
-
             // update animation at beginning to ensure consistency
             animator.Update(currState);
-            if (cc.velocity.magnitude == 0)
-            {
-                currState = RobotState.Idle;
-            }
-            else
-            {
-                currState = RobotState.Walk;
-            }
+            currState = cc.velocity.magnitude < float.Epsilon ? RobotState.Idle : RobotState.Walk;
 
             if (scriptActive)
             {
@@ -129,8 +117,6 @@ namespace FIVE.Robot
             {
                 fpsController.Update();
             }
-
-            // energe change
             battery.Update();
             //Debug.Log(energy);
         }

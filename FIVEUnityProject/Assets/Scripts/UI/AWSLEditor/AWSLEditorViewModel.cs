@@ -12,6 +12,7 @@ namespace FIVE.UI.AWSLEditor
         public bool IsFocused => View.CodeInputField.isFocused;
         public AWSLEditorViewModel()
         {
+            UpdateLineNumber(null, null);
             binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);
             binder.Bind(v => v.CancelButton.onClick).To(vm => vm.OnCancelButtonClicked);
             EventManager.Subscribe<DoToggleEditor>(ToggleEditor);
