@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
-using FIVE.AWSL;
+﻿using FIVE.AWSL;
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.AWSLEditor;
+using System.Collections;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -28,8 +27,9 @@ namespace FIVE.Robot
         private CharacterController cc;
 
         // Robot Components
-        public Battery battery;
-        public Cpu cpu;
+        public Battery Battery;
+
+        public Cpu Cpu;
 
         // Script References
         private RobotFreeAnim animator;
@@ -69,8 +69,8 @@ namespace FIVE.Robot
 
             scriptActive = false;
 
-            battery = GetComponent<Battery>();
-            cpu = GetComponent<Cpu>();
+            Battery = GetComponent<Battery>();
+            Cpu = GetComponent<Cpu>();
 
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());

@@ -14,18 +14,21 @@ namespace FIVE.AWSL
 
         public bool Execute()
         {
-            if (ExprP < Exprs.Count)
+            for (int i = 0; i < Robot.Cpu.Speed; i++)
             {
-                Physics.SphereCast(Robot.transform.position + Vector3.up * 0.005f, 0.05f, Robot.transform.forward, out RaycastHit hitinfo);
-                Vars["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
+                if (ExprP < Exprs.Count)
+                {
+                    Physics.SphereCast(Robot.transform.position + Vector3.up * 0.005f, 0.05f, Robot.transform.forward, out RaycastHit hitinfo);
+                    Vars["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
-                Exprs[ExprP++].Execute(this);
-                Robot.currState = RobotSphere.RobotState.Walk;
-            }
-            if (ExprP >= Exprs.Count)
-            {
-                Robot.currState = RobotSphere.RobotState.Idle;
-                return true;
+                    Exprs[ExprP++].Execute(this);
+                    Robot.currState = RobotSphere.RobotState.Walk;
+                }
+                if (ExprP >= Exprs.Count)
+                {
+                    Robot.currState = RobotSphere.RobotState.Idle;
+                    return true;
+                }
             }
             return false;
         }
