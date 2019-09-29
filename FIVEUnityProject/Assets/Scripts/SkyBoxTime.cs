@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-using UnityEngine.UI;
+﻿using System;
+using UnityEngine;
 
 public class SkyBoxTime : MonoBehaviour
 {
-
     public float time;
     public TimeSpan currenttime;
     public Transform SunTransform;
@@ -18,7 +15,7 @@ public class SkyBoxTime : MonoBehaviour
 
     public int speed;
 
-    void Update()
+    private void Update()
     {
         ChangeTime();
     }
@@ -33,17 +30,19 @@ public class SkyBoxTime : MonoBehaviour
         }
 
         currenttime = TimeSpan.FromSeconds(time);
-        
+
         SunTransform.rotation = Quaternion.Euler(new Vector3((time - 21600) / 86400 * 360, 0, 0));
         if (time > 43200)
+        {
             intensity = 1 - (43200 - time) / 43200;
+        }
         else
+        {
             intensity = 1 - ((43200 - time) / 43200 * -1);
+        }
 
         RenderSettings.fogColor = Color.Lerp(fognight, fogday, intensity * intensity);
 
         Sun.intensity = intensity;
-
     }
-
 }
