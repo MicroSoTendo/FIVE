@@ -27,6 +27,7 @@ namespace FIVE.Robot
 
         // Robot Components
         public Battery battery;
+        public Cpu cpu;
 
         // Script References
         private RobotFreeAnim animator;
