@@ -11,6 +11,8 @@ using UnityEngine;
 namespace FIVE.Robot
 {
     [RequireComponent(typeof(Movable))]
+    [RequireComponent(typeof(Battery))]
+    [RequireComponent(typeof(Cpu))]
     public class RobotSphere : MonoBehaviour
     {
         public enum RobotState { Idle, Walk, Jump, Open };
@@ -67,7 +69,9 @@ namespace FIVE.Robot
 
             scriptActive = false;
 
-            battery = new Battery();
+            battery = GetComponent<Battery>();
+            cpu = GetComponent<Cpu>();
+
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
         }
