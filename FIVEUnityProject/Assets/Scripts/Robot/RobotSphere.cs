@@ -125,8 +125,6 @@ namespace FIVE.Robot
                 movable.ClearSchedule();
                 fpsController.Update();
             }
-            battery.Update();
-            //Debug.Log(energy);
         }
 
         public void LateUpdate()
