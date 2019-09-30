@@ -39,8 +39,8 @@ namespace FIVE.UI
 
         private static void AutoLoad(View view)
         {
-            IEnumerable<PropertyInfo> uiElementPropertyInfos = view.GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false)).ToArray();
-            foreach (PropertyInfo uiProperty in uiElementPropertyInfos)
+            IEnumerable<PropertyInfo> uiPropInfos = view.GetType().GetProperties().Where(prop => prop.IsDefined(typeof(UIElementAttribute), false)).ToArray();
+            foreach (PropertyInfo uiProperty in uiPropInfos)
             {
                 Type type = uiProperty.PropertyType;
                 string propertyName = uiProperty.Name;
@@ -53,9 +53,10 @@ namespace FIVE.UI
                     case TargetType.XML:
                         break;
                     case TargetType.Property:
-                        PropertyInfo parent = uiElementPropertyInfos.First(prop => prop.Name == attribute.Path);
+                        PropertyInfo parent = uiPropInfos.First(prop => prop.Name == attribute.Path);
                         GameObject parentGo = (parent.GetValue(view) as MonoBehaviour)?.gameObject ?? parent.GetValue(view) as GameObject;
                         GameObject childRoot = parentGo.GetComponentsInChildren(type, true).First(c => c.name == propertyName).gameObject;
+                        Debug.Log(childRoot?.name ?? $"{propertyName} set failed");
                         uiProperty.SetValue(view, type == typeof(GameObject) ?
                             childRoot : (object)childRoot.GetComponent(type));
                         break;

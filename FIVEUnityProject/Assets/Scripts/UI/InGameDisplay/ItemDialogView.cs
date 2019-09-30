@@ -7,9 +7,9 @@ namespace FIVE.UI.InGameDisplay
     {
         [UIElement]
         public GameObject DialogPanel { get; set; }
-        [UIElement]
-        public Text ItemName { get; set; }
-        [UIElement]
-        public Text Description { get; set; }
+        [UIElement(nameof(DialogPanel), TargetType.Property)]
+        public InputField ItemNameInputField { get; set; }
+        [UIElement(nameof(DialogPanel), TargetType.Property)]
+        public InputField DescriptionInputField { get; set; }
     }
 }

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Canvas name="ItemDialogView"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
+  <Panel name = "DialogPanel" Prefab="EntityPrefabs/UI/ItemDialog">
+    <InputField name="ItemNameInputField"/>
+    <InputField name="DescriptionInputField"/>
+  </Panel>
+</Canvas>
