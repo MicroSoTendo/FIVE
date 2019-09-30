@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections;
-using FIVE.AWSL;
+﻿using FIVE.AWSL;
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.AWSLEditor;
+using System.Collections;
 using UnityEngine;
 
 namespace FIVE.Robot
 {
     [RequireComponent(typeof(Movable))]
+    [RequireComponent(typeof(Battery))]
+    [RequireComponent(typeof(Cpu))]
     public class RobotSphere : MonoBehaviour
     {
         public enum RobotState { Idle, Walk, Jump, Open };
@@ -20,13 +21,13 @@ namespace FIVE.Robot
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
 
-        //private bool editingCode = false;
-        //private readonly LauncherEditorArgs code = new LauncherEditorArgs { Code = "" };
 
         private CharacterController cc;
 
         // Robot Components
-        public Battery battery;
+        public Battery Battery;
+
+        public Cpu Cpu;
 
         // Script References
         private RobotFreeAnim animator;
@@ -66,7 +67,9 @@ namespace FIVE.Robot
 
             scriptActive = false;
 
-            battery = new Battery();
+            Battery = GetComponent<Battery>();
+            Cpu = GetComponent<Cpu>();
+
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
         }
@@ -117,11 +120,8 @@ namespace FIVE.Robot
             }
             else
             {
-                movable.ClearSchedule();
                 fpsController.Update();
             }
-            battery.Update();
-            //Debug.Log(energy);
         }
 
         public void LateUpdate()
@@ -138,6 +138,7 @@ namespace FIVE.Robot
             currState = RobotState.Walk;
             if (schedule)
             {
+                Debug.Log($"Schedule {steps}");
                 movable.ScheduleMove(move, steps);
             }
             else

@@ -23,10 +23,6 @@ namespace FIVE.Interactive
             {
                 Transform objectHit = hit.transform;
                 Item p = objectHit.gameObject.GetComponent<Item>();
-                if (p != null)
-                {
-                    p.OnCursorOver();
-                }
                 if (Input.GetMouseButtonDown(1))
                 {
                     this.RaiseEvent<OnDropItemToInventory, DropedItemToInventoryEventArgs>(new DropedItemToInventoryEventArgs(gameObject, null, objectHit.gameObject));

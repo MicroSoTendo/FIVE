@@ -12,11 +12,11 @@ namespace FIVE.UI
     public abstract class View
     {
         public Canvas ViewCanvas { get; set; }
+        public Dictionary<string, GameObject> UIElements { get; }
         public Dictionary<string, GameObject> CanvasResources { get; }
         protected GameObject CanvasGO;
         protected CanvasScaler canvasScaler;
         protected GraphicRaycaster graphicRaycaster;
-        protected Dictionary<string, GameObject> nameToUIElementGameObjects;
         protected XMLDeserializer xmlDeserializer;
         protected View()
         {
@@ -24,7 +24,7 @@ namespace FIVE.UI
             ViewCanvas = CanvasGO.AddComponent<Canvas>();
             canvasScaler = CanvasGO.AddComponent<CanvasScaler>();
             graphicRaycaster = CanvasGO.AddComponent<GraphicRaycaster>();
-            nameToUIElementGameObjects = new Dictionary<string, GameObject>();
+            UIElements = new Dictionary<string, GameObject>();
             CanvasResources = new Dictionary<string, GameObject>();
 #if DEBUG
             string xmlText = File.ReadAllText($"{Application.dataPath}/Resources/UI/{GetType().Name}.xml");
@@ -70,14 +70,14 @@ namespace FIVE.UI
         public object AddUIElement(string name, Type type)
         {
             xmlDeserializer.Deserialize(name, out GameObject gameObject);
-            nameToUIElementGameObjects.Add(name, gameObject);
+            UIElements.Add(name, gameObject);
             return gameObject.GetType() == type ? gameObject : (object)gameObject.GetComponent(type);
         }
 
         public T AddUIElement<T>(string name)
         {
             xmlDeserializer.Deserialize(name, out GameObject gameObject);
-            nameToUIElementGameObjects.Add(name, gameObject);
+            UIElements.Add(name, gameObject);
             return gameObject is T go ? go : gameObject.GetComponent<T>();
         }
 
@@ -87,14 +87,14 @@ namespace FIVE.UI
             GameObject gameObject = GameObject.Instantiate(prefab, parent);
             gameObject.SetActive(true);
             gameObject.name = gameObjectName;
-            nameToUIElementGameObjects.Add(gameObjectName, gameObject);
+            UIElements.Add(gameObjectName, gameObject);
             return gameObject is T go ? go : gameObject.GetComponent<T>();
         }
 
         public void RemoveUIElement(string name)
         {
-            GameObject go = nameToUIElementGameObjects[name];
-            nameToUIElementGameObjects.Remove(name);
+            GameObject go = UIElements[name];
+            UIElements.Remove(name);
             go.transform.SetParent(null);
             go.SetActive(false);
             GameObject.Destroy(go);
@@ -107,7 +107,7 @@ namespace FIVE.UI
 #if DEBUG
         public void Unload()
         {
-            foreach (GameObject gameObject in nameToUIElementGameObjects.Values.ToArray())
+            foreach (GameObject gameObject in UIElements.Values.ToArray())
             {
                 gameObject.SetActive(false);
                 GameObject.Destroy(gameObject);
@@ -119,7 +119,7 @@ namespace FIVE.UI
                 GameObject.Destroy(gameObject);
             }
 
-            nameToUIElementGameObjects.Clear();
+            UIElements.Clear();
             CanvasResources.Clear();
             GameObject.Destroy(CanvasGO);
         }

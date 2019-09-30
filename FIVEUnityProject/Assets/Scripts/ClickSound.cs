@@ -1,61 +1,28 @@
 ﻿using UnityEngine;
-
-using System.Collections;
-
 using UnityEngine.UI;
 
-
-
-
-
 [RequireComponent(typeof(Button))]
-
 public class ClickSound : MonoBehaviour
-
 {
-
-
-
     public AudioClip sound;
 
+    private Button Button => GetComponent<Button>();
 
+    private AudioSource Source => GetComponent<AudioSource>();
 
-    private Button button { get { return GetComponent<Button>(); } }
-
-    private AudioSource source { get { return GetComponent<AudioSource>(); } }
-
-
-
-
-
-    // Use this for initialization
-
-    void Start()
-
+    private void Start()
     {
-
         gameObject.AddComponent<AudioSource>();
 
-        source.clip = sound;
+        Source.clip = sound;
 
-        source.playOnAwake = false;
+        Source.playOnAwake = false;
 
-
-
-        button.onClick.AddListener(() => PlaySoud());
-
+        Button.onClick.AddListener(() => PlaySoud());
     }
 
-
-
-    // Update is called once per frame
-
-    void PlaySoud()
-
+    private void PlaySoud()
     {
-
-        source.PlayOneShot(sound);
-
+        Source.PlayOneShot(sound);
     }
-
 }

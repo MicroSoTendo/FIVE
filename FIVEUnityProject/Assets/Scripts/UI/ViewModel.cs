@@ -1,5 +1,6 @@
 using FIVE.EventSystem;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 namespace FIVE.UI
@@ -10,15 +11,15 @@ namespace FIVE.UI
         public int SortingOrder { get => View.ViewCanvas.sortingOrder; set => View.ViewCanvas.sortingOrder = value; }
         public void SetEnabled(bool value)
         {
-            View.ViewCanvas.enabled = value;
+            View.ViewCanvas.gameObject.SetActive(value);
         }
 
         public void ToggleEnabled()
         {
-            View.ViewCanvas.enabled ^= true;
+            View.ViewCanvas.gameObject.SetActive(!View.ViewCanvas.gameObject.activeSelf);
         }
 
-        public bool IsEnabled => View.ViewCanvas.enabled;
+        public bool IsEnabled => View.ViewCanvas.gameObject.activeSelf;
     }
     public abstract class ViewModel<TView, TViewModel> : ViewModel
         where TView : View<TView, TViewModel>, new()
