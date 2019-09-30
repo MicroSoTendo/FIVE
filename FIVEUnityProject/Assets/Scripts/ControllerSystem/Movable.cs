@@ -16,7 +16,7 @@ namespace FIVE
 
         public float RotateSpeed;
 
-        public Queue<Move> Moves;
+        public readonly Queue<Move> Moves = new Queue<Move>();
 
         public delegate void MoveOnce(int steps);
 
