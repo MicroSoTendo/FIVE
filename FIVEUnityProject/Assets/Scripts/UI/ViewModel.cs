@@ -19,7 +19,7 @@ namespace FIVE.UI
             View.ViewCanvas.gameObject.SetActive(!View.ViewCanvas.gameObject.activeSelf);
         }
 
-        public bool IsEnabled => View.ViewCanvas.enabled;
+        public bool IsEnabled => View.ViewCanvas.gameObject.activeSelf;
     }
     public abstract class ViewModel<TView, TViewModel> : ViewModel
         where TView : View<TView, TViewModel>, new()
