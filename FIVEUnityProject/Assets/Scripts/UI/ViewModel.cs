@@ -9,6 +9,7 @@ namespace FIVE.UI
     {
         protected View View { get; set; }
         public int SortingOrder { get => View.ViewCanvas.sortingOrder; set => View.ViewCanvas.sortingOrder = value; }
+        public bool IsEnabled => View.ViewCanvas.gameObject.activeSelf;
         public void SetEnabled(bool value)
         {
             View.ViewCanvas.gameObject.SetActive(value);
@@ -19,7 +20,12 @@ namespace FIVE.UI
             View.ViewCanvas.gameObject.SetActive(!View.ViewCanvas.gameObject.activeSelf);
         }
 
-        public bool IsEnabled => View.ViewCanvas.gameObject.activeSelf;
+        public void Destroy()
+        {
+            View.ViewCanvas.gameObject.SetActive(false);
+            Object.Destroy(View.ViewCanvas.gameObject);
+        }
+
     }
     public abstract class ViewModel<TView, TViewModel> : ViewModel
         where TView : View<TView, TViewModel>, new()

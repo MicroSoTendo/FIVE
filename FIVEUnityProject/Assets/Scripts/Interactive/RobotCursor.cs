@@ -1,33 +1,29 @@
-﻿using FIVE.EventSystem;
+﻿using FIVE.CameraSystem;
+using FIVE.EventSystem;
 using FIVE.UI;
+using FIVE.UI.AWSLEditor;
 using UnityEngine;
 
 namespace FIVE.Interactive
 {
     internal class RobotCursor : MonoBehaviour
     {
-        void OnEnable()
+        void Awake()
         {
-            UIManager.SetCursor(UIManager.CursorType.Aim);
+            EventManager.Subscribe<OnCameraSwitched, CameraSwitchedEventArgs>(OnCameraSwitched);
         }
 
-        void OnDisable()
+        private void OnCameraSwitched(object sender, CameraSwitchedEventArgs e)
         {
-            UIManager.SetCursor(UIManager.CursorType.Regular);
-        }
-
-        void Update()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.SphereCast(ray, 1, maxDistance: 100, hitInfo: out RaycastHit hit))
+            if (UIManager.GetViewModel<AWSLEditorViewModel>().IsEnabled)
             {
-                Transform objectHit = hit.transform;
-                Item p = objectHit.gameObject.GetComponent<Item>();
-                if (Input.GetMouseButtonDown(1))
-                {
-                    this.RaiseEvent<OnDropItemToInventory, DropedItemToInventoryEventArgs>(new DropedItemToInventoryEventArgs(gameObject, null, objectHit.gameObject));
-                }
+                UIManager.SetCursor(UIManager.CursorType.Regular);
             }
+            else if (e.NewCamera?.name.Contains("fps") ?? false)
+            {
+                UIManager.SetCursor(UIManager.CursorType.Aim);
+            }
+            
         }
     }
 }

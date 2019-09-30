@@ -128,6 +128,19 @@ namespace FIVE.UI
             return newViewModel;
         }
 
+        public static void RemoveViewModel(string name)
+        {
+            if (NameToVMs.ContainsKey(name))
+            {
+                ViewModel vm = NameToVMs[name];
+                NameToVMs.Remove(name);
+                LayerSortedVMs.Remove(vm);
+                TypeToVMs[vm.GetType()].Remove(vm);
+                vm.SetEnabled(false);
+                vm.Destroy();
+            }
+        }
+
         private class ViewModelComparer : IComparer<ViewModel>
         {
             public int Compare(ViewModel x, ViewModel y)

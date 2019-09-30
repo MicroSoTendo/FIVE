@@ -2,6 +2,8 @@
 using FIVE.UI.InGameDisplay;
 using System;
 using System.Collections;
+using FIVE.EventSystem;
+using FIVE.Robot;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,7 +34,8 @@ namespace FIVE.Interactive
         private GameObject scanner;
         private Text percentageText;
         private float scanningProgress;
-        private bool finishedScannig;
+        private bool finishedScanning;
+        private bool isCollected;
         public float ScanningSpeed { get; set; } = 1f;
 
         private void Awake()
@@ -47,7 +50,7 @@ namespace FIVE.Interactive
             percentageText = GetComponentInChildren<Text>();
             scanner.SetActive(false);
             scanningProgress = 0;
-            finishedScannig = false;
+            finishedScanning = false;
         }
 
         public bool IsPickable { get; set; }
@@ -100,7 +103,7 @@ namespace FIVE.Interactive
                 }
                 else
                 {
-                    finishedScannig = true;
+                    finishedScanning = true;
                 }
 
                 yield return null;
@@ -110,10 +113,8 @@ namespace FIVE.Interactive
         public void OnMouseOver()
         {
             //TODO: Refactor it later
-            if (!Camera.current?.name.Contains("fps") ?? true)
-            {
-                return;
-            }
+            if (!Camera.current?.name.Contains("fps") ?? true) return;
+            if (isCollected) return;
 
             if (isFlashing == false)
             {
@@ -124,7 +125,7 @@ namespace FIVE.Interactive
                 flashingCoroutine = StartCoroutine(Flashing());
             }
 
-            if (finishedScannig)
+            if (finishedScanning)
             {
                 ShowInfo();
             }
@@ -148,6 +149,7 @@ namespace FIVE.Interactive
 
         private void SetVMPosition()
         {
+            //TODO: Better way to find position?
             float x = scannerTransform.position.x + scannerRectTransform.sizeDelta.x;
             float y = scannerRectTransform.position.y + scannerRectTransform.sizeDelta.y;
             if (scannerTransform.position.x + scannerRectTransform.sizeDelta.x + 300 > Screen.width)
@@ -179,6 +181,7 @@ namespace FIVE.Interactive
 
         private void ShowInfo()
         {
+            if (isCollected) return;
             if (cachedVM != null)
             {
                 SetVMPosition();
@@ -203,5 +206,27 @@ namespace FIVE.Interactive
             cachedVM?.SetEnabled(false);
         }
 
+        private void Update()
+        {
+            if (!isFlashing)
+            {
+                return;
+            }
+            //TODO: Refactor this later
+            bool closeEnough = (GameObject.FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude < 100f;
+            if (!closeEnough)
+            {
+                return;
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                DismissInfo();
+                //TODO: Change to event based
+                UIManager.RemoveViewModel(gameObject.name + gameObject.GetInstanceID());
+                //TODO: external setting collecting state
+                isCollected = true;
+                this.RaiseEvent<OnDropItemToInventory, DropedItemToInventoryEventArgs>(new DropedItemToInventoryEventArgs(gameObject, null, gameObject));
+            }
+        }
     }
 }

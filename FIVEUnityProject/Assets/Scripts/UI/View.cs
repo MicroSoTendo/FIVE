@@ -56,7 +56,6 @@ namespace FIVE.UI
                         PropertyInfo parent = uiPropInfos.First(prop => prop.Name == attribute.Path);
                         GameObject parentGo = (parent.GetValue(view) as MonoBehaviour)?.gameObject ?? parent.GetValue(view) as GameObject;
                         GameObject childRoot = parentGo.GetComponentsInChildren(type, true).First(c => c.name == propertyName).gameObject;
-                        Debug.Log(childRoot?.name ?? $"{propertyName} set failed");
                         uiProperty.SetValue(view, type == typeof(GameObject) ?
                             childRoot : (object)childRoot.GetComponent(type));
                         break;
