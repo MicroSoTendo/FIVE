@@ -3,7 +3,7 @@ using FIVE.UI.InGameDisplay;
 using System;
 using System.Collections;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 namespace FIVE.Interactive
 {
@@ -21,11 +21,23 @@ namespace FIVE.Interactive
         private ItemInfo itemInfo;
         private Coroutine flashingCoroutine;
         private bool isFlashing;
+        private Material scannerMaterial;
+        private Transform scannerTransform;
+        private RectTransform scannerRectTransform;
+        private GameObject scanner;
 
         void Awake()
         {
-            itemRenderer = GetComponent<Renderer>(); 
+            itemRenderer = GetComponent<Renderer>();
+            scanner = Instantiate(Resources.Load<GameObject>("EntityPrefabs/UI/Scanner"));
+            scanner.transform.SetParent(transform);
+            scanner = GetComponentInChildren<Canvas>().gameObject;
+            scannerMaterial = GetComponentInChildren<Image>().material;
+            scannerTransform = GetComponentInChildren<Image>().transform;
+            scannerRectTransform = GetComponentInChildren<Image>().rectTransform;
+            scanner.SetActive(false);
         }
+
         public bool IsPickable { get; set; }
         public ItemInfo Info
         {
@@ -46,7 +58,9 @@ namespace FIVE.Interactive
         {
             while (isFlashing)
             {
-                itemRenderer.material.color = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
+                Color c = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
+                itemRenderer.material.color = c;
+                scannerMaterial.SetColor("_Color",c);
                 timer += Time.deltaTime;
                 if (timer > singleColorInterval)
                 {
@@ -60,17 +74,32 @@ namespace FIVE.Interactive
 
         public void OnMouseOver()
         {
-            Debug.Log(nameof(OnMouseOver));
             if (isFlashing == false)
             {
+                scanner.SetActive(true);
+                Vector2 size = GetScanFrameSize();
+                scannerRectTransform.sizeDelta = size;
+                scannerTransform.position = Camera.current.WorldToScreenPoint(transform.position) + new Vector3(0,size.y/2,0);
                 isFlashing = true;
                 flashingCoroutine = StartCoroutine(Flashing());
             }
         }
 
+        private Vector2 GetScanFrameSize()
+        {
+            Bounds bounds = itemRenderer.bounds;
+            Vector3 min = Camera.current.WorldToScreenPoint(bounds.min);
+            Vector3 max = Camera.current.WorldToScreenPoint(bounds.max);
+            float width = Mathf.Abs(max.x - min.x);
+            float height = Mathf.Abs(max.y - min.y);
+            float size = Math.Max(width, height);
+            return new Vector2(size,size);
+        }
+
         public void OnMouseExit()
         {
             isFlashing = false;
+            scanner.SetActive(false);
             StopCoroutine(flashingCoroutine);
             itemRenderer.material.color = new Color32(255, 255, 255, 255);
         }
