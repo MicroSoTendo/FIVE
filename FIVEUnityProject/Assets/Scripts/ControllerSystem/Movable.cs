@@ -28,6 +28,11 @@ namespace FIVE
             get; set;
         }
 
+        public Queue<Move> Moves
+        {
+            get; private set;
+        }
+
         public delegate void MoveOnce(int steps);
         public MoveOnce[] MoveOnces
         {
@@ -37,7 +42,6 @@ namespace FIVE
 
         private Vector3 rotate = Vector3.zero;
 
-        private Queue<Move> moves;
         private CharacterController cc;
 
         private void Start()
@@ -46,15 +50,15 @@ namespace FIVE
             MoveSpeed = 15.0f;
             RotateSpeed = 30.0f;
 
-            moves = new Queue<Move>();
+            Moves = new Queue<Move>();
             MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
         }
 
         private void Update()
         {
-            if (moves.Count > 0)
+            if (Moves.Count > 0)
             {
-                Move move = moves.Dequeue();
+                Move move = Moves.Dequeue();
                 MoveOnces[(int)move](1);
             }
             //if (MoveTarget != null && Vector3.Distance(transform.position, MoveTarget) > 0.5f)
@@ -65,14 +69,14 @@ namespace FIVE
 
         public void ClearSchedule()
         {
-            moves.Clear();
+            Moves.Clear();
         }
 
         public void ScheduleMove(Move move, int steps)
         {
             for (int i = 0; i < steps; i++)
             {
-                moves.Enqueue(move);
+                Moves.Enqueue(move);
             }
         }
 
