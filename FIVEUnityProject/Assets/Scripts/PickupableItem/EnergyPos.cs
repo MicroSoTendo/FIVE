@@ -8,28 +8,29 @@ public class EnergyPos : MonoBehaviour
     public GameObject energy;
     void Start()
     {
-        Vector3[] positionArray = new Vector3[7];
-        Vector3[] RotationArray = new Vector3[7];
+        var positionArray = new Vector3[7];
+        var RotationArray = new Vector3[7];
 
-        positionArray[0] = new  Vector3(3.44f, 0.28f, -25.6f);
-        RotationArray[5] = new Vector3(-90f, 0f, 90f);
+        positionArray[0] = new  Vector3(41.2f, 0f, -26.1f);
+        RotationArray[0] = new Vector3(-90f, 0f, -90f);
 
-        positionArray[1] = new Vector3(5.36f, 0.14f, -11.69f);
-        RotationArray[5] = new Vector3(-90f, 0f, 90f);
+        positionArray[1] = new Vector3(-41.34f, 0f, -82.9f);
+        RotationArray[1] = new Vector3(-90f, 0f, 90f);
 
-        positionArray[2] = new Vector3(-3.58f, 0.18f, -8.46f);
-        RotationArray[5] = new Vector3(-90f, 0f, 90f);
+        positionArray[2] = new Vector3(-37.4f, 2.2f, 218.1f);
+        RotationArray[2] = new Vector3(-90f, 0f, 90f);
 
-        positionArray[3] = new Vector3(-5.62f, 0.13f, 5.99f);
+        positionArray[3] = new Vector3(41.8f, 0.7f, -120.6f);
+        RotationArray[3] = new Vector3(-90f, 0f, -90f);
+
+        positionArray[4] = new Vector3(39.9f, 0.13f, -233.7f);
+        RotationArray[4] = new Vector3(-90f, 0, -90f);
         
-        positionArray[4] = new Vector3(-11.43f, 0f, 10.5f);
-        RotationArray[4] = new Vector3(-77.15f, 0, 90f);
-        
-        positionArray[5] = new Vector3(-3.5f, 0.12f, 13.85f);
+        positionArray[5] = new Vector3(-136.7f, 0.12f, -145.8f);
         RotationArray[5] = new Vector3(-90f, 0f, 90f);
         
-        positionArray[6] = new Vector3(4.82f, 0.12f, 13.6f);
-        RotationArray[6] =new Vector3(-90f, 0f, 180f);
+        positionArray[6] = new Vector3(4.8f, 0.1f, -285.8f);
+        RotationArray[6] =new Vector3(-90f, 0f, 0f);
         //-90, 0 180
         for (int i = 0; i < positionArray.Length; i++)
         {
