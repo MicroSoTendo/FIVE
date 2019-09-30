@@ -16,14 +16,15 @@ namespace FIVE.Interactive
             public string Description;
         }
 
-        private (byte R, byte G, byte B) color;
         private ItemDialogViewModel cachedVM;
-        private Renderer renderer;
+        private Renderer itemRenderer;
         private ItemInfo itemInfo;
+        private Coroutine flashingCoroutine;
+        private bool isFlashing;
 
         void Awake()
         {
-            renderer = GetComponent<Renderer>();
+            itemRenderer = GetComponent<Renderer>(); 
         }
         public bool IsPickable { get; set; }
         public ItemInfo Info
@@ -36,28 +37,41 @@ namespace FIVE.Interactive
             }
         }
 
+        private readonly Color[] colors = {Color.blue, Color.cyan,  Color.green, Color.yellow,  Color.red};
+        private int currentColor = 0;
+        private int nextColor = 0;
+        private float singleColorInterval = 0.5f;
+        private float timer = 0;
         private IEnumerator Flashing()
         {
-            while (true)
+            while (isFlashing)
             {
-                color.R = (byte)Random.Range(0, 255);
-                color.G = (byte)Random.Range(0, 255);
-                color.B = (byte)Random.Range(0, 255);
-
-                renderer.material.color = new Color32(color.R, color.G, color.B, 255);
-                yield return new WaitForSeconds(0.05f);
+                timer += Time.deltaTime;
+                if (timer > singleColorInterval)
+                {
+                    currentColor = (currentColor + 1) % colors.Length;
+                    nextColor = (currentColor + 1) % colors.Length;
+                    timer = 0.0f;
+                }
+                itemRenderer.material.color = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
+                yield return null;
             }
         }
 
         public void OnMouseOver()
         {
-            StartCoroutine(Flashing());
+            if (isFlashing == false)
+            {
+                isFlashing = true;
+                flashingCoroutine = StartCoroutine(Flashing());
+            }
         }
 
         public void OnMouseExit()
         {
-            StopCoroutine(Flashing());
-            renderer.material.color = new Color32(255, 255, 255, 255);
+            isFlashing = false;
+            StopCoroutine(flashingCoroutine);
+            itemRenderer.material.color = new Color32(255, 255, 255, 255);
         }
 
         private void ShowInfo()
@@ -79,8 +93,5 @@ namespace FIVE.Interactive
             cachedVM?.SetEnabled(false);
         }
 
-        private void Update()
-        {
-        }
     }
 }
