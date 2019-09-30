@@ -120,7 +120,6 @@ namespace FIVE.Robot
             }
             else
             {
-                movable.ClearSchedule();
                 fpsController.Update();
             }
         }
@@ -139,6 +138,7 @@ namespace FIVE.Robot
             currState = RobotState.Walk;
             if (schedule)
             {
+                Debug.Log($"Schedule {steps}");
                 movable.ScheduleMove(move, steps);
             }
             else
