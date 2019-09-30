@@ -47,35 +47,36 @@ namespace Assets.Scripts.PrefabPool
 
         public void HackInstantiate(GameObject givenPrefab, params SyncModule[] syncModules)
         {
-            if (!(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(givenPrefab, out string guid, out long _)))
-            {
-                Debug.LogWarning("Networked objects need to be in asset database.");
-                return;
-            }
+            //if (!(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(givenPrefab, out string guid, out long _)))
+            //{
+            //    Debug.LogWarning("Networked objects need to be in asset database.");
+            //    return;
+            //}
 
-            if (!hackDictionary.ContainsKey(guid))
-            {
-                hackDictionary.Add(guid, syncModules);
-            }
+            //if (!hackDictionary.ContainsKey(guid))
+            //{
+            //    hackDictionary.Add(guid, syncModules);
+            //}
 
-            PhotonNetwork.Instantiate(guid, Vector3.zero, Quaternion.identity);
+            //PhotonNetwork.Instantiate(guid, Vector3.zero, Quaternion.identity);
         }
 
         //Only be invoked when receiving networking requests
         public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
         {
-            SyncModule[] syncModules = hackDictionary[prefabId];
-            string path = AssetDatabase.GUIDToAssetPath(prefabId);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            GameObject instantiatedGameObject = GameObject.Instantiate(prefab, position, rotation);
-            instantiatedGameObject.SetActive(false);
-            //first-time network local object
-            SetPhotonView(instantiatedGameObject);
-            foreach (SyncModule syncModule in syncModules)
-            {
-                addingViewsTable[syncModule](instantiatedGameObject);
-            }
-            return instantiatedGameObject;
+            return null;
+            //SyncModule[] syncModules = hackDictionary[prefabId];
+            //string path = AssetDatabase.GUIDToAssetPath(prefabId);
+            //GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            //GameObject instantiatedGameObject = GameObject.Instantiate(prefab, position, rotation);
+            //instantiatedGameObject.SetActive(false);
+            ////first-time network local object
+            //SetPhotonView(instantiatedGameObject);
+            //foreach (SyncModule syncModule in syncModules)
+            //{
+            //    addingViewsTable[syncModule](instantiatedGameObject);
+            //}
+            //return instantiatedGameObject;
         }
 
         public void Destroy(GameObject gameObject)
