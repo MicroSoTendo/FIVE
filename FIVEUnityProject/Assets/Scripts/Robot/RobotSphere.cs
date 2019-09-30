@@ -114,7 +114,7 @@ namespace FIVE.Robot
             animator.Update(currState);
             currState = cc.velocity.magnitude < float.Epsilon ? RobotState.Idle : RobotState.Walk;
 
-            if (scriptActive && movable.Moves.Count > 0)
+            if (scriptActive && movable.Moves.Count == 0)
             {
                 ExecuteScript();
             }

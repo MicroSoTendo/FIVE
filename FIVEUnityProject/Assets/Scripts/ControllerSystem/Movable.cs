@@ -61,6 +61,7 @@ namespace FIVE
 
         public void Forward(int steps)
         {
+            Debug.Log("Forward");
             cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
         }
 
