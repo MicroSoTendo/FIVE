@@ -109,6 +109,12 @@ namespace FIVE.Interactive
 
         public void OnMouseOver()
         {
+            //TODO: Refactor it later
+            if (!Camera.current?.name.Contains("fps") ?? true)
+            {
+                return;
+            }
+
             if (isFlashing == false)
             {
                 scanner.SetActive(true);
@@ -159,6 +165,11 @@ namespace FIVE.Interactive
 
         public void OnMouseExit()
         {
+            if (!isFlashing)
+            {
+                return;
+            }
+
             isFlashing = false;
             scanner.SetActive(false);
             StopCoroutine(flashingCoroutine);
