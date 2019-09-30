@@ -37,7 +37,7 @@ namespace FIVE.Interactive
             }
         }
 
-        private readonly Color[] colors = {Color.blue, Color.cyan,  Color.green, Color.yellow,  Color.red};
+        private readonly Color[] colors = {Color.red, Color.magenta, Color.yellow, Color.green, Color.blue, Color.green, Color.yellow, Color.magenta, Color.red};
         private int currentColor = 0;
         private int nextColor = 0;
         private float singleColorInterval = 0.5f;
@@ -46,6 +46,7 @@ namespace FIVE.Interactive
         {
             while (isFlashing)
             {
+                itemRenderer.material.color = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
                 timer += Time.deltaTime;
                 if (timer > singleColorInterval)
                 {
@@ -53,13 +54,13 @@ namespace FIVE.Interactive
                     nextColor = (currentColor + 1) % colors.Length;
                     timer = 0.0f;
                 }
-                itemRenderer.material.color = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
                 yield return null;
             }
         }
 
         public void OnMouseOver()
         {
+            Debug.Log(nameof(OnMouseOver));
             if (isFlashing == false)
             {
                 isFlashing = true;
