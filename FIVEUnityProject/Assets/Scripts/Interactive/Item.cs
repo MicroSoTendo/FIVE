@@ -37,6 +37,7 @@ namespace FIVE.Interactive
         private bool finishedScanning;
         private bool isCollected;
         public float ScanningSpeed { get; set; } = 1f;
+        public bool IsRotating { get; set; } = false;
 
         private void Awake()
         {
@@ -77,11 +78,13 @@ namespace FIVE.Interactive
         }
         private IEnumerator Flashing()
         {
-            while (isFlashing)
+            while (isFlashing && !finishedScanning)
             {
-                var c = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
-                itemRenderer.material.color = c;
-                scannerMaterial.SetColor("_Color", c);
+                Color tintColor = Color.Lerp(colors[currentColor], colors[nextColor], timer / singleColorInterval);
+                itemRenderer.material.color = tintColor;
+                scannerMaterial.SetColor("_Color", tintColor);
+                scannerMaterial.SetFloat("_Intensity", 1f);
+                scannerMaterial.SetFloat("_ElapsedTime", Time.realtimeSinceStartup * 4f);
                 timer += Time.deltaTime;
                 if (timer > singleColorInterval)
                 {
@@ -89,21 +92,24 @@ namespace FIVE.Interactive
                     nextColor = (currentColor + 1) % colors.Length;
                     timer = 0.0f;
                 }
-
-                percentageText.color = Invert(c);
+                percentageText.color = Invert(tintColor);
                 if (scanningProgress < 100f)
                 {
                     scanningProgress += Time.deltaTime * 100 / 3f * ScanningSpeed;
                     if (scanningProgress >= 100f)
                     {
-                        scanningProgress = 100;
+                        scanningProgress = 100f;
                         ShowInfo();
                     }
-                    percentageText.text = $"{scanningProgress:F1}%";
+                    percentageText.text = $"{scanningProgress:F2}%";
                 }
                 else
                 {
+                    timer = 0f;
+                    scannerMaterial.SetFloat("_ElapsedTime", timer);
+                    scannerMaterial.SetFloat("_Intensity", 0);
                     finishedScanning = true;
+                    scannerMaterial.SetColor("_Color", Color.white);
                 }
 
                 yield return null;
@@ -113,8 +119,14 @@ namespace FIVE.Interactive
         public void OnMouseOver()
         {
             //TODO: Refactor it later
-            if (!Camera.current?.name.Contains("fps") ?? true) return;
-            if (isCollected) return;
+            if (!Camera.current?.name.Contains("fps") ?? true)
+            {
+                return;
+            }
+            if (isCollected)
+            {
+                return;
+            }
 
             if (isFlashing == false)
             {
@@ -174,9 +186,12 @@ namespace FIVE.Interactive
 
             isFlashing = false;
             scanner.SetActive(false);
-            StopCoroutine(flashingCoroutine);
             itemRenderer.material.color = new Color32(255, 255, 255, 255);
             DismissInfo();
+            if (!finishedScanning)
+            {
+                StopCoroutine(flashingCoroutine);
+            }
         }
 
         private void ShowInfo()
@@ -203,11 +218,22 @@ namespace FIVE.Interactive
 
         public void DismissInfo()
         {
-            cachedVM?.SetEnabled(false);
+            if(!isCollected)
+            {
+                cachedVM?.SetEnabled(false);
+            }
         }
 
+        private void LateUpdate()
+        {
+            if (IsRotating)
+            {
+                transform.localEulerAngles += new Vector3(0, Time.deltaTime * 90f, 0);
+            }
+        }
         private void Update()
         {
+          
             if (!isFlashing)
             {
                 return;
@@ -225,6 +251,12 @@ namespace FIVE.Interactive
                 UIManager.RemoveViewModel(gameObject.name + gameObject.GetInstanceID());
                 //TODO: external setting collecting state
                 isCollected = true;
+                MeshCollider mc = GetComponent<MeshCollider>();
+                if (mc != null)
+                {
+                    mc.enabled = false;
+                    Destroy(mc);
+                }
                 this.RaiseEvent<OnDropItemToInventory, DropedItemToInventoryEventArgs>(new DropedItemToInventoryEventArgs(gameObject, null, gameObject));
             }
         }
