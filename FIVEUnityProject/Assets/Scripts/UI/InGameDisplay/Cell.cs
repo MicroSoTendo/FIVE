@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using FIVE.Interactive;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
 {
-    public class Cell : MonoBehaviour
+    public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         private Transform contentTransform;
 
@@ -29,10 +33,14 @@ namespace FIVE.UI.InGameDisplay
         {
             contentTransform = gameObject.GetChildGameObject("Content").transform;
         }
-
-        private void Update()
+        public void OnPointerEnter(PointerEventData eventData)
         {
+            contentTransform.GetChild(0).gameObject.GetComponent<Item>().IsRotating = true;
+        }
 
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            contentTransform.GetChild(0).gameObject.GetComponent<Item>().IsRotating = false;
         }
     }
 }

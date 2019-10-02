@@ -14,7 +14,7 @@ namespace FIVE.CameraSystem
         private GameObject cameraPrefab;
         private static CameraManager instance;
         private int index = 0;
-        private Camera currentActiveCamera;
+        public static Camera CurrentActiveCamera { get; private set; }
 
         private void Awake()
         {
@@ -29,6 +29,7 @@ namespace FIVE.CameraSystem
                     cameras.Add(cam.name, cam);
                 }
             }
+            CurrentActiveCamera = Camera.current ?? Camera.main;
         }
 
         public static Camera AddCamera(string cameraName = null, Transform parent = null, bool enableAudioListener = false)
@@ -73,6 +74,7 @@ namespace FIVE.CameraSystem
                 index %= cameras.Count;
                 Camera ca = cameras.ElementAt(index).Value;
                 ca.enabled = true;
+                CurrentActiveCamera = ca;
                 (ca.gameObject.GetComponent<AudioListener>() ?? ca.gameObject.GetComponentInChildren<AudioListener>()).enabled = true;
                 this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: ca));
                 index++;

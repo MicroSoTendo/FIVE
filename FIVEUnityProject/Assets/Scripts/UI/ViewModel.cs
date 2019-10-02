@@ -1,23 +1,31 @@
+using System;
 using FIVE.EventSystem;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Object = UnityEngine.Object;
+
 namespace FIVE.UI
 {
+    public abstract class OnViewModelActiveChanged : IEventType<ViewModelActiveChangedEventArgs> { }
+    public class ViewModelActiveChangedEventArgs : EventArgs { 
+        public bool IsActive { get; }
+        public ViewModelActiveChangedEventArgs(bool isActive) => IsActive = isActive;
+    }
     public abstract class ViewModel
     {
         protected View View { get; set; }
         public int SortingOrder { get => View.ViewCanvas.sortingOrder; set => View.ViewCanvas.sortingOrder = value; }
         public bool IsEnabled => View.ViewCanvas.gameObject.activeSelf;
-        public void SetEnabled(bool value)
+        public virtual void SetEnabled(bool value)
         {
             View.ViewCanvas.gameObject.SetActive(value);
+            this.RaiseEvent<OnViewModelActiveChanged, ViewModelActiveChangedEventArgs>(new ViewModelActiveChangedEventArgs(value));
         }
 
-        public void ToggleEnabled()
+        public virtual void ToggleEnabled()
         {
-            View.ViewCanvas.gameObject.SetActive(!View.ViewCanvas.gameObject.activeSelf);
+            SetEnabled(!IsEnabled);
         }
 
         public void Destroy()

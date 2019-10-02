@@ -1,7 +1,9 @@
 ﻿using FIVE.EventSystem;
 using FIVE.Interactive;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using FIVE.CameraSystem;
 using UnityEngine;
 
 namespace FIVE.UI.InGameDisplay
@@ -10,7 +12,7 @@ namespace FIVE.UI.InGameDisplay
     {
         private GameObject Content { get; }
         private RectTransform ContentTransform { get; }
-
+        private int total;
         public Inventory Inventory { get; set; }
         public InventoryViewModel()
         {
@@ -18,6 +20,23 @@ namespace FIVE.UI.InGameDisplay
             Content = View.InventoryScrollView.GetChildGameObject("InventoryContent");
             ContentTransform = Content.GetComponent<RectTransform>();
             binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
+            View.ViewCanvas.worldCamera = Camera.current;
+            View.ViewCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            View.ViewCanvas.planeDistance = 0.5f;
+        }
+
+        public override void SetEnabled(bool value)
+        {
+            base.SetEnabled(value);
+            string s = value ? "Enabled" : "Disabled";
+            Debug.Log($"Inventory is {s}");
+            View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+        }
+
+        public override void ToggleEnabled()
+        {
+            base.ToggleEnabled();
+            View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
         }
 
         private void ExitInventory(object sender, EventArgs e)
@@ -25,16 +44,16 @@ namespace FIVE.UI.InGameDisplay
             SetEnabled(false);
         }
 
-        private void AddCell(string id, out GameObject cell, out RectTransform rectTransform, out Transform contentTransform)
+        private GameObject AddCell(string id, out RectTransform rectTransform, out Transform itemHolder)
         {
-            cell = View.AddUIElementFromResources<GameObject>("Cell", id, ContentTransform);
+            GameObject cell = View.AddUIElementFromResources<GameObject>("Cell", id, ContentTransform);
             cell.transform.SetParent(ContentTransform);
             rectTransform = cell.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(0, 1);
-            rectTransform.anchorMax = new Vector2(0, 1);
-            rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            contentTransform = cell.GetChildGameObject("Content").transform;
+            itemHolder = cell.GetChildGameObject("Content").transform;
+            return cell;
         }
+
+        private List<GameObject> cellList;
 
         private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -43,20 +62,25 @@ namespace FIVE.UI.InGameDisplay
                 case NotifyCollectionChangedAction.Add:
                     for (int i = 0; i < e.NewItems.Count; i++)
                     {
-                        int verticalBarWidth = 20; //TODO: get by call
-                        int cellWidth = 62; //TODO: get by call
-                        //TODO:fix this long stuff
-                        int totalColumns = (int)(ContentTransform.gameObject.transform.parent.transform.parent.GetComponent<RectTransform>().rect.width
-                         - verticalBarWidth) / cellWidth;
+
                         int startingIndex = e.NewStartingIndex;
-                    
+                        GameObject newCell = AddCell($"Cell-{i + startingIndex}", out RectTransform rectTransform, out Transform itemHolder);
+
+                        float cellWidth = rectTransform.sizeDelta.x; //TODO: get by call
+                        int totalColumns = (int)(ContentTransform.rect.width / cellWidth);
                         int x = startingIndex % totalColumns;
                         int y = startingIndex / totalColumns;
-                        AddCell($"Cell-{i + startingIndex}", out GameObject cell, out RectTransform rectTransform, out Transform itemHolder);
-                        rectTransform.anchoredPosition = new Vector2(34 + x * cellWidth, -34 - y * cellWidth);
+                        rectTransform.anchoredPosition = new Vector2(x * cellWidth, - y * cellWidth);
+
                         GameObject go = (GameObject)e.NewItems[i];
+                        go.GetComponent<MeshRenderer>().receiveShadows = false;
                         go.transform.SetParent(itemHolder);
-                        go.transform.localPosition = new Vector3(0,0,0);
+
+                        //TODO:Parametrize it into Item.cs
+                        go.transform.localScale = new Vector3(7.7f, 7.7f, 7.7f);
+                        go.transform.localEulerAngles = new Vector3(-90,0,0);
+                        go.transform.localPosition = new Vector3(7.5f,-55,-25);
+
                     }
                     break;
                 case NotifyCollectionChangedAction.Move:
