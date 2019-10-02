@@ -33,7 +33,9 @@ namespace FIVE
             }
             else
             {
-                cc.SimpleMove(Vector3.Normalize(currTarget.transform.position - transform.position) * speed);
+                Vector3 move = currTarget.transform.position - transform.position;
+                transform.forward = move;
+                cc.SimpleMove(Vector3.Normalize(move) * speed);
             }
         }
 
