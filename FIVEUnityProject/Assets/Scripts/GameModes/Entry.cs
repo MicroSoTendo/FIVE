@@ -5,6 +5,7 @@ using FIVE.UI.InGameDisplay;
 using FIVE.UI.OptionsMenu;
 using FIVE.UI.SplashScreens;
 using FIVE.UI.StartupMenu;
+using FIVE.UI.NPC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,6 +36,8 @@ namespace FIVE.GameStates
             yield return null;
             UIManager.AddViewModel<InGameDisplayViewModel>().SetEnabled(false);
             yield return null;
+            //UIManager.AddViewModel<NpcConversationViewModel>().SetEnabled(false);
+            //yield return null;
             //UIManager.AddViewModel<CAttributeViewModel>().SetActive(false);
             //yield return null;
         }
