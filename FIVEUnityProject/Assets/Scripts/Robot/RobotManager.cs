@@ -5,7 +5,7 @@ namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {
-        public List<GameObject> Robots;
+        public HashSet<GameObject> Robots;
 
         [SerializeField] private GameObject RobotPrefab = null;
         private static RobotManager instance;
@@ -13,7 +13,7 @@ namespace FIVE.Robot
         private void Awake()
         {
             instance = this;
-            Robots = new List<GameObject>();
+            Robots = new HashSet<GameObject>();
         }
 
         public static GameObject CreateRobot()
@@ -26,6 +26,11 @@ namespace FIVE.Robot
         public static GameObject GetPrefab()
         {
             return instance.RobotPrefab;
+        }
+
+        public static RobotManager Instance()
+        {
+            return instance;
         }
     }
 }

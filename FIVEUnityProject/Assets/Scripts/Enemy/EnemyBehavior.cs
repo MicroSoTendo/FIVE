@@ -2,17 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+using FIVE.Robot;
+
+namespace FIVE
 {
-    public float VisionRange;
-
-    void Start()
+    [RequireComponent(typeof(CharacterController))]
+    public class EnemyBehavior : MonoBehaviour
     {
-        VisionRange = 10.0f;
-    }
+        public float VisionRange;
 
-    void Update()
-    {
-        
+        private CharacterController cc;
+        private GameObject currTarget;
+
+        private float speed;
+
+        void Start()
+        {
+            VisionRange = 10.0f;
+
+            cc = GetComponent<CharacterController>();
+
+            speed = 10.0f;
+        }
+
+        void Update()
+        {
+            if (currTarget == null || Vector3.Distance(transform.position, currTarget.transform.position) > 2 * VisionRange)
+            {
+                SearchTarget();
+            }
+            else
+            {
+                Vector3 move = currTarget.transform.position - transform.position;
+                transform.forward = move;
+                cc.SimpleMove(Vector3.Normalize(move) * speed);
+            }
+        }
+
+        private void SearchTarget()
+        {
+            foreach (GameObject robot in RobotManager.Instance().Robots)
+            {
+                if (Physics.SphereCast(transform.position, 3.0f, robot.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
+                {
+                    currTarget = robot;
+                }
+            }
+        }
     }
 }
