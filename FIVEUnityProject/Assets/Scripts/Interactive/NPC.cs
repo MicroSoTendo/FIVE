@@ -35,6 +35,7 @@ namespace FIVE.Interactive
                 if (ndc.x > 0 && ndc.x < 1 && ndc.y > 0 && ndc.y < 1 && ndc.z > 0)
                 {
                     canvas.SetActive(true);
+                    isScanned = true;
                 }
             }
         }
