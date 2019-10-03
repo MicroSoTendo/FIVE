@@ -38,9 +38,12 @@ namespace FIVE
             else
             {
                 animator.SetTrigger("walk");
-                Vector3 move = currTarget.transform.position - transform.position;
-                transform.forward = move;
-                cc.SimpleMove(Vector3.Normalize(move) * speed);
+                Vector3 distance = currTarget.transform.position - transform.position;
+                transform.forward = distance;
+                if (distance.magnitude > 5.0f)
+                {
+                    cc.SimpleMove(Vector3.Normalize(distance) * speed);
+                }
             }
         }
 
@@ -53,6 +56,11 @@ namespace FIVE
                     currTarget = robot;
                 }
             }
+        }
+        
+        private void Patrol()
+        {
+            
         }
     }
 }
