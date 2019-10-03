@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
 {
@@ -7,7 +8,7 @@ namespace FIVE.UI.InGameDisplay
         [UIElement]
         public Button PlayerButton { get; set; }
         [UIElement]
-        public Button Energy { get; set; }
+        public GameObject Energy { get; set; }
         [UIElement]
         public Button Inventory { get; set; }        
         [UIElement]

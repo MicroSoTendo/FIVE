@@ -1,7 +1,10 @@
 ﻿using FIVE.UI.OptionsMenu;
 using System;
+using FIVE.EventSystem;
 using FIVE.Robot;
+using FIVE.RobotComponent;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
 {
@@ -13,9 +16,6 @@ namespace FIVE.UI.InGameDisplay
             binder.Bind(view => view.PlayerButton.onClick).
             To(viewModel => viewModel.OnPlayerButtonClicked);
 
-            binder.Bind(view => view.Energy.onClick).
-            To(viewModel => viewModel.OnEnergyClicked);
-
             binder.Bind(view => view.Inventory.onClick).
             To(viewModel => viewModel.OnInventoryClicked);
 
@@ -24,6 +24,13 @@ namespace FIVE.UI.InGameDisplay
 
             binder.Bind(view=>view.Scan.onClick).
                 To(vm=>vm.OnScanClicked);
+
+            EventManager.Subscribe<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(UpdateEnergy);
+        }
+
+        private void UpdateEnergy(object sender, RobotEnergyChangedEventArgs e)
+        {
+            View.Energy.GetComponentInChildren<Scrollbar>().size = e.NewEnergyLevel / 100f;
         }
 
         private void OnScanClicked(object sender, EventArgs e)

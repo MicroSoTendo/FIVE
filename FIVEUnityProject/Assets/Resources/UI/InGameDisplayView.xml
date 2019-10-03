@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
     <Button name = "PlayerButton" Prefab = "EntityPrefabs/Btn_User" RectTransform = "{anchorMin:(0,1); anchorMax:(0,1); pivot:(0.5,0.5); anchoredPosition3D:(50,-50,0);}"/>
-    <Button name = "Energy" Prefab = "EntityPrefabs/MenuButton" RectTransform = "{anchorMin:(0,1); anchorMax:(0,1); pivot:(0.5,0.5); anchoredPosition:(300,-50); sizeDelta:(350,100);}" Text = "Energy Bar"/>
+    <GameObject name = "Energy" Prefab = "EntityPrefabs/UI/EnergyBar"/>
     <Button name = "Inventory" Prefab = "EntityPrefabs/MenuButton" RectTransform = "{anchorMin:(0.35,0); anchorMax:(0.35,0); pivot:(0.5,0.5); anchoredPosition:(0,50); sizeDelta:(350,100);}" Text = "Inventory"/>
     <Button name = "Scan" Prefab = "EntityPrefabs/MenuButton" RectTransform = "{anchorMin:(0.65,0); anchorMax:(0.65,0); pivot:(0.5,0.5); anchoredPosition:(0,50); sizeDelta:(350,100);}" Text = "Scan"/>
     <Button name = "Option" Prefab = "EntityPrefabs/MenuButton" RectTransform = "{anchorMin:(1,1); anchorMax:(1,1); pivot:(0.5,0.5); anchoredPosition:(-100,-50); sizeDelta:(200,100);}" Text = "Option"/>

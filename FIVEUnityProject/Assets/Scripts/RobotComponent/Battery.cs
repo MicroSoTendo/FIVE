@@ -1,11 +1,34 @@
-﻿using UnityEngine;
+﻿using System;
+using FIVE.EventSystem;
+using UnityEngine;
 
 namespace FIVE.RobotComponent
 {
     public class Battery : MonoBehaviour
     {
-        public float Capacity;
-        public float CurrentEnergy;
+        private float capacity;
+
+        public float Capacity
+        {
+            get => capacity;
+            set
+            {
+                capacity = value;
+            }
+        }
+
+        private float currentEnergy;
+
+        public float CurrentEnergy
+        {
+            get => currentEnergy;
+            set
+            {
+                currentEnergy = value;
+                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(new RobotEnergyChangedEventArgs(value));
+            }
+        }
+
         private bool isCharging;
         public int DechargeSpeed;
         private int chargeSpeed;
@@ -40,6 +63,14 @@ namespace FIVE.RobotComponent
             isCharging = false;
         }
     }
+
+    public class RobotEnergyChangedEventArgs : EventArgs
+    {
+        public float NewEnergyLevel { get; }
+        public RobotEnergyChangedEventArgs(float newEnergyLevel) => NewEnergyLevel = newEnergyLevel;
+    }
+
+    public abstract class OnRobotEnergyChanged : IEventType<RobotEnergyChangedEventArgs> { }
 
 
 }
