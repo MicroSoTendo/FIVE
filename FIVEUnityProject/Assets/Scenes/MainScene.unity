@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -130,7 +131,7 @@ PrefabInstance:
     - target: {fileID: 3532059688778701597, guid: e1948cc04ff57e74687a0ed963a4dab9,
         type: 3}
       propertyPath: m_Name
-      value: DefaultCamera (2)
+      value: DefaultCamera-2
       objectReference: {fileID: 0}
     - target: {fileID: 3532059688778701571, guid: e1948cc04ff57e74687a0ed963a4dab9,
         type: 3}
@@ -209,7 +210,7 @@ PrefabInstance:
     - target: {fileID: 3532059688778701597, guid: e1948cc04ff57e74687a0ed963a4dab9,
         type: 3}
       propertyPath: m_Name
-      value: DefaultCamera (3)
+      value: DefaultCamera-3
       objectReference: {fileID: 0}
     - target: {fileID: 3532059688778701571, guid: e1948cc04ff57e74687a0ed963a4dab9,
         type: 3}
@@ -354,7 +355,7 @@ PrefabInstance:
     - target: {fileID: 3532059688778701597, guid: e1948cc04ff57e74687a0ed963a4dab9,
         type: 3}
       propertyPath: m_Name
-      value: DefaultCamera (1)
+      value: DefaultCamera-1
       objectReference: {fileID: 0}
     - target: {fileID: 3532059688778701571, guid: e1948cc04ff57e74687a0ed963a4dab9,
         type: 3}
@@ -484,11 +485,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
-        type: 3}
-      propertyPath: m_Name
-      value: Directional Light
-      objectReference: {fileID: 0}
     - target: {fileID: 3772496688967652343, guid: b49d8b618ff84b34ca0a1d92887e3c88,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -543,6 +539,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
+        type: 3}
+      propertyPath: m_Name
+      value: Directional Light
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b49d8b618ff84b34ca0a1d92887e3c88, type: 3}

@@ -113,6 +113,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c50ee77147fee49b6d46ffe41d6fd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemInfo:
+    Name: Battery
+    Description: 
+    UIScale: {x: 7.7, y: 7.7, z: 7.7}
+    UIRotation: {x: -90, y: 0, z: 0}
+    UIPosition: {x: 12, y: -55, z: -20}
 --- !u!64 &8104285750284743754
 MeshCollider:
   m_ObjectHideFlags: 0

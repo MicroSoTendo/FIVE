@@ -6,8 +6,8 @@ namespace FIVE.UI.InGameDisplay
 {
     public class ItemDialogViewModel : ViewModel<ItemDialogView, ItemDialogViewModel>
     {
-        private Item.ItemInfo info = Item.ItemInfo.Empty;
-        public void SetItemInfo(Item.ItemInfo itemInfo)
+        private ItemInfo info = ItemInfo.Empty;
+        public void SetItemInfo(ItemInfo itemInfo)
         {
             this.info = itemInfo;
         }
@@ -20,8 +20,8 @@ namespace FIVE.UI.InGameDisplay
         public bool IsProcedureDisplayFinished { get; private set; } = false;
         public IEnumerator ProcedureDisplay()
         {
-            string itemType = "Item Type: " + info.name;
-            string description = "Description: " + info.description;
+            string itemType = "Item Type: " + info.Name;
+            string description = "Description: " + info.Description;
 
             View.ItemNameInputField.text = "";
             View.DescriptionInputField.text = "";
