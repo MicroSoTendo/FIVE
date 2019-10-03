@@ -5,7 +5,7 @@ using UnityEngine;
 public class Battery : MonoBehaviour
 {
     public float Capacity;
-    private float currEnergy;
+    public float currEnergy;
     private bool isCharging;
     public int DechargeSpeed;
     private int chargeSpeed;
