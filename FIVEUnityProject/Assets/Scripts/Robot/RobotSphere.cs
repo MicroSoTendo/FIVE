@@ -11,7 +11,7 @@ namespace FIVE.Robot
 {
     [RequireComponent(typeof(Movable))]
     [RequireComponent(typeof(Battery))]
-    [RequireComponent(typeof(Cpu))]
+    [RequireComponent(typeof(CPU))]
     public class RobotSphere : MonoBehaviour
     {
         public enum RobotState { Idle, Walk, Jump, Open };
@@ -26,7 +26,7 @@ namespace FIVE.Robot
         // Robot Components
         public Battery Battery;
 
-        public Cpu Cpu;
+        public CPU Cpu;
 
         // Script References
         private RobotFreeAnim animator;
@@ -44,7 +44,7 @@ namespace FIVE.Robot
 
         private void Awake()
         {
-            GameObject eye = gameObject.GetChildGameObject(nameof(eye));
+            GameObject eye = gameObject.FindChildRecursive(nameof(eye));
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), eye.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -68,7 +68,7 @@ namespace FIVE.Robot
             scriptActive = false;
 
             Battery = GetComponent<Battery>();
-            Cpu = GetComponent<Cpu>();
+            Cpu = GetComponent<CPU>();
 
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
