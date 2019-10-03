@@ -8,25 +8,42 @@ namespace FIVE
 {
     public static class Util
     {
-        public static GameObject GetChildGameObject(this GameObject gameObject, string name)
+        public static void SetParent(this GameObject gameObject, Transform parent)
         {
+            gameObject.GetComponent<Transform>().SetParent(parent);
+        }
+
+        public static void SetParent(this GameObject gameObject, GameObject parent)
+        {
+            gameObject.GetComponent<Transform>().SetParent(parent.transform);
+        }
+
+        public static GameObject FindChild(this GameObject gameObject, string name)
+        {
+            return gameObject.transform.Find(name)?.gameObject;
+        }
+
+        public static GameObject FindChildRecursive(this GameObject gameObject, string name)
+        {
+            Transform child = gameObject.transform.Find(name);
+            if (child != null)
+            {
+                return child.gameObject;
+            }
             for (int i = 0; i < gameObject.transform.childCount; i++)
             {
-                GameObject child = gameObject.transform.GetChild(i).gameObject;
-                if (child.name == name)
+                child = gameObject.transform.GetChild(i);
+                Transform grandSon = child.Find(name);
+                if (grandSon != null)
                 {
-                    return child;
+                    return grandSon.gameObject;
                 }
-                else
+                GameObject childInChild = child.gameObject.FindChildRecursive(name);
+                if (childInChild != null)
                 {
-                    GameObject childInChild = child.GetChildGameObject(name);
-                    if (childInChild != null)
-                    {
-                        return childInChild;
-                    }
+                    return childInChild;
                 }
             }
-
             return null;
         }
 
