@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 
-public class CPU : MonoBehaviour
+namespace FIVE.RobotComponent
 {
-    public int Speed; // instruction executed per frame
-    public float PowerConsumption; // 0.0f ~ 1.0f;
-
-    private void Start()
+    public class CPU : MonoBehaviour
     {
-        Speed = 1;
-        PowerConsumption = 1.0f;
+        public int Speed; // instruction executed per frame
+        public float PowerConsumption; // 0.0f ~ 1.0f;
+
+        private void Start()
+        {
+            Speed = 1;
+            PowerConsumption = 1.0f;
+        }
     }
 }

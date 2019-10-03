@@ -1,42 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Battery : MonoBehaviour
+namespace FIVE.RobotComponent
 {
-    public float Capacity;
-    private float currEnergy;
-    private bool isCharging;
-    public int DechargeSpeed;
-    private int chargeSpeed;
 
-    public void Start()
+    public class Battery : MonoBehaviour
     {
-        Capacity = 100.0f;
-        currEnergy = Capacity;
-        DechargeSpeed = 1;
-    }
+        public float Capacity;
+        private float currEnergy;
+        private bool isCharging;
+        public int DechargeSpeed;
+        private int chargeSpeed;
 
-    public void Update()
-    {
-        if (isCharging)
+        public void Start()
         {
-            currEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, Capacity);
+            Capacity = 100.0f;
+            currEnergy = Capacity;
+            DechargeSpeed = 1;
         }
-        else
+
+        public void Update()
         {
-            currEnergy -= Mathf.Clamp(DechargeSpeed * Time.deltaTime, 0, Capacity);
+            if (isCharging)
+            {
+                currEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, Capacity);
+            }
+            else
+            {
+                currEnergy -= Mathf.Clamp(DechargeSpeed * Time.deltaTime, 0, Capacity);
+            }
+        }
+
+        public void Charge(int chargeSpeed)
+        {
+            isCharging = true;
+            this.chargeSpeed = chargeSpeed;
+        }
+
+        public void UnCharge()
+        {
+            isCharging = false;
         }
     }
 
-    public void Charge(int chargeSpeed)
-    {
-        isCharging = true;
-        this.chargeSpeed = chargeSpeed;
-    }
 
-    public void UnCharge()
-    {
-        isCharging = false;
-    }
 }

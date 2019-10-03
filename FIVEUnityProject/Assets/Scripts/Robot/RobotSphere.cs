@@ -5,6 +5,7 @@ using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.AWSLEditor;
 using System.Collections;
+using FIVE.RobotComponent;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -19,14 +20,14 @@ namespace FIVE.Robot
         private enum ControllerOp { FPS, RTS, };
 
         // private readonly ControllerOp currOp = ControllerOp.FPS;
-        public RobotState currState = RobotState.Idle;
+        public RobotState currentState = RobotState.Idle;
 
         private CharacterController cc;
 
         // Robot Components
         public Battery Battery;
 
-        public CPU Cpu;
+        public CPU CPU;
 
         // Script References
         private RobotFreeAnim animator;
@@ -68,7 +69,7 @@ namespace FIVE.Robot
             scriptActive = false;
 
             Battery = GetComponent<Battery>();
-            Cpu = GetComponent<CPU>();
+            CPU = GetComponent<CPU>();
 
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
@@ -111,8 +112,8 @@ namespace FIVE.Robot
                 return;
             }
             // update animation at beginning to ensure consistency
-            animator.Update(currState);
-            currState = cc.velocity.magnitude < float.Epsilon ? RobotState.Idle : RobotState.Walk;
+            animator.Update(currentState);
+            currentState = cc.velocity.magnitude < float.Epsilon ? RobotState.Idle : RobotState.Walk;
 
             if (scriptActive && movable.Moves.Count == 0)
             {
@@ -135,7 +136,7 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            currState = RobotState.Walk;
+            currentState = RobotState.Walk;
             if (schedule)
             {
                 movable.ScheduleMove(move, steps);
