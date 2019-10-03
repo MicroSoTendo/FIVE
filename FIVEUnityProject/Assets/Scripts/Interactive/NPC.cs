@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using FIVE.CameraSystem;
+using FIVE.Robot;
 using UnityEngine;
-
+using static FIVE.Util;
 namespace FIVE.Interactive
 {
     public class NPC : MonoBehaviour
@@ -10,13 +12,33 @@ namespace FIVE.Interactive
         public GameObject Description;
         Vector3 originalScale;
         private bool onClick;
-        private void Start()
+
+        private GameObject canvas;
+        private bool isScanned = false;
+
+        private void Awake()
         {
             onClick = false;
             Description.SetActive(false);
             image = gameObject.transform.Find("Canvas").Find("Image");
             originalScale = image.localScale;
+            Subscribe<OnGlobalScanFinished>(OnScanFinished);
+            canvas = gameObject.transform.Find("Canvas").gameObject;
+            canvas.SetActive(false);
         }
+
+        private void OnScanFinished()
+        {
+            foreach (Camera fpsCamera in CameraManager.GetFpsCameras)
+            {
+                Vector3 ndc = fpsCamera.WorldToViewportPoint(transform.position);
+                if (ndc.x > 0 && ndc.x < 1 && ndc.y > 0 && ndc.y < 1 && ndc.z > 0)
+                {
+                    canvas.SetActive(true);
+                }
+            }
+        }
+
         IEnumerator ChangeOverTime(float time)
         {
             
@@ -36,10 +58,11 @@ namespace FIVE.Interactive
 
         public void OnMouseOver()
         {
-            onClick = true; onClick = true;
+            if (!isScanned) return;
+            onClick = true;
             StartCoroutine(ChangeOverTime(0.2f));
         }
-        public void  OnMouseExit()
+        public void OnMouseExit()
         {
             onClick = false;
             

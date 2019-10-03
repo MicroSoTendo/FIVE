@@ -16,6 +16,9 @@ namespace FIVE.CameraSystem
         private int index = 0;
         public static Camera CurrentActiveCamera { get; private set; }
 
+        public static IEnumerable<Camera> GetFpsCameras =>
+            from c in instance.cameras where c.Key.ToLower().Contains("fps") select c.Value;
+
         private void Awake()
         {
             Assert.IsNull(instance);
