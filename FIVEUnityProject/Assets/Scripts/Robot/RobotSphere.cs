@@ -21,7 +21,6 @@ namespace FIVE.Robot
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
 
-
         private CharacterController cc;
 
         // Robot Components
@@ -49,6 +48,7 @@ namespace FIVE.Robot
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), eye.transform);
             fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
             fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
 
             thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(), transform, true);
             thirdPersonCamera.transform.SetParent(transform);
@@ -138,7 +138,6 @@ namespace FIVE.Robot
             currState = RobotState.Walk;
             if (schedule)
             {
-                Debug.Log($"Schedule {steps}");
                 movable.ScheduleMove(move, steps);
             }
             else

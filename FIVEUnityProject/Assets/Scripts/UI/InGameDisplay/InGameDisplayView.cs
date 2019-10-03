@@ -9,7 +9,9 @@ namespace FIVE.UI.InGameDisplay
         [UIElement]
         public Button Energy { get; set; }
         [UIElement]
-        public Button Inventory { get; set; }
+        public Button Inventory { get; set; }        
+        [UIElement]
+        public Button Scan { get; set; }
         [UIElement]
         public Button Option { get; set; }
     }

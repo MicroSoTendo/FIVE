@@ -3,9 +3,9 @@
     Properties
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
-        _Color ("Tint", Color) = (1,1,1,1)
-        _ElapsedTime ("ElapsedTime", float) = 0
-        _Intensity ("Intensity", float) = 1
+        [PerRendererData] _Color ("Tint", Color) = (1,1,1,1)
+        [PerRendererData] _ElapsedTime ("ElapsedTime", float) = 0
+        [PerRendererData] _Intensity ("Intensity", float) = 1
     }
 
     SubShader
@@ -67,7 +67,7 @@
             fixed4 frag(v2f IN) : SV_Target
             {
                 half4 color = (tex2D(_MainTex, IN.texcoord)) * IN.color;
-                color += (1,1,1, _Intensity * clamp(pow(sin(6 * IN.texcoord.y + _ElapsedTime) * 0.8,2),0.0,1.0)) * ceil(clamp(sin(6 * IN.texcoord.y + _ElapsedTime),0.0,1.0)) * ceil(clamp(sin(6 * IN.texcoord.y + 200 + _ElapsedTime),0.0,1.0));
+                color += (1,1,1, _Intensity * clamp(pow(sin(6 * IN.texcoord.y + _ElapsedTime) * 0.8, 2),0.0,1.0)) * ceil(clamp(sin(6 * IN.texcoord.y + _ElapsedTime),0.0,1.0)) * ceil(clamp(sin(6 * IN.texcoord.y + 200 + _ElapsedTime),0.0,1.0));
                 return color;
             }
         ENDCG
