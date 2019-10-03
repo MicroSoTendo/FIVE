@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using FIVE.CameraSystem;
+﻿using FIVE.CameraSystem;
 using FIVE.Robot;
+using System.Collections;
 using UnityEngine;
 using static FIVE.Util;
 namespace FIVE.Interactive
@@ -9,15 +8,14 @@ namespace FIVE.Interactive
     public class NPC : MonoBehaviour
     {
         private Transform image;
-        Vector3 originalScale;
+        private Vector3 originalScale;
         private bool onClick;
 
         private GameObject canvas;
         private bool isScanned = false;
 
-        private void Awake()
         public GameObject Description;
-        private void Start()
+        private void Awake()
         {
             onClick = false;
             image = gameObject.transform.Find("Canvas").Find("Image");
@@ -40,10 +38,10 @@ namespace FIVE.Interactive
             }
         }
 
-        IEnumerator ChangeOverTime(float time)
+        private IEnumerator ChangeOverTime(float time)
         {
-            
-            Vector3 destinationScale = new Vector3(1.05f, 1.05f, 1.05f);
+
+            var destinationScale = new Vector3(1.05f, 1.05f, 1.05f);
 
             float currentTime = 0.0f;
 
@@ -59,19 +57,22 @@ namespace FIVE.Interactive
 
         public void OnMouseOver()
         {
-            if (!isScanned) return;
+            if (!isScanned)
+            {
+                return;
+            }
+
             onClick = true;
             StartCoroutine(ChangeOverTime(0.2f));
         }
         public void OnMouseExit()
         {
             onClick = false;
-            
+
         }
         public void OnMouseDown()
         {
-            Debug.Log("OnMouseDownClicked");
-            GameObject go = Instantiate(Description) as GameObject;
+            var go = Instantiate(Description) as GameObject;
             go.transform.SetParent(GameObject.Find("UIScreenSpace").transform);
             go.transform.localPosition = new Vector2(0, -192);
         }
