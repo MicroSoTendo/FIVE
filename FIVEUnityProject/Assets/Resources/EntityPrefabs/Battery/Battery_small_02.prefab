@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 9500000}
   - component: {fileID: -6431106371783083344}
   - component: {fileID: 8104285750284743754}
+  - component: {fileID: 527021178778130703}
   m_Layer: 0
   m_Name: Battery_small_02
   m_TagString: Untagged
@@ -133,3 +134,15 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 09a65ceb169a40f41ad5118d6620c2f5, type: 3}
+--- !u!114 &527021178778130703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93499a3599847ef4898529ec0438f246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

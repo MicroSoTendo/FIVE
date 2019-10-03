@@ -95,6 +95,7 @@ namespace FIVE.Interactive
         public void Add(GameObject item)
         {
             OnChanged(item, items.Count, InventoryChangedAction.Add);
+            item.GetComponent<Item>().Owner = Owner;
             items.Add(item);
         }
 
