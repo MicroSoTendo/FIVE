@@ -26,4 +26,8 @@ public class TextDisplay : TextFormat
             yield return new WaitForSeconds(0.05f);
         }
     }
+    private void Update()
+    {
+        
+    }
 }

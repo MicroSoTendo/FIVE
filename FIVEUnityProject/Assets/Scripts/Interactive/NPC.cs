@@ -7,13 +7,12 @@ namespace FIVE.Interactive
     public class NPC : MonoBehaviour
     {
         private Transform image;
-        public GameObject Description;
         Vector3 originalScale;
         private bool onClick;
+        public GameObject Description;
         private void Start()
         {
             onClick = false;
-            Description.SetActive(false);
             image = gameObject.transform.Find("Canvas").Find("Image");
             originalScale = image.localScale;
         }
@@ -46,7 +45,10 @@ namespace FIVE.Interactive
         }
         public void OnMouseDown()
         {
-            Description.SetActive(true);
+            Debug.Log("OnMouseDownClicked");
+            GameObject go = Instantiate(Description) as GameObject;
+            go.transform.SetParent(GameObject.Find("UIScreenSpace").transform);
+            go.transform.localPosition = new Vector2(0, -192);
         }
         public void Update()
         {

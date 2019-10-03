@@ -5,8 +5,8 @@ using UnityEngine;
 public class DescriptionManager : MonoBehaviour
 {
 
-    public void InactiveSelf()
+    public void DestroySelf()
     {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }
