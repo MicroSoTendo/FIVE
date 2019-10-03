@@ -18,6 +18,8 @@ namespace FIVE.GameStates
             inventoryViewModel.SetEnabled(false);
             AWSLEditorViewModel awslEditorViewModel = UIManager.AddViewModel<AWSLEditorViewModel>();
             awslEditorViewModel.SetEnabled(false);
+            ItemDialogViewModel itemDialogViewModel = UIManager.AddViewModel<ItemDialogViewModel>();
+            itemDialogViewModel.SetEnabled(false);
         }
     }
 }

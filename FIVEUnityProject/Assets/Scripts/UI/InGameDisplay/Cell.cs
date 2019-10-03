@@ -30,7 +30,7 @@ namespace FIVE.UI.InGameDisplay
 
         private void Awake()
         {
-            contentTransform = gameObject.GetChildGameObject("Content").transform;
+            contentTransform = gameObject.FindChildRecursive("Content").transform;
         }
         public void OnPointerEnter(PointerEventData eventData)
         {

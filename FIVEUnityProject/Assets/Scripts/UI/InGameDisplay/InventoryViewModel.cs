@@ -2,6 +2,7 @@
 using FIVE.EventSystem;
 using FIVE.Interactive;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,15 +10,12 @@ namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryViewModel : ViewModel<InventoryView, InventoryViewModel>
     {
-        private GameObject Content { get; }
-        private RectTransform ContentTransform { get; }
-        public Inventory Inventory { get; set; }
         private readonly Dictionary<int, GameObject> cellDictionary = new Dictionary<int, GameObject>();
 
         public InventoryViewModel()
         {
             EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
-            Content = View.InventoryScrollView.GetChildGameObject("InventoryContent");
+            Content = View.InventoryScrollView.FindChildRecursive("InventoryContent");
             ContentTransform = Content.GetComponent<RectTransform>();
             binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
             View.ViewCanvas.worldCamera = Camera.current;
@@ -25,24 +23,22 @@ namespace FIVE.UI.InGameDisplay
             View.ViewCanvas.planeDistance = 0.5f;
         }
 
+        private GameObject Content { get; }
+        private RectTransform ContentTransform { get; }
+        public Inventory Inventory { get; set; }
+
         public override void SetEnabled(bool value)
         {
             base.SetEnabled(value);
             View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
-            if (IsEnabled)
-            {
-                MainThreadDispatcher.Schedule(SetUpCells);
-            }
+            SetUpCells();
         }
 
         public override void ToggleEnabled()
         {
             base.ToggleEnabled();
             View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
-            if (IsEnabled)
-            {
-                MainThreadDispatcher.Schedule(SetUpCells);
-            }
+            SetUpCells();
         }
 
         private void ExitInventory(object sender, EventArgs e)
@@ -54,7 +50,7 @@ namespace FIVE.UI.InGameDisplay
         {
             GameObject cell = View.AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
             cell.transform.SetParent(ContentTransform);
-            Transform itemHolder = cell.GetChildGameObject("Content").transform;
+            Transform itemHolder = cell.FindChildRecursive("Content").transform;
             item.transform.SetParent(itemHolder);
             item.GetComponent<MeshRenderer>().receiveShadows = false;
             ItemInfo info = item.GetComponent<Item>().Info;
@@ -77,7 +73,16 @@ namespace FIVE.UI.InGameDisplay
         }
 
         private void SetUpCells()
-        {       
+        {
+            if (IsEnabled)
+            {
+                MainThreadDispatcher.ScheduleCoroutine(SetUpCellsCoroutine());
+            }
+        }
+
+        private IEnumerator SetUpCellsCoroutine()
+        {
+            yield return new WaitForEndOfFrame();
             float cellWidth = 200; //TODO: get by call
             int totalColumns = (int)(ContentTransform.rect.width / cellWidth);
             foreach (KeyValuePair<int, GameObject> keyValuePair in cellDictionary)
@@ -87,8 +92,10 @@ namespace FIVE.UI.InGameDisplay
                 int x = index % totalColumns;
                 int y = index / totalColumns;
                 cell.GetComponent<RectTransform>().anchoredPosition = new Vector2(x * cellWidth, -y * cellWidth);
+                yield return null;
             }
         }
+
         private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
         {
             switch (e.Action)
@@ -107,11 +114,8 @@ namespace FIVE.UI.InGameDisplay
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            if(IsEnabled)
-            {
-                SetUpCells();
-            }
-        }
 
+            SetUpCells();
+        }
     }
 }
