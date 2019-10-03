@@ -57,10 +57,10 @@ namespace FIVE.UI.InGameDisplay
             Transform itemHolder = cell.GetChildGameObject("Content").transform;
             item.transform.SetParent(itemHolder);
             item.GetComponent<MeshRenderer>().receiveShadows = false;
-            Item.ItemInfo info = item.GetComponent<Item>().Info;
-            item.transform.localScale = info.uiScale;
-            item.transform.localEulerAngles = info.uiRotation;
-            item.transform.localPosition = info.uiPosition;
+            ItemInfo info = item.GetComponent<Item>().Info;
+            item.transform.localScale = info.UIScale;
+            item.transform.localEulerAngles = info.UIRotation;
+            item.transform.localPosition = info.UIPosition;
             AddOrUpdate(index, cell);
         }
 
