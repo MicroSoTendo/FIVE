@@ -45,7 +45,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-ProjectVersion.txt
 
 # Art Assets
 FIVEUnityProject/Assets/Resources/Textures/*
+# Test stuff
+FIVEUnityProject/Assets/Scenes/Test*
+FIVEUnityProject/ProjectSettings/ProjectVersion.txt
