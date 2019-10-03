@@ -1,10 +1,9 @@
-﻿using FIVE.Robot;
-using FIVE.UI;
+﻿using FIVE.CameraSystem;
+using FIVE.Robot;
 using FIVE.UI.InGameDisplay;
 using System;
 using System.Collections;
 using System.Linq;
-using FIVE.CameraSystem;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -31,16 +30,15 @@ namespace FIVE.Interactive
         public ItemInfo Info
         {
             get => itemInfo;
-            set
-            {
-                itemInfo = value;
-            }
+            set => itemInfo = value;
         }
 
         public float ScanningSpeed { get; set; } = 1f; //TODO: Get from CPU
         public bool IsRotating { get; set; } = false;
         public bool IsPickable { get; set; }
 
+        public Action<GameObject> ItemAction { get; set; }
+        public bool ActionExecuted { get; set; } = false;
         private void Awake()
         {
             itemRenderer = GetComponent<Renderer>();
@@ -51,7 +49,7 @@ namespace FIVE.Interactive
         {
             while (!scanner.IsScanningFinished)
             {
-                Color tintColor = Color.Lerp(HighlightColors[currentColor], HighlightColors[nextColor], timer / singleColorInterval);
+                var tintColor = Color.Lerp(HighlightColors[currentColor], HighlightColors[nextColor], timer / singleColorInterval);
                 itemRenderer.material.color = tintColor;
                 scanner.TintColor = tintColor;
                 timer += Time.deltaTime;
@@ -115,11 +113,18 @@ namespace FIVE.Interactive
 
         private void Update()
         {
+            if (IsRotating)
+            {
+                if (Input.GetMouseButtonDown(1) && !ActionExecuted)
+                {
+                    ItemAction?.Invoke(gameObject);
+                    ActionExecuted = true;
+                }
+            }
             if (!isFlashing)
             {
                 return;
             }
-
             bool closeEnough = (FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude < 20f;
             if (!closeEnough)
             {
