@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,5 +20,10 @@ public class TextFormat : MonoBehaviour
         Description[9] = "Have you ever saw an Orange walking around?  Nope it is definitely not a human. It is a walking Orange. ";
         Description[10] = "Welcome to the league of Cyber.";
         Description[11] = "Do you have a good machine learning strategy?";
+    }
+    public int GenerateDescriptionNumber()
+    {   int random = UnityEngine.Random.Range(0, 12);
+
+        return random;
     }
 }

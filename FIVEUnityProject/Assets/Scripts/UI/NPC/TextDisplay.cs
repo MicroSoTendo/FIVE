@@ -10,7 +10,7 @@ public class TextDisplay : TextFormat
     {
         GenerateDescription();
         string text = Description[0];
-        gameObject.GetComponent<Text>().text = Description[0];
+        gameObject.GetComponent<Text>().text = Description[Random.Range(0, 12)];
        // StartCoroutine(AnimateText(text));
     }
 
