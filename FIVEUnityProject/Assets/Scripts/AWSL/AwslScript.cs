@@ -39,7 +39,6 @@ namespace FIVE.AWSL
 
         internal bool Execute()
         {
-            Debug.Log("Update " + Time.time);
             try
             {
                 Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward, out RaycastHit hitinfo);

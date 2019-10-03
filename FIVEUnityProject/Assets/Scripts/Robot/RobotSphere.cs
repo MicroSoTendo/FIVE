@@ -21,7 +21,6 @@ namespace FIVE.Robot
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotState currState = RobotState.Idle;
 
-
         private CharacterController cc;
 
         // Robot Components
@@ -139,7 +138,6 @@ namespace FIVE.Robot
             currState = RobotState.Walk;
             if (schedule)
             {
-                Debug.Log($"Schedule {steps}");
                 movable.ScheduleMove(move, steps);
             }
             else
