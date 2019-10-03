@@ -95,7 +95,6 @@ namespace FIVE.UI.InGameDisplay
                 yield return null;
             }
         }
-
         private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
         {
             switch (e.Action)
@@ -104,6 +103,8 @@ namespace FIVE.UI.InGameDisplay
                     AddCell($"Cell-{e.Index}", e.Index, e.Item);
                     break;
                 case InventoryChangedAction.Remove:
+                    MainThreadDispatcher.Destroy(cellDictionary[e.Index]);
+                    cellDictionary.Remove(e.Index);
                     break;
                 case InventoryChangedAction.RemoveAt:
                     break;

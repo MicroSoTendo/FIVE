@@ -2,11 +2,10 @@
 
 namespace FIVE.RobotComponent
 {
-
     public class Battery : MonoBehaviour
     {
         public float Capacity;
-        private float currEnergy;
+        public float CurrentEnergy;
         private bool isCharging;
         public int DechargeSpeed;
         private int chargeSpeed;
@@ -14,7 +13,7 @@ namespace FIVE.RobotComponent
         public void Start()
         {
             Capacity = 100.0f;
-            currEnergy = Capacity;
+            CurrentEnergy = Capacity;
             DechargeSpeed = 1;
         }
 
@@ -22,11 +21,11 @@ namespace FIVE.RobotComponent
         {
             if (isCharging)
             {
-                currEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, Capacity);
+                CurrentEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, Capacity);
             }
             else
             {
-                currEnergy -= Mathf.Clamp(DechargeSpeed * Time.deltaTime, 0, Capacity);
+                CurrentEnergy -= Mathf.Clamp(DechargeSpeed * Time.deltaTime, 0, Capacity);
             }
         }
 

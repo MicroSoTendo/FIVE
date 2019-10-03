@@ -21,7 +21,14 @@ namespace FIVE.Interactive
         }
     }
 
+    public class RemoveItemRequestedEventArgs : EventArgs
+    {
+        public GameObject Item { get; }
+        public RemoveItemRequestedEventArgs(GameObject item) => Item = item;
+    }
+
     public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs> { }
+    public class OnRemoveItemRequested : IEventType<RemoveItemRequestedEventArgs> { }
     public enum InventoryChangedAction
     {
         Add,
@@ -56,6 +63,12 @@ namespace FIVE.Interactive
         {
             Owner = owner;
             EventManager.Subscribe<OnDropItemToInventory, DropedItemToInventoryEventArgs>(OnDropItemToInventory);
+            EventManager.Subscribe<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(RemovedItem);
+        }
+
+        private void RemovedItem(object sender, RemoveItemRequestedEventArgs e)
+        {
+            Remove(e.Item);
         }
 
         private void OnDropItemToInventory(object sender, DropedItemToInventoryEventArgs e)

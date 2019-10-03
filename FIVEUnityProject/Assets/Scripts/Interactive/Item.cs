@@ -16,6 +16,8 @@ namespace FIVE.Interactive
             Color.magenta, Color.red
         };
 
+        public delegate void ItemUsingAction(GameObject owner, GameObject item);
+
         [SerializeField] private ItemInfo itemInfo;
         private Coroutine flashingCoroutine;
         private Renderer itemRenderer;
@@ -26,7 +28,7 @@ namespace FIVE.Interactive
         private bool isFlashing;
         private Scanner scanner;
         private float singleColorInterval = 0.5f;
-
+        public GameObject Owner { get; set; }
         public ItemInfo Info
         {
             get => itemInfo;
@@ -37,7 +39,7 @@ namespace FIVE.Interactive
         public bool IsRotating { get; set; } = false;
         public bool IsPickable { get; set; }
 
-        public Action<GameObject> ItemAction { get; set; }
+        public ItemUsingAction ItemAction { get; set; }
         public bool ActionExecuted { get; set; } = false;
         private void Awake()
         {
@@ -117,8 +119,9 @@ namespace FIVE.Interactive
             {
                 if (Input.GetMouseButtonDown(1) && !ActionExecuted)
                 {
-                    ItemAction?.Invoke(gameObject);
+                    ItemAction?.Invoke(Owner, gameObject);
                     ActionExecuted = true;
+                    this.RaiseEvent<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(new RemoveItemRequestedEventArgs(gameObject));
                 }
             }
             if (!isFlashing)
