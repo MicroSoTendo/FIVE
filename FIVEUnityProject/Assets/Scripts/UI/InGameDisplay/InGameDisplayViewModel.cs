@@ -1,5 +1,6 @@
 ﻿using FIVE.UI.OptionsMenu;
 using System;
+using FIVE.Robot;
 using UnityEngine;
 
 namespace FIVE.UI.InGameDisplay
@@ -20,6 +21,14 @@ namespace FIVE.UI.InGameDisplay
 
             binder.Bind(view => view.Option.onClick).
             To(viewModel => viewModel.OnOptionClicked);
+
+            binder.Bind(view=>view.Scan.onClick).
+                To(vm=>vm.OnScanClicked);
+        }
+
+        private void OnScanClicked(object sender, EventArgs e)
+        {
+            this.RaiseEvent<OnGlobalScanRequested>();
         }
 
         private void OnPlayerButtonClicked(object sender, EventArgs eventArgs)
