@@ -45,14 +45,7 @@ namespace FIVE.AWSL
                 script.Globals["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
                 DynValue result = coroutine.Coroutine.Resume();
-                if (result.Type == DataType.Void)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return result.Type != DataType.YieldRequest;
             }
             catch (Exception e)
             {
