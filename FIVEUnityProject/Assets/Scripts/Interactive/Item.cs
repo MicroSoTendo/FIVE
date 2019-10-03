@@ -83,7 +83,7 @@ namespace FIVE.Interactive
             }
             if (scanner.IsScanningFinished)
             {
-                this.RaiseEvent<OnItemDialogRequested, ItemDialogRequestedEventArgs>(new ItemDialogRequestedEventArgs(GetComponent<Renderer>().bounds));
+                this.RaiseEvent<OnItemDialogRequested, ItemDialogRequestedEventArgs>(new ItemDialogRequestedEventArgs(gameObject));
             }
         }
 
@@ -120,7 +120,7 @@ namespace FIVE.Interactive
                 return;
             }
 
-            bool closeEnough = (FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude < 5f;
+            bool closeEnough = (FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude < 20f;
             if (!closeEnough)
             {
                 return;
