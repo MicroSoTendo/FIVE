@@ -1,6 +1,7 @@
 ﻿using FIVE.EventSystem;
 using FIVE.UI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -21,12 +22,31 @@ namespace FIVE.Interactive
     }
 
     public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs> { }
-
-    public class OnInventoryChanged : IEventType<NotifyCollectionChangedEventArgs> { }
-
-    public class Inventory : Observable<NotifyCollectionChangedEventArgs>
+    public enum InventoryChangedAction
     {
-        private readonly ObservableCollection<GameObject> items = new ObservableCollection<GameObject>();
+        Add,
+        Remove,
+        RemoveAt,
+        Insert,
+        Replace
+    }
+    public class InventoryChangedEventArgs : EventArgs
+    {
+
+        public GameObject Item { get; }
+        public int Index { get; }
+        public InventoryChangedAction Action { get; }
+        public InventoryChangedEventArgs(GameObject item, int index, InventoryChangedAction action)
+        {
+            Action = action;
+            Index = index;
+            Item = item;
+        }
+    }
+    public class OnInventoryChanged : OnObservableChanged<InventoryChangedEventArgs> { }
+    public class Inventory : Observable<OnInventoryChanged, InventoryChangedEventArgs>
+    {
+        private readonly List<GameObject> items = new List<GameObject>();
         public int Capacity { get; set; } = 100;
         public int Count => items.Count;
 
@@ -35,42 +55,39 @@ namespace FIVE.Interactive
         public Inventory(GameObject owner)
         {
             Owner = owner;
-            items.CollectionChanged += OnCollectionChanged;
             EventManager.Subscribe<OnDropItemToInventory, DropedItemToInventoryEventArgs>(OnDropItemToInventory);
-        }
-
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            sender.RaiseEvent<OnInventoryChanged, NotifyCollectionChangedEventArgs>(e);
         }
 
         private void OnDropItemToInventory(object sender, DropedItemToInventoryEventArgs e)
         {
             //TODO: Size checking
-            if (e.Index != null)
+            if (e.Index == null)
             {
-                items.Insert(e.Index.Value, e.Item);
+                Add(e.Item);
             }
             else
             {
-                items.Add(e.Item);
+                Insert(e.Index.Value, e.Item);
             }
         }
 
-
+        private void OnChanged(GameObject gameObject, int index, InventoryChangedAction action)
+        {
+            RaiseObservableChanged(new InventoryChangedEventArgs(gameObject, index, action));
+        }
         public void ChangeOwner(GameObject newOwner)
         {
             Owner = newOwner;
         }
-
-
         public void Add(GameObject item)
         {
+            OnChanged(item, items.Count, InventoryChangedAction.Add);
             items.Add(item);
         }
 
         public void Insert(int index, GameObject item)
         {
+            OnChanged(item, index, InventoryChangedAction.Insert);
             items.Insert(index, item);
         }
 
@@ -78,15 +95,18 @@ namespace FIVE.Interactive
         {
             int index = items.IndexOf(oldItem);
             items[index] = newItem;
+            OnChanged(newItem, index, InventoryChangedAction.Replace);
         }
 
         public void Remove(GameObject item)
         {
+            OnChanged(item, items.IndexOf(item), InventoryChangedAction.Remove);
             items.Remove(item);
         }
 
         public void RemoveAt(int index)
         {
+            OnChanged(items[index], index, InventoryChangedAction.RemoveAt);
             items.RemoveAt(index);
         }
 

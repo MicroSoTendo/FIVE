@@ -12,6 +12,8 @@ namespace FIVE
         public float VisionRange;
 
         private CharacterController cc;
+        private Animator animator;
+
         private GameObject currTarget;
 
         private float speed;
@@ -21,6 +23,7 @@ namespace FIVE
             VisionRange = 10.0f;
 
             cc = GetComponent<CharacterController>();
+            animator = GetComponent<Animator>();
 
             speed = 10.0f;
         }
@@ -29,10 +32,12 @@ namespace FIVE
         {
             if (currTarget == null || Vector3.Distance(transform.position, currTarget.transform.position) > 2 * VisionRange)
             {
+                animator.SetBool("idle2", true);
                 SearchTarget();
             }
             else
             {
+                animator.SetBool("walk", true);
                 Vector3 move = currTarget.transform.position - transform.position;
                 transform.forward = move;
                 cc.SimpleMove(Vector3.Normalize(move) * speed);
