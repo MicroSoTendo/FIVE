@@ -3,9 +3,9 @@
     Properties
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
-        _Color ("Tint", Color) = (1,1,1,1)
-        _ElapsedTime ("ElapsedTime", float) = 0
-        _Intensity ("Intensity", float) = 1
+        [PerRendererData] _Color ("Tint", Color) = (1,1,1,1)
+        [PerRendererData] _ElapsedTime ("ElapsedTime", float) = 0
+        [PerRendererData] _Intensity ("Intensity", float) = 1
     }
 
     SubShader
