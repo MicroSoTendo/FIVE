@@ -32,12 +32,12 @@ namespace FIVE
         {
             if (currTarget == null || Vector3.Distance(transform.position, currTarget.transform.position) > 2 * VisionRange)
             {
-                animator.SetBool("idle2", true);
+                animator.SetTrigger("idle2");
                 SearchTarget();
             }
             else
             {
-                animator.SetBool("walk", true);
+                animator.SetTrigger("walk");
                 Vector3 move = currTarget.transform.position - transform.position;
                 transform.forward = move;
                 cc.SimpleMove(Vector3.Normalize(move) * speed);
