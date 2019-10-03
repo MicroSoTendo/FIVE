@@ -29,7 +29,7 @@ namespace FIVE.AWSL
                 script.Globals["left"] = FuncMove(Movable.Move.Left);
                 script.Globals["right"] = FuncMove(Movable.Move.Right);
 
-                coroutine.Coroutine.AutoYieldCounter = 4 * robot.CPU.Speed;
+                coroutine.Coroutine.AutoYieldCounter = 4 /* robot.CPU.Speed*/;
             }
             catch (Exception e)
             {
