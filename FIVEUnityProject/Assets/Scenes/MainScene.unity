@@ -477,7 +477,7 @@ MonoBehaviour:
   - {fileID: 8399917682610804045, guid: d40b14f7a222a40458a2731f5bf43567, type: 3}
   - {fileID: 8704385010068657825, guid: abb5c8d8aef7e424aa39229fdddb13a2, type: 3}
   - {fileID: 4007370837063148263, guid: e08dd51b195aeac46ab37c3d6325adea, type: 3}
-  - {fileID: 7014651790348046657, guid: a48c2d5dd4fcee84bb5f6eaf8b171a0e, type: 3}
+  - {fileID: 2313752886767380509, guid: a48c2d5dd4fcee84bb5f6eaf8b171a0e, type: 3}
   InfrastructuresOnStart: []
 --- !u!1001 &3772496689763247098
 PrefabInstance:
@@ -486,6 +486,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
+        type: 3}
+      propertyPath: m_Name
+      value: Directional Light
+      objectReference: {fileID: 0}
     - target: {fileID: 3772496688967652343, guid: b49d8b618ff84b34ca0a1d92887e3c88,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -540,11 +545,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
-        type: 3}
-      propertyPath: m_Name
-      value: Directional Light
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b49d8b618ff84b34ca0a1d92887e3c88, type: 3}
