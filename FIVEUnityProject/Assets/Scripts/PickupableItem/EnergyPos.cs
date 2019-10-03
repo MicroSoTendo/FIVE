@@ -33,9 +33,6 @@ public class EnergyPos : MonoBehaviour
         for (int i = 0; i < positionArray.Length; i++)
         {
             double random = Random.Range(0.0f, 1.0f);
-#if !DEBUG
-            if(random >= 0.5)
-#endif
             {
                 Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i]));
             }
