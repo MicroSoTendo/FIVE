@@ -10,8 +10,6 @@ namespace FIVE.UI.InGameDisplay
         public void SetItemInfo(Item.ItemInfo itemInfo)
         {
             this.info = itemInfo;
-            //View.ItemName.text = info.Name;
-            //View.Description.text = info.Description;
         }
 
         public void SetPosition(Vector3 vector)
@@ -22,8 +20,8 @@ namespace FIVE.UI.InGameDisplay
         public bool IsProcedureDisplayFinished { get; private set; } = false;
         public IEnumerator ProcedureDisplay()
         {
-            string itemType = "Item Type: " + info.Name;
-            string description = "Description: " + info.Description;
+            string itemType = "Item Type: " + info.name;
+            string description = "Description: " + info.description;
 
             View.ItemNameInputField.text = "";
             View.DescriptionInputField.text = "";

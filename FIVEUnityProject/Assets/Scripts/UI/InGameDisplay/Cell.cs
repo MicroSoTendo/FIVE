@@ -9,7 +9,6 @@ namespace FIVE.UI.InGameDisplay
     public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         private Transform contentTransform;
-
         private GameObject item;
         public GameObject Item
         {

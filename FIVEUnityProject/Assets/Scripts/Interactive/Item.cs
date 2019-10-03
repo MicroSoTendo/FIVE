@@ -14,13 +14,13 @@ namespace FIVE.Interactive
         [Serializable]
         public struct ItemInfo
         {
-            public string Name;
-            public string Description;
-
-            public static ItemInfo Empty => new ItemInfo() { Name = "", Description = "" };
-
-            public static ItemInfo Test => new ItemInfo() { Name = "Test Item Type", Description = "Test Item Descriptions. This is a test description, which is only for test purpose and should not be used for non-test purpose. Test description tested is a testing test." };
-
+            public string name;
+            public string description;
+            public Vector3 uiScale;
+            public Vector3 uiRotation;
+            public Vector3 uiPosition;
+            public static ItemInfo Empty => new ItemInfo { name = "", description = "" };
+            public static ItemInfo Test => new ItemInfo { name = "Test Item Type", description = "Test Item Descriptions. This is a test description, which is only for test purpose and should not be used for non-test purpose. Test description tested is a testing test." };
         }
 
         private ItemDialogViewModel cachedVM;
@@ -210,7 +210,7 @@ namespace FIVE.Interactive
             {
                 cachedVM = UIManager.AddViewModel<ItemDialogViewModel>(name: gameObject.name + gameObject.GetInstanceID());
                 SetVMPosition();
-                cachedVM.SetItemInfo(ItemInfo.Test);
+                cachedVM.SetItemInfo(itemInfo);
                 cachedVM.SetEnabled(true);
                 StartCoroutine(cachedVM.ProcedureDisplay());
             }

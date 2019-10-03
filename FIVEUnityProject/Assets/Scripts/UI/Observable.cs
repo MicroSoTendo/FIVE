@@ -4,29 +4,33 @@ using System.Threading.Tasks;
 
 namespace FIVE.UI
 {
-    public abstract class Observable<TEventArgs> where TEventArgs : EventArgs
+    public class OnObservableChanged<TEventArgs> : IEventType<TEventArgs> where TEventArgs : EventArgs { }
+    public abstract class Observable<TEventType, TEventArgs> 
+        where TEventType : OnObservableChanged<TEventArgs>
+        where TEventArgs : EventArgs
     {
         public event EventHandler<TEventArgs> OnObservableChanged
         {
             add
             {
-                EventManager.Subscribe<OnObservableChanged<TEventArgs>, TEventArgs>(value);
+                EventManager.Subscribe<TEventType, TEventArgs>(value);
             }
 
             remove
             {
-                EventManager.Unsubscribe<OnObservableChanged<TEventArgs>, TEventArgs>(value);
+                EventManager.Unsubscribe<TEventType, TEventArgs>(value);
             }
         }
 
         protected void RaiseObservableChanged(TEventArgs observableChangedEventArgs)
         {
-            this.RaiseEvent<OnObservableChanged<TEventArgs>, TEventArgs>(observableChangedEventArgs);
+            this.RaiseEvent<TEventType, TEventArgs>(observableChangedEventArgs);
         }
 
         protected async Task RaiseObservableChangedAsync(TEventArgs propertyChangedEventArgs)
         {
-            await this.RaiseEventAsync<OnObservableChanged<TEventArgs>, TEventArgs>(propertyChangedEventArgs);
+            await this.RaiseEventAsync<TEventType, TEventArgs>(propertyChangedEventArgs);
         }
+
     }
 }

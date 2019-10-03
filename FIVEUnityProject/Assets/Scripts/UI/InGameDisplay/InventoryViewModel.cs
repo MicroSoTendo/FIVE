@@ -1,9 +1,8 @@
-﻿using FIVE.EventSystem;
+﻿using FIVE.CameraSystem;
+using FIVE.EventSystem;
 using FIVE.Interactive;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using FIVE.CameraSystem;
 using UnityEngine;
 
 namespace FIVE.UI.InGameDisplay
@@ -12,11 +11,12 @@ namespace FIVE.UI.InGameDisplay
     {
         private GameObject Content { get; }
         private RectTransform ContentTransform { get; }
-        private int total;
         public Inventory Inventory { get; set; }
+        private readonly Dictionary<int, GameObject> cellDictionary = new Dictionary<int, GameObject>();
+
         public InventoryViewModel()
         {
-            EventManager.Subscribe<OnInventoryChanged, NotifyCollectionChangedEventArgs>(OnInventoryChanged);
+            EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
             Content = View.InventoryScrollView.GetChildGameObject("InventoryContent");
             ContentTransform = Content.GetComponent<RectTransform>();
             binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
@@ -28,15 +28,21 @@ namespace FIVE.UI.InGameDisplay
         public override void SetEnabled(bool value)
         {
             base.SetEnabled(value);
-            string s = value ? "Enabled" : "Disabled";
-            Debug.Log($"Inventory is {s}");
             View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+            if (IsEnabled)
+            {
+                MainThreadDispatcher.Schedule(SetUpCells);
+            }
         }
 
         public override void ToggleEnabled()
         {
             base.ToggleEnabled();
             View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+            if (IsEnabled)
+            {
+                MainThreadDispatcher.Schedule(SetUpCells);
+            }
         }
 
         private void ExitInventory(object sender, EventArgs e)
@@ -44,55 +50,66 @@ namespace FIVE.UI.InGameDisplay
             SetEnabled(false);
         }
 
-        private GameObject AddCell(string id, out RectTransform rectTransform, out Transform itemHolder)
+        private void AddCell(string cellId, int index, GameObject item)
         {
-            GameObject cell = View.AddUIElementFromResources<GameObject>("Cell", id, ContentTransform);
+            GameObject cell = View.AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
             cell.transform.SetParent(ContentTransform);
-            rectTransform = cell.GetComponent<RectTransform>();
-            itemHolder = cell.GetChildGameObject("Content").transform;
-            return cell;
+            Transform itemHolder = cell.GetChildGameObject("Content").transform;
+            item.transform.SetParent(itemHolder);
+            item.GetComponent<MeshRenderer>().receiveShadows = false;
+            Item.ItemInfo info = item.GetComponent<Item>().Info;
+            item.transform.localScale = info.uiScale;
+            item.transform.localEulerAngles = info.uiRotation;
+            item.transform.localPosition = info.uiPosition;
+            AddOrUpdate(index, cell);
         }
 
-        private List<GameObject> cellList;
+        private void AddOrUpdate(int index, GameObject go)
+        {
+            if (cellDictionary.ContainsKey(index))
+            {
+                cellDictionary[index] = go;
+            }
+            else
+            {
+                cellDictionary.Add(index, go);
+            }
+        }
 
-        private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SetUpCells()
+        {       
+            float cellWidth = 200; //TODO: get by call
+            int totalColumns = (int)(ContentTransform.rect.width / cellWidth);
+            foreach (KeyValuePair<int, GameObject> keyValuePair in cellDictionary)
+            {
+                int index = keyValuePair.Key;
+                GameObject cell = keyValuePair.Value;
+                int x = index % totalColumns;
+                int y = index / totalColumns;
+                cell.GetComponent<RectTransform>().anchoredPosition = new Vector2(x * cellWidth, -y * cellWidth);
+            }
+        }
+        private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
         {
             switch (e.Action)
             {
-                case NotifyCollectionChangedAction.Add:
-                    for (int i = 0; i < e.NewItems.Count; i++)
-                    {
-
-                        int startingIndex = e.NewStartingIndex;
-                        GameObject newCell = AddCell($"Cell-{i + startingIndex}", out RectTransform rectTransform, out Transform itemHolder);
-
-                        float cellWidth = rectTransform.sizeDelta.x; //TODO: get by call
-                        int totalColumns = (int)(ContentTransform.rect.width / cellWidth);
-                        int x = startingIndex % totalColumns;
-                        int y = startingIndex / totalColumns;
-                        rectTransform.anchoredPosition = new Vector2(x * cellWidth, - y * cellWidth);
-
-                        GameObject go = (GameObject)e.NewItems[i];
-                        go.GetComponent<MeshRenderer>().receiveShadows = false;
-                        go.transform.SetParent(itemHolder);
-
-                        //TODO:Parametrize it into Item.cs
-                        go.transform.localScale = new Vector3(7.7f, 7.7f, 7.7f);
-                        go.transform.localEulerAngles = new Vector3(-90,0,0);
-                        go.transform.localPosition = new Vector3(7.5f,-55,-25);
-
-                    }
+                case InventoryChangedAction.Add:
+                    AddCell($"Cell-{e.Index}", e.Index, e.Item);
                     break;
-                case NotifyCollectionChangedAction.Move:
+                case InventoryChangedAction.Remove:
                     break;
-                case NotifyCollectionChangedAction.Remove:
+                case InventoryChangedAction.RemoveAt:
                     break;
-                case NotifyCollectionChangedAction.Replace:
+                case InventoryChangedAction.Insert:
                     break;
-                case NotifyCollectionChangedAction.Reset:
+                case InventoryChangedAction.Replace:
                     break;
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException();
+            }
+            if(IsEnabled)
+            {
+                SetUpCells();
             }
         }
 
