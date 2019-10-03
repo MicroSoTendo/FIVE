@@ -10,10 +10,10 @@ namespace FIVE.UI.InGameDisplay
 {
     public class ItemDialogRequestedEventArgs : EventArgs
     {
-        public Bounds ItemRenderBounds { get; }
-        public ItemDialogRequestedEventArgs(Bounds bounds)
+        public GameObject Item { get; }
+        public ItemDialogRequestedEventArgs(GameObject item)
         {
-            ItemRenderBounds = bounds;
+            this.Item = item;
         }
     }
     public abstract class OnItemDialogDismissRequested : IEventType { }
@@ -30,28 +30,69 @@ namespace FIVE.UI.InGameDisplay
         private void OnDismiss(object sender, EventArgs e)
         {
             base.SetEnabled(false);
+            isUpdate = false;
         }
 
+        private bool isUpdate = false;
         private void OnItemDialogRequested(object sender, ItemDialogRequestedEventArgs e)
         {
-            MainThreadDispatcher.ScheduleCoroutine(ProcedureDisplay(e.ItemRenderBounds));
+            base.SetEnabled(true);
+            isUpdate = true;
+            MainThreadDispatcher.ScheduleCoroutine(UpdatePosition(e.Item));
+            MainThreadDispatcher.ScheduleCoroutine(ProcedureDisplay(e.Item));
         }
 
-        private ItemInfo info = ItemInfo.Empty;
-        public void SetItemInfo(ItemInfo itemInfo)
+        private float GetCoordWithBound(float min, float max, float range, float offset)
         {
-            this.info = itemInfo;
+            float f;
+            if (min > 1f)
+            {
+                f = range - offset;
+            }
+            else if (max < 0f)
+            {
+                f = 0;
+            }
+            else
+            {
+                if (max < 0.5f)
+                {
+                    f = max * range;
+                }
+                else
+                {
+                    f = min * range - offset;
+                }
+            }
+            return f;
+        }
+
+        private IEnumerator UpdatePosition(GameObject item)
+        {
+            Camera fpsCamera = CameraManager.GetFpsCameras.First();
+            Renderer itemRenderer = item.GetComponent<Renderer>();
+            while (isUpdate)
+            {
+                Bounds itemBounds = itemRenderer.bounds;
+                Vector3 itemNDCMin = fpsCamera.WorldToViewportPoint(itemBounds.min);
+                Vector3 itemNDCMax = fpsCamera.WorldToViewportPoint(itemBounds.max);
+                float left = Mathf.Min(itemNDCMin.x, itemNDCMax.x);
+                float right = Mathf.Max(itemNDCMin.x, itemNDCMax.x);
+                float bottom = Mathf.Min(itemNDCMin.y, itemNDCMax.y);
+                float top = Mathf.Max(itemNDCMin.y, itemNDCMax.y);
+                float x = GetCoordWithBound(left,right,fpsCamera.pixelWidth, View.DescriptionInputField.GetComponent<RectTransform>().rect.width);
+                float y = GetCoordWithBound(bottom,top,fpsCamera.pixelHeight, 0);
+                View.DialogPanel.GetComponent<Transform>().position = new Vector3(x, y, 0);
+                yield return null;
+            }
         }
 
         public bool IsProcedureDisplayFinished { get; private set; } = false;
 
-        private IEnumerator ProcedureDisplay(Bounds itemBounds)
+        private IEnumerator ProcedureDisplay(GameObject item)
         {
-            SetEnabled(true);
-            yield return new WaitForEndOfFrame();
-            SetDialogPosition(itemBounds);
-            yield return null;
             //Show words
+            ItemInfo info = item.GetComponent<Item>().Info;
             string itemType = "Item Type: " + info.Name;
             string description = "Description: " + info.Description;
             View.ItemNameInputField.text = "";
@@ -68,60 +109,6 @@ namespace FIVE.UI.InGameDisplay
             }
 
             IsProcedureDisplayFinished = true;
-        }
-
-        private void SetDialogPosition(Bounds itemBounds)
-        {
-            Camera fpsCamera = CameraManager.GetFpsCameras.First();
-            Vector3 itemNDCMin = fpsCamera.WorldToViewportPoint(itemBounds.min);
-            Vector3 itemNDCMax = fpsCamera.WorldToViewportPoint(itemBounds.max);
-            float left = Mathf.Min(itemNDCMin.x, itemNDCMax.x);
-            float right = Mathf.Max(itemNDCMin.x, itemNDCMax.x);
-            float bottom = Mathf.Min(itemNDCMin.y, itemNDCMax.y);
-            float top = Mathf.Max(itemNDCMin.y, itemNDCMax.y);
-
-            float x, y;
-
-            if (left > 1f)
-            {
-                x = fpsCamera.pixelWidth - View.DialogPanel.GetComponent<RectTransform>().rect.width;
-            }
-            else if (right < 0f)
-            {
-                x = 0;
-            }
-            else
-            {
-                if (right < 0.5f)
-                {
-                    x = right * fpsCamera.pixelWidth;
-                }
-                else
-                {
-                    x = left * fpsCamera.pixelWidth - View.DialogPanel.GetComponent<RectTransform>().rect.width;
-                }
-            }
-
-            if (bottom > 1f)
-            {
-                y = fpsCamera.pixelHeight - View.DialogPanel.GetComponent<RectTransform>().rect.height;
-            }
-            else if (top < 0f)
-            {
-                y = 0f;
-            }
-            else
-            {
-                if (top < 0.5f)
-                {
-                    y = top * fpsCamera.pixelHeight;
-                }
-                else
-                {
-                    y = bottom * fpsCamera.pixelHeight - View.DialogPanel.GetComponent<RectTransform>().rect.height;
-                }
-            }
-            View.DialogPanel.GetComponent<Transform>().position = new Vector3(x, y, 0);
         }
     }
 }
