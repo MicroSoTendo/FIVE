@@ -1,5 +1,4 @@
 ﻿using FIVE.EventSystem;
-using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 
@@ -12,8 +11,8 @@ namespace FIVE.Network
 
     public class OnRoomListUpdateEventArgs : EventArgs
     {
-        public List<RoomInfo> RoomInfos { get; }
-        public OnRoomListUpdateEventArgs(List<RoomInfo> roomInfos)
+        public List<object> RoomInfos { get; }
+        public OnRoomListUpdateEventArgs(List<object> roomInfos)
         {
             RoomInfos = roomInfos;
         }

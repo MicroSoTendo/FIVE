@@ -1,4 +1,3 @@
-using Photon.Realtime;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -6,7 +5,7 @@ namespace FIVE.Network
 {
     public class LobbyInfoModel //: Observable
     {
-        public ObservableCollection<RoomInfo> RoomsList { get; }
+        public ObservableCollection<object> RoomsList { get; }
         public string PlayerName
         {
             get => playerName;
@@ -31,7 +30,7 @@ namespace FIVE.Network
 
         public LobbyInfoModel()
         {
-            RoomsList = new ObservableCollection<RoomInfo>();
+            RoomsList = new ObservableCollection<object>();
             //RoomsList.CollectionChanged += OnRoomsListChanged;
         }
 

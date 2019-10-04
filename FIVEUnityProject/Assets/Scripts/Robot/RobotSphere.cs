@@ -59,12 +59,7 @@ namespace FIVE.Robot
             cc = GetComponent<CharacterController>();
             movable = GetComponent<Movable>();
 
-            // TODO: make networking non-invasive
-            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            // {
-            //     fpsCamera.enabled = false;
-            //     thirdPersonCamera.enabled = false;
-            // }
+           
 
             scriptActive = false;
 
@@ -97,7 +92,7 @@ namespace FIVE.Robot
                 {
                     if (Input.GetKey(KeyCode.E))
                     {
-                        this.RaiseEventFixed<DoToggleEditor>(new LauncherEditorArgs(), 300);
+                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs(), 300);
                     }
                 }
                 yield return null;
@@ -127,11 +122,7 @@ namespace FIVE.Robot
 
         public void LateUpdate()
         {
-            // TODO: Make network non-invasive
-            // if (photonView.IsMine == false && PhotonNetwork.IsConnected)
-            // {
-            //     return;
-            // }
+    
         }
 
         public void Move(Movable.Move move, int steps, bool schedule = false)

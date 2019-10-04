@@ -15,7 +15,7 @@ namespace FIVE.UI.AWSLEditor
             UpdateLineNumber(null, null);
             binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);
             binder.Bind(v => v.CancelButton.onClick).To(vm => vm.OnCancelButtonClicked);
-            EventManager.Subscribe<DoToggleEditor>(ToggleEditor);
+            EventManager.Subscribe<OnToggleEditorRequested>(ToggleEditor);
             EventManager.Subscribe<OnCodeTextChanged>(UpdateLineNumber);
         }
 

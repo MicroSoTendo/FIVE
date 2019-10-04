@@ -12,7 +12,6 @@ namespace FIVE.GameStates
 
         private void Awake()
         {
-            networkManager = FindObjectOfType<NetworkManager>();
         }
 
         private void Start()
@@ -35,7 +34,6 @@ namespace FIVE.GameStates
 
         private void OnConnectedToMaster(object sender, EventArgs e)
         {
-            networkManager.JoinLobby();
         }
     }
 }
