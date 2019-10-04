@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
-    public class NetworkManager// : MonoBehaviourPunCallbacks, IPunObservable
+    public class NetworkManager
     {
         private LobbyInfoModel lobbyInfoModel;
 
