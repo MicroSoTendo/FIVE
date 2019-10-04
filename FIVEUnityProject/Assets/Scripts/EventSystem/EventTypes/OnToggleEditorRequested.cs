@@ -2,7 +2,7 @@
 
 namespace FIVE.EventSystem
 {
-    public abstract class DoToggleEditor : IEventType<LauncherEditorArgs> { }
+    public abstract class OnToggleEditorRequested : IEventType<LauncherEditorArgs> { }
 
     public sealed class LauncherEditorArgs : EventArgs { }
 }
