@@ -50,4 +50,5 @@ sysinfo.txt
 FIVEUnityProject/Assets/Resources/Textures/*
 # Test stuff
 FIVEUnityProject/Assets/Scenes/Test*
+FIVEUnityProject/Assets/Scripts/Network/Mirror/Examples*
 FIVEUnityProject/ProjectSettings/ProjectVersion.txt
