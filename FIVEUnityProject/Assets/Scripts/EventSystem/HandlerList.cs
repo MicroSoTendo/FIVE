@@ -2,29 +2,29 @@ using System.Collections.Generic;
 
 namespace FIVE.EventSystem
 {
-    public class HandlerList<T> where T : HandlerNode
+    public class HandlerList
     {
-        private readonly List<(bool requiresMain, List<T> handlers)> storage;
+        private readonly List<(bool requiresMain, List<HandlerNode> handlers)> storage;
         private readonly object syncroot = new object();
 
         public HandlerList()
         {
-            storage = new List<(bool requiresMain, List<T> handlers)>();
+            storage = new List<(bool requiresMain, List<HandlerNode> handlers)>();
         }
 
-        public HandlerList(IEnumerable<(bool requiresMain, List<T> handlers)> collection)
+        public HandlerList(IEnumerable<(bool requiresMain, List<HandlerNode> handlers)> collection)
         {
-            storage = new List<(bool requiresMain, List<T> handlers)>(collection);
+            storage = new List<(bool requiresMain, List<HandlerNode> handlers)>(collection);
         }
 
         public HandlerList(int capacity)
         {
-            storage = new List<(bool requiresMain, List<T> handlers)>(capacity);
+            storage = new List<(bool requiresMain, List<HandlerNode> handlers)>(capacity);
         }
 
         public int Count => storage.Count;
 
-        public void Add(T item)
+        public void Add(HandlerNode item)
         {
             lock (syncroot)
             {
@@ -34,7 +34,7 @@ namespace FIVE.EventSystem
                 }
                 else
                 {
-                    storage.Add((item.RequiresMainThread, new List<T>() { item }));
+                    storage.Add((item.RequiresMainThread, new List<HandlerNode>() { item }));
                 }
             }
         }
@@ -47,7 +47,7 @@ namespace FIVE.EventSystem
             }
         }
 
-        public IEnumerator<(bool requiresMain, List<T> handlers)> GetEnumerator()
+        public IEnumerator<(bool requiresMain, List<HandlerNode> handlers)> GetEnumerator()
         {
             lock (syncroot)
             {
@@ -55,11 +55,11 @@ namespace FIVE.EventSystem
             }
         }
 
-        public bool Remove(T item)
+        public bool Remove(HandlerNode item)
         {
             lock (syncroot)
             {
-                foreach ((bool requiresMain, List<T> handlers) in storage)
+                foreach ((bool requiresMain, List<HandlerNode> handlers) in storage)
                 {
                     if (handlers.Remove(item))
                     {

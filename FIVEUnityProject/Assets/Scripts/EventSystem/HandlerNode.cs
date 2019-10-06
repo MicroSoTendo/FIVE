@@ -2,69 +2,49 @@ using System;
 
 namespace FIVE.EventSystem
 {
-    public class HandlerNode : IEquatable<HandlerNode>
+    public struct HandlerNode : IEquatable<HandlerNode>
     {
-        public Delegate Handler { get; protected set; }
-        public bool RequiresMainThread { get; protected set; }
+        public EventHandler Handler { get; }
+        public bool RequiresMainThread { get; }
+        private readonly Delegate rawHandler;
 
-        public HandlerNode(Delegate handler, bool requiresMainThread)
+        private HandlerNode(EventHandler handler, Delegate rawHandler, bool requiresMainThread)
         {
-            Handler = handler;
-            RequiresMainThread = requiresMainThread;
+            this.Handler = handler;
+            this.rawHandler = rawHandler;
+            this.RequiresMainThread = requiresMainThread;
+        }
+
+        public static HandlerNode Create(EventHandler handler, bool requiresMainThread)
+        {
+            return new HandlerNode(handler, handler, requiresMainThread);
+        }
+
+        public static HandlerNode Create<T>(EventHandler<T> handler, bool requiresMainThread) where T : EventArgs
+        {
+            return new HandlerNode((o, e) => { handler(o, (T)e); }, handler, requiresMainThread);
         }
 
         public bool Equals(HandlerNode other)
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return Equals(Handler, other.Handler) && RequiresMainThread == other.RequiresMainThread;
+            return Equals(rawHandler, other.rawHandler) && RequiresMainThread == other.RequiresMainThread;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj != null && obj is HandlerNode node)
             {
-                return false;
+                return Equals(node);
             }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((HandlerNode)obj);
+            return false;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((Handler != null ? Handler.GetHashCode() : 0) * 397) ^ RequiresMainThread.GetHashCode();
+                return ((rawHandler != null ? rawHandler.GetHashCode() : 0) * 397) ^ RequiresMainThread.GetHashCode();
             }
-        }
-    }
-
-    public class HandlerNode<T> : HandlerNode where T : Delegate
-    {
-        public new T Handler { get; }
-
-        public HandlerNode(T handler, bool requiresMainThread) : base(handler, requiresMainThread)
-        {
-            Handler = handler;
-            RequiresMainThread = requiresMainThread;
         }
     }
 }
