@@ -2,7 +2,7 @@
 using System;
 using FIVE.EventSystem;
 using FIVE.Robot;
-using FIVE.RobotComponent;
+using FIVE.RobotComponents;
 using UnityEngine;
 using UnityEngine.UI;
 

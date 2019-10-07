@@ -2,9 +2,9 @@
 using FIVE.EventSystem;
 using UnityEngine;
 
-namespace FIVE.RobotComponent
+namespace FIVE.RobotComponents
 {
-    public class Battery : MonoBehaviour
+    public class Battery : RobotComponent
     {
         private float capacity;
 

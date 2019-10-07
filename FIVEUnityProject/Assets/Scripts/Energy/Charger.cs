@@ -8,8 +8,7 @@ namespace FIVE
 {
     public class Charger : MonoBehaviour
     {
-        public int ChargeSpeed
-        { get; set; }
+        public int ChargeSpeed { get; set; }
 
         private void Start()
         {
@@ -21,7 +20,7 @@ namespace FIVE
             RobotSphere robotSphere = other.gameObject.GetComponent<Robot.RobotSphere>();
             if (robotSphere != null)
             {
-                robotSphere.Battery.Charge(ChargeSpeed);
+                //robotSphere.Battery.Charge(ChargeSpeed);
             }
         }
 
@@ -30,7 +29,7 @@ namespace FIVE
             RobotSphere robotSphere = other.gameObject.GetComponent<Robot.RobotSphere>();
             if (robotSphere != null)
             {
-                robotSphere.Battery.UnCharge();
+                //robotSphere.Battery.UnCharge();
             }
         }
     }

@@ -5,29 +5,28 @@ using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.AWSLEditor;
 using System.Collections;
-using FIVE.RobotComponent;
+using FIVE.RobotComponents;
 using UnityEngine;
 
 namespace FIVE.Robot
 {
     [RequireComponent(typeof(Movable))]
-    [RequireComponent(typeof(Battery))]
     [RequireComponent(typeof(CPU))]
-    public class RobotSphere : MonoBehaviour
+    [RequireComponent(typeof(Battery))]
+    public class RobotSphere : RobotBehaviour
     {
-        public enum RobotState { Idle, Walk, Jump, Open };
+        public enum RobotSphereState { Idle, Walk, Jump, Open };
 
         private enum ControllerOp { FPS, RTS, };
 
         // private readonly ControllerOp currOp = ControllerOp.FPS;
-        public RobotState currentState = RobotState.Idle;
+        public RobotSphereState CurrentState = RobotSphereState.Idle;
 
         private CharacterController cc;
 
         // Robot Components
-        public Battery Battery;
-
-        public CPU CPU;
+        private Battery Battery;
+        private CPU CPU;
 
         // Script References
         private RobotFreeAnim animator;
@@ -107,8 +106,8 @@ namespace FIVE.Robot
                 return;
             }
             // update animation at beginning to ensure consistency
-            animator.Update(currentState);
-            currentState = cc.velocity.magnitude < float.Epsilon ? RobotState.Idle : RobotState.Walk;
+            animator.Update(CurrentState);
+            CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
             if (scriptActive && movable.Moves.Count == 0)
             {
@@ -127,7 +126,7 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            currentState = RobotState.Walk;
+            CurrentState = RobotSphereState.Walk;
             if (schedule)
             {
                 movable.ScheduleMove(move, steps);

@@ -14,7 +14,6 @@ using UnityEngine;
 
 namespace FIVE.GameStates
 {
-    public abstract class OnLoadingFinished : IEventType { }
     public class Entry : GameMode
     {
         private readonly List<Action> loadingActions = new List<Action>();
@@ -36,10 +35,6 @@ namespace FIVE.GameStates
             yield return null;
             UIManager.AddViewModel<InGameDisplayViewModel>().SetEnabled(false);
             yield return null;
-            //UIManager.AddViewModel<NpcConversationViewModel>().SetEnabled(false);
-            //yield return null;
-            //UIManager.AddViewModel<CAttributeViewModel>().SetActive(false);
-            //yield return null;
         }
 
         private void Awake()
@@ -69,4 +64,5 @@ namespace FIVE.GameStates
             EventManager.Subscribe<OnMultiPlayersButtonClicked>((o, e) => { SwitchTo<MultiPlayer>(); });
         }
     }
+    public abstract class OnLoadingFinished : IEventType { }
 }

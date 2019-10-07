@@ -13,18 +13,18 @@ namespace FIVE.Robot
             anim = gameObject.GetComponent<Animator>();
         }
 
-        public void Update(RobotSphere.RobotState currState)
+        public void Update(RobotSphere.RobotSphereState currSphereState)
         {
-            UpdateAnim(currState);
+            UpdateAnim(currSphereState);
         }
 
-        private void UpdateAnim(RobotSphere.RobotState currState)
+        private void UpdateAnim(RobotSphere.RobotSphereState currSphereState)
         {
-            if (currState == RobotSphere.RobotState.Idle)
+            if (currSphereState == RobotSphere.RobotSphereState.Idle)
             {
                 anim.SetBool("Walk_Anim", false);
             }
-            else if (currState == RobotSphere.RobotState.Walk)
+            else if (currSphereState == RobotSphere.RobotSphereState.Walk)
             {
                 anim.SetBool("Walk_Anim", true);
             }

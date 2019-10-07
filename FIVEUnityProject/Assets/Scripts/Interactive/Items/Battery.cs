@@ -15,7 +15,7 @@ namespace FIVE.Interactive.Items
 
         private void ItemAction(GameObject owner, GameObject o)
         {
-            owner.GetComponent<RobotComponent.Battery>().CurrentEnergy = Remaining;
+            owner.GetComponent<RobotComponents.Battery>().CurrentEnergy = Remaining;
         }
     }
 
