@@ -1,4 +1,7 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -10,23 +13,51 @@ namespace FIVE
         private ReorderableList onAwakeLoadingList;
         private ReorderableList onStartLoadingList;
 
-        private int onAwakePickerWindowId;
-        private int onStartPickerWindowId;
+        private int pickerWindowId;
 
         private MainLoader MainLoader => (MainLoader)target;
+        private List<GameObject> pickerList;
+
+        private void InitList(string propertyName, out ReorderableList list, string headerText, List<GameObject> prefabList)
+        {
+            SerializedProperty property = serializedObject.FindProperty(propertyName);
+            list = new ReorderableList(serializedObject, property, true, true, true, true);
+            list.drawHeaderCallback += rect => { GUI.Label(rect, headerText); };
+            list.onAddCallback += OnAdd(prefabList);
+            list.drawElementCallback += DrawElementCallback(property);
+            list.onRemoveCallback += RemoveItem(prefabList);
+            list.elementHeightCallback += ElementHeightCallback(property);
+        }
+
+        private ReorderableList.ElementHeightCallbackDelegate ElementHeightCallback(SerializedProperty property)
+        {
+            return index => 24f;
+        }
 
         private void OnEnable()
         {
-            onAwakeLoadingList = new ReorderableList(MainLoader.InfrastructuresOnAwake, typeof(GameObject), true, true, true, true);
-            onStartLoadingList = new ReorderableList(MainLoader.InfrastructuresOnStart, typeof(GameObject), true, true, true, true);
-            onAwakeLoadingList.drawHeaderCallback += rect => { GUI.Label(rect, "Loading on Awake"); };
-            onStartLoadingList.drawHeaderCallback += rect => { GUI.Label(rect, "Loading on Start"); };
+            pickerWindowId = GUIUtility.GetControlID(FocusType.Passive) + 100;
+            InitList("InfrastructuresOnAwake", out onAwakeLoadingList, "Loading on Awake", MainLoader.InfrastructuresOnAwake);
+            InitList("InfrastructuresOnStart", out onStartLoadingList, "Loading on Start", MainLoader.InfrastructuresOnStart);
+        }
 
-            onAwakeLoadingList.onAddCallback += OnAdd;
-            onStartLoadingList.onAddCallback += OnAdd;
+        private static ReorderableList.ElementCallbackDelegate DrawElementCallback(SerializedProperty property)
+        {
+            return (rect, index, isActive, isfocused) =>
+            {
+                SerializedProperty prefab = property.GetArrayElementAtIndex(index);
+                GameObject go = (GameObject)prefab.objectReferenceValue;
+                GUIContent content = new GUIContent(go.name);
+                Rect r = new Rect(rect) {height = 24f};
+                GameObject newGameObject =
+                    (GameObject)EditorGUI.ObjectField(r, content, go, typeof(GameObject), false);
+            
 
-            onAwakeLoadingList.onRemoveCallback += RemoveItem;
-            onStartLoadingList.onRemoveCallback += RemoveItem;
+                if (newGameObject != go)
+                {
+                    prefab.objectReferenceValue = newGameObject;
+                }
+            };
         }
 
         private void OnDisable()
@@ -40,58 +71,38 @@ namespace FIVE
             onStartLoadingList.onRemoveCallback = null;
         }
 
-        private void OnAdd(ReorderableList list)
+        private ReorderableList.AddCallbackDelegate OnAdd(List<GameObject> toBeAdded)
         {
-            if (list == onAwakeLoadingList)
+            return list =>
             {
-                onAwakePickerWindowId = GUIUtility.GetControlID(FocusType.Passive) + 100;
-                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, onAwakePickerWindowId);
-            }
-
-            if (list == onStartLoadingList)
-            {
-                onStartPickerWindowId = GUIUtility.GetControlID(FocusType.Passive) + 101;
-                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, onStartPickerWindowId);
-            }
-
-            EditorUtility.SetDirty(target);
+                pickerList = toBeAdded;
+                pickerWindowId = GUIUtility.GetControlID(FocusType.Passive) + 100;
+                EditorGUIUtility.ShowObjectPicker<GameObject>(null, false, null, pickerWindowId);
+                EditorUtility.SetDirty(target);
+            };
         }
 
-        private void RemoveItem(ReorderableList list)
+        private ReorderableList.RemoveCallbackDelegate RemoveItem(IList prefabList)
         {
-            if (list == onAwakeLoadingList)
+            return list =>
             {
-                MainLoader.InfrastructuresOnAwake.RemoveAt(list.index);
-            }
-
-            if (list == onStartLoadingList)
-            {
-                MainLoader.InfrastructuresOnStart.RemoveAt(list.index);
-            }
-
-            EditorUtility.SetDirty(target);
+                prefabList.RemoveAt(list.index);
+                EditorUtility.SetDirty(target);
+            };
         }
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
             onAwakeLoadingList.DoLayoutList();
             GUILayout.Space(10);
             onStartLoadingList.DoLayoutList();
             GUILayout.Space(10);
 
-            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == onAwakePickerWindowId)
+            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == pickerWindowId)
             {
                 var selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
-                onAwakePickerWindowId = -1;
-                MainLoader.InfrastructuresOnAwake.Add(selectedObject);
-            }
-
-            if (Event.current.commandName == "ObjectSelectorUpdated" && EditorGUIUtility.GetObjectPickerControlID() == onStartPickerWindowId)
-            {
-                var selectedObject = (GameObject)EditorGUIUtility.GetObjectPickerObject();
-                onStartPickerWindowId = -1;
-                MainLoader.InfrastructuresOnStart.Add(selectedObject);
+                pickerWindowId = -1;
+                pickerList.Add(selectedObject);
             }
         }
     }
