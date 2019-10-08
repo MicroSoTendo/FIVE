@@ -1,7 +1,7 @@
 ﻿using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.UI;
-using FIVE.UI.AWSLEditor;
+using FIVE.UI.CodeEditor;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -15,7 +15,7 @@ namespace FIVE.Interactive
 
         private void OnCameraSwitched(object sender, CameraSwitchedEventArgs e)
         {
-            if (UIManager.GetViewModel<AWSLEditorViewModel>().IsEnabled)
+            if (UIManager.GetViewModel<CodeEditorViewModel>().IsEnabled)
             {
                 UIManager.SetCursor(UIManager.CursorType.Regular);
             }

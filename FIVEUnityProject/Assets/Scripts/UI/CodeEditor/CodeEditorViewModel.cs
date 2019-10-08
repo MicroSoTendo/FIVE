@@ -4,11 +4,11 @@ using TMPro;
 using UnityEngine.UI;
 using static FIVE.Util;
 
-namespace FIVE.UI.AWSLEditor
+namespace FIVE.UI.CodeEditor
 {
-    internal class AWSLEditorViewModel : ViewModel
+    internal class CodeEditorViewModel : ViewModel
     {
-        protected override string PrefabPath { get; } = "EntityPrefabs/UICodeEditor/CodeEditor";
+        protected override string PrefabPath { get; } = "EntityPrefabs/UI/CodeEditor/CodeEditor";
         public TMP_InputField CodeInputField { get; }
         public TMP_InputField LineNumber { get; }
         public Button SaveButton { get; }
@@ -18,7 +18,7 @@ namespace FIVE.UI.AWSLEditor
         public Button ExitButton { get; }
 
         public bool IsFocused { get; set; }
-        public AWSLEditorViewModel()
+        public CodeEditorViewModel()
         {
             CodeInputField = Get<TMP_InputField>(nameof(CodeInputField));
             LineNumber = Get<TMP_InputField>(nameof(LineNumber));

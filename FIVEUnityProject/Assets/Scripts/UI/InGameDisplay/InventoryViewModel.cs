@@ -11,27 +11,26 @@ namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryViewModel : ViewModel
     {
+        protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryScrollView";
         private readonly Dictionary<int, GameObject> cellDictionary = new Dictionary<int, GameObject>();
+        private readonly RectTransform contentRectTransform;
 
-        public GameObject InventoryScrollView { get; set; }
-        public Button ExitButton { get; set; }
+        public GameObject InventoryContent { get; }
+        public Button ExitButton { get; }
+        public Inventory Inventory { get; set; }
 
         public InventoryViewModel()
         {
+            InventoryContent = Get(nameof(InventoryContent));
+            ExitButton = Get<Button>(nameof(ExitButton));
+            Bind(ExitButton).To(ExitInventory);
+
             EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
-            Content = InventoryScrollView.FindChildRecursive("InventoryContent");
-            ContentTransform = Content.GetComponent<RectTransform>();
-            //binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
+            contentRectTransform = InventoryContent.GetComponent<RectTransform>();
             ViewCanvas.worldCamera = Camera.current;
             ViewCanvas.renderMode = RenderMode.ScreenSpaceCamera;
             ViewCanvas.planeDistance = 0.5f;
         }
-
-        private GameObject Content { get; }
-        private RectTransform ContentTransform { get; }
-        public Inventory Inventory { get; set; }
-
-        protected override string PrefabPath { get; }
 
         public override void SetEnabled(bool value)
         {
@@ -47,15 +46,16 @@ namespace FIVE.UI.InGameDisplay
             SetUpCells();
         }
 
-        private void ExitInventory(object sender, EventArgs e)
+        private void ExitInventory()
         {
             SetEnabled(false);
         }
 
         private void AddCell(string cellId, int index, GameObject item)
         {
-            GameObject cell = new GameObject();// AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
-            cell.transform.SetParent(ContentTransform);
+            GameObject
+                cell = new GameObject(); // AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
+            cell.transform.SetParent(contentRectTransform);
             Transform itemHolder = cell.FindChildRecursive("Content").transform;
             item.transform.SetParent(itemHolder);
             item.GetComponent<MeshRenderer>().receiveShadows = false;
@@ -90,7 +90,7 @@ namespace FIVE.UI.InGameDisplay
         {
             yield return new WaitForEndOfFrame();
             float cellWidth = 200; //TODO: get by call
-            int totalColumns = (int)(ContentTransform.rect.width / cellWidth);
+            int totalColumns = (int)(contentRectTransform.rect.width / cellWidth);
             foreach (KeyValuePair<int, GameObject> keyValuePair in cellDictionary)
             {
                 int index = keyValuePair.Key;
@@ -101,6 +101,7 @@ namespace FIVE.UI.InGameDisplay
                 yield return null;
             }
         }
+
         private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
         {
             switch (e.Action)

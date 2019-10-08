@@ -21,6 +21,7 @@ namespace FIVE.UI.InGameDisplay
     public abstract class OnItemDialogRequested : IEventType<ItemDialogRequestedEventArgs> { }
     public class ItemDialogViewModel : ViewModel
     {
+        protected override string PrefabPath { get; } = "EntityPrefabs/UI/ItemDialog";
         public GameObject DialogPanel { get; set; }
         public InputField ItemNameInputField { get; set; }
         public InputField DescriptionInputField { get; set; }
@@ -115,6 +116,5 @@ namespace FIVE.UI.InGameDisplay
             IsProcedureDisplayFinished = true;
         }
 
-        protected override string PrefabPath { get; }
     }
 }

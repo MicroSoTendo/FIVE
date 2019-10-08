@@ -1,7 +1,7 @@
 ﻿using System;
 using FIVE.EventSystem;
 
-namespace FIVE.UI.AWSLEditor
+namespace FIVE.UI.CodeEditor
 {
     public abstract class OnToggleEditorRequested : IEventType<LauncherEditorArgs> { }
 

@@ -97,6 +97,13 @@ namespace FIVE.UI
             return ViewCanvas.gameObject.FindChildRecursive(name).GetComponent<T>();
         }
 
+        protected GameObject Get(string name)
+        {
+            if (UIElements.ContainsKey(name))
+                return UIElements[name];
+            return ViewCanvas.gameObject.FindChildRecursive(name);
+        }
+
         protected ButtonSource Bind(Button button)
         {
             return new ButtonSource(button);

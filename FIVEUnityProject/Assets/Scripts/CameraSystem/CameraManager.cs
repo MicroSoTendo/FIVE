@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FIVE.UI;
-using FIVE.UI.AWSLEditor;
+using FIVE.UI.CodeEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -63,7 +63,7 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
-            if (UIManager.GetViewModel<AWSLEditorViewModel>()?.IsEnabled ?? false)
+            if (UIManager.GetViewModel<CodeEditorViewModel>()?.IsEnabled ?? false)
             {
                 return;
             }

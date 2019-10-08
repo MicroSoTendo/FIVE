@@ -42,7 +42,7 @@ namespace FIVE.UI.InGameDisplay
         }
         private void OnOptionClicked()
         {
-            UIManager.GetViewModel<InGameMenuViewModel>().SetEnabled(true);
+            UIManager.GetViewModel<InGameMenuViewModel>().ToggleEnabled();
         }
 
     }

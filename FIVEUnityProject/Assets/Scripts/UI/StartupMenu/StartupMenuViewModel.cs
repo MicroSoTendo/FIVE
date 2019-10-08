@@ -32,6 +32,7 @@ namespace FIVE.UI.StartupMenu
             UIManager.GetViewModel<HUDViewModel>().SetEnabled(true);
             UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
+            this.RaiseEvent<OnSinglePlayerButtonClicked>();
         }
         private void OnMultiplayersButtonClicked()
         {

@@ -3,7 +3,7 @@ using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
 using FIVE.UI;
-using FIVE.UI.AWSLEditor;
+using FIVE.UI.CodeEditor;
 using System.Collections;
 using FIVE.RobotComponents;
 using UnityEngine;
@@ -87,7 +87,7 @@ namespace FIVE.Robot
         {
             while (true)
             {
-                if (!UIManager.GetViewModel<AWSLEditorViewModel>()?.IsFocused ?? true)
+                if (!UIManager.GetViewModel<CodeEditorViewModel>()?.IsFocused ?? true)
                 {
                     if (Input.GetKey(KeyCode.E))
                     {
@@ -101,7 +101,7 @@ namespace FIVE.Robot
         private void Update()
         {
             //Block user input when editor is up
-            if (UIManager.GetViewModel<AWSLEditorViewModel>()?.IsEnabled ?? false)
+            if (UIManager.GetViewModel<CodeEditorViewModel>()?.IsEnabled ?? false)
             {
                 return;
             }
