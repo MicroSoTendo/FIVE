@@ -1,17 +1,13 @@
-﻿using FIVE.EventSystem;
-using FIVE.UI.Background;
-using FIVE.UI.InGameDisplay;
-using FIVE.UI.OptionsMenu;
-using System;
-using UnityEngine;
+﻿using UnityEngine.UI;
 
 namespace FIVE.UI.NPC
 {
-    public class NpcConversationViewModel : ViewModel<NpcConversationView, NpcConversationViewModel>
+    public class NpcConversationViewModel : ViewModel
     {
-        public NpcConversationViewModel() : base()
-        {
-        }
+        protected override string PrefabPath { get; }
+        public Text SinglePlayerButton { get; set; }
+        public NpcConversationViewModel() : base() { }
+
     }
 
 }

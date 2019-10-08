@@ -1,52 +1,69 @@
-﻿using System.Text;
-using System.Linq;
-using FIVE.EventSystem;
-using System;
+﻿using System.Linq;
+using System.Text;
+using TMPro;
+using UnityEngine.UI;
+using static FIVE.Util;
 
 namespace FIVE.UI.AWSLEditor
 {
-    internal class OnCodeTextChanged : IEventType { }
-    internal class AWSLEditorViewModel : ViewModel<AWSLEditorView, AWSLEditorViewModel>
+    internal class AWSLEditorViewModel : ViewModel
     {
-        public string CodeText => View.CodeText.text;
-        public bool IsFocused => View.CodeInputField.isFocused;
+        protected override string PrefabPath { get; } = "EntityPrefabs/UICodeEditor/CodeEditor";
+        public TMP_InputField CodeInputField { get; }
+        public TMP_InputField LineNumber { get; }
+        public Button SaveButton { get; }
+        public Button RunButton { get; }
+        public Button PauseButton { get; }
+        public Button StopButton { get; }
+        public Button ExitButton { get; }
+
+        public bool IsFocused { get; set; }
         public AWSLEditorViewModel()
         {
-            UpdateLineNumber(null, null);
-            binder.Bind(v => v.SaveButton.onClick).To(vm => vm.OnSaveButtonClicked);
-            binder.Bind(v => v.CancelButton.onClick).To(vm => vm.OnCancelButtonClicked);
-            EventManager.Subscribe<OnToggleEditorRequested>(ToggleEditor);
-            EventManager.Subscribe<OnCodeTextChanged>(UpdateLineNumber);
+            CodeInputField = Get<TMP_InputField>(nameof(CodeInputField));
+            LineNumber = Get<TMP_InputField>(nameof(LineNumber));
+            SaveButton = Get<Button>(nameof(SaveButton));
+            RunButton = Get<Button>(nameof(RunButton));
+            PauseButton = Get<Button>(nameof(PauseButton));
+            StopButton = Get<Button>(nameof(StopButton));
+            ExitButton = Get<Button>(nameof(ExitButton));
+
+            UpdateLineNumber("");
+            Bind(SaveButton).To(RunButtonClicked);
+            Bind(ExitButton).To(OnCancelButted);
+            Subscribe<OnToggleEditorRequested>(ToggleEditor);
+            CodeInputField.onValueChanged.AddListener(UpdateLineNumber);
         }
 
-        private void UpdateLineNumber(object sender, EventArgs e)
+        private void UpdateLineNumber(string text)
         {
-            int numberOfLines = CodeText.Count(c => c == '\n');
-            StringBuilder sb = new StringBuilder();
+            int numberOfLines = text.Count(c => c == '\n');
+            var sb = new StringBuilder();
             for (int i = 1; i < numberOfLines + 2; i++)
             {
                 sb.AppendLine(i.ToString());
             }
-            View.LineNumber.text = sb.ToString();
+            LineNumber.text = sb.ToString();
         }
 
-        private void ToggleEditor(object sender, EventArgs e)
+        private void ToggleEditor()
         {
             ToggleEnabled();
             UIManager.SetCursor(IsEnabled ? UIManager.CursorType.Regular : UIManager.CursorType.Aim);
         }
 
-        public void OnSaveButtonClicked(object sender, EventArgs e)
+        private void RunButtonClicked()
         {
-            this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeText));
+            this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeInputField.text));
             SetEnabled(false);
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
 
-        public void OnCancelButtonClicked(object sender, EventArgs e)
+        private void OnCancelButted()
         {
             SetEnabled(false);
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
+
     }
 }

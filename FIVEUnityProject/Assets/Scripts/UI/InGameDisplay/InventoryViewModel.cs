@@ -5,39 +5,45 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
 {
-    internal class InventoryViewModel : ViewModel<InventoryView, InventoryViewModel>
+    internal class InventoryViewModel : ViewModel
     {
         private readonly Dictionary<int, GameObject> cellDictionary = new Dictionary<int, GameObject>();
+
+        public GameObject InventoryScrollView { get; set; }
+        public Button ExitButton { get; set; }
 
         public InventoryViewModel()
         {
             EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
-            Content = View.InventoryScrollView.FindChildRecursive("InventoryContent");
+            Content = InventoryScrollView.FindChildRecursive("InventoryContent");
             ContentTransform = Content.GetComponent<RectTransform>();
-            binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
-            View.ViewCanvas.worldCamera = Camera.current;
-            View.ViewCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-            View.ViewCanvas.planeDistance = 0.5f;
+            //binder.Bind(v => v.ExitButton.onClick).To(vm => vm.ExitInventory);
+            ViewCanvas.worldCamera = Camera.current;
+            ViewCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            ViewCanvas.planeDistance = 0.5f;
         }
 
         private GameObject Content { get; }
         private RectTransform ContentTransform { get; }
         public Inventory Inventory { get; set; }
 
+        protected override string PrefabPath { get; }
+
         public override void SetEnabled(bool value)
         {
             base.SetEnabled(value);
-            View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+            ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
             SetUpCells();
         }
 
         public override void ToggleEnabled()
         {
             base.ToggleEnabled();
-            View.ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+            ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
             SetUpCells();
         }
 
@@ -48,7 +54,7 @@ namespace FIVE.UI.InGameDisplay
 
         private void AddCell(string cellId, int index, GameObject item)
         {
-            GameObject cell = View.AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
+            GameObject cell = new GameObject();// AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
             cell.transform.SetParent(ContentTransform);
             Transform itemHolder = cell.FindChildRecursive("Content").transform;
             item.transform.SetParent(itemHolder);

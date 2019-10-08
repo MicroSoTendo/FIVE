@@ -1,57 +1,50 @@
 using FIVE.EventSystem;
 using FIVE.UI.Background;
 using FIVE.UI.InGameDisplay;
-using FIVE.UI.OptionsMenu;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FIVE.UI.StartupMenu
 {
-    public class StartupMenuViewModel : ViewModel<StartupMenuView, StartupMenuViewModel>
+    public class StartupMenuViewModel : ViewModel
     {
+        protected override string PrefabPath { get; } = "EntityPrefabs/UI/StartupMenu";
+        public Button SinglePlayerButton { get; }
+        public Button MultiplayersButton { get; }
+        public Button OptionsButton { get; }
+        public Button ExitButton { get; }
         public StartupMenuViewModel() : base()
         {
-            binder.Bind(view => view.SinglePlayerButton.onClick).
-            To(viewModel => viewModel.OnSinglePlayerButtonClicked);
-
-            binder.Bind(v => v.SinglePlayerButton.onClick).
-            ToBroadcast<OnSinglePlayerButtonClicked>();
-
-            binder.Bind(view => view.MultiplayerButton.onClick).
-            To(viewModel => viewModel.OnMultiPlayerButtonClicked);
-
-            binder.Bind(v => v.MultiplayerButton.onClick).
-            ToBroadcast<OnMultiPlayersButtonClicked>();
-
-            binder.Bind(view => view.OptionsButton.onClick).
-            To(viewModel => viewModel.OnOptionsButtonClicked);
-
-            binder.Bind(view => view.ExitGameButton.onClick).
-            To(viewModel => viewModel.OnExitButtonClicked);
+            SinglePlayerButton = Get<Button>(nameof(SinglePlayerButton));
+            MultiplayersButton = Get<Button>(nameof(MultiplayersButton));
+            OptionsButton = Get<Button>(nameof(OptionsButton));
+            ExitButton = Get<Button>(nameof(ExitButton));
+            Bind(SinglePlayerButton).To(OnSinglePlayerButtonClicked);
+            Bind(MultiplayersButton).To(OnMultiplayersButtonClicked);
+            Bind(OptionsButton).To(OnOptionsButtonClicked);
+            Bind(ExitButton).To(OnExitButtonClicked);
         }
 
-        private void OnSinglePlayerButtonClicked(object sender, EventArgs eventArgs)
+        private void OnSinglePlayerButtonClicked()
         {
-            Debug.Log(nameof(OnSinglePlayerButtonClicked));
-            View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<InGameDisplayViewModel>().SetEnabled(true);
+            ViewCanvas.gameObject.SetActive(false);
+            UIManager.GetViewModel<HUDViewModel>().SetEnabled(true);
             UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
-        private void OnMultiPlayerButtonClicked(object sender, EventArgs eventArgs)
+        private void OnMultiplayersButtonClicked()
         {
-            Debug.Log(nameof(OnMultiPlayerButtonClicked));
-            View.ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<InGameDisplayViewModel>().SetEnabled(true);
+            ViewCanvas.gameObject.SetActive(false);
+            UIManager.GetViewModel<HUDViewModel>().SetEnabled(true);
             UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
-        private void OnOptionsButtonClicked(object sender, EventArgs eventArgs)
+        private void OnOptionsButtonClicked()
         {
-            Debug.Log(nameof(OnOptionsButtonClicked));
-            UIManager.GetViewModel<OptionsMenuViewModel>().SetEnabled(true);
+            UIManager.GetViewModel<InGameMenuViewModel>().SetEnabled(true);
         }
-        private void OnExitButtonClicked(object sender, EventArgs eventArgs)
+        private void OnExitButtonClicked()
         {
             Application.Quit();
 #if UNITY_EDITOR

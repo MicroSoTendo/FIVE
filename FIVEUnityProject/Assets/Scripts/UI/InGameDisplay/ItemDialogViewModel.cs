@@ -5,6 +5,7 @@ using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Interactive;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
 {
@@ -18,8 +19,11 @@ namespace FIVE.UI.InGameDisplay
     }
     public abstract class OnItemDialogDismissRequested : IEventType { }
     public abstract class OnItemDialogRequested : IEventType<ItemDialogRequestedEventArgs> { }
-    public class ItemDialogViewModel : ViewModel<ItemDialogView, ItemDialogViewModel>
+    public class ItemDialogViewModel : ViewModel
     {
+        public GameObject DialogPanel { get; set; }
+        public InputField ItemNameInputField { get; set; }
+        public InputField DescriptionInputField { get; set; }
         public ItemDialogViewModel()
         {
             EventManager.Subscribe<OnItemDialogRequested, ItemDialogRequestedEventArgs>(OnItemDialogRequested);
@@ -80,9 +84,9 @@ namespace FIVE.UI.InGameDisplay
                 float right = Mathf.Max(itemNDCMin.x, itemNDCMax.x);
                 float bottom = Mathf.Min(itemNDCMin.y, itemNDCMax.y);
                 float top = Mathf.Max(itemNDCMin.y, itemNDCMax.y);
-                float x = GetCoordWithBound(left,right,fpsCamera.pixelWidth, View.DescriptionInputField.GetComponent<RectTransform>().rect.width);
+                float x = GetCoordWithBound(left,right,fpsCamera.pixelWidth, DescriptionInputField.GetComponent<RectTransform>().rect.width);
                 float y = GetCoordWithBound(bottom,top,fpsCamera.pixelHeight, 0);
-                View.DialogPanel.GetComponent<Transform>().position = new Vector3(x, y, 0);
+                DialogPanel.GetComponent<Transform>().position = new Vector3(x, y, 0);
                 yield return null;
             }
         }
@@ -95,20 +99,22 @@ namespace FIVE.UI.InGameDisplay
             ItemInfo info = item.GetComponent<Item>().Info;
             string itemType = "Item Type: " + info.Name;
             string description = "Description: " + info.Description;
-            View.ItemNameInputField.text = "";
-            View.DescriptionInputField.text = "";
+            ItemNameInputField.text = "";
+            DescriptionInputField.text = "";
             for (int i = 0; i <= itemType.Length; i++)
             {
-                View.ItemNameInputField.text = itemType.Substring(0, i);
+                ItemNameInputField.text = itemType.Substring(0, i);
                 yield return null;
             }
             for (int i = 0; i <= description.Length; i++)
             {
-                View.DescriptionInputField.text = description.Substring(0, i);
+                DescriptionInputField.text = description.Substring(0, i);
                 yield return null;
             }
 
             IsProcedureDisplayFinished = true;
         }
+
+        protected override string PrefabPath { get; }
     }
 }

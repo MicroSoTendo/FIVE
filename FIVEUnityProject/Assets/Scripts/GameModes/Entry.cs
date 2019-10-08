@@ -2,7 +2,6 @@
 using FIVE.UI;
 using FIVE.UI.Background;
 using FIVE.UI.InGameDisplay;
-using FIVE.UI.OptionsMenu;
 using FIVE.UI.SplashScreens;
 using FIVE.UI.StartupMenu;
 using FIVE.UI.NPC;
@@ -31,9 +30,9 @@ namespace FIVE.GameStates
                 startupMenuViewModel.SetEnabled(true);
                 backgroundViewModel.SetEnabled(true);
             });
-            UIManager.AddViewModel<OptionsMenuViewModel>().SetEnabled(false);
+            UIManager.AddViewModel<InGameMenuViewModel>().SetEnabled(false);
             yield return null;
-            UIManager.AddViewModel<InGameDisplayViewModel>().SetEnabled(false);
+            UIManager.AddViewModel<HUDViewModel>().SetEnabled(false);
             yield return null;
         }
 

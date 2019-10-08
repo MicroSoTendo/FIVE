@@ -16,7 +16,7 @@ namespace FIVE.UI
         private static readonly Dictionary<Type, ConstructorInfo> VmConstructorInfos = new Dictionary<Type, ConstructorInfo>();
         private static readonly Dictionary<string, ViewModel> NameToVMs = new Dictionary<string, ViewModel>();
         private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
-        private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModelComparer());
+        private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModel.ViewModelComparer());
 
         private static Texture2D cursorTexture;
         public enum CursorType
@@ -80,13 +80,7 @@ namespace FIVE.UI
             StartCoroutine(startUpScreen.OnTransitioning());
             EventManager.Subscribe<OnLoadingFinished>((sender, args) => startUpScreen.DoFadingOut());
             cursorTexture = Resources.Load<Texture2D>("Textures/UI/Cursor");
-        }
-
-
-        private void Start()
-        {
             StartCoroutine(Initialize());
-            StartCoroutine(View.Initialize());
         }
 
         private IEnumerator Initialize()
@@ -120,7 +114,7 @@ namespace FIVE.UI
             }
             if (!TypeToVMs.ContainsKey(typeof(T)))
             {
-                TypeToVMs.Add(typeof(T), new SortedSet<ViewModel>(new ViewModelComparer()));
+                TypeToVMs.Add(typeof(T), new SortedSet<ViewModel>(new ViewModel.ViewModelComparer()));
             }
             NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
             TypeToVMs[typeof(T)].Add(newViewModel);
@@ -141,12 +135,6 @@ namespace FIVE.UI
             }
         }
 
-        private class ViewModelComparer : IComparer<ViewModel>
-        {
-            public int Compare(ViewModel x, ViewModel y)
-            {
-                return x.SortingOrder - y.SortingOrder;
-            }
-        }
+  
     }
 }
