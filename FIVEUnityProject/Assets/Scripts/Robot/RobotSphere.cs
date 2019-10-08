@@ -2,10 +2,10 @@
 using FIVE.CameraSystem;
 using FIVE.ControllerSystem;
 using FIVE.EventSystem;
+using FIVE.RobotComponents;
 using FIVE.UI;
 using FIVE.UI.CodeEditor;
 using System.Collections;
-using FIVE.RobotComponents;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -25,8 +25,9 @@ namespace FIVE.Robot
         private CharacterController cc;
 
         // Robot Components
-        private Battery Battery;
-        private CPU CPU;
+        public Battery Battery { get; private set; }
+
+        public CPU CPU { get; private set; }
 
         // Script References
         private RobotFreeAnim animator;
@@ -57,8 +58,6 @@ namespace FIVE.Robot
 
             cc = GetComponent<CharacterController>();
             movable = GetComponent<Movable>();
-
-           
 
             scriptActive = false;
 
@@ -121,7 +120,6 @@ namespace FIVE.Robot
 
         public void LateUpdate()
         {
-    
         }
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
