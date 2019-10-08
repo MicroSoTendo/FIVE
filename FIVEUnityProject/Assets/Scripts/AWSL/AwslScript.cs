@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace FIVE.AWSL
 {
-    [RequireComponent(typeof(RobotSphere))]
     internal class AWSLScript
     {
         private readonly RobotSphere robot;
