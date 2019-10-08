@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Canvas name="NpcConversitionView"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="ViewSchema.xsd">
-  <Image name = "CoversationBackground" Sprite="Textures/UI/bg_Window1" Transform = "{localPosition:(0,-120,0);}"/>  
-  <Text name = "NPC" Prefab = "EntityPrefabs/Text" Transform = "{localPosition:(0,-120,0);}" Text = "Single Player"/>
-</Canvas>

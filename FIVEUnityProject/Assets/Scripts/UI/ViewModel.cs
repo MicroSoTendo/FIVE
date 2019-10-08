@@ -47,7 +47,7 @@ namespace FIVE.UI
             GameObject prefab = Resources.Load<GameObject>(PrefabPath);
             if (prefab == null)
             {
-                Debug.LogWarning($"{PrefabPath} not found. ({GetType().Name})");
+                Debug.LogWarning($"{PrefabPath ?? nameof(PrefabPath)} not found. ({GetType().Name})");
             }
             else
             {

@@ -56,12 +56,10 @@ namespace FIVE.UI.InGameDisplay
         {
             Debug.Log(nameof(OnResumeClicked));
             UIManager.GetViewModel<InGameMenuViewModel>().SetEnabled(false);
-            //UIManager.Get(nameof(OptionBGView)).SetActive(false);
         }
         private void OnMainMenuClicked()
         {
             ViewCanvas.gameObject.SetActive(false);
-            //UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnMainMenuClicked));
         }
 
