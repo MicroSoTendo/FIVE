@@ -29,10 +29,10 @@ namespace FIVE
             float screenWidth = EditorGUIUtility.currentViewWidth;
             float playButtonsPosition = (screenWidth - 100) / 2;
             var rect = new Rect(0, 0, screenWidth, Screen.height);
-            rect.xMin += 10 + 32 * ToolCount; // Tool buttons
-            rect.xMin += 20; // Spacing between tools and pivot
+            rect.xMin += 32 * ToolCount; // Tool buttons
+            rect.xMin += 10; // Spacing between tools and pivot
             rect.xMin += 64 * 2; // Pivot buttons
-            rect.xMax = playButtonsPosition - 150;
+            rect.xMax = playButtonsPosition - 20;
             rect.y = 5;
             rect.height = 24;
             GUILayout.BeginArea(rect);
