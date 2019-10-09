@@ -8,29 +8,20 @@ namespace FIVE.Robot
         public HashSet<GameObject> Robots;
 
         [SerializeField] private GameObject RobotPrefab = null;
-        private static RobotManager instance;
+
+        public static RobotManager Instance { get; private set; }
 
         private void Awake()
         {
-            instance = this;
+            Instance = this;
             Robots = new HashSet<GameObject>();
         }
 
-        public static GameObject CreateRobot()
+        public static GameObject CreateRobot(Vector3 pos)
         {
-            GameObject robot = Instantiate(instance.RobotPrefab, new Vector3(0f, 20f, 0f), Quaternion.identity);
-            instance.Robots.Add(robot);
+            GameObject robot = Instantiate(Instance.RobotPrefab, pos, Quaternion.identity);
+            Instance.Robots.Add(robot);
             return robot;
-        }
-
-        public static GameObject GetPrefab()
-        {
-            return instance.RobotPrefab;
-        }
-
-        public static RobotManager Instance()
-        {
-            return instance;
         }
     }
 }
