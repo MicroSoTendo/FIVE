@@ -108,6 +108,7 @@ namespace FIVE.Network
             // note: we don't use ReadString here because the list server
             //       doesn't know C#'s '7-bit-length + utf8' encoding for strings
             var reader = new BinaryReader(new MemoryStream(bytes, false), Encoding.UTF8);
+
             byte ipBytesLength = reader.ReadByte();
             byte[] ipBytes = reader.ReadBytes(ipBytesLength);
             string ip = new IPAddress(ipBytes).ToString();
@@ -116,6 +117,7 @@ namespace FIVE.Network
             ushort capacity = reader.ReadUInt16();
             ushort titleLength = reader.ReadUInt16();
             string title = Encoding.UTF8.GetString(reader.ReadBytes(titleLength));
+
             Debug.Log($"PARSED: ip= {ip}  port= {port}  players= {players} capacity= { capacity } title= {title}");
             // build key
             string key = ip + ":" + port;
