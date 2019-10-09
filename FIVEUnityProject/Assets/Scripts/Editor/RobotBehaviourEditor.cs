@@ -6,7 +6,7 @@ using UnityEngine;
 namespace FIVE
 {
     [CustomEditor(typeof(RobotBehaviour), editorForChildClasses:true)]
-    internal class RobotBehaviourEditor : Editor
+    internal class RobotBehaviourEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

@@ -1,5 +1,4 @@
 ﻿using TMPro;
-using UnityEngine.UI;
 
 namespace FIVE.UI.NPC
 {
@@ -12,7 +11,6 @@ namespace FIVE.UI.NPC
         {
             DialogueText = Get<TMP_Text>(nameof(DialogueText));
         }
-
     }
 
 }
