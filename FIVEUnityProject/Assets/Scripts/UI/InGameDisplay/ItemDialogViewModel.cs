@@ -45,7 +45,12 @@ namespace FIVE.UI.InGameDisplay
             base.SetEnabled(true);
             isUpdate = true;
             MainThreadDispatcher.ScheduleCoroutine(UpdatePosition(e.Item));
-            MainThreadDispatcher.ScheduleCoroutine(ProcedureDisplay(e.Item));
+            MainThreadDispatcher.ScheduleCoroutine(ProcedureDisplayText.Routine(ItemNameInputField.textComponent, Callback));
+        }
+
+        private void Callback()
+        {
+            MainThreadDispatcher.ScheduleCoroutine(ProcedureDisplayText.Routine(DescriptionInputField.textComponent, null));
         }
 
         private float GetCoordWithBound(float min, float max, float range, float offset)

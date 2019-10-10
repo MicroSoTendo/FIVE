@@ -16,7 +16,7 @@ namespace FIVE.Network
         public ServerStatus(string ip, ushort port, string title, ushort players, ushort capacity)
         {
             this.IP = ip;
-            //this.port = port;
+            this.Port = port;
             this.Title = title;
             this.Players = players;
             this.Capacity = capacity;
