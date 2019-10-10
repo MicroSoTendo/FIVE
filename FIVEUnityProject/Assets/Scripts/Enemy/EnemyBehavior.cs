@@ -1,8 +1,6 @@
-﻿using System.Collections;
+﻿using FIVE.Robot;
 using System.Collections.Generic;
 using UnityEngine;
-
-using FIVE.Robot;
 
 namespace FIVE
 {
@@ -49,11 +47,11 @@ namespace FIVE
 
         private void SearchTarget()
         {
-            foreach (GameObject robot in RobotManager.Instance.Robots)
+            foreach (KeyValuePair<(int, int), GameObject> kv in RobotManager.Instance.Robots)
             {
-                if (Physics.SphereCast(transform.position, 3.0f, robot.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
+                if (Physics.SphereCast(transform.position, 3.0f, kv.Value.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
                 {
-                    currTarget = robot;
+                    currTarget = kv.Value;
                 }
             }
         }

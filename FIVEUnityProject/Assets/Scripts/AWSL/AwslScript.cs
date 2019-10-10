@@ -2,6 +2,7 @@
 using MoonSharp.Interpreter;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace FIVE.AWSL
 {
@@ -56,6 +57,11 @@ namespace FIVE.AWSL
         private Action<float> FuncMove(Movable.Move dir)
         {
             return x => robot.GetComponent<RobotSphere>().Move(dir, (int)x, true);
+        }
+
+        private Func<List<RobotSphere>> FuncFindRobots()
+        {
+            return () => null;
         }
     }
 }

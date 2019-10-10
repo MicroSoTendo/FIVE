@@ -5,7 +5,7 @@ namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {
-        public HashSet<GameObject> Robots;
+        public Dictionary<(int, int), GameObject> Robots = new Dictionary<(int, int), GameObject>();
 
         [SerializeField] private GameObject RobotPrefab = null;
 
@@ -14,14 +14,20 @@ namespace FIVE.Robot
         private void Awake()
         {
             Instance = this;
-            Robots = new HashSet<GameObject>();
         }
 
         public static GameObject CreateRobot(Vector3 pos)
         {
             GameObject robot = Instantiate(Instance.RobotPrefab, pos, Quaternion.identity);
-            Instance.Robots.Add(robot);
+            Instance.Robots.Add(Key(robot), robot);
             return robot;
+        }
+
+        private static (int, int) Key(GameObject robot)
+        {
+            int x = (int)robot.transform.position.x;
+            int z = (int)robot.transform.position.z;
+            return (x >> 1, z >> 1);
         }
     }
 }
