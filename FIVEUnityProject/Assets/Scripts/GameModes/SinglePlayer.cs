@@ -12,7 +12,7 @@ namespace FIVE.GameStates
         private void Start()
         {
             GameObject robot;
-            robot = RobotManager.CreateRobot(new Vector3(0, 20, 0));
+            robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
             Inventory inventory = InventoryManager.AddInventory(robot);
             InventoryViewModel inventoryViewModel = UIManager.AddViewModel<InventoryViewModel>();
             inventoryViewModel.Inventory = inventory;
