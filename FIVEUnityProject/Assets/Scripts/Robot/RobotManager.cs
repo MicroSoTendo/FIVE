@@ -3,34 +3,31 @@ using UnityEngine;
 
 namespace FIVE.Robot
 {
-    public class RobotManager : MonoBehaviour
+    public class RobotManager : RobotBehaviour
     {
-        public HashSet<GameObject> Robots;
+        public Dictionary<(int, int), GameObject> Robots = new Dictionary<(int, int), GameObject>();
 
         [SerializeField] private GameObject RobotPrefab = null;
-        private static RobotManager instance;
+
+        public static RobotManager Instance { get; private set; }
 
         private void Awake()
         {
-            instance = this;
-            Robots = new HashSet<GameObject>();
+            Instance = this;
         }
 
-        public static GameObject CreateRobot()
+        public static GameObject CreateRobot(Vector3 pos)
         {
-            GameObject robot = Instantiate(instance.RobotPrefab, new Vector3(0f, 20f, 0f), Quaternion.identity);
-            instance.Robots.Add(robot);
+            GameObject robot = Instantiate(Instance.RobotPrefab, pos, Quaternion.identity);
+            Instance.Robots.Add(Key(robot), robot);
             return robot;
         }
 
-        public static GameObject GetPrefab()
+        private static (int, int) Key(GameObject robot)
         {
-            return instance.RobotPrefab;
-        }
-
-        public static RobotManager Instance()
-        {
-            return instance;
+            int x = (int)robot.transform.position.x;
+            int z = (int)robot.transform.position.z;
+            return (x >> 1, z >> 1);
         }
     }
 }

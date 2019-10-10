@@ -11,7 +11,8 @@ namespace FIVE.GameStates
     {
         private void Start()
         {
-            GameObject robot = RobotManager.CreateRobot();
+            GameObject robot;
+            robot = RobotManager.CreateRobot(new Vector3(0, 20, 0));
             Inventory inventory = InventoryManager.AddInventory(robot);
             InventoryViewModel inventoryViewModel = UIManager.AddViewModel<InventoryViewModel>();
             inventoryViewModel.Inventory = inventory;

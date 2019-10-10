@@ -1,8 +1,6 @@
-﻿using System.Collections;
+﻿using FIVE.Robot;
 using System.Collections.Generic;
 using UnityEngine;
-
-using FIVE.Robot;
 
 namespace FIVE
 {
@@ -18,7 +16,7 @@ namespace FIVE
 
         private float speed;
 
-        void Start()
+        private void Start()
         {
             VisionRange = 10.0f;
 
@@ -28,7 +26,7 @@ namespace FIVE
             speed = 10.0f;
         }
 
-        void Update()
+        private void Update()
         {
             if (currTarget == null || Vector3.Distance(transform.position, currTarget.transform.position) > 2 * VisionRange)
             {
@@ -49,18 +47,17 @@ namespace FIVE
 
         private void SearchTarget()
         {
-            foreach (GameObject robot in RobotManager.Instance().Robots)
+            foreach (KeyValuePair<(int, int), GameObject> kv in RobotManager.Instance.Robots)
             {
-                if (Physics.SphereCast(transform.position, 3.0f, robot.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
+                if (Physics.SphereCast(transform.position, 3.0f, kv.Value.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
                 {
-                    currTarget = robot;
+                    currTarget = kv.Value;
                 }
             }
         }
-        
+
         private void Patrol()
         {
-            
         }
     }
 }
