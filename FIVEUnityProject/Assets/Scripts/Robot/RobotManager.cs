@@ -6,14 +6,18 @@ namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {
-        private readonly Dictionary<(int x, int y, int z), GameObject> robots = new Dictionary<(int, int, int), GameObject>();
+        public Dictionary<(int, int, int), List<int>> RobotIDs = new Dictionary<(int, int, int), List<int>>();
+
+        public HashSet<GameObject> Robots = new HashSet<GameObject>();
+
         private readonly Dictionary<string, GameObject> robotPrefabs = new Dictionary<string, GameObject>();
-        private static RobotManager instance;
-        public static Dictionary<(int x, int y, int z), GameObject> Robots => instance.robots;
+
+        public static RobotManager Instance { get; private set; }
+
         private void Awake()
         {
-            Assert.IsTrue(instance == null); //Make sure singleton
-            instance = this;
+            Assert.IsTrue(Instance == null); // Make sure singleton
+            Instance = this;
             GameObject[] prefabs = Resources.LoadAll<GameObject>("EntityPrefabs/RobotPrefabs");
             foreach (GameObject prefab in prefabs)
             {
@@ -23,10 +27,18 @@ namespace FIVE.Robot
 
         public static GameObject CreateRobot(string prefabName, Vector3 pos, Quaternion quat)
         {
-            if (instance.robotPrefabs.TryGetValue(prefabName, out GameObject prefab))
+            if (Instance.robotPrefabs.TryGetValue(prefabName, out GameObject prefab))
             {
                 GameObject robot = Instantiate(prefab, pos, quat);
-                instance.robots.Add(Key(robot), robot);
+                Instance.Robots.Add(robot);
+
+                (int x, int y, int z) k = Key(robot);
+                if (!Instance.RobotIDs.ContainsKey(k))
+                {
+                    Instance.RobotIDs[k] = new List<int>();
+                }
+
+                Instance.RobotIDs[k].Add(robot.GetInstanceID());
                 return robot;
             }
             return null;
@@ -40,6 +52,30 @@ namespace FIVE.Robot
             int y = (int)(robot.transform.position.y * 100);
             int z = (int)(robot.transform.position.z * 100);
             return (x, y, z);
+        }
+
+        public List<int> FindNearbyRobots(GameObject robot)
+        {
+            (int x, int y, int z) k = Key(robot);
+            var ret = new List<int>();
+            ret.AddRange(RobotIDs[k]);
+
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    for (int dz = -1; dz <= 1; dz++)
+                    {
+                        (int, int, int) _k = (k.x + dx, k.y + dy, k.z + dz);
+                        if (RobotIDs.ContainsKey(_k))
+                        {
+                            ret.AddRange(RobotIDs[_k]);
+                        }
+                    }
+                }
+            }
+
+            return ret;
         }
     }
 }
