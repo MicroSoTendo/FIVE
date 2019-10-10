@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FIVE.Robot
 {
-    public class RobotManager : MonoBehaviour
+    public class RobotManager : RobotBehaviour
     {
         public Dictionary<(int, int), GameObject> Robots = new Dictionary<(int, int), GameObject>();
 
