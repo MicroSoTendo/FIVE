@@ -27,6 +27,7 @@ namespace FIVE.UI
         public bool IsEnabled => ViewCanvas.gameObject.activeSelf;
         protected abstract string PrefabPath { get; }
         protected Canvas ViewCanvas { get; }
+        protected GameObject Root { get; }
         protected Dictionary<string, GameObject> UIElements { get; } = new Dictionary<string, GameObject>();
         protected Dictionary<string, GameObject> CanvasResources { get; } = new Dictionary<string, GameObject>();
 
@@ -51,7 +52,8 @@ namespace FIVE.UI
             }
             else
             {
-                AddAllUIElements(Object.Instantiate(prefab, ViewCanvas.transform));
+                Root = Object.Instantiate(prefab, ViewCanvas.transform);
+                AddAllUIElements(Root);
             }
         }
 

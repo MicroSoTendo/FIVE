@@ -4,8 +4,8 @@ using System.Linq;
 using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Interactive;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
 {
@@ -22,11 +22,12 @@ namespace FIVE.UI.InGameDisplay
     public class ItemDialogViewModel : ViewModel
     {
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/ItemDialog";
-        public GameObject DialogPanel { get; set; }
-        public InputField ItemNameInputField { get; set; }
-        public InputField DescriptionInputField { get; set; }
+        public TMP_InputField ItemNameInputField { get; }
+        public TMP_InputField DescriptionInputField { get; }
         public ItemDialogViewModel()
         {
+            ItemNameInputField = Get<TMP_InputField>(nameof(ItemNameInputField));
+            DescriptionInputField = Get<TMP_InputField>(nameof(DescriptionInputField));
             EventManager.Subscribe<OnItemDialogRequested, ItemDialogRequestedEventArgs>(OnItemDialogRequested);
             EventManager.Subscribe<OnItemDialogDismissRequested>(OnDismiss);
             base.SetEnabled(false);
@@ -87,7 +88,7 @@ namespace FIVE.UI.InGameDisplay
                 float top = Mathf.Max(itemNDCMin.y, itemNDCMax.y);
                 float x = GetCoordWithBound(left,right,fpsCamera.pixelWidth, DescriptionInputField.GetComponent<RectTransform>().rect.width);
                 float y = GetCoordWithBound(bottom,top,fpsCamera.pixelHeight, 0);
-                DialogPanel.GetComponent<Transform>().position = new Vector3(x, y, 0);
+                Root.transform.position = new Vector3(x, y, 0);
                 yield return null;
             }
         }
