@@ -47,7 +47,7 @@ namespace FIVE
 
         private void SearchTarget()
         {
-            foreach (KeyValuePair<(int, int), GameObject> kv in RobotManager.Robots)
+            foreach (KeyValuePair<(int, int, int), GameObject> kv in RobotManager.Robots)
             {
                 if (Physics.SphereCast(transform.position, 3.0f, kv.Value.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
                 {
