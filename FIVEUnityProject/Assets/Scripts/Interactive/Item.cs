@@ -4,6 +4,7 @@ using FIVE.UI.InGameDisplay;
 using System;
 using System.Collections;
 using System.Linq;
+using FIVE.EventSystem;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -142,8 +143,7 @@ namespace FIVE.Interactive
                     mc.enabled = false;
                     Destroy(mc);
                 }
-                this.RaiseEvent<OnDropItemToInventory, DropedItemToInventoryEventArgs>(
-                    new DropedItemToInventoryEventArgs(gameObject, null, gameObject));
+                EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(gameObject,null,gameObject));
             }
         }
     }

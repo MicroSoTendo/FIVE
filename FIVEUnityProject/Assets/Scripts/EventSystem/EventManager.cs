@@ -169,6 +169,17 @@ namespace FIVE.EventSystem
             RaiseEvent<T>(sender, args);
         }
 
+        public static void RaiseImmediate<T>(object sender, EventArgs args) where T : IEventType
+        {
+            foreach ((bool requiresMain, List<HandlerNode> handlers) in Instance.handlerNodes[typeof(T)])
+            {
+                foreach (HandlerNode node in handlers)
+                {
+                    node.Handler(sender, args);
+                }
+            }
+        }
+
         public static void RaiseEventFixed<T>(object sender, EventArgs e, int millisecondsDelay)
         {
             ConcurrentDictionary<Type, Task> lookUp = Instance.timedEventDictionary;
