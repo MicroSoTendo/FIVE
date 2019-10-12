@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using System;
+using Mirror;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -7,5 +8,18 @@ namespace FIVE.Robot
     [RequireComponent(typeof(NetworkTransformChild))]
     public class RobotBehaviour : NetworkBehaviour
     {
+        private NetworkTransform networkTransform;
+        private NetworkTransformChild networkTransformChild;
+        private NetworkAnimator networkAnimator;
+        protected virtual void Awake()
+        {
+            networkTransform = GetComponent<NetworkTransform>();
+            networkTransformChild = GetComponent<NetworkTransformChild>();
+            networkAnimator = GetComponent<NetworkAnimator>();
+        }
+
+        protected virtual void Start()
+        {
+        }
     }
 }

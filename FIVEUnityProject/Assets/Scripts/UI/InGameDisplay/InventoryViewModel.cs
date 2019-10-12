@@ -11,10 +11,11 @@ namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryViewModel : ViewModel
     {
+        protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryScrollView";
         private readonly Dictionary<int, GameObject> cellDictionary = new Dictionary<int, GameObject>();
         private readonly RectTransform contentRectTransform;
-
+        private GameObject CellPrefab { get; } = Resources.Load<GameObject>("EntityPrefabs/UI/Inventory/Cell");
         public GameObject InventoryContent { get; }
         public Button ExitButton { get; }
         public Inventory Inventory { get; set; }
@@ -27,34 +28,33 @@ namespace FIVE.UI.InGameDisplay
 
             EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
             contentRectTransform = InventoryContent.GetComponent<RectTransform>();
-            ViewCanvas.worldCamera = Camera.current;
-            ViewCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-            ViewCanvas.planeDistance = 0.5f;
+            this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
+            this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
         }
 
-        public override void SetEnabled(bool value)
+        public override void SetActive(bool value)
         {
-            base.SetEnabled(value);
-            ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+            base.SetActive(value);
+            this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
             SetUpCells();
         }
 
         public override void ToggleEnabled()
         {
             base.ToggleEnabled();
-            ViewCanvas.worldCamera = CameraManager.CurrentActiveCamera;
+            this[RenderMode.ScreenSpaceCamera].worldCamera  = CameraManager.CurrentActiveCamera;
             SetUpCells();
         }
 
         private void ExitInventory()
         {
-            SetEnabled(false);
+            SetActive(false);
         }
 
         private void AddCell(string cellId, int index, GameObject item)
         {
-            GameObject
-                cell = new GameObject(); // AddUIElementFromResources<GameObject>("Cell", cellId, ContentTransform);
+            GameObject cell = GameObject.Instantiate(CellPrefab, contentRectTransform);
+            cell.name = nameof(cell) + cellId;
             cell.transform.SetParent(contentRectTransform);
             Transform itemHolder = cell.FindChildRecursive("Content").transform;
             item.transform.SetParent(itemHolder);
@@ -80,7 +80,7 @@ namespace FIVE.UI.InGameDisplay
 
         private void SetUpCells()
         {
-            if (IsEnabled)
+            if (IsActive)
             {
                 MainThreadDispatcher.ScheduleCoroutine(SetUpCellsCoroutine());
             }

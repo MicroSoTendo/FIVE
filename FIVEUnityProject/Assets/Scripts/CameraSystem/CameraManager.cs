@@ -63,7 +63,7 @@ namespace FIVE.CameraSystem
 
         private void Update()
         {
-            if (UIManager.GetViewModel<CodeEditorViewModel>()?.IsEnabled ?? false)
+            if (UIManager.Get<CodeEditorViewModel>()?.IsActive ?? false)
             {
                 return;
             }

@@ -1,45 +1,48 @@
-﻿using FIVE.EventSystem;
-using System;
+﻿using System;
 using System.Collections;
-using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using FIVE.EventSystem;
 
 namespace FIVE.UI.SplashScreens
 {
-    public abstract class OnProgressUpdated : IEventType<OnProgressUpdatedEventArgs> { }
-
-    public class OnProgressUpdatedEventArgs : EventArgs
+    public class ProgressEventArgs : EventArgs
     {
         public float Progress { get; }
-        public OnProgressUpdatedEventArgs(float progress)
-        {
-            Progress = progress;
-        }
+        public ProgressEventArgs(float progress) => Progress = progress;
     }
-
-    public abstract class LoadingSplashScreen : SplashScreen
+    public abstract class OnProgress : IEventType<ProgressEventArgs> { }
+    public abstract class LoadingSplashScreen : ISplashScreen
     {
-        protected float progress;
-        public float Progress { get => progress; set => progress = Mathf.Clamp(value, 0f, 1f); }
-
+        private readonly Dictionary<object, float> progressValues;
+        protected float Progress { get; private set; }
+        protected abstract void UpdateLoadingProgressBar();
         protected LoadingSplashScreen()
         {
-            progress = 0;
-            EventManager.Subscribe<OnProgressUpdated, OnProgressUpdatedEventArgs>(OnProgressUpdated);
+            Progress = 0; 
+            progressValues = new Dictionary<object, float>();
+            EventManager.Subscribe<OnProgress, ProgressEventArgs>(OnProgressChanged);
         }
-
-        private void OnProgressUpdated(object sender, OnProgressUpdatedEventArgs e)
+        private void OnProgressChanged(object sender, ProgressEventArgs e)
         {
-            progress = e.Progress;
+            if (progressValues.ContainsKey(sender))
+            {
+                progressValues[sender] = e.Progress;
+            }
+            else
+            {
+                progressValues.Add(sender, e.Progress);
+            }
+            Progress = progressValues.Values.Sum() / progressValues.Count;
         }
-
-        protected abstract void UpdateLoadingProgressBar();
-        public override IEnumerator OnTransitioning()
+        public IEnumerator TransitionRoutine()
         {
             while (Progress <= 1)
             {
                 UpdateLoadingProgressBar();
                 yield return null;
             }
+            progressValues.Clear();
         }
     }
 }

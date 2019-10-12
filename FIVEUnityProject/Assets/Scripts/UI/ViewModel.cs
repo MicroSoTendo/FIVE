@@ -2,63 +2,55 @@ using FIVE.EventSystem;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace FIVE.UI
 {
-    public abstract class OnViewModelActiveChanged : IEventType<ViewModelActiveChangedEventArgs>
-    {
-    }
+    public abstract class OnUIActiveChanged : IEventType<UIActiveChangedEventArgs> { }
 
-    public class ViewModelActiveChangedEventArgs : EventArgs
+    public class UIActiveChangedEventArgs : EventArgs
     {
         public bool IsActive { get; }
-        public ViewModelActiveChangedEventArgs(bool isActive)
+
+        public UIActiveChangedEventArgs(bool isActive)
         {
             IsActive = isActive;
         }
     }
 
-    public abstract class ViewModel
+    public abstract partial class ViewModel
     {
-        public int SortingOrder { get => ViewCanvas.sortingOrder; set => ViewCanvas.sortingOrder = value; }
-        public bool IsEnabled => ViewCanvas.gameObject.activeSelf;
+        protected Canvas this[RenderMode mode] => Canvas[(int)mode];
+        public int ZIndex
+        {
+            get => Root.transform.GetSiblingIndex();
+            set => Root.transform.SetSiblingIndex(value);
+        }
+        public bool IsActive => Root.activeSelf;
         protected abstract string PrefabPath { get; }
-        protected Canvas ViewCanvas { get; }
+        protected virtual RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceOverlay;
         protected GameObject Root { get; }
         protected Dictionary<string, GameObject> UIElements { get; } = new Dictionary<string, GameObject>();
-        protected Dictionary<string, GameObject> CanvasResources { get; } = new Dictionary<string, GameObject>();
 
-        protected ViewModel(Canvas parentCanvas = null)
+        protected ViewModel()
         {
-            if (parentCanvas == null)
-            {
-                var canvasGameObject = new GameObject { name = GetType().Name };
-                ViewCanvas = canvasGameObject.AddComponent<Canvas>();
-                canvasGameObject.AddComponent<CanvasScaler>();
-                canvasGameObject.AddComponent<GraphicRaycaster>();
-                ViewCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            }
-            else
-            {
-                ViewCanvas = parentCanvas;
-            }
-            GameObject prefab = Resources.Load<GameObject>(PrefabPath);
-            if (prefab == null)
-            {
-                Debug.LogWarning($"{PrefabPath ?? nameof(PrefabPath)} not found. ({GetType().Name})");
-            }
-            else
-            {
-                Root = Object.Instantiate(prefab, ViewCanvas.transform);
-                AddAllUIElements(Root);
-            }
+            Root = Instantiate();
+            AddAllUIElements(Root);
+        }
+
+        private GameObject Instantiate()
+        {
+            if (PrefabPath == null) return null;
+            GameObject prefab = LoadPrefab(PrefabPath);
+            Transform parent = this[ViewModelRenderMode].transform;
+            GameObject go = Object.Instantiate(prefab, parent);
+            go.SetActive(false);
+            return go;
         }
 
         private void AddAllUIElements(GameObject instantiatedPrefab)
         {
+            if (instantiatedPrefab == null) return;
             for (int i = 0; i < instantiatedPrefab.transform.childCount; i++)
             {
                 GameObject child = instantiatedPrefab.transform.GetChild(i).gameObject;
@@ -68,85 +60,48 @@ namespace FIVE.UI
                     Debug.LogWarning($"Prefab:{PrefabPath} {name} already exists.");
                     throw new ArgumentException();
                 }
+
                 UIElements.Add(name, child);
                 AddAllUIElements(child);
             }
         }
 
-        public virtual void SetEnabled(bool value)
+        public virtual void SetActive(bool value)
         {
-            ViewCanvas.gameObject.SetActive(value);
-            this.RaiseEvent<OnViewModelActiveChanged, ViewModelActiveChangedEventArgs>(
-                new ViewModelActiveChangedEventArgs(value));
+            Root.SetActive(value);
+            this.RaiseEvent<OnUIActiveChanged, UIActiveChangedEventArgs>(
+                new UIActiveChangedEventArgs(value));
         }
 
         public virtual void ToggleEnabled()
         {
-            SetEnabled(!IsEnabled);
+            SetActive(!IsActive);
         }
 
         public virtual void Destroy()
         {
-            GameObject gameObject = ViewCanvas.gameObject;
-            gameObject.SetActive(false);
-            Object.Destroy(gameObject);
+            Root.SetActive(false);
+            Object.Destroy(Root);
         }
 
         protected T Get<T>(string name)
         {
             if (UIElements.ContainsKey(name))
+            {
                 return UIElements[name].GetComponent<T>();
-            return ViewCanvas.gameObject.FindChildRecursive(name).GetComponent<T>();
+            }
+
+            return Root.FindChildRecursive(name).GetComponent<T>();
         }
 
         protected GameObject Get(string name)
         {
             if (UIElements.ContainsKey(name))
+            {
                 return UIElements[name];
-            return ViewCanvas.gameObject.FindChildRecursive(name);
-        }
-
-        protected ButtonSource Bind(Button button)
-        {
-            return new ButtonSource(button);
-        }
-
-        public class ViewModelComparer : IComparer<ViewModel>
-        {
-            public int Compare(ViewModel x, ViewModel y)
-            {
-                if (x == null)
-                {
-                    return y != null ? -1 : 0;
-                }
-
-                return y != null ? x.SortingOrder.CompareTo(y.SortingOrder) : 1;
             }
-        }
 
-        protected abstract class BindingSource<T>
-        {
-            protected T Source { get; }
-            protected BindingSource(T source)
-            {
-                Source = source;
-            }
-        }
-
-        protected class ButtonSource : BindingSource<Button>
-        {
-            public ButtonSource(Button button) : base(button) { }
-
-            public void To(Action o)
-            {
-                Source.onClick.AddListener(new UnityAction(o));
-            }
-        }
-
-        protected class TextSource : BindingSource<Text>
-        {
-            public TextSource(Text source) : base(source) { }
-            public void To(ref string s) { }
+            return Root.FindChildRecursive(name);
         }
     }
 }

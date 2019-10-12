@@ -15,7 +15,7 @@ namespace FIVE.Interactive
 
         private void OnCameraSwitched(object sender, CameraSwitchedEventArgs e)
         {
-            if (UIManager.GetViewModel<CodeEditorViewModel>().IsEnabled)
+            if (UIManager.Get<CodeEditorViewModel>().IsActive)
             {
                 UIManager.SetCursor(UIManager.CursorType.Regular);
             }

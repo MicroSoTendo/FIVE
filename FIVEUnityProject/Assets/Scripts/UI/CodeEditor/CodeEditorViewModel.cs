@@ -49,19 +49,19 @@ namespace FIVE.UI.CodeEditor
         private void ToggleEditor()
         {
             ToggleEnabled();
-            UIManager.SetCursor(IsEnabled ? UIManager.CursorType.Regular : UIManager.CursorType.Aim);
+            UIManager.SetCursor(IsActive ? UIManager.CursorType.Regular : UIManager.CursorType.Aim);
         }
 
         private void RunButtonClicked()
         {
             this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeInputField.text));
-            SetEnabled(false);
+            SetActive(false);
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
 
         private void OnCancelButted()
         {
-            SetEnabled(false);
+            SetActive(false);
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
 

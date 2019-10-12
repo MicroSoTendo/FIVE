@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 namespace FIVE.UI.SplashScreens
 {
-    public abstract class OnFadedOut : IEventType { }
     public class StartUpScreen : LoadingSplashScreen
     {
         #region Private Fields
@@ -17,7 +16,7 @@ namespace FIVE.UI.SplashScreens
 
         private GameObject TBoundary, TColor, S1Boundary, S1Color, S2Boundary, S2Color;
 
-        private readonly GameObject canvas;
+        private readonly Canvas canvas;
         private float width, height, unitWidth;
         private MoveInAnimation genmtt, wallymtt, laurencemtt, wenmtt, yumtt;
         #endregion
@@ -25,11 +24,11 @@ namespace FIVE.UI.SplashScreens
         #region Animation Methods
         private void InstantiateCharacters()
         {
-            Wally = InitLogoHelper(nameof(Wally), canvas, unitWidth);
-            Gen = InitLogoHelper(nameof(Gen), canvas, unitWidth);
-            Yu = InitLogoHelper(nameof(Yu), canvas, unitWidth);
-            Wen = InitLogoHelper(nameof(Wen), canvas, unitWidth);
-            Laurence = InitLogoHelper(nameof(Laurence), canvas, unitWidth);
+            Wally = InitLogoHelper(nameof(Wally), canvas.transform, unitWidth);
+            Gen = InitLogoHelper(nameof(Gen), canvas.transform, unitWidth);
+            Yu = InitLogoHelper(nameof(Yu), canvas.transform, unitWidth);
+            Wen = InitLogoHelper(nameof(Wen), canvas.transform, unitWidth);
+            Laurence = InitLogoHelper(nameof(Laurence), canvas.transform, unitWidth);
             Yu.GetComponent<RectTransform>().sizeDelta *= (0.82f);
         }
 
@@ -53,21 +52,21 @@ namespace FIVE.UI.SplashScreens
         private void InstantiateSymbols()
         {
 
-            QuestionMark = InitLogoHelper(nameof(QuestionMark), canvas, unitWidth / 6);
-            ExclamationMark = InitLogoHelper(nameof(ExclamationMark), canvas, unitWidth / 6);
-            LaurenceMark = InitLogoHelper(nameof(LaurenceMark), canvas, unitWidth / 6);
+            QuestionMark = InitLogoHelper(nameof(QuestionMark), canvas.transform, unitWidth / 6);
+            ExclamationMark = InitLogoHelper(nameof(ExclamationMark), canvas.transform, unitWidth / 6);
+            LaurenceMark = InitLogoHelper(nameof(LaurenceMark), canvas.transform, unitWidth / 6);
         }
 
         private void InstantiateTSS()
         {
-            TBoundary = InitLogoHelper(nameof(TBoundary), canvas, unitWidth / 2);
-            TColor = InitLogoHelper(nameof(TColor), TBoundary, unitWidth / 2);
+            TBoundary = InitLogoHelper(nameof(TBoundary), canvas.transform, unitWidth / 2);
+            TColor = InitLogoHelper(nameof(TColor), TBoundary.transform, unitWidth / 2);
 
-            S1Boundary = InitLogoHelper(nameof(S1Boundary), canvas, unitWidth / 2);
-            S1Color = InitLogoHelper(nameof(S1Color), S1Boundary, unitWidth / 2);
+            S1Boundary = InitLogoHelper(nameof(S1Boundary), canvas.transform, unitWidth / 2);
+            S1Color = InitLogoHelper(nameof(S1Color), S1Boundary.transform, unitWidth / 2);
 
-            S2Boundary = InitLogoHelper(nameof(S2Boundary), canvas, unitWidth / 2);
-            S2Color = InitLogoHelper(nameof(S2Color), S2Boundary, unitWidth / 2);
+            S2Boundary = InitLogoHelper(nameof(S2Boundary), canvas.transform, unitWidth / 2);
+            S2Color = InitLogoHelper(nameof(S2Color), S2Boundary.transform, unitWidth / 2);
         }
 
         private void SetUpTSSPositionAndBar()
@@ -130,9 +129,15 @@ namespace FIVE.UI.SplashScreens
         }
         #endregion
 
-        public StartUpScreen(GameObject canvas) : base()
+        public StartUpScreen() : base()
         {
-            this.canvas = canvas;
+            var canvasGameObject = new GameObject { name = nameof(StartUpScreen) };
+            canvas = canvasGameObject.AddComponent<Canvas>();
+            canvasGameObject.AddComponent<CanvasScaler>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 10;
+            canvasGameObject.transform.SetSiblingIndex(0);
+
             MainThreadDispatcher.Schedule(
                 SetUpFromCanvas,
                 InstantiateTSS,
@@ -151,7 +156,7 @@ namespace FIVE.UI.SplashScreens
             width = canvas.GetComponent<RectTransform>().sizeDelta.x;
             height = canvas.GetComponent<RectTransform>().sizeDelta.y;
             unitWidth = (width / 4f);
-            canvas.AddComponent<Image>().sprite = Resources.Load<Sprite>("UI/WhiteBackground");
+            canvas.gameObject.AddComponent<Image>().sprite = Resources.Load<Sprite>("UI/WhiteBackground");
         }
 
         private async void StartMoving()
@@ -184,41 +189,42 @@ namespace FIVE.UI.SplashScreens
         }
         private void Destroy()
         {
-            MainThreadDispatcher.Destroy(Wally, 2f);
-            MainThreadDispatcher.Destroy(Gen, 2f);
-            MainThreadDispatcher.Destroy(Laurence, 2f);
-            MainThreadDispatcher.Destroy(Yu, 2f);
-            MainThreadDispatcher.Destroy(Wen, 2f);
-            MainThreadDispatcher.Destroy(QuestionMark, 2f);
-            MainThreadDispatcher.Destroy(ExclamationMark, 2f);
-            MainThreadDispatcher.Destroy(LaurenceMark, 2f);
-            MainThreadDispatcher.Destroy(TBoundary, 2f);
-            MainThreadDispatcher.Destroy(TColor, 2f);
-            MainThreadDispatcher.Destroy(S1Boundary, 2f);
-            MainThreadDispatcher.Destroy(S1Color, 2f);
-            MainThreadDispatcher.Destroy(S2Boundary, 2f);
-            MainThreadDispatcher.Destroy(S2Color, 2f);
-            MainThreadDispatcher.Destroy(canvas, 2f);
+            float time = 3.5f;
+            MainThreadDispatcher.Destroy(Wally, time);
+            MainThreadDispatcher.Destroy(Gen, time);
+            MainThreadDispatcher.Destroy(Laurence, time);
+            MainThreadDispatcher.Destroy(Yu, time);
+            MainThreadDispatcher.Destroy(Wen, time);
+            MainThreadDispatcher.Destroy(QuestionMark, time);
+            MainThreadDispatcher.Destroy(ExclamationMark, time);
+            MainThreadDispatcher.Destroy(LaurenceMark, time);
+            MainThreadDispatcher.Destroy(TBoundary, time);
+            MainThreadDispatcher.Destroy(TColor, time);
+            MainThreadDispatcher.Destroy(S1Boundary, time);
+            MainThreadDispatcher.Destroy(S1Color, time);
+            MainThreadDispatcher.Destroy(S2Boundary, time);
+            MainThreadDispatcher.Destroy(S2Color, time);
+            MainThreadDispatcher.Destroy(canvas.gameObject, time);
         }
 
-        public void DoFadingOut()
+        private void DoFadingOut()
         {
+            float duration = 1.5f;
+            Wally.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            Gen.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            Laurence.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            Yu.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            Wen.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            QuestionMark.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            ExclamationMark.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            LaurenceMark.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            TBoundary.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            TColor.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            S1Boundary.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            S1Color.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            S2Boundary.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
+            S2Color.GetComponent<Image>().CrossFadeAlpha(0, duration, false);
             Destroy();
-            Wally.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            Gen.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            Laurence.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            Yu.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            Wen.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            QuestionMark.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            ExclamationMark.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            LaurenceMark.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            TBoundary.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            TColor.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            S1Boundary.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            S1Color.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            S2Boundary.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            S2Color.GetComponent<Image>().CrossFadeAlpha(0, 2, false);
-            this.RaiseEvent<OnFadedOut>(EventArgs.Empty);
         }
 
 
@@ -232,9 +238,9 @@ namespace FIVE.UI.SplashScreens
             mtt.SetTargetAndSpeed(target, speed);
             return mtt;
         }
-        private GameObject InitLogoHelper(string name, GameObject parentCanvas, float width)
+        private GameObject InitLogoHelper(string name, Transform parent, float width)
         {
-            GameObject obj = GameObject.Instantiate(Resources.Load<GameObject>("Logos/Prefabs/" + name), parentCanvas.transform);
+            var obj = GameObject.Instantiate(Resources.Load<GameObject>("Logos/Prefabs/" + name), parent);
             obj.SetActive(false);
             RectTransform recttransform = obj.GetComponent<RectTransform>();
             recttransform.sizeDelta *= (width / recttransform.sizeDelta.x);
@@ -251,25 +257,27 @@ namespace FIVE.UI.SplashScreens
             float tAmount = 0f;
             float s1Amount = 0f;
             float s2Amount = 0f;
-            if (progress < 1 / 3f)
+            if (Progress < 1 / 3f)
             {
-                tAmount = progress * 3f;
+                tAmount = Progress * 3f;
             }
-            else if (progress < 2 / 3f)
+            else if (Progress < 2 / 3f)
             {
                 tAmount = 1f;
-                s1Amount = progress * 3f - 1f;
+                s1Amount = Progress * 3f - 1f;
             }
             else
             {
                 tAmount = 1f;
                 s1Amount = 1f;
-                s2Amount = progress * 3f - 2f;
+                s2Amount = Progress * 3f - 2f;
             }
 
             TColor.GetComponent<Image>().fillAmount = tAmount;
             S1Color.GetComponent<Image>().fillAmount = s1Amount;
             S2Color.GetComponent<Image>().fillAmount = s2Amount;
+            if(Math.Abs(Progress - 1) < float.Epsilon)
+                DoFadingOut();
         }
     }
 }

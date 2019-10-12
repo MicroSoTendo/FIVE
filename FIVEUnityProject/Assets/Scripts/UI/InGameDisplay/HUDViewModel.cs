@@ -38,11 +38,11 @@ namespace FIVE.UI.InGameDisplay
         }
         private void OnInventoryClicked()
         {
-            UIManager.GetViewModel<InventoryViewModel>().ToggleEnabled();
+            UIManager.Get<InventoryViewModel>().ToggleEnabled();
         }
         private void OnOptionClicked()
         {
-            UIManager.GetViewModel<InGameMenuViewModel>().ToggleEnabled();
+            UIManager.Get<InGameMenuViewModel>().ToggleEnabled();
         }
 
     }

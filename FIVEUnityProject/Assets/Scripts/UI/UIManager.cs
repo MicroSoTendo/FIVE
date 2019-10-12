@@ -1,22 +1,17 @@
-using FIVE.EventSystem;
-using FIVE.GameStates;
 using FIVE.UI.SplashScreens;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using FIVE.EventSystem;
+using FIVE.GameStates;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        private static readonly Dictionary<Type, ConstructorInfo> VmConstructorInfos = new Dictionary<Type, ConstructorInfo>();
         private static readonly Dictionary<string, ViewModel> NameToVMs = new Dictionary<string, ViewModel>();
         private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
-        private static readonly SortedSet<ViewModel> LayerSortedVMs = new SortedSet<ViewModel>(new ViewModel.ViewModelComparer());
 
         private static Texture2D cursorTexture;
         public enum CursorType
@@ -46,12 +41,13 @@ namespace FIVE.UI
             }
         }
 
-        public static bool TryGetViewModel(string name, out ViewModel viewModel)
+        public static ViewModel GetOrCreate<T>(string name = null) where T : ViewModel
         {
-            return NameToVMs.TryGetValue(name, out viewModel);
+            ViewModel vm = Get<T>(name) ?? Create<T>(name);
+            return vm;
         }
 
-        public static T GetViewModel<T>(string name = null) where T : ViewModel
+        public static T Get<T>(string name = null) where T : ViewModel
         {
             if (name != null)
             {
@@ -64,77 +60,27 @@ namespace FIVE.UI
             return null;
         }
 
-        public static SortedSet<ViewModel> GetViewModels<T>() where T : ViewModel
-        {
-            return TypeToVMs[typeof(T)];
-        }
-
         private void Awake()
         {
-            GameObject canvasGameObject = new GameObject { name = "LoadingSplashCanvas" };
-            Canvas canvas = canvasGameObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvasGameObject.AddComponent<CanvasScaler>();
-            canvasGameObject.AddComponent<GraphicRaycaster>();
-            StartUpScreen startUpScreen = new StartUpScreen(canvasGameObject);
-            StartCoroutine(startUpScreen.OnTransitioning());
-            EventManager.Subscribe<OnLoadingFinished>((sender, args) => startUpScreen.DoFadingOut());
+            Coroutine vmCoroutine = null;
+            vmCoroutine = StartCoroutine(ViewModel.InitializeRoutine(ProgressCallBack));
+            void ProgressCallBack(float progress) => vmCoroutine.RaiseEvent<OnProgress, ProgressEventArgs>(new ProgressEventArgs(progress));
+            var startUpScreen = new StartUpScreen();
+            StartCoroutine(startUpScreen.TransitionRoutine());
             cursorTexture = Resources.Load<Texture2D>("Textures/UI/Cursor");
-            StartCoroutine(Initialize());
         }
 
-        private IEnumerator Initialize()
-        {
-            IEnumerable<Type> types =
-                from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in assembly.GetTypes()
-                where typeof(ViewModel).IsAssignableFrom(type)
-                select type;
-            foreach (Type type in types)
-            {
-                if (type.IsAbstract)
-                {
-                    continue;
-                }
-                VmConstructorInfos.Add(type, type.GetConstructor(Type.EmptyTypes));
-                yield return null;
-            }
-        }
 
-        public static T AddViewModel<T>(string name = null) where T : ViewModel, new()
+        public static T Create<T>(string name = null) where T : ViewModel
         {
-            T newViewModel;
-            if (VmConstructorInfos.TryGetValue(typeof(T), out ConstructorInfo ctor))
-            {
-                newViewModel = (T)ctor.Invoke(null);
-            }
-            else
-            {
-                newViewModel = new T();
-            }
             if (!TypeToVMs.ContainsKey(typeof(T)))
             {
                 TypeToVMs.Add(typeof(T), new SortedSet<ViewModel>(new ViewModel.ViewModelComparer()));
             }
+            var newViewModel = ViewModel.Create<T>();
             NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
             TypeToVMs[typeof(T)].Add(newViewModel);
-            LayerSortedVMs.Add(newViewModel);
-            return newViewModel;
+            return (T)newViewModel;
         }
-
-        public static void RemoveViewModel(string name)
-        {
-            if (NameToVMs.ContainsKey(name))
-            {
-                ViewModel vm = NameToVMs[name];
-                NameToVMs.Remove(name);
-                LayerSortedVMs.Remove(vm);
-                TypeToVMs[vm.GetType()].Remove(vm);
-                vm.SetEnabled(false);
-                vm.Destroy();
-            }
-        }
-
-  
     }
 }

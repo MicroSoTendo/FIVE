@@ -14,13 +14,13 @@ namespace FIVE.GameStates
             GameObject robot;
             robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
             Inventory inventory = InventoryManager.AddInventory(robot);
-            InventoryViewModel inventoryViewModel = UIManager.AddViewModel<InventoryViewModel>();
+            InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
+            CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
+            ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
             inventoryViewModel.Inventory = inventory;
-            inventoryViewModel.SetEnabled(false);
-            CodeEditorViewModel codeEditorViewModel = UIManager.AddViewModel<CodeEditorViewModel>();
-            codeEditorViewModel.SetEnabled(false);
-            ItemDialogViewModel itemDialogViewModel = UIManager.AddViewModel<ItemDialogViewModel>();
-            itemDialogViewModel.SetEnabled(false);
+            inventoryViewModel.SetActive(false);
+            codeEditorViewModel.SetActive(false);
+            itemDialogViewModel.SetActive(false);
         }
     }
 }

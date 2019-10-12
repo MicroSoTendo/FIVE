@@ -25,7 +25,7 @@ namespace FIVE
             this.RaiseEvent<OnMainLoaderStart>(EventArgs.Empty);
             foreach (GameObject prefab in InfrastructuresOnStart)
             {
-                DontDestroyOnLoad(Instantiate(prefab));
+                Instantiate(prefab);
                 yield return null;
             }
             Destroy(this);

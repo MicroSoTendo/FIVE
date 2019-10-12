@@ -43,7 +43,7 @@ namespace FIVE.Robot
         // Robot Status
         private float health;
 
-        private void Awake()
+        protected override void Awake()
         {
             GameObject eye = gameObject.FindChildRecursive(nameof(eye));
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), eye.transform);
@@ -66,13 +66,15 @@ namespace FIVE.Robot
 
             health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
+            base.Awake();
         }
 
-        private void Start()
+        protected override void Start()
         {
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, CodeEditorSavedEventArgs>(OnCodeSaved);
+            base.Start();
         }
 
         private void OnCodeSaved(object sender, CodeEditorSavedEventArgs e)
@@ -86,7 +88,7 @@ namespace FIVE.Robot
         {
             while (true)
             {
-                if (!UIManager.GetViewModel<CodeEditorViewModel>()?.IsFocused ?? true)
+                if (!UIManager.Get<CodeEditorViewModel>()?.IsFocused ?? true)
                 {
                     if (Input.GetKey(KeyCode.E))
                     {
@@ -100,7 +102,7 @@ namespace FIVE.Robot
         private void Update()
         {
             //Block user input when editor is up
-            if (UIManager.GetViewModel<CodeEditorViewModel>()?.IsEnabled ?? false)
+            if (UIManager.Get<CodeEditorViewModel>()?.IsActive ?? false)
             {
                 return;
             }

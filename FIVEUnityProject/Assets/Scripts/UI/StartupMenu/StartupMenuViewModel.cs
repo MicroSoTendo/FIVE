@@ -28,22 +28,22 @@ namespace FIVE.UI.StartupMenu
 
         private void OnSinglePlayerButtonClicked()
         {
-            ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<HUDViewModel>().SetEnabled(true);
-            UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
+            SetActive(false);
+            UIManager.Get<HUDViewModel>().SetActive(true);
+            UIManager.Get<BackgroundViewModel>().SetActive(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
             this.RaiseEvent<OnSinglePlayerButtonClicked>();
         }
         private void OnMultiplayersButtonClicked()
         {
-            ViewCanvas.gameObject.SetActive(false);
-            UIManager.GetViewModel<HUDViewModel>().SetEnabled(true);
-            UIManager.GetViewModel<BackgroundViewModel>().SetEnabled(false);
+            SetActive(false);
+            UIManager.Get<HUDViewModel>().SetActive(true);
+            UIManager.Get<BackgroundViewModel>().SetActive(false);
             this.RaiseEvent<OnLoadingGameMode>(EventArgs.Empty);
         }
         private void OnOptionsButtonClicked()
         {
-            UIManager.GetViewModel<InGameMenuViewModel>().SetEnabled(true);
+            UIManager.Get<InGameMenuViewModel>().SetActive(true);
         }
         private void OnExitButtonClicked()
         {
