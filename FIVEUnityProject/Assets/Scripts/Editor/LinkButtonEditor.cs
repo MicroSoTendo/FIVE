@@ -86,23 +86,10 @@ namespace FIVE
             style.active.textColor = Color.magenta;
             initialized = true;
         }
-
-        private static bool TryLoadDatabase()
-        {
-            string pathToDatabase = DataPathPrefix + "/Scripts/Editor/fileHashingMap.json";
-            if (File.Exists(pathToDatabase))
-            {
-                string json = File.ReadAllText(pathToDatabase);
-                hashingDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-                return true;
-            }
-
-            return false;
-        }
-
+        
         private static void SaveDatabase()
         {
-            string pathToDatabase = DataPathPrefix + "/Scripts/Editor/fileHashingMap.json";
+            string pathToDatabase = DataPathPrefix + "/Scripts/Editor/.fileHashingMap.json";
             string json = JsonConvert.SerializeObject(hashingDictionary, Formatting.None);
             File.WriteAllText(pathToDatabase, json);
         }
@@ -135,22 +122,15 @@ namespace FIVE
         private static readonly ConcurrentDictionary<string,string> PathMd5Map = new ConcurrentDictionary<string, string>();
         private static void InitDatabase()
         {
-            if (!TryLoadDatabase())
+            TexturesFileInfos = Textures.GetFiles("*.*", SearchOption.AllDirectories);
+            Parallel.ForEach(TexturesFileInfos, info =>
             {
-                TexturesFileInfos = Textures.GetFiles("*.*", SearchOption.AllDirectories);
-                Parallel.ForEach(TexturesFileInfos, info =>
-                {
-                    string md5Str = CheckSum(info.FullName);
-                    PathMd5Map.TryAdd(RemovePrefix(info.FullName), md5Str);
-                });
-                hashingDictionary = PathMd5Map.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                SaveDatabase();
-                Debug.Log($"Hashing Finished. Count = {hashingDictionary.Count}");
-            }
-            else
-            {
-                Debug.Log($"{hashingDictionary.Count} loaded.");
-            }
+                string md5Str = CheckSum(info.FullName);
+                PathMd5Map.TryAdd(RemovePrefix(info.FullName), md5Str);
+            });
+            hashingDictionary = PathMd5Map.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            SaveDatabase();
+            Debug.Log($"Hashing Finished. Count = {hashingDictionary.Count}");
         }
 
         private static void InitGoogleService()
@@ -212,13 +192,14 @@ namespace FIVE
                         Debug.LogWarning($"{name} not started");
                         break;
                     case DownloadStatus.Downloading:
-                        Debug.Log($"{name} Downloading Pregress: {(float)progress.BytesDownloaded / size:P2}");
+                        Debug.Log($"{name} Downloading Progress: {(float)progress.BytesDownloaded / size:P2}");
                         break;
                     case DownloadStatus.Completed:
                         string filePath = $"{targetDirectory}\\{name}";
-                        using (var fs = new FileStream(filePath, FileMode.Create))
+                        using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                         {
-                            fs.Write(ms.ToArray(), 0, ms.Capacity);
+                            Debug.Log($"Writing File: {filePath}, {ms.Length} bytes");
+                            ms.CopyTo(fs);
                             hashingDictionary[RemovePrefix(filePath)] = CheckSum(ms);
                         }
                         ms.Dispose();
@@ -302,6 +283,7 @@ namespace FIVE
             Debug.LogFormat("Checked files: {0} Checked folders: {1}", CheckedFiles.Count, CheckedFolders.Count);
         }
 
+        private static bool ReplaceAll = false;
         private static IEnumerator FetchCoroutine(string remoteFolderId, string localFolderPath)
         {
             localFolderPath = Trim(localFolderPath);
@@ -333,11 +315,18 @@ namespace FIVE
                 string md5Remote = subFile.Md5Checksum;
                 if (md5Local != md5Remote)
                 {
-                    bool doReplace = EditorUtility.DisplayDialog("File conflict",
-                        $"File:{fileKey} checksum does not match remote, do you still want to download it from remote to replace it?",
-                        "Yes", "No");
-                    if (doReplace)
+                    if (ReplaceAll)
                     {
+                        DownloadFile(subFile.Id, localFolderPath);
+                        return true;
+                    }
+                    int result = EditorUtility.DisplayDialogComplex("File Conflict",
+                        $"File:{fileKey} checksum does not match remote, do you still want to download it from remote to replace it?",
+                        "Yes", "No", "Yes for all");
+                    
+                    if (result == 0 || result == 2)
+                    {
+                        ReplaceAll = true;
                         DownloadFile(subFile.Id, localFolderPath);
                     }
 
