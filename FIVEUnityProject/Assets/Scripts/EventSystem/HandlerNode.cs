@@ -36,6 +36,7 @@ namespace FIVE.EventSystem
             {
                 return Equals(node);
             }
+
             return false;
         }
 

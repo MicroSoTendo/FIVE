@@ -7,10 +7,10 @@ namespace FIVE.TerrainSystem
         public static int col = 127;
         public static int size = col + 1;
 
-        private Vector3 Position;
+        private int[] GroundTriangles;
         private Vector3[] GroundVertices;
 
-        private int[] GroundTriangles;
+        private Vector3 Position;
 
         public AreaData(Vector3 pos)
         {
@@ -75,6 +75,7 @@ namespace FIVE.TerrainSystem
                     GroundVertices[x * size].y = 0.0f;
                     GroundVertices[x * size + col].y = 0.0f;
                 }
+
                 for (int y = 0; y < size; y++)
                 {
                     GroundVertices[y].y = 0.0f;
@@ -93,6 +94,7 @@ namespace FIVE.TerrainSystem
                     SampleSquare(x, y, stepsize, Frand() * scale);
                 }
             }
+
             for (int y = 0; y < size; y += stepsize)
             {
                 for (int x = 0; x < size; x += stepsize)
@@ -111,7 +113,7 @@ namespace FIVE.TerrainSystem
             float c = Sample(x - hs, y + hs);
             float d = Sample(x + hs, y + hs);
 
-            Sample(x, y) = ((a + b + c + d) / 4f) + value;
+            Sample(x, y) = (a + b + c + d) / 4f + value;
         }
 
         private void SampleDiamond(int x, int y, int size, float value)
@@ -122,7 +124,7 @@ namespace FIVE.TerrainSystem
             float c = Sample(x, y - hs);
             float d = Sample(x, y + hs);
 
-            Sample(x, y) = ((a + b + c + d) / 4f) + value;
+            Sample(x, y) = (a + b + c + d) / 4f + value;
         }
 
         private ref float Sample(int x, int y)
@@ -166,6 +168,7 @@ namespace FIVE.TerrainSystem
                     GroundTriangles[c + 4] = i;
                     GroundTriangles[c + 5] = i + size;
                 }
+
                 c += 6;
             }
         }

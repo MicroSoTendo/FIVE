@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    public GameObject Prefab;
-
     private static EnemyManager instance;
-
-    private Vector3 spwanLocation;
+    private float elapsedTime;
 
     private HashSet<GameObject> enemies;
-    private float elapsedTime;
+    public GameObject Prefab;
+
+    private Vector3 spwanLocation;
 
     private void Awake()
     {

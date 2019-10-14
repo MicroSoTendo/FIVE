@@ -6,8 +6,8 @@ namespace FIVE.ControllerSystem
     [RequireComponent(typeof(Movable))]
     public class FpsController
     {
-        private readonly GameObject gameObject;
         private readonly CharacterController cc;
+        private readonly GameObject gameObject;
         private readonly RobotSphere robotSphere;
 
         private Vector3 rot = Vector3.zero;
@@ -26,14 +26,17 @@ namespace FIVE.ControllerSystem
             {
                 robotSphere.Move(Movable.Move.Front, 1);
             }
+
             if (Input.GetKey(KeyCode.S))
             {
                 robotSphere.Move(Movable.Move.Back, 1);
             }
+
             if (Input.GetKey(KeyCode.A))
             {
                 robotSphere.Move(Movable.Move.Left, 5);
             }
+
             if (Input.GetKey(KeyCode.D))
             {
                 robotSphere.Move(Movable.Move.Right, 5);

@@ -11,9 +11,10 @@ namespace FIVE.GameModes
 {
     public class Entry : MonoBehaviour
     {
-        [SerializeField] private GameObject Singelplayer;
-        [SerializeField] private GameObject Multiplayers;
         private Camera guiCamera;
+        [SerializeField] private GameObject Multiplayers;
+        [SerializeField] private GameObject Singelplayer;
+
         private IEnumerator Start()
         {
             guiCamera = CameraManager.AddCamera("GUI Camera", enableAudioListener: true);
@@ -21,6 +22,7 @@ namespace FIVE.GameModes
             {
                 yield return null;
             }
+
             StartupMenuViewModel startupMenuViewModel = UIManager.Create<StartupMenuViewModel>();
             BackgroundViewModel backgroundViewModel = UIManager.Create<BackgroundViewModel>();
             startupMenuViewModel.IsActive = true;

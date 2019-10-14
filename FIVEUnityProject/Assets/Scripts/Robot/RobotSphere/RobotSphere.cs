@@ -17,31 +17,29 @@ namespace FIVE.Robot
     {
         public enum RobotSphereState { Idle, Walk, Jump, Open };
 
-        private enum ControllerOp { FPS, RTS, };
+        // Script References
+        private RobotFreeAnim animator;
+
+        private CharacterController cc;
 
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotSphereState CurrentState = RobotSphereState.Idle;
+        private Camera fpsCamera;
 
-        private CharacterController cc;
+        private FpsController fpsController;
+
+        // Robot Status
+        private float health;
+        private Movable movable;
+
+        private AWSLScript script;
+        private bool scriptActive;
+        private Camera thirdPersonCamera;
 
         // Robot Components
         public Battery Battery { get; private set; }
 
         public CPU CPU { get; private set; }
-
-        // Script References
-        private RobotFreeAnim animator;
-
-        private FpsController fpsController;
-        private Camera fpsCamera;
-        private Camera thirdPersonCamera;
-        private Movable movable;
-
-        private AWSLScript script;
-        private bool scriptActive;
-
-        // Robot Status
-        private float health;
 
         protected override void Awake()
         {
@@ -49,10 +47,10 @@ namespace FIVE.Robot
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
             fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
 
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(), 
-                parent: transform, enableAudioListener: true, 
-                position: new Vector3(0, 2, 0), 
-                rotation: Quaternion.Euler(90,0,0));
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(),
+                parent: transform, enableAudioListener: true,
+                position: new Vector3(0, 2, 0),
+                rotation: Quaternion.Euler(90, 0, 0));
 
             cc = GetComponent<CharacterController>();
             movable = GetComponent<Movable>();
@@ -94,6 +92,7 @@ namespace FIVE.Robot
                         this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs(), 300);
                     }
                 }
+
                 yield return null;
             }
         }
@@ -105,6 +104,7 @@ namespace FIVE.Robot
             {
                 return;
             }
+
             // update animation at beginning to ensure consistency
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
@@ -140,5 +140,7 @@ namespace FIVE.Robot
         {
             scriptActive = !script.Execute();
         }
+
+        private enum ControllerOp { FPS, RTS, };
     }
 }

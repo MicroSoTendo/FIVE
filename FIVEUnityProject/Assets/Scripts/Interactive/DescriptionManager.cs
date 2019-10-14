@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DescriptionManager : MonoBehaviour
 {
-
     public void DestroySelf()
     {
         Destroy(gameObject);

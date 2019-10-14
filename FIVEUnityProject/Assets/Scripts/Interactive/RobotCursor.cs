@@ -23,7 +23,6 @@ namespace FIVE.Interactive
             {
                 UIManager.SetCursor(UIManager.CursorType.Aim);
             }
-            
         }
     }
 }

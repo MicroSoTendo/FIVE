@@ -12,5 +12,4 @@ namespace FIVE.UI.NPC
             DialogueText = Get<TMP_Text>(nameof(DialogueText));
         }
     }
-
 }

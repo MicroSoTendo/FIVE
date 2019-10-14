@@ -21,6 +21,7 @@ namespace FIVE.UI.Multiplayers
         public TMP_InputField PasswordInputField { get; }
         public GameObject Bar { get; }
         public TMP_Text Title { get; }
+
         public LobbyWindowViewModel()
         {
             ZIndex = 1;
@@ -76,6 +77,7 @@ namespace FIVE.UI.Multiplayers
                 }
             }
         }
+
         private void CreateButtonLobbyHandler()
         {
             Title.text = "Create Room";
@@ -89,7 +91,8 @@ namespace FIVE.UI.Multiplayers
             string roomName = RoomNameInputField.text;
             int size = int.Parse(RoomSizeInputField.text);
             string password = PasswordInputField.text;
-            this.RaiseEvent<OnCreateRoomRequested>(new CreateRoomRequestedEventArgs(new RoomInfo(roomName, size, password)));
+            this.RaiseEvent<OnCreateRoomRequested>(
+                new CreateRoomRequestedEventArgs(new RoomInfo(roomName, size, password)));
             Root.SetActive(false);
         }
     }

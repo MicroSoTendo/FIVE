@@ -6,14 +6,14 @@ namespace FIVE
     [RequireComponent(typeof(CharacterController))]
     public class EnemyBehavior : MonoBehaviour
     {
-        public float VisionRange;
+        private Animator animator;
 
         private CharacterController cc;
-        private Animator animator;
 
         private GameObject currTarget;
 
         private float speed;
+        public float VisionRange;
 
         private void Start()
         {
@@ -27,7 +27,8 @@ namespace FIVE
 
         private void Update()
         {
-            if (currTarget == null || Vector3.Distance(transform.position, currTarget.transform.position) > 2 * VisionRange)
+            if (currTarget == null ||
+                Vector3.Distance(transform.position, currTarget.transform.position) > 2 * VisionRange)
             {
                 animator.SetTrigger("idle2");
                 SearchTarget();
@@ -48,7 +49,8 @@ namespace FIVE
         {
             foreach (GameObject robot in RobotManager.Instance.Robots)
             {
-                if (Physics.SphereCast(transform.position, 3.0f, robot.transform.position - transform.position, out RaycastHit hitInfo, VisionRange))
+                if (Physics.SphereCast(transform.position, 3.0f, robot.transform.position - transform.position,
+                    out RaycastHit hitInfo, VisionRange))
                 {
                     currTarget = robot;
                 }

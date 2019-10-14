@@ -8,25 +8,28 @@ namespace FIVE.Interactive
 {
     public class Scanner : MonoBehaviour
     {
+        private Canvas canvas;
+
+        private GameObject cursor;
+        private RectTransform cursorRectTransform;
+        private Transform cursorTransform;
+
+        private Coroutine flashingCoroutine;
+        private Camera fpsCamera;
+
+        private bool isScanning;
+        private Text percentageText;
+        private GameObject scannerFrame;
+        private Material scannerMaterial;
+        private RectTransform scannerRectTransform;
+        private Transform scannerTransform;
+        private Transform scanningTransform;
+        private float timer;
         public float ScanningProgress { get; set; } = 0;
         public float ScanningSpeed { get; set; } = 3f;
         public bool IsScanningFinished { get; private set; } = false;
         public Color TintColor { get; set; } = Color.white;
-        private Canvas canvas;
-        private Material scannerMaterial;
-        private Transform scannerTransform;
-        private Transform scanningTransform;
-        private GameObject scannerFrame;
-        private RectTransform scannerRectTransform;
-        private Text percentageText;
-        private Camera fpsCamera;
 
-        private GameObject cursor;
-        private Transform cursorTransform;
-        private RectTransform cursorRectTransform;
-
-        private bool isScanning;
-        private float timer;
         void Awake()
         {
             canvas = GetComponent<Canvas>();
@@ -44,8 +47,6 @@ namespace FIVE.Interactive
 
             gameObject.SetActive(false);
         }
-
-        private Coroutine flashingCoroutine;
 
         public void StartScanning(GameObject item)
         {
@@ -69,7 +70,8 @@ namespace FIVE.Interactive
         private void UpdatePosition(GameObject item)
         {
             fpsCamera = CameraManager.GetFpsCameras.First();
-            Vector3 position = fpsCamera.WorldToScreenPoint(item.transform.position) + new Vector3(0, scannerRectTransform.sizeDelta.y / 2, 0);
+            Vector3 position = fpsCamera.WorldToScreenPoint(item.transform.position) +
+                               new Vector3(0, scannerRectTransform.sizeDelta.y / 2, 0);
             scannerTransform.position = position;
             cursorTransform.position = position;
         }
@@ -82,7 +84,7 @@ namespace FIVE.Interactive
             Vector3 max = fpsCamera.WorldToViewportPoint(bounds.max);
             float width = Mathf.Abs(max.x - min.x) * fpsCamera.pixelWidth * 1.1f;
             float height = Mathf.Abs(max.y - min.y) * fpsCamera.pixelHeight * 1.1f;
-            Vector2 size = Vector2.one * Mathf.Max(width,height);
+            Vector2 size = Vector2.one * Mathf.Max(width, height);
             scannerRectTransform.sizeDelta = size;
             cursorRectTransform.sizeDelta = size;
         }
@@ -105,15 +107,17 @@ namespace FIVE.Interactive
                     if (ScanningProgress >= 100f)
                     {
                         ScanningProgress = 100f;
-                        isScanning = false; 
+                        isScanning = false;
                         timer = 0f;
                         scannerMaterial.SetFloat("_ElapsedTime", 0);
                         scannerMaterial.SetFloat("_Intensity", 0);
                         scannerMaterial.SetColor("_Color", Color.white);
                         IsScanningFinished = true;
                     }
+
                     percentageText.text = $"{ScanningProgress:F2}%";
                 }
+
                 yield return null;
             }
         }

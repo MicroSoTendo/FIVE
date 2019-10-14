@@ -12,6 +12,7 @@ namespace FIVE.UI.InGameDisplay
         public Button SettingsButton { get; }
         public Button MainMenuButton { get; }
         public Button ExitGameButton { get; }
+
         public InGameMenuViewModel() : base()
         {
             ResumeButton = Get<Button>(nameof(ResumeButton));
@@ -32,17 +33,21 @@ namespace FIVE.UI.InGameDisplay
             IsActive = false;
             Debug.Log(nameof(OnLoadSaveClicked));
         }
+
         private void OnSaveButtonClicked()
         {
             IsActive = false;
             // UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnSaveButtonClicked));
         }
+
         private void OnSettingsClicked()
         {
-            Debug.Log(nameof(OnSettingsClicked)); IsActive = false;
+            Debug.Log(nameof(OnSettingsClicked));
+            IsActive = false;
             //UIManager.Get(nameof(GameOptionView)).SetActive(true);
         }
+
         private void OnExitGameClicked()
         {
             Application.Quit();
@@ -51,16 +56,17 @@ namespace FIVE.UI.InGameDisplay
 #endif
             Debug.Log(nameof(OnExitGameClicked));
         }
+
         private void OnResumeClicked()
         {
             Debug.Log(nameof(OnResumeClicked));
             UIManager.Get<InGameMenuViewModel>().IsActive = false;
         }
+
         private void OnMainMenuClicked()
         {
             IsActive = false;
             Debug.Log(nameof(OnMainMenuClicked));
         }
-
     }
 }

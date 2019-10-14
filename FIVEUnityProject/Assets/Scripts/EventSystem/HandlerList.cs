@@ -7,6 +7,8 @@ namespace FIVE.EventSystem
         private readonly List<(bool requiresMain, List<HandlerNode> handlers)> storage;
         private readonly object syncroot = new object();
 
+        public int Count => storage.Count;
+
         public HandlerList()
         {
             storage = new List<(bool requiresMain, List<HandlerNode> handlers)>();
@@ -22,8 +24,6 @@ namespace FIVE.EventSystem
             storage = new List<(bool requiresMain, List<HandlerNode> handlers)>(capacity);
         }
 
-        public int Count => storage.Count;
-
         public void Add(HandlerNode item)
         {
             lock (syncroot)
@@ -34,7 +34,7 @@ namespace FIVE.EventSystem
                 }
                 else
                 {
-                    storage.Add((item.RequiresMainThread, new List<HandlerNode>() { item }));
+                    storage.Add((item.RequiresMainThread, new List<HandlerNode>() {item}));
                 }
             }
         }
@@ -66,6 +66,7 @@ namespace FIVE.EventSystem
                         return true;
                     }
                 }
+
                 return false;
             }
         }

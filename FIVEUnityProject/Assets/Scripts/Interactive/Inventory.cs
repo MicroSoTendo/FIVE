@@ -13,6 +13,7 @@ namespace FIVE.Interactive
         public GameObject Picker { get; }
         public int? Index { get; }
         public GameObject Item { get; }
+
         public DropedItemToInventoryEventArgs(GameObject picker, int? index, GameObject item)
         {
             Index = index;
@@ -27,8 +28,14 @@ namespace FIVE.Interactive
         public RemoveItemRequestedEventArgs(GameObject item) => Item = item;
     }
 
-    public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs> { }
-    public class OnRemoveItemRequested : IEventType<RemoveItemRequestedEventArgs> { }
+    public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs>
+    {
+    }
+
+    public class OnRemoveItemRequested : IEventType<RemoveItemRequestedEventArgs>
+    {
+    }
+
     public enum InventoryChangedAction
     {
         Add,
@@ -37,12 +44,13 @@ namespace FIVE.Interactive
         Insert,
         Replace
     }
+
     public class InventoryChangedEventArgs : EventArgs
     {
-
         public GameObject Item { get; }
         public int Index { get; }
         public InventoryChangedAction Action { get; }
+
         public InventoryChangedEventArgs(GameObject item, int index, InventoryChangedAction action)
         {
             Action = action;
@@ -50,7 +58,11 @@ namespace FIVE.Interactive
             Item = item;
         }
     }
-    public class OnInventoryChanged : OnObservableChanged<InventoryChangedEventArgs> { }
+
+    public class OnInventoryChanged : OnObservableChanged<InventoryChangedEventArgs>
+    {
+    }
+
     public class Inventory : Observable<OnInventoryChanged, InventoryChangedEventArgs>
     {
         private readonly List<GameObject> items = new List<GameObject>();
@@ -88,10 +100,12 @@ namespace FIVE.Interactive
         {
             RaiseObservableChanged(new InventoryChangedEventArgs(gameObject, index, action));
         }
+
         public void ChangeOwner(GameObject newOwner)
         {
             Owner = newOwner;
         }
+
         public void Add(GameObject item)
         {
             OnChanged(item, items.Count, InventoryChangedAction.Add);
@@ -123,6 +137,5 @@ namespace FIVE.Interactive
             OnChanged(items[index], index, InventoryChangedAction.RemoveAt);
             items.RemoveAt(index);
         }
-
     }
 }

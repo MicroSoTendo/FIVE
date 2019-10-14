@@ -8,16 +8,19 @@ namespace FIVE.UI
 {
     public class UIManager : MonoBehaviour
     {
-        private static readonly Dictionary<string, ViewModel> NameToVMs = new Dictionary<string, ViewModel>();
-        private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs = new Dictionary<Type, SortedSet<ViewModel>>();
-
-        private static Texture2D cursorTexture;
         public enum CursorType
         {
             Aim,
             Regular,
             Hidden
         }
+
+        private static readonly Dictionary<string, ViewModel> NameToVMs = new Dictionary<string, ViewModel>();
+
+        private static readonly Dictionary<Type, SortedSet<ViewModel>> TypeToVMs =
+            new Dictionary<Type, SortedSet<ViewModel>>();
+
+        private static Texture2D cursorTexture;
 
         public static void SetCursor(CursorType cursorType)
         {
@@ -51,10 +54,12 @@ namespace FIVE.UI
             {
                 return (T)NameToVMs[name];
             }
+
             if (TypeToVMs.TryGetValue(typeof(T), out SortedSet<ViewModel> values))
             {
                 return (T)values.First();
             }
+
             return null;
         }
 
@@ -62,7 +67,12 @@ namespace FIVE.UI
         {
             Coroutine vmCoroutine = null;
             vmCoroutine = StartCoroutine(ViewModel.InitializeRoutine(ProgressCallBack));
-            void ProgressCallBack(float progress) => vmCoroutine.RaiseEvent<OnProgress, ProgressEventArgs>(new ProgressEventArgs(progress));
+
+            void ProgressCallBack(float progress)
+            {
+                vmCoroutine.RaiseEvent<OnProgress, ProgressEventArgs>(new ProgressEventArgs(progress));
+            }
+
             var startUpScreen = new StartUpScreen();
             StartCoroutine(startUpScreen.TransitionRoutine());
             cursorTexture = Resources.Load<Texture2D>("Textures/UI/Cursor");
@@ -75,6 +85,7 @@ namespace FIVE.UI
             {
                 TypeToVMs.Add(typeof(T), new SortedSet<ViewModel>(new ViewModel.ViewModelComparer()));
             }
+
             var newViewModel = ViewModel.Create<T>();
             NameToVMs.Add(name ?? typeof(T).Name, newViewModel);
             TypeToVMs[typeof(T)].Add(newViewModel);

@@ -35,7 +35,8 @@ namespace FIVE.UI.InGameDisplay
                     newVertexColors = textInfo.meshInfo[materialIndex].colors32;
                     int vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
-                    byte alpha = (byte)(byte.MaxValue - (byte)Mathf.Clamp(newVertexColors[vertexIndex + 0].a - fadeSteps, 0, 255));
+                    byte alpha = (byte)(byte.MaxValue -
+                                        (byte)Mathf.Clamp(newVertexColors[vertexIndex + 0].a - fadeSteps, 0, 255));
 
                     // Set new alpha values.
                     newVertexColors[vertexIndex + 0].a = alpha;
@@ -70,6 +71,7 @@ namespace FIVE.UI.InGameDisplay
                     }
                 }
             }
+
             callback?.Invoke();
         }
     }

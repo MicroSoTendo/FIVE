@@ -10,15 +10,17 @@ namespace FIVE.CameraSystem
 {
     public class CameraManager : MonoBehaviour
     {
+        private static CameraManager instance;
         private readonly Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
         private readonly Dictionary<Camera, string> camerasReversed = new Dictionary<Camera, string>();
         private GameObject cameraPrefab;
-        private static CameraManager instance;
         private int index = 0;
         public static Camera CurrentActiveCamera { get; private set; }
 
         public static IEnumerable<Camera> GetFpsCameras =>
             from c in instance.cameras where c.Key.ToLower().Contains("fps") select c.Value;
+
+        public static Dictionary<string, Camera> Cameras => instance.cameras;
 
         private void Awake()
         {
@@ -31,13 +33,14 @@ namespace FIVE.CameraSystem
                 cameras.Add(cam.name, cam);
                 camerasReversed.Add(cam, cam.name);
             }
+
             CurrentActiveCamera = Camera.current ?? Camera.main;
         }
 
-        public static Dictionary<string, Camera> Cameras => instance.cameras;
-        public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
+        public static Camera AddCamera(string cameraName = null, Vector3 position = default,
+            Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
         {
-            GameObject gameObject = Instantiate(instance.cameraPrefab,parent);
+            GameObject gameObject = Instantiate(instance.cameraPrefab, parent);
             gameObject.transform.localPosition = position;
             gameObject.transform.localRotation = rotation;
             if (enableAudioListener) //Make sure only one audio listener active simutaneously
@@ -51,6 +54,7 @@ namespace FIVE.CameraSystem
                     }
                 }
             }
+
             gameObject.GetComponent<AudioListener>().enabled = enableAudioListener;
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera camera = gameObject.GetComponent<Camera>();
@@ -80,19 +84,24 @@ namespace FIVE.CameraSystem
             {
                 return;
             }
+
             if (Input.GetKeyUp(KeyCode.C) && cameras.Count > 0)
             {
                 foreach (Camera c in cameras.Values)
                 {
                     c.enabled = false;
-                    (c.gameObject.GetComponent<AudioListener>() ?? c.gameObject.GetComponentInChildren<AudioListener>()).enabled = false;
+                    (c.gameObject.GetComponent<AudioListener>() ?? c.gameObject.GetComponentInChildren<AudioListener>())
+                        .enabled = false;
                 }
+
                 index %= cameras.Count;
                 Camera ca = cameras.ElementAt(index).Value;
                 ca.enabled = true;
                 CurrentActiveCamera = ca;
-                (ca.gameObject.GetComponent<AudioListener>() ?? ca.gameObject.GetComponentInChildren<AudioListener>()).enabled = true;
-                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: ca));
+                (ca.gameObject.GetComponent<AudioListener>() ?? ca.gameObject.GetComponentInChildren<AudioListener>())
+                    .enabled = true;
+                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(
+                    new CameraSwitchedEventArgs(activeCamera: ca));
                 index++;
             }
         }

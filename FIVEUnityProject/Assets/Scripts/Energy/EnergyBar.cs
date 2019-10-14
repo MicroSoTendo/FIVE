@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class EnergyBar : MonoBehaviour
 {
-    public float TotalEnergy;
-    public float CurrentEnergy;
     public static bool BetteryOn = false;
+    public float CurrentEnergy;
     public bool decreasingEnergy = false;
     public bool increasingEnergy = false;
+    public float TotalEnergy;
+
     void Start()
     {
         CurrentEnergy = TotalEnergy;
         StartCoroutine(HealthChange());
-     
     }
 
     void Update()
     {
         if (decreasingEnergy == true)
         {
-            if (CurrentEnergy>5)
+            if (CurrentEnergy > 5)
             {
                 CurrentEnergy -= 5;
-                transform.localScale = new Vector3((CurrentEnergy / TotalEnergy), 1, 1);
+                transform.localScale = new Vector3(CurrentEnergy / TotalEnergy, 1, 1);
                 decreasingEnergy = false;
             }
             else
@@ -37,7 +37,7 @@ public class EnergyBar : MonoBehaviour
             if (CurrentEnergy < 95)
             {
                 CurrentEnergy += 5;
-                transform.localScale = new Vector3((CurrentEnergy / TotalEnergy), 1, 1);
+                transform.localScale = new Vector3(CurrentEnergy / TotalEnergy, 1, 1);
                 increasingEnergy = false;
             }
             else
@@ -49,11 +49,10 @@ public class EnergyBar : MonoBehaviour
 
     IEnumerator HealthChange()
     {
-        while(CurrentEnergy!=0 && !BetteryOn)
+        while (CurrentEnergy != 0 && !BetteryOn)
         {
             yield return new WaitForSeconds(2);
             decreasingEnergy = true;
         }
-
     }
 }

@@ -14,6 +14,7 @@ namespace FIVE.ControllerSystem
                 d = transform.InverseTransformDirection(d);
                 transform.Translate(d);
             }
+
             if (Input.GetKey(KeyCode.S))
             {
                 Vector3 d = transform.forward.normalized;
@@ -22,10 +23,12 @@ namespace FIVE.ControllerSystem
                 d = transform.InverseTransformDirection(d);
                 transform.Translate(d);
             }
+
             if (Input.GetKey(KeyCode.A))
             {
                 transform.Rotate(0f, -2f, 0f, Space.World);
             }
+
             if (Input.GetKey(KeyCode.D))
             {
                 transform.Rotate(0f, 2f, 0f, Space.World);

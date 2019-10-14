@@ -2,5 +2,7 @@
 
 namespace FIVE.UI.Multiplayers
 {
-    public abstract class OnJoinButtonPressed : IEventType { }
+    public abstract class OnJoinButtonPressed : IEventType
+    {
+    }
 }

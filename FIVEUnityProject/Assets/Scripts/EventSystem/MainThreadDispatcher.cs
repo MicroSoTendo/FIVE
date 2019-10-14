@@ -11,14 +11,16 @@ namespace FIVE.EventSystem
         private static readonly ConcurrentQueue<Action> ScheduledActions = new ConcurrentQueue<Action>();
         private static readonly ConcurrentQueue<IEnumerator> ScheduledCoroutine = new ConcurrentQueue<IEnumerator>();
         private Action onUpdate = () => { };
-        private void Awake()
-        {
-            DontDestroyOnLoad(this);
-        }
+
         public Action OnUpdate
         {
             get => onUpdate;
             set => onUpdate = value ?? (() => { });
+        }
+
+        private void Awake()
+        {
+            DontDestroyOnLoad(this);
         }
 
         private void Update()
@@ -29,6 +31,7 @@ namespace FIVE.EventSystem
                 ScheduledActions.TryDequeue(out Action result);
                 result();
             }
+
             while (!ScheduledCoroutine.IsEmpty)
             {
                 ScheduledCoroutine.TryDequeue(out IEnumerator result);

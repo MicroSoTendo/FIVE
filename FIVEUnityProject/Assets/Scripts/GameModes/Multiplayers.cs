@@ -11,8 +11,9 @@ namespace FIVE.GameModes
 {
     public class Multiplayers : MonoBehaviour
     {
-        private NetworkManager networkManager;
         private ListServer listServer;
+        private NetworkManager networkManager;
+
         private void Awake()
         {
             networkManager = FindObjectOfType<NetworkManager>();

@@ -4,8 +4,8 @@ namespace FIVE.Robot
 {
     public class RobotFreeAnim
     {
-        private readonly GameObject gameObject;
         private readonly Animator anim;
+        private readonly GameObject gameObject;
 
         public RobotFreeAnim(GameObject gameObject)
         {

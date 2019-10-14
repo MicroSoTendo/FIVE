@@ -35,6 +35,7 @@ namespace FIVE.ControllerSystem
                             {
                                 selectedTroop.GetComponent<RtsControlUnit>().DeSelect();
                             }
+
                             selectedTroops.Clear();
                         }
 
@@ -60,6 +61,7 @@ namespace FIVE.ControllerSystem
                             {
                                 objective = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
                             }
+
                             inputControlTest.Move(objective);
                         }
                     }

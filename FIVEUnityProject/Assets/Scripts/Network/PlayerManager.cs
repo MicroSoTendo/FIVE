@@ -2,7 +2,7 @@
 
 namespace FIVE.Network
 {
-    public class PlayerManager 
+    public class PlayerManager
     {
         [SerializeField] private readonly string PlayerNickName = "";
         private GameObject player;
@@ -15,7 +15,6 @@ namespace FIVE.Network
         // Update is called once per frame
         private void Update()
         {
-
         }
     }
 }

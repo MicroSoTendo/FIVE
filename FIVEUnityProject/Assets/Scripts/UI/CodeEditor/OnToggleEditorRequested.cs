@@ -3,7 +3,11 @@ using FIVE.EventSystem;
 
 namespace FIVE.UI.CodeEditor
 {
-    public abstract class OnToggleEditorRequested : IEventType<LauncherEditorArgs> { }
+    public abstract class OnToggleEditorRequested : IEventType<LauncherEditorArgs>
+    {
+    }
 
-    public sealed class LauncherEditorArgs : EventArgs { }
+    public sealed class LauncherEditorArgs : EventArgs
+    {
+    }
 }

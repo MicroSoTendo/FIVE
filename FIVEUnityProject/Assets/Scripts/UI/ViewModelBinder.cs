@@ -26,6 +26,7 @@ namespace FIVE.UI
                 {
                     return y != null ? -1 : 0;
                 }
+
                 return y != null ? x.ZIndex.CompareTo(y.ZIndex) : 1;
             }
         }
@@ -33,6 +34,7 @@ namespace FIVE.UI
         protected abstract class BindingSource<T>
         {
             protected T Source { get; }
+
             protected BindingSource(T source)
             {
                 Source = source;

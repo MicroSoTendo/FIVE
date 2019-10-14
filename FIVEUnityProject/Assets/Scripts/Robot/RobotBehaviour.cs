@@ -8,9 +8,9 @@ namespace FIVE.Robot
     [RequireComponent(typeof(NetworkTransformChild))]
     public class RobotBehaviour : NetworkBehaviour
     {
+        private NetworkAnimator networkAnimator;
         private NetworkTransform networkTransform;
         private NetworkTransformChild networkTransformChild;
-        private NetworkAnimator networkAnimator;
 
         protected Action OnLocalPlayerUpdate;
 

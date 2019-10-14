@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using FIVE.Robot;
 
 namespace FIVE
@@ -17,7 +16,7 @@ namespace FIVE
 
         private void OnTriggerEnter(Collider other)
         {
-            RobotSphere robotSphere = other.gameObject.GetComponent<Robot.RobotSphere>();
+            RobotSphere robotSphere = other.gameObject.GetComponent<RobotSphere>();
             if (robotSphere != null)
             {
                 //robotSphere.Battery.Charge(ChargeSpeed);
@@ -26,7 +25,7 @@ namespace FIVE
 
         private void OnTriggerExit(Collider other)
         {
-            RobotSphere robotSphere = other.gameObject.GetComponent<Robot.RobotSphere>();
+            RobotSphere robotSphere = other.gameObject.GetComponent<RobotSphere>();
             if (robotSphere != null)
             {
                 //robotSphere.Battery.UnCharge();

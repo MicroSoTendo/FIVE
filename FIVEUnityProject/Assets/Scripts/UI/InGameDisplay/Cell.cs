@@ -10,6 +10,7 @@ namespace FIVE.UI.InGameDisplay
     {
         private Transform contentTransform;
         private GameObject item;
+
         public GameObject Item
         {
             get => item;
@@ -28,10 +29,6 @@ namespace FIVE.UI.InGameDisplay
             }
         }
 
-        private void Awake()
-        {
-            contentTransform = gameObject.FindChildRecursive("Content").transform;
-        }
         public void OnPointerEnter(PointerEventData eventData)
         {
             contentTransform.GetChild(0).gameObject.GetComponent<Item>().IsRotating = true;
@@ -40,6 +37,11 @@ namespace FIVE.UI.InGameDisplay
         public void OnPointerExit(PointerEventData eventData)
         {
             contentTransform.GetChild(0).gameObject.GetComponent<Item>().IsRotating = false;
+        }
+
+        private void Awake()
+        {
+            contentTransform = gameObject.FindChildRecursive("Content").transform;
         }
     }
 }

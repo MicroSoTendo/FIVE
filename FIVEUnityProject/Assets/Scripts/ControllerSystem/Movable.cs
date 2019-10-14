@@ -6,19 +6,21 @@ namespace FIVE
     [RequireComponent(typeof(CharacterController))]
     public class Movable : MonoBehaviour
     {
+        public delegate void MoveOnce(int steps);
+
         public enum Move { Front = 0, Back = 1, Left = 2, Right = 3, };
-
-        public Vector3 MoveTarget;
-
-        public float MoveSpeed;
-
-        public float RotateTarget;
-
-        public float RotateSpeed;
 
         public readonly Queue<Move> Moves = new Queue<Move>();
 
-        public delegate void MoveOnce(int steps);
+        private CharacterController cc;
+
+        public float MoveSpeed;
+
+        public Vector3 MoveTarget;
+
+        public float RotateSpeed;
+
+        public float RotateTarget;
 
         public MoveOnce[] MoveOnces
         {
@@ -26,15 +28,13 @@ namespace FIVE
             private set;
         }
 
-        private CharacterController cc;
-
         private void Start()
         {
             cc = GetComponent<CharacterController>();
             MoveSpeed = 15.0f;
             RotateSpeed = 30.0f;
 
-            MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
+            MoveOnces = new MoveOnce[4] {Forward, Backward, TurnLeft, TurnRight,};
         }
 
         private void Update()

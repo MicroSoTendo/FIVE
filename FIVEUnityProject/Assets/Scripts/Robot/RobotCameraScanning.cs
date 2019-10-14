@@ -1,15 +1,25 @@
 ﻿using UnityEngine;
 using FIVE.EventSystem;
 using static FIVE.Util;
+
 namespace FIVE.Robot
 {
-    public class OnGlobalScanRequested : IEventType { }
-    public class OnGlobalScanFinished : IEventType { }
+    public class OnGlobalScanRequested : IEventType
+    {
+    }
+
+    public class OnGlobalScanFinished : IEventType
+    {
+    }
+
     public class RobotCameraScanning : MonoBehaviour
     {
-        private Material scanningEffectMaterial;
-        private MaterialPropertyBlock propBlock;
         private bool isScanning;
+        private MaterialPropertyBlock propBlock;
+        private Material scanningEffectMaterial;
+
+        private float timer = 4f;
+
         void Awake()
         {
             propBlock = new MaterialPropertyBlock();
@@ -31,7 +41,6 @@ namespace FIVE.Robot
             Graphics.Blit(src, dest, scanningEffectMaterial);
         }
 
-        private float timer = 4f;
         void Update()
         {
             if (isScanning)

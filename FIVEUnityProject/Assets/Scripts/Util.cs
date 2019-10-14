@@ -30,6 +30,7 @@ namespace FIVE
             {
                 return child.gameObject;
             }
+
             for (int i = 0; i < gameObject.transform.childCount; i++)
             {
                 child = gameObject.transform.GetChild(i);
@@ -38,12 +39,14 @@ namespace FIVE
                 {
                     return grandSon.gameObject;
                 }
+
                 GameObject childInChild = child.gameObject.FindChildRecursive(name);
                 if (childInChild != null)
                 {
                     return childInChild;
                 }
             }
+
             return null;
         }
 

@@ -3,18 +3,19 @@ using FIVE.Robot;
 using System.Collections;
 using UnityEngine;
 using static FIVE.Util;
+
 namespace FIVE.Interactive
 {
     public class NPC : MonoBehaviour
     {
-        private Transform image;
-        private Vector3 originalScale;
-        private bool onClick;
-
         private GameObject canvas;
-        private bool isScanned = false;
 
         public GameObject Description;
+        private Transform image;
+        private bool isScanned = false;
+        private bool onClick;
+        private Vector3 originalScale;
+
         private void Awake()
         {
             onClick = false;
@@ -40,7 +41,6 @@ namespace FIVE.Interactive
 
         private IEnumerator ChangeOverTime(float time)
         {
-
             var destinationScale = new Vector3(1.05f, 1.05f, 1.05f);
 
             float currentTime = 0.0f;
@@ -51,7 +51,6 @@ namespace FIVE.Interactive
                 currentTime += Time.deltaTime;
                 yield return null;
             } while (currentTime <= time);
-
         }
 
 
@@ -65,17 +64,19 @@ namespace FIVE.Interactive
             onClick = true;
             StartCoroutine(ChangeOverTime(0.2f));
         }
+
         public void OnMouseExit()
         {
             onClick = false;
-
         }
+
         public void OnMouseDown()
         {
             var go = Instantiate(Description) as GameObject;
             go.transform.SetParent(GameObject.Find("UIScreenSpace").transform);
             go.transform.localPosition = new Vector2(0, -192);
         }
+
         public void Update()
         {
             if (!onClick)

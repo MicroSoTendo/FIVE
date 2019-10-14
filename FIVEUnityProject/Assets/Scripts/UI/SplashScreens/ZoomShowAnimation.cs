@@ -5,11 +5,14 @@ namespace FIVE.UI.SplashScreens
 {
     public class ZoomShowAnimation : MonoBehaviour
     {
-        public EventHandler OnFinished = (o, e) => { };
-        private float speed;
         private readonly float acceleration = 1f;
+        public EventHandler OnFinished = (o, e) => { };
         private Action OnUpdate = () => { };
+        private float speed;
         private bool started = false;
+
+
+        private float timer = 0;
 
         private void Start()
         {
@@ -49,8 +52,6 @@ namespace FIVE.UI.SplashScreens
             }
         }
 
-
-        private float timer = 0;
         private void DoDynamicScale()
         {
             transform.localScale = new Vector3(1, 1, 1) * (0.7f + 0.275f * ((Mathf.Cos(timer) + 1f) / 1.85f));

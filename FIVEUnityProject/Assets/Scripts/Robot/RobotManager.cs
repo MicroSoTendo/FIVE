@@ -6,11 +6,10 @@ namespace FIVE.Robot
 {
     public class RobotManager : MonoBehaviour
     {
+        private readonly Dictionary<string, GameObject> robotPrefabs = new Dictionary<string, GameObject>();
         public Dictionary<(int, int, int), List<int>> RobotIDs = new Dictionary<(int, int, int), List<int>>();
 
         public HashSet<GameObject> Robots = new HashSet<GameObject>();
-
-        private readonly Dictionary<string, GameObject> robotPrefabs = new Dictionary<string, GameObject>();
 
         public static RobotManager Instance { get; private set; }
 
@@ -41,6 +40,7 @@ namespace FIVE.Robot
                 Instance.RobotIDs[k].Add(robot.GetInstanceID());
                 return robot;
             }
+
             return null;
         }
 

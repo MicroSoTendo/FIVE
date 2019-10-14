@@ -6,12 +6,13 @@ using UnityEngine.UI;
 public class TextDisplay : TextFormat
 {
     private string str;
+
     void Start()
     {
         GenerateDescription();
         string text = Description[0];
         gameObject.GetComponent<Text>().text = Description[Random.Range(0, 12)];
-       // StartCoroutine(AnimateText(text));
+        // StartCoroutine(AnimateText(text));
     }
 
 
@@ -26,8 +27,8 @@ public class TextDisplay : TextFormat
             yield return new WaitForSeconds(0.05f);
         }
     }
+
     private void Update()
     {
-        
     }
 }

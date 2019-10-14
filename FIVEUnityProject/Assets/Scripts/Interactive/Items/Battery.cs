@@ -5,8 +5,9 @@ namespace FIVE.Interactive.Items
     public class Battery : MonoBehaviour
     {
         private float Capacity = 100;
-        private float Remaining = 100;
         private Item item;
+        private float Remaining = 100;
+
         void Awake()
         {
             item = GetComponent<Item>();
@@ -18,5 +19,4 @@ namespace FIVE.Interactive.Items
             owner.GetComponent<RobotComponents.Battery>().CurrentEnergy = Remaining;
         }
     }
-
 }

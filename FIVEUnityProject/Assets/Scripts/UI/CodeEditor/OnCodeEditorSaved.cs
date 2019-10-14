@@ -8,5 +8,8 @@ namespace FIVE.UI.CodeEditor
         public string Code { get; }
         public CodeEditorSavedEventArgs(string code) => Code = code;
     }
-    public class OnCodeEditorSaved : IEventType<CodeEditorSavedEventArgs> { }
+
+    public class OnCodeEditorSaved : IEventType<CodeEditorSavedEventArgs>
+    {
+    }
 }

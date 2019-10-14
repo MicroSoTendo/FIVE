@@ -14,6 +14,7 @@ namespace FIVE.UI.InGameDisplay
         public Button MenuButton { get; }
         public Button InventoryButton { get; }
         public Button ScanButton { get; }
+
         public HUDViewModel() : base()
         {
             PlayerButton = Get<Button>(nameof(PlayerButton));
@@ -32,18 +33,20 @@ namespace FIVE.UI.InGameDisplay
         {
             EnergyScrollbar.size = e.NewEnergyLevel / 100f;
         }
+
         private void OnScanClicked()
         {
             this.RaiseEvent<OnGlobalScanRequested>();
         }
+
         private void OnInventoryClicked()
         {
             UIManager.Get<InventoryViewModel>().ToggleEnabled();
         }
+
         private void OnOptionClicked()
         {
             UIManager.Get<InGameMenuViewModel>().ToggleEnabled();
         }
-
     }
 }

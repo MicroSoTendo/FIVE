@@ -18,6 +18,5 @@ namespace FIVE.Network
         public string Name { get; }
         public int Size { get; }
         public string Password { get; }
-        
     }
 }

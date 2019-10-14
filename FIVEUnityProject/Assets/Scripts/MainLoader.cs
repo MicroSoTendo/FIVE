@@ -28,6 +28,7 @@ namespace FIVE
                 Instantiate(prefab);
                 yield return null;
             }
+
             Destroy(this);
             this.RaiseEvent<OnMainLoaderDestroyed>(EventArgs.Empty);
         }

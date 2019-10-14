@@ -5,18 +5,18 @@ namespace FIVE
 {
     public class SkyBoxTime : MonoBehaviour
     {
-        [SerializeField] private GameObject lightPrefab;
-        public float time;
         public TimeSpan currenttime;
-        private Transform sunTransform;
-        private Light sun;
         public int days;
-
-        public float intensity;
         public Color fogday = Color.gray;
         public Color fognight = Color.black;
 
+        public float intensity;
+        [SerializeField] private GameObject lightPrefab;
+
         public int speed;
+        private Light sun;
+        private Transform sunTransform;
+        public float time;
 
         private void Awake()
         {
@@ -48,7 +48,7 @@ namespace FIVE
             }
             else
             {
-                intensity = 1 - ((43200 - time) / 43200 * -1);
+                intensity = 1 - (43200 - time) / 43200 * -1;
             }
 
             RenderSettings.fogColor = Color.Lerp(fognight, fogday, intensity * intensity);

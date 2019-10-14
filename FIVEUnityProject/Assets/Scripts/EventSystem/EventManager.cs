@@ -12,16 +12,16 @@ namespace FIVE.EventSystem
 {
     public sealed class EventManager
     {
-        private static EventManager Instance { get; } = new EventManager();
-        private readonly ConcurrentDictionary<Type, HandlerList> handlerNodes;
-        private readonly ConcurrentDictionary<Type, Task> timedEventDictionary;
-        private readonly ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> scheduledMainThread;
-        private readonly ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> scheduledAsync;
         private readonly int asynchronousTimeOut; //ms
         private readonly MainThreadDispatcher dispatcher;
-        private bool initialized;
-        private Coroutine coroutine;
+        private readonly ConcurrentDictionary<Type, HandlerList> handlerNodes;
+        private readonly ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> scheduledAsync;
+        private readonly ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> scheduledMainThread;
+        private readonly ConcurrentDictionary<Type, Task> timedEventDictionary;
         private Task asyncTask;
+        private Coroutine coroutine;
+        private bool initialized;
+        private static EventManager Instance { get; } = new EventManager();
 
         private EventManager()
         {
@@ -43,13 +43,14 @@ namespace FIVE.EventSystem
             }
 
             IEnumerable<Type> types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                                      from type in assembly.GetTypes()
-                                      where typeof(IEventType).IsAssignableFrom(type)
-                                      select type;
+                from type in assembly.GetTypes()
+                where typeof(IEventType).IsAssignableFrom(type)
+                select type;
             foreach (Type type in types)
             {
                 Instance.handlerNodes.TryAdd(type, new HandlerList());
             }
+
             Instance.coroutine = Instance.dispatcher.StartCoroutine(Instance.MainThreadConsumer());
             Instance.asyncTask = Task.Run(Instance.AsyncConsumer);
             Instance.initialized = true;
@@ -65,8 +66,10 @@ namespace FIVE.EventSystem
                     {
                         tuple.handler(tuple.sender, tuple.args);
                     }
+
                     yield return null;
                 }
+
                 yield return null;
             }
         }
@@ -80,9 +83,11 @@ namespace FIVE.EventSystem
                 {
                     if (scheduledAsync.TryDequeue(out (EventHandler handler, object sender, EventArgs args) tuple))
                     {
-                        await Task.Run(() => { tuple.handler(tuple.sender, tuple.args); }, new CancellationTokenSource(asynchronousTimeOut).Token);
+                        await Task.Run(() => { tuple.handler(tuple.sender, tuple.args); },
+                            new CancellationTokenSource(asynchronousTimeOut).Token);
                     }
                 }
+
                 Thread.Sleep(1);
             }
         }
@@ -121,7 +126,8 @@ namespace FIVE.EventSystem
             {
                 foreach ((bool requiresMain, List<HandlerNode> handlerNodes) in Instance.handlerNodes[typeof(T)])
                 {
-                    ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> queue = requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
+                    ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> queue =
+                        requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
                     foreach (HandlerNode handlerNode in handlerNodes)
                     {
                         queue.Enqueue((handlerNode.Handler, sender, args));
@@ -136,9 +142,10 @@ namespace FIVE.EventSystem
                 {
                     return;
                 }
+
                 foreach ((bool requiresMain, List<HandlerNode> handlerNodes) in Instance.handlerNodes[baseType])
                 {
-                    ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> queue = 
+                    ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> queue =
                         requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
                     foreach (HandlerNode handlerNode in handlerNodes)
                     {
@@ -202,7 +209,7 @@ namespace FIVE.EventSystem
         {
             foreach ((bool requiresMain, List<HandlerNode> handlerNodes) in Instance.handlerNodes[typeof(T)])
             {
-                ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> queue = 
+                ConcurrentQueue<(EventHandler handler, object sender, EventArgs args)> queue =
                     requiresMain ? Instance.scheduledMainThread : Instance.scheduledAsync;
                 foreach (HandlerNode handlerNode in handlerNodes)
                 {

@@ -11,25 +11,27 @@ namespace FIVE.Interactive
 {
     public class Item : MonoBehaviour
     {
+        public delegate void ItemUsingAction(GameObject owner, GameObject item);
+
         public static readonly Color[] HighlightColors =
         {
             Color.red, Color.magenta, Color.yellow, Color.green, Color.blue, Color.green, Color.yellow,
             Color.magenta, Color.red
         };
 
-        public delegate void ItemUsingAction(GameObject owner, GameObject item);
-
-        [SerializeField] private ItemInfo itemInfo;
-        private Coroutine flashingCoroutine;
-        private Renderer itemRenderer;
         private int currentColor = 0;
-        private int nextColor = 0;
-        private float timer = 0;
+        private Coroutine flashingCoroutine;
         private bool isCollected;
         private bool isFlashing;
+
+        [SerializeField] private ItemInfo itemInfo;
+        private Renderer itemRenderer;
+        private int nextColor = 0;
         private Scanner scanner;
         private float singleColorInterval = 0.5f;
+        private float timer = 0;
         public GameObject Owner { get; set; }
+
         public ItemInfo Info
         {
             get => itemInfo;
@@ -42,17 +44,20 @@ namespace FIVE.Interactive
 
         public ItemUsingAction ItemAction { get; set; }
         public bool ActionExecuted { get; set; } = false;
+
         private void Awake()
         {
             itemRenderer = GetComponent<Renderer>();
-            scanner = Instantiate(Resources.Load<GameObject>("EntityPrefabs/UI/Scanner"), transform).GetComponent<Scanner>();
+            scanner = Instantiate(Resources.Load<GameObject>("EntityPrefabs/UI/Scanner"), transform)
+                .GetComponent<Scanner>();
         }
 
         private IEnumerator FlashingSelf()
         {
             while (!scanner.IsScanningFinished)
             {
-                var tintColor = Color.Lerp(HighlightColors[currentColor], HighlightColors[nextColor], timer / singleColorInterval);
+                var tintColor = Color.Lerp(HighlightColors[currentColor], HighlightColors[nextColor],
+                    timer / singleColorInterval);
                 itemRenderer.material.color = tintColor;
                 scanner.TintColor = tintColor;
                 timer += Time.deltaTime;
@@ -62,6 +67,7 @@ namespace FIVE.Interactive
                     nextColor = (currentColor + 1) % HighlightColors.Length;
                     timer = 0.0f;
                 }
+
                 yield return null;
             }
         }
@@ -72,19 +78,23 @@ namespace FIVE.Interactive
             {
                 return;
             }
+
             if (isCollected)
             {
                 return;
             }
+
             if (isFlashing == false)
             {
                 scanner.StartScanning(gameObject);
                 isFlashing = true;
                 flashingCoroutine = StartCoroutine(FlashingSelf());
             }
+
             if (scanner.IsScanningFinished)
             {
-                this.RaiseEvent<OnItemDialogRequested, ItemDialogRequestedEventArgs>(new ItemDialogRequestedEventArgs(gameObject));
+                this.RaiseEvent<OnItemDialogRequested, ItemDialogRequestedEventArgs>(
+                    new ItemDialogRequestedEventArgs(gameObject));
             }
         }
 
@@ -102,6 +112,7 @@ namespace FIVE.Interactive
             {
                 StopCoroutine(flashingCoroutine);
             }
+
             this.RaiseEvent<OnItemDialogDismissRequested>();
         }
 
@@ -122,18 +133,23 @@ namespace FIVE.Interactive
                 {
                     ItemAction?.Invoke(Owner, gameObject);
                     ActionExecuted = true;
-                    this.RaiseEvent<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(new RemoveItemRequestedEventArgs(gameObject));
+                    this.RaiseEvent<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(
+                        new RemoveItemRequestedEventArgs(gameObject));
                 }
             }
+
             if (!isFlashing)
             {
                 return;
             }
-            bool closeEnough = (FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude < 100f;
+
+            bool closeEnough = (FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude <
+                               100f;
             if (!closeEnough)
             {
                 return;
             }
+
             if (Input.GetMouseButtonDown(1))
             {
                 isCollected = true;
@@ -143,7 +159,9 @@ namespace FIVE.Interactive
                     mc.enabled = false;
                     Destroy(mc);
                 }
-                EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(gameObject,null,gameObject));
+
+                EventManager.RaiseImmediate<OnDropItemToInventory>(this,
+                    new DropedItemToInventoryEventArgs(gameObject, null, gameObject));
             }
         }
     }

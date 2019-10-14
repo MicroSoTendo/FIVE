@@ -7,6 +7,12 @@ namespace FIVE.RobotComponents
     public class Battery : RobotComponent
     {
         private float capacity;
+        private int chargeSpeed;
+
+        private float currentEnergy;
+        public int DechargeSpeed;
+
+        private bool isCharging;
 
         public float Capacity
         {
@@ -17,21 +23,16 @@ namespace FIVE.RobotComponents
             }
         }
 
-        private float currentEnergy;
-
         public float CurrentEnergy
         {
             get => currentEnergy;
             set
             {
                 currentEnergy = value;
-                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(new RobotEnergyChangedEventArgs(value));
+                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(
+                    new RobotEnergyChangedEventArgs(value));
             }
         }
-
-        private bool isCharging;
-        public int DechargeSpeed;
-        private int chargeSpeed;
 
         public void Start()
         {
@@ -70,7 +71,7 @@ namespace FIVE.RobotComponents
         public RobotEnergyChangedEventArgs(float newEnergyLevel) => NewEnergyLevel = newEnergyLevel;
     }
 
-    public abstract class OnRobotEnergyChanged : IEventType<RobotEnergyChangedEventArgs> { }
-
-
+    public abstract class OnRobotEnergyChanged : IEventType<RobotEnergyChangedEventArgs>
+    {
+    }
 }

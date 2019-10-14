@@ -38,12 +38,12 @@ namespace FIVE.UI
                 Canvas c = go.AddComponent<Canvas>();
                 go.AddComponent<CanvasScaler>();
                 GraphicRaycaster graphicRaycaster = go.AddComponent<GraphicRaycaster>();
-                
+
                 Canvas[(int)value] = c;
                 c.renderMode = (RenderMode)value;
             }
         }
-        
+
         public static IEnumerator InitializeRoutine(Action<float> progressCallBack)
         {
             if (progressCallBack == null) progressCallBack = f => { };
@@ -67,11 +67,13 @@ namespace FIVE.UI
                 finished++;
                 yield return null;
             }
+
             while (CachedPrefabs.Count < fileInfos.Length)
             {
                 progressCallBack((float)finished / total);
                 yield return null;
             }
+
             finished *= 2;
             foreach (Type type in types)
             {
@@ -81,6 +83,7 @@ namespace FIVE.UI
                 progressCallBack((float)finished / total);
                 yield return null;
             }
+
             Initialized = true;
         }
 

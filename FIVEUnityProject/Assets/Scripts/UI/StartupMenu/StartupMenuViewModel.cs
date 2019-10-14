@@ -14,6 +14,7 @@ namespace FIVE.UI.StartupMenu
         public Button MultiplayersButton { get; }
         public Button OptionsButton { get; }
         public Button ExitButton { get; }
+
         public StartupMenuViewModel() : base()
         {
             SinglePlayerButton = Get<Button>(nameof(SinglePlayerButton));
@@ -34,6 +35,7 @@ namespace FIVE.UI.StartupMenu
             this.RaiseEvent<OnLoadingGameMode>();
             this.RaiseEvent<OnSinglePlayerButtonClicked>();
         }
+
         private void OnMultiplayersButtonClicked()
         {
             IsActive = false;
@@ -42,10 +44,12 @@ namespace FIVE.UI.StartupMenu
             this.RaiseEvent<OnLoadingGameMode>();
             this.RaiseEvent<OnMultiPlayersButtonClicked>();
         }
+
         private void OnOptionsButtonClicked()
         {
             UIManager.Get<InGameMenuViewModel>().IsActive = true;
         }
+
         private void OnExitButtonClicked()
         {
             Application.Quit();
@@ -54,6 +58,5 @@ namespace FIVE.UI.StartupMenu
 #endif
             Debug.Log(nameof(OnExitButtonClicked));
         }
-
     }
 }

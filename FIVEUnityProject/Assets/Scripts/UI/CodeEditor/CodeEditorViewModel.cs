@@ -18,6 +18,7 @@ namespace FIVE.UI.CodeEditor
         public Button ExitButton { get; }
 
         public bool IsFocused { get; set; }
+
         public CodeEditorViewModel()
         {
             CodeInputField = Get<TMP_InputField>(nameof(CodeInputField));
@@ -43,6 +44,7 @@ namespace FIVE.UI.CodeEditor
             {
                 sb.AppendLine(i.ToString());
             }
+
             LineNumber.text = sb.ToString();
         }
 
@@ -54,7 +56,8 @@ namespace FIVE.UI.CodeEditor
 
         private void RunButtonClicked()
         {
-            this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeInputField.text));
+            this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(
+                new CodeEditorSavedEventArgs(CodeInputField.text));
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
@@ -64,6 +67,5 @@ namespace FIVE.UI.CodeEditor
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
-
     }
 }

@@ -7,7 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace FIVE.UI
 {
-    public abstract class OnUIActiveChanged : IEventType<UIActiveChangedEventArgs> { }
+    public abstract class OnUIActiveChanged : IEventType<UIActiveChangedEventArgs>
+    {
+    }
 
     public class UIActiveChangedEventArgs : EventArgs
     {
@@ -22,11 +24,13 @@ namespace FIVE.UI
     public abstract partial class ViewModel
     {
         protected Canvas this[RenderMode mode] => Canvas[(int)mode];
+
         public int ZIndex
         {
             get => Root.transform.GetSiblingIndex();
             set => Root.transform.SetSiblingIndex(value);
         }
+
         public virtual bool IsActive
         {
             get => Root.activeSelf;

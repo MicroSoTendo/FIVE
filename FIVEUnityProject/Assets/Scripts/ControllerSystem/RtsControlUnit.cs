@@ -7,6 +7,7 @@ namespace FIVE.ControllerSystem
         private CharacterController cc;
 
         private Vector3 currTarget;
+
         private Vector3 velocity;
         // private readonly float speed = 10f;
 
@@ -39,5 +40,4 @@ namespace FIVE.ControllerSystem
             velocity = Vector3.Normalize(target - transform.position);
         }
     }
-
 }

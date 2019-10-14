@@ -6,31 +6,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryViewModel : ViewModel
     {
-        protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
-        protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryScrollView";
         private readonly Dictionary<int, GameObject> cellDictionary = new Dictionary<int, GameObject>();
         private readonly RectTransform contentRectTransform;
+        protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
+        protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryScrollView";
         private GameObject CellPrefab { get; } = Resources.Load<GameObject>("EntityPrefabs/UI/Inventory/Cell");
         public GameObject InventoryContent { get; }
         public Button ExitButton { get; }
         public Inventory Inventory { get; set; }
-
-        public InventoryViewModel()
-        {
-            InventoryContent = Get(nameof(InventoryContent));
-            ExitButton = Get<Button>(nameof(ExitButton));
-            Bind(ExitButton).To(ExitInventory);
-
-            EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
-            contentRectTransform = InventoryContent.GetComponent<RectTransform>();
-            this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
-            this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
-        }
 
         public override bool IsActive
         {
@@ -49,10 +38,22 @@ namespace FIVE.UI.InGameDisplay
             }
         }
 
+        public InventoryViewModel()
+        {
+            InventoryContent = Get(nameof(InventoryContent));
+            ExitButton = Get<Button>(nameof(ExitButton));
+            Bind(ExitButton).To(ExitInventory);
+
+            EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
+            contentRectTransform = InventoryContent.GetComponent<RectTransform>();
+            this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
+            this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
+        }
+
         public override void ToggleEnabled()
         {
             base.ToggleEnabled();
-            this[RenderMode.ScreenSpaceCamera].worldCamera  = CameraManager.CurrentActiveCamera;
+            this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
             SetUpCells();
         }
 
@@ -63,7 +64,7 @@ namespace FIVE.UI.InGameDisplay
 
         private void AddCell(string cellId, int index, GameObject item)
         {
-            GameObject cell = GameObject.Instantiate(CellPrefab, contentRectTransform);
+            GameObject cell = Object.Instantiate(CellPrefab, contentRectTransform);
             cell.name = nameof(cell) + cellId;
             cell.transform.SetParent(contentRectTransform);
             Transform itemHolder = cell.FindChildRecursive("Content").transform;

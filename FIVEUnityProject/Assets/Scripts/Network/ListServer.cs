@@ -11,14 +11,15 @@ namespace FIVE.Network
     [RequireComponent(typeof(NetworkManager))]
     public class ListServer : MonoBehaviour
     {
-        [Header("Listen Server Connection")]
-        public string listServerIp = "gs.xugen.me";
-        public ushort gameServerToListenPort = 8887;
-        public ushort clientToListenPort = 8888;
-        public string gameServerTitle = "Test Server";
+        private readonly Client clientToListenConnection = new Client();
 
         private readonly Client gameServerToListenConnection = new Client();
-        private readonly Client clientToListenConnection = new Client();
+        public ushort clientToListenPort = 8888;
+        public string gameServerTitle = "Test Server";
+        public ushort gameServerToListenPort = 8887;
+
+        [Header("Listen Server Connection")] public string listServerIp = "gs.xugen.me";
+
         public Dictionary<string, ServerStatus> ServerList { get; } = new Dictionary<string, ServerStatus>();
 
         private void Start()
@@ -74,7 +75,8 @@ namespace FIVE.Network
             }
             else
             {
-                Debug.LogError("[List Server] List Server will reject messages longer than 128 bytes. Please use a shorter title.");
+                Debug.LogError(
+                    "[List Server] List Server will reject messages longer than 128 bytes. Please use a shorter title.");
             }
         }
 
@@ -118,7 +120,7 @@ namespace FIVE.Network
             ushort titleLength = reader.ReadUInt16();
             string title = Encoding.UTF8.GetString(reader.ReadBytes(titleLength));
 
-            Debug.Log($"PARSED: ip= {ip}  port= {port}  players= {players} capacity= { capacity } title= {title}");
+            Debug.Log($"PARSED: ip= {ip}  port= {port}  players= {players} capacity= {capacity} title= {title}");
             // build key
             string key = ip + ":" + port;
             // find existing or create new one
@@ -134,6 +136,7 @@ namespace FIVE.Network
                 // create
                 server = new ServerStatus(ip, port, title, players, capacity);
             }
+
             // save
             ServerList[key] = server;
         }

@@ -5,12 +5,14 @@ namespace FIVE.UI.SplashScreens
 {
     public class MoveInAnimation : MonoBehaviour
     {
-        public EventHandler OnFinished = (o, e) => { };
-        private Vector3 targetPosition;
-        private float speed;
         private float acceleration;
+        public EventHandler OnFinished = (o, e) => { };
         private Action OnUpdate = () => { };
+        private float speed;
         private bool started = false;
+
+        private Vector3 targetPosition;
+
         //private static bool firstStarted = false;
         public void SetTargetAndSpeed(Vector3 newTargetLocation, float newSpeed = 1f, float newAcceleration = 900f)
         {

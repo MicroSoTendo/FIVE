@@ -8,10 +8,10 @@ namespace FIVE.AWSL
 {
     internal class AWSLScript
     {
+        private readonly DynValue coroutine;
         private readonly RobotSphere robot;
 
         private readonly Script script;
-        private readonly DynValue coroutine;
 
         internal AWSLScript(RobotSphere robot, string code)
         {
@@ -41,7 +41,8 @@ namespace FIVE.AWSL
         {
             try
             {
-                Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward, out RaycastHit hitinfo);
+                Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward,
+                    out RaycastHit hitinfo);
                 script.Globals["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
                 DynValue result = coroutine.Coroutine.Resume();
@@ -51,6 +52,7 @@ namespace FIVE.AWSL
             {
                 Debug.LogError(e);
             }
+
             return true;
         }
 
