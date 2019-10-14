@@ -46,15 +46,13 @@ namespace FIVE.Robot
         protected override void Awake()
         {
             GameObject eye = gameObject.FindChildRecursive(nameof(eye));
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), eye.transform);
-            fpsCamera.transform.localPosition = new Vector3(0, 0, 0);
-            fpsCamera.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
             fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
 
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(), transform, true);
-            thirdPersonCamera.transform.SetParent(transform);
-            thirdPersonCamera.transform.localPosition = new Vector3(0, 2, 0);
-            thirdPersonCamera.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(), 
+                parent: transform, enableAudioListener: true, 
+                position: new Vector3(0, 2, 0), 
+                rotation: Quaternion.Euler(90,0,0));
 
             cc = GetComponent<CharacterController>();
             movable = GetComponent<Movable>();
@@ -74,6 +72,7 @@ namespace FIVE.Robot
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, CodeEditorSavedEventArgs>(OnCodeSaved);
+            OnLocalPlayerUpdate += RobotSphereUpdate;
             base.Start();
         }
 
@@ -99,7 +98,7 @@ namespace FIVE.Robot
             }
         }
 
-        private void Update()
+        private void RobotSphereUpdate()
         {
             //Block user input when editor is up
             if (UIManager.Get<CodeEditorViewModel>()?.IsActive ?? false)

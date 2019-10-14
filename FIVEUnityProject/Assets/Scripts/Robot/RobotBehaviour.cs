@@ -11,8 +11,12 @@ namespace FIVE.Robot
         private NetworkTransform networkTransform;
         private NetworkTransformChild networkTransformChild;
         private NetworkAnimator networkAnimator;
+
+        protected Action OnLocalPlayerUpdate;
+
         protected virtual void Awake()
         {
+            OnLocalPlayerUpdate += () => { }; //Avoid null checking
             networkTransform = GetComponent<NetworkTransform>();
             networkTransformChild = GetComponent<NetworkTransformChild>();
             networkAnimator = GetComponent<NetworkAnimator>();
@@ -20,6 +24,14 @@ namespace FIVE.Robot
 
         protected virtual void Start()
         {
+        }
+
+        protected virtual void Update()
+        {
+            if (!isLocalPlayer)
+            {
+                OnLocalPlayerUpdate();
+            }
         }
     }
 }
