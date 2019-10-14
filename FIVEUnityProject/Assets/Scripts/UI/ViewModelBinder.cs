@@ -13,6 +13,11 @@ namespace FIVE.UI
             return new ButtonSource(button);
         }
 
+        protected UnBindButtonSource UnBind(Button button)
+        {
+            return new UnBindButtonSource(button);
+        }
+
         public class ViewModelComparer : IComparer<ViewModel>
         {
             public int Compare(ViewModel x, ViewModel y)
@@ -38,9 +43,24 @@ namespace FIVE.UI
         {
             public ButtonSource(Button button) : base(button) { }
 
-            public void To(Action o)
+            public void To(UnityAction OnButtonClicked)
             {
-                Source.onClick.AddListener(new UnityAction(o));
+                Source.onClick.AddListener(OnButtonClicked);
+            }
+        }
+
+        protected class UnBindButtonSource : BindingSource<Button>
+        {
+            public UnBindButtonSource(Button source) : base(source) { }
+
+            public void With(UnityAction OnButtonClicked)
+            {
+                Source.onClick.RemoveListener(OnButtonClicked);
+            }
+
+            public void All()
+            {
+                Source.onClick.RemoveAllListeners();
             }
         }
 

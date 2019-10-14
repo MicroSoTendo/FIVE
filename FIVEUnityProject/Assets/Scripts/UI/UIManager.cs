@@ -2,8 +2,6 @@ using FIVE.UI.SplashScreens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FIVE.EventSystem;
-using FIVE.GameStates;
 using UnityEngine;
 
 namespace FIVE.UI

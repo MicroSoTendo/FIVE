@@ -1,6 +1,7 @@
 using FIVE.EventSystem;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -26,7 +27,17 @@ namespace FIVE.UI
             get => Root.transform.GetSiblingIndex();
             set => Root.transform.SetSiblingIndex(value);
         }
-        public bool IsActive => Root.activeSelf;
+        public virtual bool IsActive
+        {
+            get => Root.activeSelf;
+            set
+            {
+                Root.SetActive(value);
+                this.RaiseEvent<OnUIActiveChanged, UIActiveChangedEventArgs>(
+                    new UIActiveChangedEventArgs(value));
+            }
+        }
+
         protected abstract string PrefabPath { get; }
         protected virtual RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceOverlay;
         protected GameObject Root { get; }
@@ -66,16 +77,9 @@ namespace FIVE.UI
             }
         }
 
-        public virtual void SetActive(bool value)
-        {
-            Root.SetActive(value);
-            this.RaiseEvent<OnUIActiveChanged, UIActiveChangedEventArgs>(
-                new UIActiveChangedEventArgs(value));
-        }
-
         public virtual void ToggleEnabled()
         {
-            SetActive(!IsActive);
+            IsActive ^= true;
         }
 
         public virtual void Destroy()
