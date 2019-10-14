@@ -83,6 +83,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!95 &9500000
 Animator:
   serializedVersion: 3
@@ -118,7 +119,7 @@ MonoBehaviour:
     Name: Battery
     Description: 
     UIScale: {x: 7.7, y: 7.7, z: 7.7}
-    UIRotation: {x: -90, y: 0, z: 0}
+    UIRotation: {x: -90, y: 0, z: 120}
     UIPosition: {x: 12, y: -55, z: -20}
 --- !u!64 &8104285750284743754
 MeshCollider:

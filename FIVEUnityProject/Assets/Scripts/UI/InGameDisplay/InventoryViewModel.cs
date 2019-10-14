@@ -21,6 +21,8 @@ namespace FIVE.UI.InGameDisplay
         public Button ExitButton { get; }
         public Inventory Inventory { get; set; }
 
+        private readonly object poolLock = new object();
+        private readonly List<(GameObject, Transform)> cellPool = new List<(GameObject, Transform)>();
         public override bool IsActive
         {
             get
@@ -43,11 +45,33 @@ namespace FIVE.UI.InGameDisplay
             InventoryContent = Get(nameof(InventoryContent));
             ExitButton = Get<Button>(nameof(ExitButton));
             Bind(ExitButton).To(ExitInventory);
-
             EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
             contentRectTransform = InventoryContent.GetComponent<RectTransform>();
             this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
             this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
+            MainThreadDispatcher.ScheduleCoroutine(UpdateCellPool());
+        }
+
+        public IEnumerator UpdateCellPool()
+        {
+            while (true)
+            {
+
+                while (cellDictionary.Count >= cellPool.Count)
+                {
+                    GameObject cell0 = Object.Instantiate(CellPrefab, contentRectTransform);
+                    GameObject cell1 = Object.Instantiate(CellPrefab, contentRectTransform);
+                    cell0.name = $"Cell-{cellPool.Count}";
+                    cell1.name = $"Cell-{cellPool.Count + 1}";
+                    cell0.SetActive(false);
+                    cell1.SetActive(false);
+                    Transform itemHolder0 = cell0.FindChildRecursive("Content").transform;
+                    Transform itemHolder1 = cell1.FindChildRecursive("Content").transform;
+                    cellPool.Add((cell0, itemHolder0));
+                    cellPool.Add((cell1, itemHolder1));
+                }
+                yield return null;
+            }
         }
 
         public override void ToggleEnabled()
@@ -62,18 +86,20 @@ namespace FIVE.UI.InGameDisplay
             IsActive = false;
         }
 
-        private void AddCell(string cellId, int index, GameObject item)
+        private IEnumerator AddCell(int index, GameObject item)
         {
-            GameObject cell = Object.Instantiate(CellPrefab, contentRectTransform);
-            cell.name = nameof(cell) + cellId;
-            cell.transform.SetParent(contentRectTransform);
-            Transform itemHolder = cell.FindChildRecursive("Content").transform;
+            while (index > cellPool.Count)
+            {
+                yield return null;
+            }
+            (GameObject cell, Transform itemHolder) = cellPool[index];
             item.transform.SetParent(itemHolder);
             item.GetComponent<MeshRenderer>().receiveShadows = false;
             ItemInfo info = item.GetComponent<Item>().Info;
             item.transform.localScale = info.UIScale;
             item.transform.localEulerAngles = info.UIRotation;
             item.transform.localPosition = info.UIPosition;
+            cell.SetActive(true);
             AddOrUpdate(index, cell);
         }
 
@@ -118,7 +144,7 @@ namespace FIVE.UI.InGameDisplay
             switch (e.Action)
             {
                 case InventoryChangedAction.Add:
-                    AddCell($"Cell-{e.Index}", e.Index, e.Item);
+                    MainThreadDispatcher.ScheduleCoroutine(AddCell(e.Index, e.Item));
                     break;
                 case InventoryChangedAction.Remove:
                     MainThreadDispatcher.Destroy(cellDictionary[e.Index]);

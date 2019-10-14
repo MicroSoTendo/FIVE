@@ -12,8 +12,8 @@ namespace FIVE.GameModes
     public class Entry : MonoBehaviour
     {
         private Camera guiCamera;
-        [SerializeField] private GameObject Multiplayers;
         [SerializeField] private GameObject Singelplayer;
+        [SerializeField] private GameObject Multiplayers;
 
         private IEnumerator Start()
         {
