@@ -43,10 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3689d60217ab0349abbcdf7bb51f2d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  time: 50000
-  SunTransform: {fileID: 3772496688967652343, guid: b49d8b618ff84b34ca0a1d92887e3c88,
+  lightPrefab: {fileID: 3772496688967652337, guid: b49d8b618ff84b34ca0a1d92887e3c88,
     type: 3}
-  Sun: {fileID: 3772496688967652342, guid: b49d8b618ff84b34ca0a1d92887e3c88, type: 3}
+  time: 50000
   days: 0
   intensity: 0
   fogday: {r: 0.5, g: 0.5, b: 0.5, a: 1}

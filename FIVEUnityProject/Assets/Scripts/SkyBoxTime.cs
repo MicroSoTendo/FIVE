@@ -1,48 +1,59 @@
 ﻿using System;
 using UnityEngine;
 
-public class SkyBoxTime : MonoBehaviour
+namespace FIVE
 {
-    public float time;
-    public TimeSpan currenttime;
-    public Transform SunTransform;
-    public Light Sun;
-    public int days;
-
-    public float intensity;
-    public Color fogday = Color.gray;
-    public Color fognight = Color.black;
-
-    public int speed;
-
-    private void Update()
+    public class SkyBoxTime : MonoBehaviour
     {
-        ChangeTime();
-    }
+        [SerializeField] private GameObject lightPrefab;
+        public float time;
+        public TimeSpan currenttime;
+        private Transform sunTransform;
+        private Light sun;
+        public int days;
 
-    public void ChangeTime()
-    {
-        time += Time.deltaTime * speed;
-        if (time > 86400)
+        public float intensity;
+        public Color fogday = Color.gray;
+        public Color fognight = Color.black;
+
+        public int speed;
+
+        private void Awake()
         {
-            days += 1;
-            time = 0;
+            GameObject lightGameObject = Instantiate(lightPrefab);
+            sunTransform = lightGameObject.transform;
+            sun = lightGameObject.GetComponent<Light>();
         }
 
-        currenttime = TimeSpan.FromSeconds(time);
-
-        SunTransform.rotation = Quaternion.Euler(new Vector3((time - 21600) / 86400 * 360, 0, 0));
-        if (time > 43200)
+        private void Update()
         {
-            intensity = 1 - (43200 - time) / 43200;
-        }
-        else
-        {
-            intensity = 1 - ((43200 - time) / 43200 * -1);
+            ChangeTime();
         }
 
-        RenderSettings.fogColor = Color.Lerp(fognight, fogday, intensity * intensity);
+        public void ChangeTime()
+        {
+            time += Time.deltaTime * speed;
+            if (time > 86400)
+            {
+                days += 1;
+                time = 0;
+            }
 
-        Sun.intensity = intensity;
+            currenttime = TimeSpan.FromSeconds(time);
+
+            sunTransform.rotation = Quaternion.Euler(new Vector3((time - 21600) / 86400 * 360, 0, 0));
+            if (time > 43200)
+            {
+                intensity = 1 - (43200 - time) / 43200;
+            }
+            else
+            {
+                intensity = 1 - ((43200 - time) / 43200 * -1);
+            }
+
+            RenderSettings.fogColor = Color.Lerp(fognight, fogday, intensity * intensity);
+
+            sun.intensity = intensity;
+        }
     }
 }
