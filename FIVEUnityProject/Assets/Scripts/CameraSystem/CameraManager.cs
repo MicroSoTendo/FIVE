@@ -10,7 +10,8 @@ namespace FIVE.CameraSystem
 {
     public class CameraManager : MonoBehaviour
     {
-        public readonly Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
+        private readonly Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
+        private readonly Dictionary<Camera, string> camerasReversed = new Dictionary<Camera, string>();
         private GameObject cameraPrefab;
         private static CameraManager instance;
         private int index = 0;
@@ -27,17 +28,18 @@ namespace FIVE.CameraSystem
             Camera[] existedCameras = FindObjectsOfType<Camera>();
             foreach (Camera cam in existedCameras)
             {
-                if (cam.name.Contains("DefaultCamera"))
-                {
-                    cameras.Add(cam.name, cam);
-                }
+                cameras.Add(cam.name, cam);
+                camerasReversed.Add(cam, cam.name);
             }
             CurrentActiveCamera = Camera.current ?? Camera.main;
         }
 
-        public static Camera AddCamera(string cameraName = null, Transform parent = null, bool enableAudioListener = false)
+        public static Dictionary<string, Camera> Cameras => instance.cameras;
+        public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
         {
-            GameObject gameObject = Instantiate(instance.cameraPrefab);
+            GameObject gameObject = Instantiate(instance.cameraPrefab,parent);
+            gameObject.transform.localPosition = position;
+            gameObject.transform.localRotation = rotation;
             if (enableAudioListener) //Make sure only one audio listener active simutaneously
             {
                 foreach (Camera camerasValue in instance.cameras.Values)
@@ -52,13 +54,24 @@ namespace FIVE.CameraSystem
             gameObject.GetComponent<AudioListener>().enabled = enableAudioListener;
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera camera = gameObject.GetComponent<Camera>();
-            if (parent != null)
-            {
-                gameObject.transform.SetParent(parent);
-            }
             instance.cameras.Add(gameObject.name, camera);
+            instance.camerasReversed.Add(camera, gameObject.name);
             instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, camera));
             return gameObject.GetComponent<Camera>();
+        }
+
+        public static void Remove(Camera camera)
+        {
+            string name = instance.camerasReversed[camera];
+            instance.cameras.Remove(name);
+            Destroy(camera.gameObject);
+        }
+
+        public static void Remove(string cameraName)
+        {
+            Camera c = instance.cameras[cameraName];
+            instance.camerasReversed.Remove(c);
+            Destroy(c.gameObject);
         }
 
         private void Update()

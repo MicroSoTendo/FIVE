@@ -43,3 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a75bf2506e4130439c0d8c0de9f9855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Singelplayer: {fileID: 1419513932704616922, guid: 6058e2ac9d06dd642833209a4ff9af91,
+    type: 3}
+  Multiplayers: {fileID: 6687479523435219106, guid: 20b8031c70edcdc4a8b9d3feb67ad3d1,
+    type: 3}
