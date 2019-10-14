@@ -33,4 +33,10 @@ namespace FIVE
             this.RaiseEvent<OnMainLoaderDestroyed>(EventArgs.Empty);
         }
     }
+
+    public class OnMainLoaderAwake : IEventType { }
+
+    public class OnMainLoaderStart : IEventType { }
+
+    public class OnMainLoaderDestroyed : IEventType { }
 }

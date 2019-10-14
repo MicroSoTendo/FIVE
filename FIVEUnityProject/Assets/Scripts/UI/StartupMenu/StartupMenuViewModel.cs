@@ -30,18 +30,12 @@ namespace FIVE.UI.StartupMenu
         private void OnSinglePlayerButtonClicked()
         {
             IsActive = false;
-            UIManager.Get<HUDViewModel>().IsActive = true;
-            UIManager.Get<BackgroundViewModel>().IsActive = false;
-            this.RaiseEvent<OnLoadingGameMode>();
             this.RaiseEvent<OnSinglePlayerButtonClicked>();
         }
 
         private void OnMultiplayersButtonClicked()
         {
             IsActive = false;
-            UIManager.Get<HUDViewModel>().IsActive = true;
-            UIManager.Get<BackgroundViewModel>().IsActive = false;
-            this.RaiseEvent<OnLoadingGameMode>();
             this.RaiseEvent<OnMultiPlayersButtonClicked>();
         }
 

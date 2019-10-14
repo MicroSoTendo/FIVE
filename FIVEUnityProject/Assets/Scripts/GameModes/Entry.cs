@@ -22,17 +22,12 @@ namespace FIVE.GameModes
             {
                 yield return null;
             }
-
             StartupMenuViewModel startupMenuViewModel = UIManager.Create<StartupMenuViewModel>();
             BackgroundViewModel backgroundViewModel = UIManager.Create<BackgroundViewModel>();
             startupMenuViewModel.IsActive = true;
             backgroundViewModel.IsActive = true;
             startupMenuViewModel.ZIndex = 1;
             backgroundViewModel.ZIndex = 0;
-            UIManager.Create<InGameMenuViewModel>().IsActive = false;
-            yield return null;
-            UIManager.Create<HUDViewModel>().IsActive = false;
-            yield return null;
             EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e) =>
             {
                 Instantiate(Singelplayer);
