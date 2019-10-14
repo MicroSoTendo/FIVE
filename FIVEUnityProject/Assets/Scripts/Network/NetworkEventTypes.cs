@@ -4,6 +4,16 @@ using System.Collections.Generic;
 
 namespace FIVE.Network
 {
+    public abstract class OnCreateRoomRequested : IEventType<CreateRoomRequestedEventArgs> { }
+
+    public class CreateRoomRequestedEventArgs : EventArgs
+    {
+        public CreateRoomRequestedEventArgs(RoomInfo roomInfo)
+        {
+            RoomInfo = roomInfo;
+        }
+        public RoomInfo RoomInfo { get; }
+    }
     public abstract class OnConnected : IEventType { }
     public abstract class OnConnectedToMaster : IEventType { }
     public abstract class OnJoinedLobby : IEventType { }

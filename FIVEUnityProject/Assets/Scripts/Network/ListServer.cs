@@ -168,10 +168,10 @@ namespace FIVE.Network
 
                     foreach (ServerStatus server in ServerList.Values)
                     {
-                        if (server.ping.isDone)
+                        if (server.Ping.isDone)
                         {
-                            server.lastLatency = server.ping.time;
-                            server.ping = new Ping(server.IP);
+                            server.LastLatency = server.Ping.time;
+                            server.Ping = new Ping(server.IP);
                         }
                     }
                 }

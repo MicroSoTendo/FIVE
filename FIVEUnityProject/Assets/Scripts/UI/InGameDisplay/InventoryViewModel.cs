@@ -32,11 +32,21 @@ namespace FIVE.UI.InGameDisplay
             this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
         }
 
-        public override void SetActive(bool value)
+        public override bool IsActive
         {
-            base.SetActive(value);
-            this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-            SetUpCells();
+            get
+            {
+                return base.IsActive;
+            }
+            set
+            {
+                base.IsActive = value;
+                if (value)
+                {
+                    this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
+                    SetUpCells();
+                }
+            }
         }
 
         public override void ToggleEnabled()
@@ -48,7 +58,7 @@ namespace FIVE.UI.InGameDisplay
 
         private void ExitInventory()
         {
-            SetActive(false);
+            IsActive = false;
         }
 
         private void AddCell(string cellId, int index, GameObject item)

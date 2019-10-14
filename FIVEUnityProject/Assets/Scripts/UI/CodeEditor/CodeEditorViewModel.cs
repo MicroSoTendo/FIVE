@@ -55,13 +55,13 @@ namespace FIVE.UI.CodeEditor
         private void RunButtonClicked()
         {
             this.RaiseEvent<OnCodeEditorSaved, CodeEditorSavedEventArgs>(new CodeEditorSavedEventArgs(CodeInputField.text));
-            SetActive(false);
+            IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
 
         private void OnCancelButted()
         {
-            SetActive(false);
+            IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
         }
 

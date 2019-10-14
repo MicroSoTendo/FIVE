@@ -29,19 +29,18 @@ namespace FIVE.UI.InGameDisplay
 
         private void OnLoadSaveClicked()
         {
-            SetActive(false);
+            IsActive = false;
             Debug.Log(nameof(OnLoadSaveClicked));
         }
         private void OnSaveButtonClicked()
         {
-            SetActive(false);
+            IsActive = false;
             // UIManager.Get(nameof(GameOptionView)).SetActive(true);
             Debug.Log(nameof(OnSaveButtonClicked));
         }
         private void OnSettingsClicked()
         {
-            Debug.Log(nameof(OnSettingsClicked));
-            SetActive(false);
+            Debug.Log(nameof(OnSettingsClicked)); IsActive = false;
             //UIManager.Get(nameof(GameOptionView)).SetActive(true);
         }
         private void OnExitGameClicked()
@@ -55,11 +54,11 @@ namespace FIVE.UI.InGameDisplay
         private void OnResumeClicked()
         {
             Debug.Log(nameof(OnResumeClicked));
-            UIManager.Get<InGameMenuViewModel>().SetActive(false);
+            UIManager.Get<InGameMenuViewModel>().IsActive = false;
         }
         private void OnMainMenuClicked()
         {
-            SetActive(false);
+            IsActive = false;
             Debug.Log(nameof(OnMainMenuClicked));
         }
 

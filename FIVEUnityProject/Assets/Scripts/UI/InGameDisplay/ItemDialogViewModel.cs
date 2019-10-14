@@ -30,19 +30,19 @@ namespace FIVE.UI.InGameDisplay
             DescriptionInputField = Get<TMP_InputField>(nameof(DescriptionInputField));
             EventManager.Subscribe<OnItemDialogRequested, ItemDialogRequestedEventArgs>(OnItemDialogRequested);
             EventManager.Subscribe<OnItemDialogDismissRequested>(OnDismiss);
-            base.SetActive(false);
+            base.IsActive = false;
         }
 
         private void OnDismiss(object sender, EventArgs e)
         {
-            base.SetActive(false);
+            base.IsActive = false;
             isUpdate = false;
         }
 
         private bool isUpdate = false;
         private void OnItemDialogRequested(object sender, ItemDialogRequestedEventArgs e)
         {
-            base.SetActive(true);
+            base.IsActive = false;
             isUpdate = true;
             MainThreadDispatcher.ScheduleCoroutine(UpdatePosition(e.Item));
             MainThreadDispatcher.ScheduleCoroutine(ProcedureDisplayText.Routine(ItemNameInputField.textComponent, Callback));
