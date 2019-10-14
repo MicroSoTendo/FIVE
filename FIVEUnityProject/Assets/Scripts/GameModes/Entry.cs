@@ -36,12 +36,10 @@ namespace FIVE.GameModes
             EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e) =>
             {
                 Instantiate(Singelplayer);
-                CameraManager.Remove(guiCamera);
             });
             EventManager.Subscribe<OnMultiPlayersButtonClicked>((o, e) =>
             {
                 Instantiate(Multiplayers);
-                CameraManager.Remove(guiCamera);
             });
         }
     }

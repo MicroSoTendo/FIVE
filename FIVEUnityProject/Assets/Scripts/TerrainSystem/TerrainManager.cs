@@ -1,5 +1,6 @@
 ﻿using FIVE.UI.StartupMenu;
 using UnityEngine;
+using UnityEngine.Assertions;
 using static FIVE.Util;
 
 namespace FIVE.TerrainSystem
@@ -8,19 +9,22 @@ namespace FIVE.TerrainSystem
     {
         public GameObject Ground;
 
+        private static TerrainManager instance;
         //private GameObject Camera;
         //private readonly Dictionary<(int, int), AreaData> Areas = new Dictionary<(int, int), AreaData>();
 
         private void Awake()
         {
+            Assert.IsNull(instance);
+            instance = this;
             //EventManager.Subscribe<OnSinglePlayerButtonClicked>((button, args) => { gameObject.SetActive(true); });
             //gameObject.SetActive(false);
-            Subscribe<OnSinglePlayerButtonClicked>(OnSinglePlayerButtonClicked);
+
         }
 
-        private void OnSinglePlayerButtonClicked()
+        public static void CreateTerrain(Vector3 location)
         {
-            Instantiate(Ground, Vector3.zero, Quaternion.identity);
+            Instantiate(instance.Ground, location, Quaternion.identity);
         }
 
         private void Update()

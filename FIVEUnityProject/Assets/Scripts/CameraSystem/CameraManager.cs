@@ -67,6 +67,7 @@ namespace FIVE.CameraSystem
         public static void Remove(Camera camera)
         {
             string name = instance.camerasReversed[camera];
+            instance.camerasReversed.Remove(camera);
             instance.cameras.Remove(name);
             Destroy(camera.gameObject);
         }
@@ -74,6 +75,7 @@ namespace FIVE.CameraSystem
         public static void Remove(string cameraName)
         {
             Camera c = instance.cameras[cameraName];
+            instance.cameras.Remove(cameraName);
             instance.camerasReversed.Remove(c);
             Destroy(c.gameObject);
         }
