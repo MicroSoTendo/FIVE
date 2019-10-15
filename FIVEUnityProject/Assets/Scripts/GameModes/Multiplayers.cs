@@ -1,4 +1,5 @@
 ﻿using System;
+using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Network;
 using FIVE.UI;
@@ -9,6 +10,8 @@ using UnityEngine;
 
 namespace FIVE.GameModes
 {
+    [RequireComponent(typeof(ListServer))]
+    [RequireComponent(typeof(NetworkManager))]
     public class Multiplayers : MonoBehaviour
     {
         private ListServer listServer;
@@ -16,8 +19,8 @@ namespace FIVE.GameModes
 
         private void Awake()
         {
-            networkManager = FindObjectOfType<NetworkManager>();
-            listServer = FindObjectOfType<ListServer>();
+            networkManager = GetComponent<NetworkManager>();
+            listServer = GetComponent<ListServer>();
             UIManager.Create<LobbyWindowViewModel>().IsActive = true;
         }
 
@@ -26,8 +29,11 @@ namespace FIVE.GameModes
             EventManager.Subscribe<OnCreateRoomRequested, CreateRoomRequestedEventArgs>(CreateRoomHandler);
         }
 
+
         private void CreateRoomHandler(object sender, CreateRoomRequestedEventArgs e)
         {
+            listServer.gameServerTitle = e.RoomInfo.Name;
+            networkManager.maxConnections = e.RoomInfo.Size;
             networkManager.StartHost();
         }
     }

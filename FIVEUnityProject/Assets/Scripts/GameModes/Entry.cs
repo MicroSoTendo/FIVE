@@ -12,9 +12,10 @@ namespace FIVE.GameModes
     public class Entry : MonoBehaviour
     {
         private Camera guiCamera;
-        [SerializeField] private GameObject Singelplayer;
-        [SerializeField] private GameObject Multiplayers;
-
+        [SerializeField] private GameObject Singelplayer = null;
+        [SerializeField] private GameObject Multiplayers = null;
+        public enum Mode { Single, Multi }
+        public static Mode CurrentMode { get; private set; }
         private IEnumerator Start()
         {
             guiCamera = CameraManager.AddCamera("GUI Camera", enableAudioListener: true);
@@ -31,10 +32,12 @@ namespace FIVE.GameModes
             EventManager.Subscribe<OnSinglePlayerButtonClicked>((o, e) =>
             {
                 Instantiate(Singelplayer);
+                CurrentMode = Mode.Single;
             });
             EventManager.Subscribe<OnMultiPlayersButtonClicked>((o, e) =>
             {
                 Instantiate(Multiplayers);
+                CurrentMode = Mode.Multi;
             });
         }
     }

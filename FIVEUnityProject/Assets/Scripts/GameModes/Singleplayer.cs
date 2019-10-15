@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using FIVE.CameraSystem;
-using FIVE.EventSystem;
 using FIVE.Interactive;
 using FIVE.Robot;
 using FIVE.TerrainSystem;
@@ -17,7 +16,6 @@ namespace FIVE.GameModes
         private void Awake()
         {
             UIManager.Get<BackgroundViewModel>().IsActive = false;
-            CameraManager.Remove("GUI Camera");
         }
 
         private IEnumerator Start()
@@ -27,6 +25,7 @@ namespace FIVE.GameModes
             CameraManager.AddCamera("DefaultCamera-1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
             CameraManager.AddCamera("DefaultCamera-2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
             CameraManager.AddCamera("DefaultCamera-3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
+            CameraManager.Remove("GUI Camera");
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector

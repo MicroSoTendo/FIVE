@@ -10,7 +10,7 @@
     "com.unity.timeline": "1.2.3",
     "com.unity.ugui": "1.0.0",
     "com.vis2k.apathy": "https://github.com/xgstation/Apathy.git",
-    "com.vis2k.mirror": "https://github.com/TendoSoSoft/Mirror.git",
+    "com.vis2k.mirror": "https://github.com/TendoSoSoft/Mirror.git#v4.0.8",
     "com.vis2k.mirror.booster": "https://github.com/xgstation/MirrorBooster.git",
     "com.vis2k.mirror.profiler": "https://github.com/xgstation/MirrorProfiler.git",
     "moonsharp": "https://github.com/k0dep/MoonSharp.git#2.0.0",
@@ -52,8 +52,8 @@
       "hash": "dab61023931877f0a2a5c8382981cc018414db66"
     },
     "com.vis2k.mirror": {
-      "revision": "HEAD",
-      "hash": "9c6c9078e101e00bc5436588820efcd50e2a7c38"
+      "revision": "v4.0.8",
+      "hash": "cf82d227da78f6c6c07d7aca3031cd865a03dae4"
     },
     "com.vis2k.mirror.booster": {
       "revision": "HEAD",

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using Telepathy;
 using UnityEngine;
@@ -66,7 +67,7 @@ namespace FIVE.Network
             writer.Write((ushort)titleBytes.Length);
             writer.Write(titleBytes);
             writer.Flush();
-
+            
             // list server only allows up to 128 bytes per message
             if (writer.BaseStream.Position <= 128)
             {

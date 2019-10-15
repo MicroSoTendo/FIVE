@@ -4,9 +4,7 @@ using UnityEngine;
 
 namespace FIVE.CameraSystem
 {
-    public abstract class OnCameraCreated : IEventType<CameraCreatedEventArgs>
-    {
-    }
+    public abstract class OnCameraCreated : IEventType<CameraCreatedEventArgs> { }
 
     public sealed class CameraCreatedEventArgs : EventArgs
     {

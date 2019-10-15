@@ -173,5 +173,4 @@ MonoBehaviour:
   InfrastructuresOnStart:
   - {fileID: 8399917682610804045, guid: d40b14f7a222a40458a2731f5bf43567, type: 3}
   - {fileID: 7673448739380194672, guid: 35e889fded39d7b46bbc778622dea305, type: 3}
-  - {fileID: 8769810589094344286, guid: 4b92811b8b27bae4dba0cf64d14c07d0, type: 3}
   - {fileID: 5635016158228287630, guid: 83a996776e9dd7546b93aef52980138f, type: 3}

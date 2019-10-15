@@ -1,4 +1,5 @@
 ﻿using System;
+using FIVE.GameModes;
 using Mirror;
 using UnityEngine;
 
@@ -12,10 +13,15 @@ namespace FIVE.Robot
         private NetworkTransform networkTransform;
         private NetworkTransformChild networkTransformChild;
 
+        /// <summary>
+        /// Update callbacks only happens on local player.
+        /// </summary>
         protected Action OnLocalPlayerUpdate;
+        protected Action OnUpdateGlobal;
 
         protected virtual void Awake()
         {
+            OnUpdateGlobal += () => { };
             OnLocalPlayerUpdate += () => { }; //Avoid null checking
             networkTransform = GetComponent<NetworkTransform>();
             networkTransformChild = GetComponent<NetworkTransformChild>();
@@ -28,10 +34,11 @@ namespace FIVE.Robot
 
         protected virtual void Update()
         {
-            if (!isLocalPlayer)
+            if (Entry.CurrentMode == Entry.Mode.Multi && isLocalPlayer)
             {
-                OnLocalPlayerUpdate();
+                return;
             }
+            OnLocalPlayerUpdate();
         }
     }
 }

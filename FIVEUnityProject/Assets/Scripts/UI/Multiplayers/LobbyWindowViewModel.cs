@@ -91,8 +91,7 @@ namespace FIVE.UI.Multiplayers
             string roomName = RoomNameInputField.text;
             int size = int.Parse(RoomSizeInputField.text);
             string password = PasswordInputField.text;
-            this.RaiseEvent<OnCreateRoomRequested>(
-                new CreateRoomRequestedEventArgs(new RoomInfo(roomName, size, password)));
+            this.RaiseEvent<OnCreateRoomRequested>(new CreateRoomRequestedEventArgs(new RoomInfo(roomName, size, password)));
             Root.SetActive(false);
         }
     }

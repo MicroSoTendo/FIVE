@@ -1,8 +1,7 @@
-﻿using FIVE.EventSystem;
+﻿using FIVE.UI;
+using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
 using System.Linq;
-using FIVE.UI;
-using FIVE.UI.CodeEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
