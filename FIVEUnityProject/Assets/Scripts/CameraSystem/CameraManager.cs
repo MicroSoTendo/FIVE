@@ -1,4 +1,5 @@
 ﻿using FIVE.UI;
+using System;
 using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,72 +11,110 @@ namespace FIVE.CameraSystem
     public class CameraManager : MonoBehaviour
     {
         private static CameraManager instance;
-        private readonly Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
-        private readonly Dictionary<Camera, string> camerasReversed = new Dictionary<Camera, string>();
         private GameObject cameraPrefab;
+        private readonly Dictionary<string, Camera> name2cam = new Dictionary<string, Camera>();
+        private readonly Dictionary<Camera, string> cam2name = new Dictionary<Camera, string>();
+        private readonly List<Camera> camwall = new List<Camera>();
         private int index = 0;
         public static Camera CurrentActiveCamera { get; private set; }
 
         public static IEnumerable<Camera> GetFpsCameras =>
-            from c in instance.cameras where c.Key.ToLower().Contains("fps") select c.Value;
+            from c in instance.name2cam where c.Key.ToLower().Contains("fps") select c.Value;
 
-        public static Dictionary<string, Camera> Cameras => instance.cameras;
+        public static Dictionary<string, Camera> Cameras => instance.name2cam;
 
         private void Awake()
         {
             Assert.IsNull(instance);
             instance = this;
             cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
-            Camera[] existedCameras = FindObjectsOfType<Camera>();
-            foreach (Camera cam in existedCameras)
-            {
-                cameras.Add(cam.name, cam);
-                camerasReversed.Add(cam, cam.name);
-            }
 
             CurrentActiveCamera = Camera.current ?? Camera.main;
         }
 
-        public static Camera AddCamera(string cameraName = null, Vector3 position = default,
-            Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
+        public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
         {
             GameObject gameObject = Instantiate(instance.cameraPrefab, parent);
             gameObject.transform.localPosition = position;
             gameObject.transform.localRotation = rotation;
+
+            gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
+            Camera cam = gameObject.GetComponent<Camera>();
+            instance.name2cam.Add(gameObject.name, cam);
+            instance.cam2name.Add(cam, gameObject.name);
+            instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, cam));
+
             if (enableAudioListener) //Make sure only one audio listener active simutaneously
             {
-                foreach (Camera camerasValue in instance.cameras.Values)
-                {
-                    AudioListener audioListener = camerasValue.GetComponent<AudioListener>();
-                    if (audioListener != null)
-                    {
-                        audioListener.enabled = false;
-                    }
-                }
+                SetAudioListener(cam);
             }
 
-            gameObject.GetComponent<AudioListener>().enabled = enableAudioListener;
-            gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
-            Camera camera = gameObject.GetComponent<Camera>();
-            instance.cameras.Add(gameObject.name, camera);
-            instance.camerasReversed.Add(camera, gameObject.name);
-            instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, camera));
             return gameObject.GetComponent<Camera>();
+        }
+
+        public static void SetAudioListener(Camera cam)
+        {
+            foreach (Camera c in instance.cam2name.Keys)
+            {
+                AudioListener audioListener = c.GetComponent<AudioListener>();
+                if (audioListener != null)
+                {
+                    audioListener.enabled = false;
+                }
+            }
+            cam.gameObject.GetComponent<AudioListener>().enabled = true;
+        }
+
+        public static void SetCamera(Camera cam)
+        {
+            foreach (Camera c in instance.cam2name.Keys)
+            {
+                c.enabled = false;
+            }
+            cam.enabled = true;
+            CurrentActiveCamera = cam;
+        }
+
+        public static void SetCamera(string name)
+        {
+            foreach (Camera c in instance.cam2name.Keys)
+            {
+                c.enabled = false;
+            }
+            Camera cam = instance.name2cam[name];
+            cam.enabled = true;
+            CurrentActiveCamera = cam;
+        }
+
+        public static void SetCameraWall(string name)
+        {
+            instance.camwall.Clear();
+            foreach (Camera c in instance.cam2name.Keys)
+            {
+                c.enabled = false;
+            }
+            foreach (KeyValuePair<string, Camera> pair in instance.name2cam)
+            {
+                if (pair.Key.StartsWith(name))
+                {
+                    instance.camwall.Add(pair.Value);
+                }
+            }
         }
 
         public static void Remove(Camera camera)
         {
-            string name = instance.camerasReversed[camera];
-            instance.camerasReversed.Remove(camera);
-            instance.cameras.Remove(name);
+            string name = instance.cam2name[camera];
+            instance.cam2name.Remove(camera);
+            instance.name2cam.Remove(name);
             Destroy(camera.gameObject);
         }
 
-        public static void Remove(string cameraName)
+        public static void Remove(string name)
         {
-            Camera c = instance.cameras[cameraName];
-            instance.cameras.Remove(cameraName);
-            instance.camerasReversed.Remove(c);
+            Camera c = instance.name2cam[name];
+            instance.name2cam.Remove(name);
+            instance.cam2name.Remove(c);
             Destroy(c.gameObject);
         }
 
@@ -86,23 +125,27 @@ namespace FIVE.CameraSystem
                 return;
             }
 
-            if (Input.GetKeyUp(KeyCode.C) && cameras.Count > 0)
+            if (camwall.Count > 0)
             {
-                foreach (Camera c in cameras.Values)
+                foreach (Camera c in instance.cam2name.Keys)
                 {
                     c.enabled = false;
-                    (c.gameObject.GetComponent<AudioListener>() ?? c.gameObject.GetComponentInChildren<AudioListener>())
-                        .enabled = false;
                 }
+                for (int i = 0; i < Math.Min(4, camwall.Count); i++)
+                {
+                    instance.camwall[i].enabled = true;
+                    float x = (float)(i / 2), y = (float)(i % 2);
+                    instance.camwall[i].rect = new Rect(x, y, 0.5f, 0.5f);
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
+            {
+                index %= name2cam.Count;
 
-                index %= cameras.Count;
-                Camera ca = cameras.ElementAt(index).Value;
-                ca.enabled = true;
-                CurrentActiveCamera = ca;
-                (ca.gameObject.GetComponent<AudioListener>() ?? ca.gameObject.GetComponentInChildren<AudioListener>())
-                    .enabled = true;
-                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(
-                    new CameraSwitchedEventArgs(activeCamera: ca));
+                Camera cam = name2cam.ElementAt(index).Value;
+                SetAudioListener(cam);
+                SetCamera(cam);
+                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: cam));
                 index++;
             }
         }
