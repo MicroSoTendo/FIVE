@@ -63,6 +63,24 @@ namespace FIVE.CameraSystem
             c.gameObject.GetComponent<AudioListener>().enabled = true;
         }
 
+        public static void SetCamera(Camera c)
+        {
+            foreach (Camera cam in instance.cam2name.Keys)
+            {
+                cam.enabled = false;
+            }
+            c.enabled = true;
+        }
+
+        public static void SetCamera(string name)
+        {
+            foreach (Camera cam in instance.cam2name.Keys)
+            {
+                cam.enabled = false;
+            }
+            instance.name2cam[name].enabled = true;
+        }
+
         public static void Remove(Camera camera)
         {
             string name = instance.cam2name[camera];
