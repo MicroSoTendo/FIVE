@@ -1,4 +1,5 @@
 ﻿using FIVE.UI;
+using System;
 using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace FIVE.CameraSystem
         private GameObject cameraPrefab;
         private readonly Dictionary<string, Camera> name2cam = new Dictionary<string, Camera>();
         private readonly Dictionary<Camera, string> cam2name = new Dictionary<Camera, string>();
+        private readonly List<Camera> camwall = new List<Camera>();
         private int index = 0;
         public static Camera CurrentActiveCamera { get; private set; }
 
@@ -86,6 +88,18 @@ namespace FIVE.CameraSystem
 
         public static void SetCameraWall(string name)
         {
+            instance.camwall.Clear();
+            foreach (Camera c in instance.cam2name.Keys)
+            {
+                c.enabled = false;
+            }
+            foreach (KeyValuePair<string, Camera> pair in instance.name2cam)
+            {
+                if (pair.Key.StartsWith(name))
+                {
+                    instance.camwall.Add(pair.Value);
+                }
+            }
         }
 
         public static void Remove(Camera camera)
@@ -111,15 +125,27 @@ namespace FIVE.CameraSystem
                 return;
             }
 
-            if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
+            if (camwall.Count > 0)
+            {
+                foreach (Camera c in instance.cam2name.Keys)
+                {
+                    c.enabled = false;
+                }
+                for (int i = 0; i < Math.Min(4, camwall.Count); i++)
+                {
+                    instance.camwall[i].enabled = true;
+                    float x = (float)(i / 2), y = (float)(i % 2);
+                    instance.camwall[i].rect = new Rect(x, y, 0.5f, 0.5f);
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
             {
                 index %= name2cam.Count;
 
                 Camera cam = name2cam.ElementAt(index).Value;
                 SetAudioListener(cam);
                 SetCamera(cam);
-                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(
-                    new CameraSwitchedEventArgs(activeCamera: cam));
+                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: cam));
                 index++;
             }
         }
