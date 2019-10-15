@@ -134,8 +134,8 @@ namespace FIVE.CameraSystem
                 for (int i = 0; i < Math.Min(6, camwall.Count); i++)
                 {
                     instance.camwall[i].enabled = true;
-                    float x = (float)(i / 3) / 3f, y = (float)(i % 2) / 2f;
-                    instance.camwall[i].rect = new Rect(x, y, 1f / 3f, 0.5f);
+                    float x = i / 3 / 3f, y = i % 2 / 2f;
+                    instance.camwall[i].rect = new Rect(x, y, 1f / 3f, 1f / 2f);
                 }
             }
             else if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
