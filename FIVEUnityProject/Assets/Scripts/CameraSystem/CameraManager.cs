@@ -1,6 +1,6 @@
 ﻿using FIVE.UI;
-using System;
 using FIVE.UI.CodeEditor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -131,11 +131,11 @@ namespace FIVE.CameraSystem
                 {
                     c.enabled = false;
                 }
-                for (int i = 0; i < Math.Min(4, camwall.Count); i++)
+                for (int i = 0; i < Math.Min(6, camwall.Count); i++)
                 {
                     instance.camwall[i].enabled = true;
-                    float x = (float)(i / 2), y = (float)(i % 2);
-                    instance.camwall[i].rect = new Rect(x, y, 0.5f, 0.5f);
+                    float x = (float)(i / 3) / 3f, y = (float)(i % 2) / 2f;
+                    instance.camwall[i].rect = new Rect(x, y, 0.3333333f, 0.5f);
                 }
             }
             else if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
