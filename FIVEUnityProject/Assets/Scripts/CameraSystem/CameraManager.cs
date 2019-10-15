@@ -37,48 +37,55 @@ namespace FIVE.CameraSystem
             gameObject.transform.localRotation = rotation;
 
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
-            Camera camera = gameObject.GetComponent<Camera>();
-            instance.name2cam.Add(gameObject.name, camera);
-            instance.cam2name.Add(camera, gameObject.name);
-            instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, camera));
+            Camera cam = gameObject.GetComponent<Camera>();
+            instance.name2cam.Add(gameObject.name, cam);
+            instance.cam2name.Add(cam, gameObject.name);
+            instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, cam));
 
             if (enableAudioListener) //Make sure only one audio listener active simutaneously
             {
-                SetAudioListener(camera);
+                SetAudioListener(cam);
             }
 
             return gameObject.GetComponent<Camera>();
         }
 
-        public static void SetAudioListener(Camera c)
+        public static void SetAudioListener(Camera cam)
         {
-            foreach (Camera cam in instance.cam2name.Keys)
+            foreach (Camera c in instance.cam2name.Keys)
             {
-                AudioListener audioListener = cam.GetComponent<AudioListener>();
+                AudioListener audioListener = c.GetComponent<AudioListener>();
                 if (audioListener != null)
                 {
                     audioListener.enabled = false;
                 }
             }
-            c.gameObject.GetComponent<AudioListener>().enabled = true;
+            cam.gameObject.GetComponent<AudioListener>().enabled = true;
         }
 
-        public static void SetCamera(Camera c)
+        public static void SetCamera(Camera cam)
         {
-            foreach (Camera cam in instance.cam2name.Keys)
+            foreach (Camera c in instance.cam2name.Keys)
             {
-                cam.enabled = false;
+                c.enabled = false;
             }
-            c.enabled = true;
+            cam.enabled = true;
+            CurrentActiveCamera = cam;
         }
 
         public static void SetCamera(string name)
         {
-            foreach (Camera cam in instance.cam2name.Keys)
+            foreach (Camera c in instance.cam2name.Keys)
             {
-                cam.enabled = false;
+                c.enabled = false;
             }
-            instance.name2cam[name].enabled = true;
+            Camera cam = instance.name2cam[name];
+            cam.enabled = true;
+            CurrentActiveCamera = cam;
+        }
+
+        public static void SetCameraWall(string name)
+        {
         }
 
         public static void Remove(Camera camera)
@@ -89,10 +96,10 @@ namespace FIVE.CameraSystem
             Destroy(camera.gameObject);
         }
 
-        public static void Remove(string cameraName)
+        public static void Remove(string name)
         {
-            Camera c = instance.name2cam[cameraName];
-            instance.name2cam.Remove(cameraName);
+            Camera c = instance.name2cam[name];
+            instance.name2cam.Remove(name);
             instance.cam2name.Remove(c);
             Destroy(c.gameObject);
         }
@@ -106,21 +113,13 @@ namespace FIVE.CameraSystem
 
             if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
             {
-                foreach (Camera c in name2cam.Values)
-                {
-                    c.enabled = false;
-                    (c.gameObject.GetComponent<AudioListener>() ?? c.gameObject.GetComponentInChildren<AudioListener>())
-                        .enabled = false;
-                }
-
                 index %= name2cam.Count;
-                Camera ca = name2cam.ElementAt(index).Value;
-                ca.enabled = true;
-                CurrentActiveCamera = ca;
-                (ca.gameObject.GetComponent<AudioListener>() ?? ca.gameObject.GetComponentInChildren<AudioListener>())
-                    .enabled = true;
+
+                Camera cam = name2cam.ElementAt(index).Value;
+                SetAudioListener(cam);
+                SetCamera(cam);
                 this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(
-                    new CameraSwitchedEventArgs(activeCamera: ca));
+                    new CameraSwitchedEventArgs(activeCamera: cam));
                 index++;
             }
         }
