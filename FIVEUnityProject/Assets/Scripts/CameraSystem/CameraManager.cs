@@ -30,31 +30,37 @@ namespace FIVE.CameraSystem
             CurrentActiveCamera = Camera.current ?? Camera.main;
         }
 
-        public static Camera AddCamera(string cameraName = null, Vector3 position = default,
-            Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
+        public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
         {
             GameObject gameObject = Instantiate(instance.cameraPrefab, parent);
             gameObject.transform.localPosition = position;
             gameObject.transform.localRotation = rotation;
-            if (enableAudioListener) //Make sure only one audio listener active simutaneously
-            {
-                foreach (Camera camerasValue in instance.name2cam.Values)
-                {
-                    AudioListener audioListener = camerasValue.GetComponent<AudioListener>();
-                    if (audioListener != null)
-                    {
-                        audioListener.enabled = false;
-                    }
-                }
-            }
 
-            gameObject.GetComponent<AudioListener>().enabled = enableAudioListener;
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera camera = gameObject.GetComponent<Camera>();
             instance.name2cam.Add(gameObject.name, camera);
             instance.cam2name.Add(camera, gameObject.name);
             instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, camera));
+
+            if (enableAudioListener) //Make sure only one audio listener active simutaneously
+            {
+                SetAudioListener(camera);
+            }
+
             return gameObject.GetComponent<Camera>();
+        }
+
+        public static void SetAudioListener(Camera c)
+        {
+            foreach (Camera cam in instance.cam2name.Keys)
+            {
+                AudioListener audioListener = cam.GetComponent<AudioListener>();
+                if (audioListener != null)
+                {
+                    audioListener.enabled = false;
+                }
+            }
+            c.gameObject.GetComponent<AudioListener>().enabled = true;
         }
 
         public static void Remove(Camera camera)
