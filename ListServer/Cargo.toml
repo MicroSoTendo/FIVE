@@ -1,5 +1,5 @@
 [package]
-name = "ListServer"
+name = "list_server"
 version = "0.1.0"
 authors = ["Gen <xgbarry@gmail.com>"]
 edition = "2018"
