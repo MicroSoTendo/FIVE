@@ -1,4 +1,5 @@
-﻿using FIVE.UI;
+﻿using FIVE.EventSystem;
+using FIVE.UI;
 using FIVE.UI.CodeEditor;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,8 @@ namespace FIVE.CameraSystem
             cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
 
             CurrentActiveCamera = Camera.current ?? Camera.main;
+
+            EventManager.Subscribe<OnSwitchCameraModeRequested>((_, __) => SetCameraWall(""));
         }
 
         public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
