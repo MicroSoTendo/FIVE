@@ -15,9 +15,14 @@ namespace FIVE.CameraSystem
         private GameObject cameraPrefab;
         private readonly Dictionary<string, Camera> name2cam = new Dictionary<string, Camera>();
         private readonly Dictionary<Camera, string> cam2name = new Dictionary<Camera, string>();
-        private readonly List<Camera> camwall = new List<Camera>();
-        private int index = 0;
+
+        public enum StateEnum { Single, Multiple };
+
+        public StateEnum State { get; private set; } = StateEnum.Multiple;
+
         public static Camera CurrentActiveCamera { get; private set; }
+
+        private int index = 0;
 
         public static IEnumerable<Camera> GetFpsCameras =>
             from c in instance.name2cam where c.Key.ToLower().Contains("fps") select c.Value;
@@ -32,7 +37,7 @@ namespace FIVE.CameraSystem
 
             CurrentActiveCamera = Camera.current ?? Camera.main;
 
-            EventManager.Subscribe<OnSwitchCameraModeRequested>((_, __) => SetCameraWall(""));
+            EventManager.Subscribe<OnSwitchCameraModeRequested>((_, __) => SetCameraWall());
         }
 
         public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
@@ -70,6 +75,7 @@ namespace FIVE.CameraSystem
 
         public static void SetCamera(Camera cam)
         {
+            instance.State = StateEnum.Single;
             foreach (Camera c in instance.cam2name.Keys)
             {
                 c.enabled = false;
@@ -80,6 +86,7 @@ namespace FIVE.CameraSystem
 
         public static void SetCamera(string name)
         {
+            instance.State = StateEnum.Single;
             foreach (Camera c in instance.cam2name.Keys)
             {
                 c.enabled = false;
@@ -89,19 +96,12 @@ namespace FIVE.CameraSystem
             CurrentActiveCamera = cam;
         }
 
-        public static void SetCameraWall(string name)
+        public static void SetCameraWall()
         {
-            instance.camwall.Clear();
+            instance.State = StateEnum.Multiple;
             foreach (Camera c in instance.cam2name.Keys)
             {
                 c.enabled = false;
-            }
-            foreach (KeyValuePair<string, Camera> pair in instance.name2cam)
-            {
-                if (pair.Key.StartsWith(name))
-                {
-                    instance.camwall.Add(pair.Value);
-                }
             }
         }
 
@@ -128,17 +128,21 @@ namespace FIVE.CameraSystem
                 return;
             }
 
-            if (camwall.Count > 0)
+            if (State == StateEnum.Multiple)
             {
-                foreach (Camera c in instance.cam2name.Keys)
+                if (Time.frameCount % 120 != 0)
+                    return;
+                foreach (Camera c in cam2name.Keys)
                 {
                     c.enabled = false;
                 }
-                for (int i = 0; i < Math.Min(6, camwall.Count); i++)
+                for (int count = 0; count < 4; count++, index++)
                 {
-                    instance.camwall[i].enabled = true;
-                    float x = i / 3 / 3f, y = i % 2 / 2f;
-                    instance.camwall[i].rect = new Rect(x, y, 1f / 3f, 1f / 2f);
+                    index %= cam2name.Keys.Count;
+                    Camera c = instance.cam2name.Keys.ElementAt(index);
+                    c.enabled = true;
+                    float x = count / 2 / 2f, y = count % 2 / 2f;
+                    c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
                 }
             }
             else if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
