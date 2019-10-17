@@ -1,10 +1,10 @@
 {
     "name": "FIVE",
     "references": [
-        "Mirror",
-        "Mirror.Components",
         "MoonSharp",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Apathy",
+        "Unity.Networking.Transport"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

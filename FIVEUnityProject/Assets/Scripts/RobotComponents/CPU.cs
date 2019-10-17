@@ -1,11 +1,11 @@
-﻿using Mirror;
+﻿//using Mirror;
 using UnityEngine;
 
 namespace FIVE.RobotComponents
 {
     public class CPU : RobotComponent
     {
-        [SyncVar] [Range(0f, 1f)] public float PowerConsumption;
+        [Range(0f, 1f)] public float PowerConsumption;
 
         public int Speed; // instruction executed per frame
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using static FIVE.Util;
 
 namespace FIVE.CameraSystem
 {
@@ -18,7 +19,7 @@ namespace FIVE.CameraSystem
 
         public enum StateEnum { Single, Multiple };
 
-        public StateEnum State { get; private set; } = StateEnum.Multiple;
+        public static StateEnum State { get; private set; } = StateEnum.Multiple;
 
         public static Camera CurrentActiveCamera { get; private set; }
 
@@ -36,8 +37,7 @@ namespace FIVE.CameraSystem
             cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
 
             CurrentActiveCamera = Camera.current ?? Camera.main;
-
-            EventManager.Subscribe<OnSwitchCameraModeRequested>((_, __) => SetCameraWall());
+            Subscribe<OnSwitchCameraModeRequested>(SetCameraWall);
         }
 
         public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)
@@ -75,7 +75,7 @@ namespace FIVE.CameraSystem
 
         public static void SetCamera(Camera cam)
         {
-            instance.State = StateEnum.Single;
+            State = StateEnum.Single;
             foreach (Camera c in instance.cam2name.Keys)
             {
                 c.enabled = false;
@@ -86,7 +86,7 @@ namespace FIVE.CameraSystem
 
         public static void SetCamera(string name)
         {
-            instance.State = StateEnum.Single;
+            State = StateEnum.Single;
             foreach (Camera c in instance.cam2name.Keys)
             {
                 c.enabled = false;
@@ -98,7 +98,7 @@ namespace FIVE.CameraSystem
 
         public static void SetCameraWall()
         {
-            instance.State = StateEnum.Multiple;
+            State = StateEnum.Multiple;
             foreach (Camera c in instance.cam2name.Keys)
             {
                 c.enabled = false;

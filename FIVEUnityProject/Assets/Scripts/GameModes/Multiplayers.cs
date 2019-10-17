@@ -4,23 +4,20 @@ using FIVE.EventSystem;
 using FIVE.Network;
 using FIVE.UI;
 using FIVE.UI.Multiplayers;
-using Mirror;
 using UnityEngine;
 
 
 namespace FIVE.GameModes
 {
-    [RequireComponent(typeof(ListServer))]
-    [RequireComponent(typeof(NetworkManager))]
+    //[RequireComponent(typeof(ListServer))]
     public class Multiplayers : MonoBehaviour
     {
-        private ListServer listServer;
-        private NetworkManager networkManager;
+        //private ListServer listServer;
 
         private void Awake()
         {
-            networkManager = GetComponent<NetworkManager>();
-            listServer = GetComponent<ListServer>();
+            //networkManager = GetComponent<NetworkManager>();
+            //listServer = GetComponent<ListServer>();
             UIManager.Create<LobbyWindowViewModel>().IsActive = true;
         }
 
@@ -32,9 +29,9 @@ namespace FIVE.GameModes
 
         private void CreateRoomHandler(object sender, CreateRoomRequestedEventArgs e)
         {
-            listServer.gameServerTitle = e.RoomInfo.Name;
-            networkManager.maxConnections = e.RoomInfo.Size;
-            networkManager.StartHost();
+            //listServer.gameServerTitle = e.RoomInfo.Name;
+            //networkManager.maxConnections = e.RoomInfo.Size;
+            //networkManager.StartHost();
         }
     }
 }
