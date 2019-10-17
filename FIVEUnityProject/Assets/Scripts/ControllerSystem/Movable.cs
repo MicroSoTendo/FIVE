@@ -31,10 +31,10 @@ namespace FIVE
         private void Start()
         {
             cc = GetComponent<CharacterController>();
-            MoveSpeed = 15.0f;
+            MoveSpeed = 0.15f;
             RotateSpeed = 30.0f;
 
-            MoveOnces = new MoveOnce[4] {Forward, Backward, TurnLeft, TurnRight,};
+            MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
         }
 
         private void Update()
@@ -61,12 +61,12 @@ namespace FIVE
 
         public void Forward(int steps)
         {
-            cc.SimpleMove(gameObject.transform.forward * MoveSpeed);
+            cc.Move(gameObject.transform.forward * MoveSpeed);
         }
 
         public void Backward(int steps)
         {
-            cc.SimpleMove(-gameObject.transform.forward * MoveSpeed);
+            cc.Move(-gameObject.transform.forward * MoveSpeed);
         }
 
         public void TurnLeft(int steps)

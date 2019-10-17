@@ -5,31 +5,51 @@ use std::vec::Vec;
 
 #[repr(packed)]
 struct RoomInfo {
-    connections_count: u16,
-    max_connections: u16,
-    password: [u8; 16],
-    title: String,
+    current_player : u16,
+    max_player : u16,
+    has_password : bool,
+    title: String
 }
 
+#[repr(u8)]
+pub enum OpCode {
+    CreateRoom = 1,
+    RemoveRoom = 2,
+}
+
+
+
+unsafe fn handle_create_room(&mut stream : TcpStream) {
+    let mut room_info_raw = Vec::new();
+    match stream.read(&mut room_info_raw) {
+        Ok(_) => {
+            let room_info : RoomInfo = { std::ptr::read(room_info_raw.as_ptr() as * const _)};
+            let mut guid_raw = [0 as u8; 8];
+            match stream.read(&mut guid_raw) {
+                Ok(_) => {
+                    let guid : u128 =  { std::ptr::read(guid_raw.as_ptr() as * const _)};
+                    clients_map.insert(guid, room_info);
+                }
+                _ => {}
+            }
+        }
+        _ => {}
+    }
+}
+
+fn handle_remove_room() {
+
+}
+
+
 unsafe fn handle_client(mut stream: TcpStream, clients_map : &mut HashMap<u128, RoomInfo>) {
-    let mut packet_size = [0 as u8; 1];
+    let mut command = [0 as u8; 2];
     loop {
-        match stream.read(&mut packet_size) {
+        match stream.read(&mut command) {
             Ok(_) => {
-                let mut room_info_raw = Vec::new();
-                match stream.read(&mut room_info_raw) {
-                    Ok(_) => {
-                        let room_info : RoomInfo = { std::ptr::read(room_info_raw.as_ptr() as * const _)};
-                        let mut guid_raw = [0 as u8; 8];
-                        match stream.read(&mut guid_raw) {
-                            Ok(_) => {
-                                let guid : u128 =  { std::ptr::read(guid_raw.as_ptr() as * const _)};
-                                clients_map.insert(guid, room_info);
-                            }
-                            _ => {}
-                        }
-                    }
-                    _ => {}
+                match command[0] : OpCode {
+                    CreateRoom => handle_create_room(stream);
+                    RemoveRoom => {}
                 }
             }
             _ => {}

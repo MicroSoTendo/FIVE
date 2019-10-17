@@ -1,17 +1,14 @@
 ﻿using System;
 using FIVE.GameModes;
-using Mirror;
 using UnityEngine;
 
 namespace FIVE.Robot
 {
-    [RequireComponent(typeof(NetworkTransform))]
-    [RequireComponent(typeof(NetworkTransformChild))]
-    public class RobotBehaviour : NetworkBehaviour
+    public class RobotBehaviour : MonoBehaviour
     {
-        private NetworkAnimator networkAnimator;
-        private NetworkTransform networkTransform;
-        private NetworkTransformChild networkTransformChild;
+        //private NetworkAnimator networkAnimator;
+        //private NetworkTransform networkTransform;
+        //private NetworkTransformChild networkTransformChild;
 
         /// <summary>
         /// Update callbacks only happens on local player.
@@ -23,9 +20,9 @@ namespace FIVE.Robot
         {
             OnUpdateGlobal += () => { };
             OnLocalPlayerUpdate += () => { }; //Avoid null checking
-            networkTransform = GetComponent<NetworkTransform>();
-            networkTransformChild = GetComponent<NetworkTransformChild>();
-            networkAnimator = GetComponent<NetworkAnimator>();
+            //networkTransform = GetComponent<NetworkTransform>();
+            //networkTransformChild = GetComponent<NetworkTransformChild>();
+            //networkAnimator = GetComponent<NetworkAnimator>();
         }
 
         protected virtual void Start()
@@ -34,10 +31,10 @@ namespace FIVE.Robot
 
         protected virtual void Update()
         {
-            if (Entry.CurrentMode == Entry.Mode.Multi && isLocalPlayer)
-            {
-                return;
-            }
+            //if (Entry.CurrentMode == Entry.Mode.Multi && isLocalPlayer)
+            //{
+            //    return;
+            //}
             OnLocalPlayerUpdate();
         }
     }

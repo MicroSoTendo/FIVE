@@ -10,9 +10,6 @@
     "com.unity.timeline": "1.2.3",
     "com.unity.ugui": "1.0.0",
     "com.vis2k.apathy": "https://github.com/xgstation/Apathy.git",
-    "com.vis2k.mirror": "https://github.com/TendoSoSoft/Mirror.git#v4.0.8",
-    "com.vis2k.mirror.booster": "https://github.com/xgstation/MirrorBooster.git",
-    "com.vis2k.mirror.profiler": "https://github.com/xgstation/MirrorProfiler.git",
     "moonsharp": "https://github.com/k0dep/MoonSharp.git#2.0.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
@@ -47,25 +44,13 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "lock": {
-    "com.vis2k.apathy": {
-      "revision": "HEAD",
-      "hash": "dab61023931877f0a2a5c8382981cc018414db66"
-    },
-    "com.vis2k.mirror": {
-      "revision": "v4.0.8",
-      "hash": "cf82d227da78f6c6c07d7aca3031cd865a03dae4"
-    },
-    "com.vis2k.mirror.booster": {
-      "revision": "HEAD",
-      "hash": "3c326f318c2d7f7e0799cb76817402c9db4e385b"
-    },
-    "com.vis2k.mirror.profiler": {
-      "revision": "HEAD",
-      "hash": "7229fa58bcde6d441f9f95b73bed60f6fe209a49"
-    },
     "moonsharp": {
       "revision": "2.0.0",
       "hash": "54016d620078714e2dda195a9c583f12c5e446fa"
+    },
+    "com.vis2k.apathy": {
+      "revision": "HEAD",
+      "hash": "dab61023931877f0a2a5c8382981cc018414db66"
     }
   }
 }
