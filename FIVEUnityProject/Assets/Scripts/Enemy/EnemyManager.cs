@@ -15,7 +15,7 @@ public class EnemyManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        spwanLocation = new Vector3(10, 0, 0);
+        spwanLocation = new Vector3(0, 0, 100);
 
         enemies = new HashSet<GameObject>();
         elapsedTime = 0;
