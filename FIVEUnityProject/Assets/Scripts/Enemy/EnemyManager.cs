@@ -10,12 +10,17 @@ public class EnemyManager : MonoBehaviour
     private HashSet<GameObject> enemies;
     public GameObject Prefab;
 
-    private Vector3 spwanLocation;
+    private Queue<Vector3> spawnLocations;
 
     private void Awake()
     {
         instance = this;
-        spwanLocation = new Vector3(0, 0, 100);
+
+        spawnLocations = new Queue<Vector3>();
+        spawnLocations.Enqueue(new Vector3(0, 0, -250));
+        spawnLocations.Enqueue(new Vector3(100, 0, 90));
+        spawnLocations.Enqueue(new Vector3(-100, 0, 90));
+        spawnLocations.Enqueue(new Vector3(0, 0, 200));
 
         enemies = new HashSet<GameObject>();
         elapsedTime = 0;
@@ -26,7 +31,9 @@ public class EnemyManager : MonoBehaviour
         elapsedTime += Time.deltaTime;
         if (elapsedTime >= 5.0f && enemies.Count < 10)
         {
-            AddEnemy(spwanLocation);
+            Vector3 pos = spawnLocations.Dequeue();
+            AddEnemy(pos);
+            spawnLocations.Enqueue(pos);
             elapsedTime = 0;
         }
     }
