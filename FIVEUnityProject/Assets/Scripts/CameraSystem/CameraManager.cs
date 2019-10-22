@@ -36,7 +36,7 @@ namespace FIVE.CameraSystem
             cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
 
             CurrentActiveCamera = Camera.current ?? Camera.main;
-            Subscribe<OnDisplayModeRequested>(SetCameraWall);
+            Subscribe<OnMultiCameraModeRequested>(SetCameraWall);
         }
 
         public static Camera AddCamera(string cameraName = null, Vector3 position = default, Quaternion rotation = default, Transform parent = null, bool enableAudioListener = false)

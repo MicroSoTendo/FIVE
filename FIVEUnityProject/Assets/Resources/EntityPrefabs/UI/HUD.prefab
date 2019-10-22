@@ -60,7 +60,7 @@ PrefabInstance:
     - target: {fileID: 3864806767597317991, guid: d35071636131ee843bebf4cd11d9870e,
         type: 3}
       propertyPath: m_Name
-      value: SwitchCameraMode
+      value: MultiCameraModeButton
       objectReference: {fileID: 0}
     - target: {fileID: 3943642534020220313, guid: d35071636131ee843bebf4cd11d9870e,
         type: 3}
@@ -170,7 +170,7 @@ PrefabInstance:
     - target: {fileID: 4248454421989674784, guid: d35071636131ee843bebf4cd11d9870e,
         type: 3}
       propertyPath: m_Name
-      value: SwitchCameraModeButtonText
+      value: MultiCameraModeButtonText
       objectReference: {fileID: 0}
     - target: {fileID: 4015912693421551963, guid: d35071636131ee843bebf4cd11d9870e,
         type: 3}
@@ -984,15 +984,15 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3761793155798089243, guid: d35071636131ee843bebf4cd11d9870e,
-        type: 3}
-      propertyPath: m_PixelsPerUnitMultiplier
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4248454421989674784, guid: d35071636131ee843bebf4cd11d9870e,
         type: 3}
       propertyPath: m_Name
       value: MenuButtonText
+      objectReference: {fileID: 0}
+    - target: {fileID: 3761793155798089243, guid: d35071636131ee843bebf4cd11d9870e,
+        type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4015912693421551963, guid: d35071636131ee843bebf4cd11d9870e,
         type: 3}

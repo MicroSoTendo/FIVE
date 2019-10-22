@@ -34,5 +34,5 @@ namespace FIVE.CameraSystem
         }
     }
 
-    public abstract class OnDisplayModeRequested : IEventType { }
+    public abstract class OnMultiCameraModeRequested : IEventType { }
 }

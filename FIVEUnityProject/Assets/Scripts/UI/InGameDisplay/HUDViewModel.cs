@@ -1,9 +1,11 @@
-﻿using FIVE.CameraSystem;
+﻿using System;
+using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Robot;
 using FIVE.RobotComponents;
 using UnityEngine;
 using UnityEngine.UI;
+using static FIVE.Util;
 
 namespace FIVE.UI.InGameDisplay
 {
@@ -15,7 +17,7 @@ namespace FIVE.UI.InGameDisplay
         public Button MenuButton { get; }
         public Button InventoryButton { get; }
         public Button ScanButton { get; }
-        public Button SwitchCameraMode { get; }
+        public Button MultiCameraModeButton { get; }
 
         public HUDViewModel() : base()
         {
@@ -24,18 +26,25 @@ namespace FIVE.UI.InGameDisplay
             MenuButton = Get<Button>(nameof(MenuButton));
             InventoryButton = Get<Button>(nameof(InventoryButton));
             ScanButton = Get<Button>(nameof(ScanButton));
-            SwitchCameraMode = Get<Button>(nameof(SwitchCameraMode));
-            Bind(SwitchCameraMode).To(SwitchGlobalCamera);
+            MultiCameraModeButton = Get<Button>(nameof(MultiCameraModeButton));
+            Bind(MultiCameraModeButton).To(OnMultiCameraModeButtonPressed);
             Bind(InventoryButton).To(OnInventoryClicked);
             Bind(MenuButton).To(OnOptionClicked);
             Bind(ScanButton).To(OnScanClicked);
-
             EventManager.Subscribe<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(UpdateEnergy);
+            Subscribe<OnCameraSwitched>(OnCameraSwitched);
+            MultiCameraModeButton.gameObject.SetActive(false);
         }
 
-        private void SwitchGlobalCamera()
+        private void OnCameraSwitched()
         {
-            //EventManager.RaiseImmediate<OnSwitchCameraModeRequested>(this, new SwitchCameraModeRequestedEventArgs());
+            MultiCameraModeButton.gameObject.SetActive(true);
+        }
+
+        private void OnMultiCameraModeButtonPressed()
+        {
+            EventManager.RaiseImmediate<OnMultiCameraModeRequested>(this, EventArgs.Empty);
+            MultiCameraModeButton.gameObject.SetActive(false);
         }
 
         private void UpdateEnergy(object sender, RobotEnergyChangedEventArgs e)
