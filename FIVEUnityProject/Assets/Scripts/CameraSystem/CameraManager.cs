@@ -1,7 +1,5 @@
-﻿using FIVE.EventSystem;
-using FIVE.UI;
+﻿using FIVE.UI;
 using FIVE.UI.CodeEditor;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,6 +22,7 @@ namespace FIVE.CameraSystem
         public static Camera CurrentActiveCamera { get; private set; }
 
         private int index = 0;
+        private List<Camera> wall = new List<Camera>();
 
         public static IEnumerable<Camera> GetFpsCameras =>
             from c in instance.name2cam where c.Key.ToLower().Contains("fps") select c.Value;
@@ -81,19 +80,13 @@ namespace FIVE.CameraSystem
                 c.enabled = false;
             }
             cam.enabled = true;
+            cam.rect = new Rect(0, 0, 1, 1);
             CurrentActiveCamera = cam;
         }
 
         public static void SetCamera(string name)
         {
-            State = StateEnum.Single;
-            foreach (Camera c in instance.cam2name.Keys)
-            {
-                c.enabled = false;
-            }
-            Camera cam = instance.name2cam[name];
-            cam.enabled = true;
-            CurrentActiveCamera = cam;
+            SetCamera(instance.name2cam[name]);
         }
 
         public static void SetCameraWall()
@@ -104,7 +97,6 @@ namespace FIVE.CameraSystem
                 c.enabled = false;
             }
         }
-
 
         public static void Remove(Camera camera)
         {
@@ -131,8 +123,24 @@ namespace FIVE.CameraSystem
 
             if (State == StateEnum.Multiple)
             {
-                if (Time.frameCount % 120 != 0)
+                if (Input.GetMouseButtonDown(0))
+                {
+                    int x = Mathf.FloorToInt(Input.mousePosition.x / Screen.width * 2f);
+                    int y = Mathf.FloorToInt(Input.mousePosition.y / Screen.height * 2f);
+                    Camera ca = wall[x * 2 + y];
+                    SetCamera(ca);
+                    SetAudioListener(ca);
+                    this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: ca));
+                    wall.Clear();
                     return;
+                }
+
+                if (Time.frameCount % 120 != 0)
+                {
+                    return;
+                }
+
+                wall.Clear();
                 foreach (Camera c in cam2name.Keys)
                 {
                     c.enabled = false;
@@ -144,17 +152,8 @@ namespace FIVE.CameraSystem
                     c.enabled = true;
                     float x = count / 2 / 2f, y = count % 2 / 2f;
                     c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
+                    wall.Add(c);
                 }
-            }
-            else if (Input.GetKeyUp(KeyCode.C) && name2cam.Count > 0)
-            {
-                index %= name2cam.Count;
-
-                Camera cam = name2cam.ElementAt(index).Value;
-                SetAudioListener(cam);
-                SetCamera(cam);
-                this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: cam));
-                index++;
             }
         }
     }
