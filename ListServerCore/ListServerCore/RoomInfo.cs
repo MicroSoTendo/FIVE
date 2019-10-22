@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FIVE.Network
+namespace ListServerCore
 {
     public struct RoomInfo
     {
@@ -9,7 +9,7 @@ namespace FIVE.Network
         public int MaxPlayers { get; set; }
         public bool HasPassword { get; set; }
         public int Host { get; set; }
-        public ushort Port { get; set; }
+        public ushort Port { get; set; }    
         public string Name { get; set; }
 
         public RoomInfo(Guid guid, int currentPlayers, int maxPlayers, bool hasPassword, int host, ushort port, string name)

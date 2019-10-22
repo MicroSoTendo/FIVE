@@ -1,0 +1,229 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace ListServerCore
+{
+    internal class Program
+    {
+
+        private static bool TryParseArgs(IReadOnlyList<string> args,
+            ref IPAddress address,
+            ref int listeningPort,
+            ref int broadcastPort)
+        {
+            bool ValidatePort(int p)
+            {
+                return p > 0 && p < 65535;
+            }
+
+            bool TryParsePort(string str, out int port)
+            {
+                if (int.TryParse(str, out port))
+                {
+                    if (ValidatePort(port))
+                    {
+                        return true;
+                    }
+                    Console.WriteLine($"Port {port} is in valid.");
+                }
+                else
+                {
+                    Console.WriteLine($"Port {str} is in valid.");
+                }
+                return false;
+            }
+
+            for (int i = 0; i < args.Count; i++)
+            {
+                switch (args[i])
+                {
+                    case "/p":
+                    case "-p":
+                        if (TryParsePort(args[i + 1], out listeningPort) && TryParsePort(args[i + 2], out broadcastPort))
+                        {
+                            i += 2;
+                        }
+                        return false;
+                    case "-a":
+                    case "/a":
+                        if (IPAddress.TryParse(args[i + 1], out address))
+                        {
+                            i++;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Port {args[i + 1]} is in valid.");
+                            return false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return true;
+        }
+        private static void Main(string[] args)
+        {
+            IPAddress address = IPAddress.Loopback;
+            int listeningPort = 8887;
+            int broadcastPort = 8888;
+            //if (!TryParseArgs(args, ref address, ref listeningPort, ref broadcastPort))
+            //{
+            //    return;
+            //}
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
+            Task listenTask = Task.Run(() => { DoListen(address, listeningPort); }, tokenSource.Token);
+            Task broadcastTask = Task.Run(() => { DoBroadcast(address, broadcastPort); }, tokenSource.Token);
+
+            ConsoleKeyInfo key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Q)
+            {
+                tokenSource.Cancel();
+            }
+        }
+
+        private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
+        private static void ClientHandler(TcpClient client)
+        {
+            NetworkStream networkStream = client.GetStream();
+            byte[] opCodeBuffer = new byte[4];
+            networkStream.Read(opCodeBuffer);
+            int opCode = opCodeBuffer.ToI32();
+            switch ((OpCode)opCode)
+            {
+                case OpCode.CreateRoom:
+                    CreateRoomHandler(networkStream);
+                    break;
+                case OpCode.RemoveRoom:
+                    RemoveRoomHandler(networkStream);
+                    break;
+                case OpCode.UpdateRoom:
+                    UpdateRoomHandler(opCode, networkStream);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void UpdateRoomHandler(int opCode, NetworkStream networkStream)
+        {
+            byte[] guidBytes = new byte[16];
+            networkStream.Read(guidBytes);
+            Guid guid = guidBytes.ToGuid();
+            switch ((OpCode)opCode)
+            {
+                case OpCode.UpdateName:
+                    byte[] size = new byte[4];
+                    networkStream.Read(size);
+                    byte[] nameBuffer = new byte[size.ToI32()];
+                    networkStream.Read(nameBuffer);
+                    if (RoomInfos.ContainsKey(guid))
+                    {
+                        RoomInfo roomInfo = RoomInfos[guid];
+                        roomInfo.Name = nameBuffer.ToName();
+                        RoomInfos[guid] = roomInfo;
+                    }
+                    break;
+                case OpCode.UpdateCurrentPlayer:
+                    byte[] current = new byte[4];
+                    networkStream.Read(current);
+                    if (RoomInfos.ContainsKey(guid))
+                    {
+                        RoomInfo roomInfo = RoomInfos[guid];
+                        roomInfo.CurrentPlayers = current.ToI32();
+                        RoomInfos[guid] = roomInfo;
+                    }
+                    break;
+                case OpCode.UpdateMaxPlayer:
+                    byte[] max = new byte[4];
+                    networkStream.Read(max);
+                    if (RoomInfos.ContainsKey(guid))
+                    {
+                        RoomInfo roomInfo = RoomInfos[guid];
+                        roomInfo.MaxPlayers = max.ToI32();
+                        RoomInfos[guid] = roomInfo;
+                    }
+                    break;
+                case OpCode.UpdatePassword:
+                    byte[] flagBuffer = new byte[1];
+                    networkStream.Read(flagBuffer);
+                    if (RoomInfos.ContainsKey(guid))
+                    {
+                        RoomInfo roomInfo = RoomInfos[guid];
+                        roomInfo.HasPassword = flagBuffer.ToBool();
+                        RoomInfos[guid] = roomInfo;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void RemoveRoomHandler(NetworkStream networkStream)
+        {
+            byte[] guidBytes = new byte[16];
+            networkStream.Read(guidBytes);
+            Guid guid = guidBytes.ToGuid();
+            RoomInfos.TryRemove(guid, out _);
+        }
+
+        private static void CreateRoomHandler(NetworkStream stream)
+        {
+            byte[] sizeBuffer = new byte[4];
+            stream.Read(sizeBuffer);
+            byte[] roomInfoBuffer = new byte[sizeBuffer.ToI32()];
+            stream.Read(roomInfoBuffer);
+            RoomInfo roomInfo = roomInfoBuffer.ToRoomInfo();
+            roomInfo.Guid = Guid.NewGuid();
+            stream.Write(roomInfo.Guid.ToBytes());
+            RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
+        }
+
+        private static void DoListen(IPAddress address, int listeningPort)
+        {
+            TcpListener listener = new TcpListener(address, listeningPort);
+            listener.Start();
+            Console.WriteLine($"Listening at {address}:{listeningPort}");
+            while (true)
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                ThreadPool.QueueUserWorkItem(ClientHandler, client, false);
+            }
+        }
+        private static void SendRoomInfos(TcpClient client)
+        {
+            NetworkStream networkStream = client.GetStream();
+            while (true)
+            {
+                byte[] head = new byte[4];
+                networkStream.BeginRead(head, 0, 4, Callback, networkStream);
+            }
+        }
+
+        private static void Callback(IAsyncResult ar)
+        {
+            NetworkStream networkStream = (NetworkStream)ar.AsyncState;
+            networkStream.Write(RoomInfos.Values.Count.ToBytes());
+            foreach (RoomInfo roomInfo in RoomInfos.Values)
+            {
+                networkStream.Write(roomInfo.ToBytes());
+            }
+        }
+
+        private static void DoBroadcast(IPAddress address, int broadcastPort)
+        {
+            TcpListener listener = new TcpListener(address, broadcastPort);
+            listener.Start();
+            Console.WriteLine($"Broadcasting at {address}:{broadcastPort}");
+            while (true)
+            {
+                ThreadPool.QueueUserWorkItem(SendRoomInfos, listener.AcceptTcpClient(), false);
+            }
+        }
+    }
+}

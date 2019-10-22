@@ -34,22 +34,5 @@ namespace FIVE.CameraSystem
         }
     }
 
-    public abstract class OnSwitchCameraModeRequested : IEventType { }
-
-    public class SwitchCameraModeRequestedEventArgs : EventArgs
-    {
-        public SwitchCameraModeRequestedEventArgs(CameraMode mode)
-        {
-            Mode = mode;
-        }
-
-        public enum CameraMode
-        {
-            Single,
-            Multiple
-        }
-
-        public  CameraMode Mode { get; }
-        
-    }
+    public abstract class OnDisplayModeRequested : IEventType { }
 }

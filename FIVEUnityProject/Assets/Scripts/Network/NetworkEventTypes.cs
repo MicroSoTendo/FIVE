@@ -10,11 +10,17 @@ namespace FIVE.Network
 
     public class CreateRoomRequestedEventArgs : EventArgs
     {
-        public RoomInfo RoomInfo { get; }
+        public string Name { get; }
+        public bool HasPassword { get; }
+        public string Password { get; }
+        public int MaxPlayer { get; }
 
-        public CreateRoomRequestedEventArgs(RoomInfo roomInfo)
+        public CreateRoomRequestedEventArgs(string name, bool hasPassword, string password, int maxPlayer)
         {
-            RoomInfo = roomInfo;
+            Name = name;
+            HasPassword = hasPassword;
+            Password = password;
+            MaxPlayer = maxPlayer;
         }
     }
 
@@ -34,17 +40,17 @@ namespace FIVE.Network
     {
     }
 
-    public class OnRoomListUpdateEventArgs : EventArgs
+    public class RoomListUpdateArgs : EventArgs
     {
         public List<object> RoomInfos { get; }
 
-        public OnRoomListUpdateEventArgs(List<object> roomInfos)
+        public RoomListUpdateArgs(List<object> roomInfos)
         {
             RoomInfos = roomInfos;
         }
     }
 
-    public abstract class OnRoomListUpdate : IEventType<OnRoomListUpdateEventArgs>
+    public abstract class OnRoomListUpdate : IEventType<RoomListUpdateArgs>
     {
     }
 }
