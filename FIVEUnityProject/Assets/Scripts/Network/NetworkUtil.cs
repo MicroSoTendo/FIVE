@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 
 namespace FIVE.Network
@@ -33,17 +35,15 @@ namespace FIVE.Network
 
         public static RoomInfo ToRoomInfo(this byte[] bytes)
         {
-            Guid guid = bytes.ToGuid();
+            var guid = bytes.ToGuid();
             int currentPlayers = bytes.ToI32(16);
             int maxPlayers = bytes.ToI32(20);
             bool hasPassword = bytes.ToBool(24);
             int host = bytes.ToI32(25);
             ushort port = bytes.ToU16(29);
             string name = bytes.ToName(31);
-            return new RoomInfo(guid,currentPlayers,maxPlayers,hasPassword,host,port,name);
+            return new RoomInfo(guid, currentPlayers, maxPlayers, hasPassword, host, port, name);
         }
-
-
 
         public static byte[] ToBytes(this int i)
         {
@@ -71,14 +71,13 @@ namespace FIVE.Network
 
         public static byte[] ToBytes(this RoomInfo roomInfo)
         {
-            byte[] guid = roomInfo.Guid.ToBytes();
             byte[] currentPlayers = roomInfo.CurrentPlayers.ToBytes();
             byte[] maxPlayers = roomInfo.MaxPlayers.ToBytes();
             byte[] hasPassword = roomInfo.HasPassword.ToBytes();
             byte[] host = roomInfo.Host.ToBytes();
             byte[] port = roomInfo.Port.ToBytes();
             byte[] name = roomInfo.Name.ToBytes();
-            return Combine(guid, currentPlayers, maxPlayers, hasPassword, host, port, name);
+            return Combine(currentPlayers, maxPlayers, hasPassword, host, port, name);
         }
 
         private static byte[] Combine(params byte[][] arrays)
@@ -91,6 +90,52 @@ namespace FIVE.Network
                 offset += array.Length;
             }
             return rv;
+        }
+
+        public static void Write(this NetworkStream stream, byte[] bytes)
+        {
+            stream.Write(bytes, 0, bytes.Length);
+        }
+
+        public static void Write(this NetworkStream stream, int i)
+        {
+            stream.Write(i.ToBytes());
+        }    
+        
+        public static void Write(this NetworkStream stream, bool b)
+        {
+            stream.Write(b.ToBytes());
+        }
+
+        public static void Write(this NetworkStream stream, Guid guid)
+        {
+            stream.Write(guid.ToBytes());
+        }
+
+        public static void Write(this NetworkStream stream, string str)
+        {
+            byte[] buffer = str.ToBytes();
+            stream.Write(buffer.Length);
+            stream.Write(buffer);
+        }
+
+        public static void Write(this NetworkStream stream, RoomInfo info)
+        {
+            byte[] buffer = info.ToBytes();
+            stream.Write(buffer.Length);
+            stream.Write(buffer);
+        }
+
+        public static void Read(this NetworkStream stream, byte[] bytes)
+        {
+            stream.Read(bytes, 0, bytes.Length);
+        }        
+        
+        public static byte[] Read(this NetworkStream stream, int size)
+        {
+            byte[] bytes = new byte[size];
+            stream.Read(bytes, 0, bytes.Length);
+            return bytes;
         }
     }
 }
