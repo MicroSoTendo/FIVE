@@ -2,9 +2,7 @@
     "name": "FIVE",
     "references": [
         "MoonSharp",
-        "Unity.TextMeshPro",
-        "Apathy",
-        "Unity.Networking.Transport"
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

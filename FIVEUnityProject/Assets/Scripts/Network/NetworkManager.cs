@@ -1,8 +1,8 @@
-﻿using Apathy;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace FIVE.Network
@@ -23,38 +23,21 @@ namespace FIVE.Network
         [SerializeField] private ushort listServerInfoPort;
         [SerializeField] private ushort listServerUpdatePort;
         [SerializeField] private int updateRate = 30;
-        private Client lobbyInfoClient;
-        private Client hostInfoClient;
+        private TcpClient lobbyInfoClient;
+        private TcpClient hostInfoClient;
         private readonly ConcurrentDictionary<Guid, RoomInfo> roomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
-        private bool isUpdatingLobby;
         public NetworkState State { get; private set; } = NetworkState.Idle;
-        private Server server;
-        private Client client;
 
-        public bool IsUpdatingLobby
-        {
-            get => isUpdatingLobby;
-            set
-            {
-                if (isUpdatingLobby == value)
-                {
-                    return;
-                }
-                isUpdatingLobby = value;
-                if (value)
-                {
-                    StartCoroutine(ReceiveLobbyInfo());
-                }
-            }
-        }
+        private TcpListener server;
+        private TcpClient client;
 
         public void Awake()
         {
             Assert.IsNull(instance);
             instance = this;
-            lobbyInfoClient = new Client();
+            lobbyInfoClient = new TcpClient();
             lobbyInfoClient.Connect(listServer, listServerInfoPort);
-            hostInfoClient = new Client();
+            hostInfoClient = new TcpClient();
             hostInfoClient.Connect(listServer, listServerUpdatePort);
             hostRoomInfo = new RoomInfo();
             StartCoroutine(ReceiveLobbyInfo());
@@ -62,29 +45,30 @@ namespace FIVE.Network
 
         private IEnumerator ReceiveLobbyInfo()
         {
-            while (isUpdatingLobby)
+            while (true)
             {
                 while (!lobbyInfoClient.Connected)
                 {
                     yield return new WaitForSeconds(1f / updateRate);
                 }
 
-                lobbyInfoClient.Send(new byte[4]);
-                lobbyInfoClient.GetNextMessage(out Message size);
-                int count = size.data.Array.ToI32();
+                NetworkStream stream = lobbyInfoClient.GetStream();
+                stream.Write(new byte[4], 0, 4);
+                byte[] sizeBuffer = new byte[4];
+                stream.Read(sizeBuffer, 0, 4);
+                int count = sizeBuffer.ToI32();
                 roomInfos.Clear();
                 for (int i = 0; i < count; i++)
                 {
-                    lobbyInfoClient.GetNextMessage(out Message message);
-                    byte[] rawData = message.data.Array;
-                    if (rawData == null)
-                    {
-                        continue;
-                    }
-                    var roomInfo = rawData.ToRoomInfo();
+                    byte[] roomInfoBufferSize = new byte[4];
+                    stream.Read(roomInfoBufferSize, 0, 4);
+                    byte[] roomInfoBuffer = new byte[roomInfoBufferSize.ToI32()];
+                    stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
+                    var roomInfo = roomInfoBuffer.ToRoomInfo();
                     roomInfos.TryAdd(roomInfo.Guid, roomInfo);
                     yield return null;
                 }
+                yield return new WaitForSeconds(15f/updateRate);
             }
         }
 
@@ -92,25 +76,29 @@ namespace FIVE.Network
         {
             if (instance.roomInfos.TryGetValue(roomGuid, out RoomInfo roomInfo))
             {
-                instance.client = new Client();
+                instance.client = new TcpClient();
                 instance.client.Connect(roomInfo.Host.ToString(), roomInfo.Port);
                 instance.State = NetworkState.Client;
             }
         }
 
-        public static void CreateRoom()
+        public static void CreateRoom(string name, int maxPlayers, bool hasPassword, string password)
         {
+            instance.hostRoomInfo.Name = name;
+            instance.hostRoomInfo.MaxPlayers = maxPlayers;
+            instance.hostRoomInfo.CurrentPlayers = 1;
+            instance.hostRoomInfo.Port = 8889;
+            instance.hostRoomInfo.HasPassword = hasPassword;
+            instance.roomPassword = password;
             if (instance.hostInfoClient.Connected)
             {
+                NetworkStream stream = instance.hostInfoClient.GetStream();
                 OpCode code = OpCode.CreateRoom;
-                byte[] opCode = ((int)code).ToBytes();
-                instance.hostInfoClient.Send(opCode);
-                byte[] buffer = instance.hostRoomInfo.ToBytes();
-                instance.hostInfoClient.Send(buffer.Length.ToBytes());
-                instance.hostInfoClient.Send(buffer);
-                instance.hostInfoClient.GetNextMessage(out Message guidMessage);
-                instance.hostRoomInfo.Guid = guidMessage.data.Array.ToGuid();
-                instance.server.Start(instance.hostRoomInfo.Port);
+                stream.Write((int)code);
+                stream.Write(instance.hostRoomInfo);
+                instance.hostRoomInfo.Guid = stream.Read(16).ToGuid();
+                instance.server = new TcpListener(IPAddress.Loopback, instance.hostRoomInfo.Port);
+                instance.server.Start();
                 instance.State = NetworkState.Host;
             }
         }        
@@ -119,10 +107,10 @@ namespace FIVE.Network
         {
             if (instance.hostInfoClient.Connected)
             {
+                NetworkStream stream = instance.hostInfoClient.GetStream();
                 OpCode code = OpCode.RemoveRoom;
-                byte[] opCode = ((int)code).ToBytes();
-                instance.hostInfoClient.Send(opCode);
-                instance.hostInfoClient.Send(instance.hostRoomInfo.Guid.ToBytes());
+                stream.Write((int)code);
+                stream.Write(instance.hostRoomInfo.Guid);
                 instance.server.Stop();
                 instance.State = NetworkState.Idle;
             }
@@ -132,24 +120,23 @@ namespace FIVE.Network
         {
             if (instance.lobbyInfoClient.Connected)
             {
+                NetworkStream stream = instance.hostInfoClient.GetStream();
                 code |= OpCode.UpdateRoom;
-                instance.hostInfoClient.Send(((int)code).ToBytes());
-                instance.hostInfoClient.Send(instance.hostRoomInfo.Guid.ToBytes());
+                stream.Write((int)code);
+                stream.Write(instance.hostRoomInfo.Guid);
                 switch (code)
                 {
                     case OpCode.UpdateName:
-                        byte[] nameBuffer = instance.hostRoomInfo.Name.ToBytes();
-                        instance.hostInfoClient.Send(nameBuffer.Length.ToBytes());
-                        instance.hostInfoClient.Send(nameBuffer);
+                        stream.Write(instance.hostRoomInfo.Name);
                         break;
                     case OpCode.UpdateCurrentPlayer:
-                        instance.hostInfoClient.Send(instance.hostRoomInfo.CurrentPlayers.ToBytes());
+                        stream.Write(instance.hostRoomInfo.CurrentPlayers);
                         break;
                     case OpCode.UpdateMaxPlayer:
-                        instance.hostInfoClient.Send(instance.hostRoomInfo.MaxPlayers.ToBytes());
+                        stream.Write(instance.hostRoomInfo.MaxPlayers);
                         break;
                     case OpCode.UpdatePassword:
-                        instance.hostInfoClient.Send(instance.hostRoomInfo.HasPassword.ToBytes());
+                        stream.Write(instance.hostRoomInfo.HasPassword);
                         break;
                     default:
                         break;
