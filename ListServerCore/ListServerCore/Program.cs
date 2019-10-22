@@ -67,23 +67,44 @@ namespace ListServerCore
             }
             return true;
         }
+
+        private static readonly HashSet<TcpClient> connectedClients = new HashSet<TcpClient>();
+        private static readonly HashSet<Task> Tasks = new HashSet<Task>();
         private static void Main(string[] args)
         {
             IPAddress address = IPAddress.Loopback;
-            int listeningPort = 8887;
-            int broadcastPort = 8888;
+            int updatePort = 8887;
+            int infoPort = 8888;
             //if (!TryParseArgs(args, ref address, ref listeningPort, ref broadcastPort))
             //{
             //    return;
             //}
             CancellationTokenSource tokenSource = new CancellationTokenSource();
-            Task listenTask = Task.Run(() => { DoListen(address, listeningPort); }, tokenSource.Token);
-            Task broadcastTask = Task.Run(() => { DoBroadcast(address, broadcastPort); }, tokenSource.Token);
-
-            ConsoleKeyInfo key = Console.ReadKey();
-            if (key.Key == ConsoleKey.Q)
+            Task listenTask = Task.Run(() => { ListenUpdatePort(address, updatePort); }, tokenSource.Token);
+            Task broadcastTask = Task.Run(() => { ListenInfoPort(address, infoPort); }, tokenSource.Token);
+            while (true)
             {
-                tokenSource.Cancel();
+                ConsoleKeyInfo key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Q)
+                {
+                    tokenSource.Cancel();
+                }
+                if (key.Key == ConsoleKey.R)
+                {
+                    listenTask.Dispose();
+                    broadcastTask.Dispose();
+                    foreach (Task task in Tasks)
+                    {
+                        task.Dispose();
+                    }
+                    foreach (TcpClient connectedClient in connectedClients)
+                    {
+                        connectedClient.Dispose();
+                    }
+                    connectedClients.Clear();
+                    listenTask = Task.Run(() => { ListenUpdatePort(address, updatePort); }, tokenSource.Token);
+                    broadcastTask = Task.Run(() => { ListenInfoPort(address, infoPort); }, tokenSource.Token);
+                }
             }
         }
 
@@ -174,17 +195,18 @@ namespace ListServerCore
 
         private static void CreateRoomHandler(NetworkStream stream)
         {
+            Console.Write("Create room requested: ");
             byte[] sizeBuffer = new byte[4];
             stream.Read(sizeBuffer);
             byte[] roomInfoBuffer = new byte[sizeBuffer.ToI32()];
             stream.Read(roomInfoBuffer);
             RoomInfo roomInfo = roomInfoBuffer.ToRoomInfo();
-            roomInfo.Guid = Guid.NewGuid();
+            Console.WriteLine($"GUID = {roomInfo.Guid}, Room Name = {roomInfo.Name}, Max Players = {roomInfo.MaxPlayers}, Has Password = {roomInfo.HasPassword} ");
             stream.Write(roomInfo.Guid.ToBytes());
             RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
         }
 
-        private static void DoListen(IPAddress address, int listeningPort)
+        private static void ListenUpdatePort(IPAddress address, int listeningPort)
         {
             TcpListener listener = new TcpListener(address, listeningPort);
             listener.Start();
@@ -192,7 +214,9 @@ namespace ListServerCore
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
-                ThreadPool.QueueUserWorkItem(ClientHandler, client, false);
+                connectedClients.Add(client);
+                Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
+                Tasks.Add(Task.Run(() => ClientHandler(client)));
             }
         }
         private static void SendRoomInfos(TcpClient client)
@@ -201,28 +225,28 @@ namespace ListServerCore
             while (true)
             {
                 byte[] head = new byte[4];
-                networkStream.BeginRead(head, 0, 4, Callback, networkStream);
+                networkStream.Read(head);
+                networkStream.Write(RoomInfos.Values.Count.ToBytes());
+                foreach (RoomInfo roomInfo in RoomInfos.Values)
+                {
+                    byte[] roomInfoBuffer = roomInfo.ToBytes();
+                    networkStream.Write(roomInfoBuffer.Length.ToBytes());
+                    networkStream.Write(roomInfoBuffer);
+                }
             }
         }
 
-        private static void Callback(IAsyncResult ar)
-        {
-            NetworkStream networkStream = (NetworkStream)ar.AsyncState;
-            networkStream.Write(RoomInfos.Values.Count.ToBytes());
-            foreach (RoomInfo roomInfo in RoomInfos.Values)
-            {
-                networkStream.Write(roomInfo.ToBytes());
-            }
-        }
-
-        private static void DoBroadcast(IPAddress address, int broadcastPort)
+        private static void ListenInfoPort(IPAddress address, int broadcastPort)
         {
             TcpListener listener = new TcpListener(address, broadcastPort);
             listener.Start();
             Console.WriteLine($"Broadcasting at {address}:{broadcastPort}");
             while (true)
             {
-                ThreadPool.QueueUserWorkItem(SendRoomInfos, listener.AcceptTcpClient(), false);
+                TcpClient client = listener.AcceptTcpClient();
+                connectedClients.Add(client);
+                Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
+                Tasks.Add(Task.Run(() => SendRoomInfos(client)));
             }
         }
     }

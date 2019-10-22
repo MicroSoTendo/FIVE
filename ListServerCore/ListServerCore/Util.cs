@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -10,7 +9,7 @@ namespace ListServerCore
         public static int ToI32(this byte[] bytes, int startIndex = 0)
         {
             return BitConverter.ToInt32(bytes, startIndex);
-        }        
+        }
         public static ushort ToU16(this byte[] bytes, int startIndex = 0)
         {
             return BitConverter.ToUInt16(bytes, startIndex);
@@ -19,8 +18,8 @@ namespace ListServerCore
         public static bool ToBool(this byte[] bytes, int startIndex = 0)
         {
             return BitConverter.ToBoolean(bytes, startIndex);
-        }        
-        
+        }
+
         public static Guid ToGuid(this byte[] bytes, int startIndex = 0)
         {
             return new Guid(bytes[startIndex..(startIndex + 16)]);
@@ -31,16 +30,17 @@ namespace ListServerCore
             return Encoding.Unicode.GetString(bytes[startIndex..]);
         }
 
-        public static RoomInfo ToRoomInfo(this byte[] bytes)
+        public static RoomInfo ToRoomInfo(this byte[] bytes, bool hasGuid = false)
         {
-            Guid guid = bytes.ToGuid();
-            int currentPlayers = bytes.ToI32(16);
-            int maxPlayers = bytes.ToI32(20);
-            bool hasPassword = bytes.ToBool(24);
-            int host = bytes.ToI32(25);
-            ushort port = bytes.ToU16(29);
-            string name = bytes.ToName(31);
-            return new RoomInfo(guid,currentPlayers,maxPlayers,hasPassword,host,port,name);
+            int offset = hasGuid ? 0 : -16;
+            Guid guid = hasGuid ? bytes.ToGuid() : Guid.NewGuid();
+            int currentPlayers = bytes.ToI32(16 + offset);
+            int maxPlayers = bytes.ToI32(20 + offset);
+            bool hasPassword = bytes.ToBool(24 + offset);
+            int host = bytes.ToI32(25 + offset);
+            ushort port = bytes.ToU16(29 + offset);
+            string name = bytes.ToName(31 + offset);
+            return new RoomInfo(guid, currentPlayers, maxPlayers, hasPassword, host, port, name);
         }
 
 
@@ -84,7 +84,8 @@ namespace ListServerCore
         {
             byte[] rv = new byte[arrays.Sum(a => a.Length)];
             int offset = 0;
-            foreach (byte[] array in arrays) {
+            foreach (byte[] array in arrays)
+            {
                 Buffer.BlockCopy(array, 0, rv, offset, array.Length);
                 offset += array.Length;
             }
