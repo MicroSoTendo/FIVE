@@ -17,7 +17,7 @@ namespace FIVE.UI.CodeEditor
         public Button StopButton { get; }
         public Button ExitButton { get; }
 
-        public bool IsFocused { get; set; }
+        public bool IsFocused => CodeInputField.isFocused;
 
         public CodeEditorViewModel()
         {
