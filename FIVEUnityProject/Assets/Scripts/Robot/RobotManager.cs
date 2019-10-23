@@ -15,6 +15,20 @@ namespace FIVE.Robot
 
         public static RobotManager Instance { get; private set; }
 
+        private GameObject activeRobot;
+
+        public GameObject ActiveRobot
+        {
+            get => activeRobot;
+            set
+            {
+                if (activeRobot)
+                    activeRobot.GetComponent<Movable>().enabled = false;
+                activeRobot = value;
+                activeRobot.GetComponent<Movable>().enabled = true;
+            }
+        }
+
         private void Awake()
         {
             Assert.IsTrue(Instance == null); // Make sure singleton
@@ -31,6 +45,7 @@ namespace FIVE.Robot
             if (Instance.robotPrefabs.TryGetValue(prefabName, out GameObject prefab))
             {
                 GameObject robot = Instantiate(prefab, pos, quat);
+                robot.GetComponent<Movable>().enabled = false;
 
                 Instance.Robots.Add(robot);
                 Instance.ID2Robot.Add(robot.GetInstanceID(), robot);

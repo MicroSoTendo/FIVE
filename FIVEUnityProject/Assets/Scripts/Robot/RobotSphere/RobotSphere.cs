@@ -32,9 +32,7 @@ namespace FIVE.Robot
         private FpsController fpsController;
 
         // Robot Status
-        private float health;
-
-        private Movable movable;
+        private Movable movable => GetComponent<Movable>();
 
         private AWSLScript script;
         private bool scriptActive;
@@ -57,14 +55,12 @@ namespace FIVE.Robot
                 rotation: Quaternion.Euler(90, 0, 0));
 
             cc = GetComponent<CharacterController>();
-            movable = GetComponent<Movable>();
 
             scriptActive = false;
 
             Battery = GetComponent<Battery>();
             CPU = GetComponent<CPU>();
 
-            health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
             base.Awake();
         }
@@ -82,7 +78,8 @@ namespace FIVE.Robot
         {
             if (e.Target != this)
                 return;
-            movable.ClearSchedule();
+            if (movable.enabled)
+                movable.ClearSchedule();
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
         }
@@ -115,7 +112,7 @@ namespace FIVE.Robot
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
-            if (scriptActive && movable.Moves.Count == 0)
+            if (scriptActive && (!movable.enabled || movable.Moves.Count == 0))
             {
                 ExecuteScript();
             }
@@ -131,14 +128,17 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            CurrentState = RobotSphereState.Walk;
-            if (schedule)
+            if (movable.enabled)
             {
-                movable.ScheduleMove(move, steps);
-            }
-            else
-            {
-                movable.MoveOnces[(int)move](steps);
+                CurrentState = RobotSphereState.Walk;
+                if (schedule)
+                {
+                    movable.ScheduleMove(move, steps);
+                }
+                else
+                {
+                    movable.MoveOnces[(int)move](steps);
+                }
             }
         }
 
