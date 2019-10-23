@@ -82,10 +82,5 @@ namespace FIVE.AWSL
                 return nearestEnemy;
             };
         }
-
-        private Func<List<RobotSphere>> FuncFindRobots()
-        {
-            return () => null;
-        }
     }
 }
