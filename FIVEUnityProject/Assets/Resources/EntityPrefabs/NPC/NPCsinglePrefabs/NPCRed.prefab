@@ -82,6 +82,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2739840877419783489}
+  - component: {fileID: -2524015727128804366}
+  - component: {fileID: -7470585158786257805}
   m_Layer: 0
   m_Name: NPCRed
   m_TagString: Untagged
@@ -101,9 +103,36 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4433150937261438635}
+  - {fileID: 3984615891910382031}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-2524015727128804366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4759351524015607978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 422b7d8a691ae6e4db7f2d7af3040010, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-7470585158786257805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4759351524015607978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 935847cf9a4ff364ea6f8b07cc5b2878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Description: {fileID: 6995427117354658964, guid: a9955fa11b05c6e48bd155db050ba9cf,
+    type: 3}
 --- !u!1 &6448870052857317856
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,12 +164,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7935282011508516726}
-  m_Father: {fileID: 4433150937261438635}
-  m_RootOrder: 2
+  m_Father: {fileID: 2739840877419783489}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.01, y: 1.93}
+  m_AnchoredPosition: {x: 0.01, y: 1.9919997}
   m_SizeDelta: {x: 0.9985, y: 1.2017}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &9009602003243362049

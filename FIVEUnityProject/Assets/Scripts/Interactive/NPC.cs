@@ -72,6 +72,7 @@ namespace FIVE.Interactive
 
         public void OnMouseDown()
         {
+
             var go = Instantiate(Description) as GameObject;
             go.transform.SetParent(GameObject.Find("UIScreenSpace").transform);
             go.transform.localPosition = new Vector2(0, -192);
