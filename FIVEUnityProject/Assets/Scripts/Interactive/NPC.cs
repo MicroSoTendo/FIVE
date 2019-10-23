@@ -72,9 +72,12 @@ namespace FIVE.Interactive
 
         public void OnMouseDown()
         {
+
             var go = Instantiate(Description) as GameObject;
-            go.transform.SetParent(GameObject.Find("UIScreenSpace").transform);
-            go.transform.localPosition = new Vector2(0, -192);
+            var canvas = GameObject.Find("UIScreenSpace");
+            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            go.transform.SetParent(canvas.transform);
+            go.transform.localPosition = new Vector2(0, -115);
         }
 
         public void Update()

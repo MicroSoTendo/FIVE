@@ -26,13 +26,10 @@ namespace FIVE.GameModes
             CameraManager.AddCamera("DefaultCamera-2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
             CameraManager.AddCamera("DefaultCamera-3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
             CameraManager.Remove("GUI Camera");
-            var NPC = Resources.Load<GameObject>("EntityPrefabs/NPC/NPCsinglePrefabs/NPCBlue");
-            Instantiate(NPC, new Vector3(-2.91f, 0f, 3.96f), Quaternion.Euler(new Vector3(0f, 140f, 0)));
-            Instantiate(NPC, new Vector3(3.55f, 0f, -4.11f), Quaternion.Euler(new Vector3(0f, 270f, 0)));
-            Instantiate(NPC, new Vector3(3.64f, 0.22f, 12.76f), Quaternion.Euler(new Vector3(0f, 180f, 0)));
-            Instantiate(NPC, new Vector3(-2.91f, 0f, 3.96f), Quaternion.Euler(new Vector3(0f, 140f, 0)));
-            Instantiate(NPC, new Vector3(3f, 0f, 3.96f), Quaternion.Euler(new Vector3(0f, 270f, 0)));
-            Instantiate(NPC, new Vector3(-3f, 0f, 13f), Quaternion.Euler(new Vector3(0f, 140f, 0)));
+            NPCInit.Initialize();
+            var myGO = new GameObject();
+            myGO.name = "UIScreenSpace";
+            myGO.AddComponent<Canvas>();
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector
