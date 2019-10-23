@@ -24,12 +24,14 @@ namespace FIVE.Robot
 
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotSphereState CurrentState = RobotSphereState.Idle;
+
         private Camera fpsCamera;
 
         private FpsController fpsController;
 
         // Robot Status
         private float health;
+
         private Movable movable;
 
         private AWSLScript script;
@@ -69,13 +71,15 @@ namespace FIVE.Robot
         {
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
-            EventManager.Subscribe<OnCodeEditorSaved, CodeEditorSavedEventArgs>(OnCodeSaved);
+            EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
             OnLocalPlayerUpdate += RobotSphereUpdate;
             base.Start();
         }
 
-        private void OnCodeSaved(object sender, CodeEditorSavedEventArgs e)
+        private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
+            if (e.Target != this)
+                return;
             movable.ClearSchedule();
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
@@ -89,7 +93,7 @@ namespace FIVE.Robot
                 {
                     if (Input.GetKey(KeyCode.E))
                     {
-                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs(), 300);
+                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs() { Target = this }, 300);
                     }
                 }
 

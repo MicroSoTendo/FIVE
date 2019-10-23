@@ -2,7 +2,6 @@
 using MoonSharp.Interpreter;
 using System;
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace FIVE.AWSL
 {
@@ -19,6 +18,7 @@ namespace FIVE.AWSL
 
             try
             {
+                UserData.RegisterAssembly();
                 script = new Script(CoreModules.None);
                 script.DoString(code);
                 coroutine = script.CreateCoroutine(script.Globals.Get("main"));
@@ -102,6 +102,23 @@ namespace FIVE.AWSL
 
                 return nearestBattery;
             };
+        }
+    }
+
+    [MoonSharpUserData]
+    internal class Message
+    {
+        public int type;
+    }
+
+    [MoonSharpUserData]
+    internal class MessageUpdateScript : Message
+    {
+        public string code;
+
+        public MessageUpdateScript()
+        {
+            type = 1;
         }
     }
 }
