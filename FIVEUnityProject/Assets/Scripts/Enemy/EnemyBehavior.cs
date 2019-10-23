@@ -49,7 +49,6 @@ namespace FIVE
             }
             else
             {
-                Debug.Log("Attacking");
                 animator.SetTrigger("attack1");
             }
 
@@ -61,7 +60,6 @@ namespace FIVE
             else
             {
                 float distance = Vector3.Distance(transform.position, currTarget.transform.position);
-                Debug.Log(distance);
                 if (distance > 2 * visionRange)
                 {
                     state = State.Idle;
