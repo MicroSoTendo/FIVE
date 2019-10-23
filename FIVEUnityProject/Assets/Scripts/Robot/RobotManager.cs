@@ -7,9 +7,11 @@ namespace FIVE.Robot
     public class RobotManager : MonoBehaviour
     {
         private readonly Dictionary<string, GameObject> robotPrefabs = new Dictionary<string, GameObject>();
-        public Dictionary<(int, int, int), List<int>> RobotIDs = new Dictionary<(int, int, int), List<int>>();
 
         public HashSet<GameObject> Robots = new HashSet<GameObject>();
+        public Dictionary<int, GameObject> ID2Robot = new Dictionary<int, GameObject>();
+
+        public Dictionary<(int, int, int), List<int>> HashMap = new Dictionary<(int, int, int), List<int>>();
 
         public static RobotManager Instance { get; private set; }
 
@@ -29,23 +31,33 @@ namespace FIVE.Robot
             if (Instance.robotPrefabs.TryGetValue(prefabName, out GameObject prefab))
             {
                 GameObject robot = Instantiate(prefab, pos, quat);
+
                 Instance.Robots.Add(robot);
+                Instance.ID2Robot.Add(robot.GetInstanceID(), robot);
 
                 (int x, int y, int z) k = Key(robot);
-                if (!Instance.RobotIDs.ContainsKey(k))
+                if (!Instance.HashMap.ContainsKey(k))
                 {
-                    Instance.RobotIDs[k] = new List<int>();
+                    Instance.HashMap[k] = new List<int>();
                 }
+                Instance.HashMap[k].Add(robot.GetInstanceID());
 
-                Instance.RobotIDs[k].Add(robot.GetInstanceID());
                 return robot;
             }
 
             return null;
         }
 
-        //Possible issue: 1 unity unit is large enough to have multiple robots
-        //May cause ArgumentException for existed key.
+        public static void RemoveRobot(GameObject robot)
+        {
+            Instance.Robots.Remove(robot);
+            Instance.ID2Robot.Remove(robot.GetInstanceID());
+            (int x, int y, int z) k = Key(robot);
+            Instance.HashMap[k].Add(robot.GetInstanceID());
+        }
+
+        // Possible issue: 1 unity unit is large enough to have multiple robots
+        // May cause ArgumentException for existed key.
         private static (int x, int y, int z) Key(GameObject robot)
         {
             int x = (int)(robot.transform.position.x * 100);
@@ -58,7 +70,7 @@ namespace FIVE.Robot
         {
             (int x, int y, int z) k = Key(robot);
             var ret = new List<int>();
-            ret.AddRange(RobotIDs[k]);
+            ret.AddRange(HashMap[k]);
 
             for (int dx = -1; dx <= 1; dx++)
             {
@@ -67,9 +79,9 @@ namespace FIVE.Robot
                     for (int dz = -1; dz <= 1; dz++)
                     {
                         (int, int, int) _k = (k.x + dx, k.y + dy, k.z + dz);
-                        if (RobotIDs.ContainsKey(_k))
+                        if (HashMap.ContainsKey(_k))
                         {
-                            ret.AddRange(RobotIDs[_k]);
+                            ret.AddRange(HashMap[_k]);
                         }
                     }
                 }
