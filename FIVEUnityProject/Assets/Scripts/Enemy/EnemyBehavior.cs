@@ -55,6 +55,10 @@ namespace FIVE
                 {
                     currTarget = null;
                 }
+                else if (Vector3.Distance(transform.position, currTarget.transform.position) < 1.0f)
+                {
+                    animator.SetTrigger("attack");
+                }
                 else
                 {
                     Vector3 distance = currTarget.transform.position - transform.position;
