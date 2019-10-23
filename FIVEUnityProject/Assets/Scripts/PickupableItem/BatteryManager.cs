@@ -1,8 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class EnergyPos : MonoBehaviour
+public class BatteryManager : MonoBehaviour
 {
+    private static BatteryManager instance;
+
+    public List<GameObject> Batteries;
+
     public GameObject energy;
+
+    private void Awake()
+    {
+        instance = this;
+        Batteries = new List<GameObject>();
+    }
 
     private void Start()
     {
@@ -29,14 +40,16 @@ public class EnergyPos : MonoBehaviour
 
         positionArray[6] = new Vector3(4.8f, 0.1f, -285.8f);
         RotationArray[6] = new Vector3(-90f, 0f, 0f);
-        //-90, 0 180
+
         for (int i = 0; i < positionArray.Length; i++)
         {
-            double random = Random.Range(0.0f, 1.0f);
-            {
-                Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i]));
-            }
+            Batteries.Add(Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i])));
         }
+    }
+
+    public static BatteryManager Instance()
+    {
+        return instance;
     }
 
     // Update is called once per frame

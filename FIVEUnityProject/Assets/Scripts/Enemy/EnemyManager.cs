@@ -7,7 +7,8 @@ public class EnemyManager : MonoBehaviour
     private static EnemyManager instance;
     private float elapsedTime;
 
-    private HashSet<GameObject> enemies;
+    public List<GameObject> Enemies;
+
     public GameObject Prefab;
 
     private Queue<Vector3> spawnLocations;
@@ -22,14 +23,14 @@ public class EnemyManager : MonoBehaviour
         spawnLocations.Enqueue(new Vector3(-100, 0, 90));
         spawnLocations.Enqueue(new Vector3(0, 0, 200));
 
-        enemies = new HashSet<GameObject>();
+        Enemies = new List<GameObject>();
         elapsedTime = 0;
     }
 
     void Update()
     {
         elapsedTime += Time.deltaTime;
-        if (elapsedTime >= 5.0f && enemies.Count < 10)
+        if (elapsedTime >= 5.0f && Enemies.Count < 10)
         {
             Vector3 pos = spawnLocations.Dequeue();
             AddEnemy(pos);
@@ -46,6 +47,6 @@ public class EnemyManager : MonoBehaviour
     private void AddEnemy(Vector3 positition)
     {
         GameObject enemy = Instantiate(Prefab, positition, Quaternion.identity);
-        enemies.Add(enemy);
+        Enemies.Add(enemy);
     }
 }

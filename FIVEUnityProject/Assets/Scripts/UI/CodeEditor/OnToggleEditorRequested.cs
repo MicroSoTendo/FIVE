@@ -1,5 +1,6 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using FIVE.Robot;
+using System;
 
 namespace FIVE.UI.CodeEditor
 {
@@ -9,5 +10,6 @@ namespace FIVE.UI.CodeEditor
 
     public sealed class LauncherEditorArgs : EventArgs
     {
+        public RobotSphere Target;
     }
 }
