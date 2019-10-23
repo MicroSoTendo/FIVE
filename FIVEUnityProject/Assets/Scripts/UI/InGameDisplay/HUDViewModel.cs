@@ -33,18 +33,15 @@ namespace FIVE.UI.InGameDisplay
             Bind(ScanButton).To(OnScanClicked);
             EventManager.Subscribe<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(UpdateEnergy);
             Subscribe<OnCameraSwitched>(OnCameraSwitched);
-            MultiCameraModeButton.gameObject.SetActive(false);
         }
 
         private void OnCameraSwitched()
         {
-            MultiCameraModeButton.gameObject.SetActive(true);
         }
 
         private void OnMultiCameraModeButtonPressed()
         {
             EventManager.RaiseImmediate<OnMultiCameraModeRequested>(this, EventArgs.Empty);
-            MultiCameraModeButton.gameObject.SetActive(false);
         }
 
         private void UpdateEnergy(object sender, RobotEnergyChangedEventArgs e)
