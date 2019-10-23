@@ -29,6 +29,7 @@ namespace FIVE.AWSL
                 script.Globals["left"] = FuncMove(Movable.Move.Left);
                 script.Globals["right"] = FuncMove(Movable.Move.Right);
                 script.Globals["nearestEnemy"] = FuncNearestEnemy();
+                script.Globals["nearestBattery"] = FuncNearestBattery();
 
                 coroutine.Coroutine.AutoYieldCounter = 4 * robot.CPU.Speed;
             }
