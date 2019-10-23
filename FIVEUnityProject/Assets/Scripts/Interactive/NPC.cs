@@ -1,5 +1,7 @@
 ﻿using FIVE.CameraSystem;
 using FIVE.Robot;
+using FIVE.UI;
+using FIVE.UI.NPC;
 using System.Collections;
 using UnityEngine;
 using static FIVE.Util;
@@ -72,12 +74,7 @@ namespace FIVE.Interactive
 
         public void OnMouseDown()
         {
-
-            var go = Instantiate(Description) as GameObject;
-            var canvas = GameObject.Find("UIScreenSpace");
-            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
-            go.transform.SetParent(canvas.transform);
-            go.transform.localPosition = new Vector2(0, -115);
+            UIManager.Get<NPCDialogueViewModel>().IsActive = true;
         }
 
         public void Update()

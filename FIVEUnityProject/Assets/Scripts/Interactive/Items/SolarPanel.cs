@@ -17,7 +17,12 @@ namespace FIVE.Interactive.Items
 
         private void ItemAction(GameObject owner, GameObject o)
         {
-            owner.GetComponent<RobotComponents.Battery>().CurrentEnergy = Remaining;
+            if(true/*is daytime*/)
+            {
+                //current Energy downs slower
+                owner.GetComponent<RobotComponents.Battery>().CurrentEnergy+= 0.7f;
+            }
+
         }
     }
 }
