@@ -34,6 +34,7 @@ namespace FIVE.GameModes
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector
             GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
+            GameObject robot1 = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 20), Quaternion.identity);
             var enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
             Instantiate(enemyManagerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             Inventory inventory = InventoryManager.AddInventory(robot);
