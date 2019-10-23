@@ -27,6 +27,9 @@ namespace FIVE.GameModes
             CameraManager.AddCamera("DefaultCamera-3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
             CameraManager.Remove("GUI Camera");
             NPCInit.Initialize();
+            var myGO = new GameObject();
+            myGO.name = "UIScreenSpace";
+            myGO.AddComponent<Canvas>();
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector

@@ -52,3 +52,12 @@ FIVEUnityProject/Assets/Resources/Textures/*
 FIVEUnityProject/Assets/Scenes/Test*
 FIVEUnityProject/Assets/Samples*
 FIVEUnityProject/ProjectSettings/ProjectVersion.txt
+/FIVEUnityProject/Assets/Resources/Animation
+/FIVEUnityProject/Assets/Resources/Battery
+/FIVEUnityProject/Assets/Resources/ElectronicComponents
+/FIVEUnityProject/Assets/Resources/Electronics
+/FIVEUnityProject/Assets/Resources/SolarPanel
+/FIVEUnityProject/Assets/Resources/SolarPanel.meta
+/FIVEUnityProject/Assets/Resources/Electronics.meta
+/FIVEUnityProject/Assets/Resources/ElectronicComponents.meta
+/FIVEUnityProject/Assets/Resources/Battery.meta
