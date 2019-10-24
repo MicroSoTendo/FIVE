@@ -1,6 +1,7 @@
 ﻿using FIVE.CameraSystem;
 using FIVE.Robot;
 using FIVE.UI;
+using FIVE.UI.BSComposite;
 using FIVE.UI.NPC;
 using System.Collections;
 using UnityEngine;
@@ -74,7 +75,15 @@ namespace FIVE.Interactive
 
         public void OnMouseDown()
         {
-            UIManager.Get<NPCDialogueViewModel>().IsActive = true;
+            if (gameObject.name.Contains("Blue"))
+            {
+                UIManager.Get<NPCDialogueViewModel>().IsActive = true;
+            }
+            if (gameObject.name.Contains("Orange"))
+            {
+                UIManager.Get<BSCompositeViewModel>().IsActive = true;
+            }
+            
         }
 
         public void Update()

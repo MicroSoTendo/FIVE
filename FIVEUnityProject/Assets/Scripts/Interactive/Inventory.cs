@@ -59,15 +59,15 @@ namespace FIVE.Interactive
 
     public class Inventory
     {
-        private readonly List<GameObject> items = new List<GameObject>();
+        public List<GameObject> Items { get; } = new List<GameObject>();
         public int Capacity { get; set; } = 100;
-        public int Count => items.Count;
+        public int Count => Items.Count;
 
         public GameObject Owner { get; private set; }
 
-        public List<GameObject> ListItem()
+        public List<GameObject> ListItem
         {
-            return items;
+            get => Items;
         }
         public Inventory(GameObject owner)
         {
@@ -106,34 +106,34 @@ namespace FIVE.Interactive
 
         public void Add(GameObject item)
         {
-            OnChanged(item, items.Count, InventoryChangedAction.Add);
+            OnChanged(item, Items.Count, InventoryChangedAction.Add);
             item.GetComponent<Item>().Owner = Owner;
-            items.Add(item);
+            Items.Add(item);
         }
 
         public void Insert(int index, GameObject item)
         {
             OnChanged(item, index, InventoryChangedAction.Insert);
-            items.Insert(index, item);
+            Items.Insert(index, item);
         }
 
         public void Replace(GameObject oldItem, GameObject newItem)
         {
-            int index = items.IndexOf(oldItem);
-            items[index] = newItem;
+            int index = Items.IndexOf(oldItem);
+            Items[index] = newItem;
             OnChanged(newItem, index, InventoryChangedAction.Replace);
         }
 
         public void Remove(GameObject item)
         {
-            OnChanged(item, items.IndexOf(item), InventoryChangedAction.Remove);
-            items.Remove(item);
+            OnChanged(item, Items.IndexOf(item), InventoryChangedAction.Remove);
+            Items.Remove(item);
         }
 
         public void RemoveAt(int index)
         {
-            OnChanged(items[index], index, InventoryChangedAction.RemoveAt);
-            items.RemoveAt(index);
+            OnChanged(Items[index], index, InventoryChangedAction.RemoveAt);
+            Items.RemoveAt(index);
         }
     }
 }

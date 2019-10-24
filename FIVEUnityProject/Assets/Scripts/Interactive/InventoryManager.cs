@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FIVE.Robot;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -11,6 +12,14 @@ namespace FIVE.Interactive
         {
             Inventory inventory = new Inventory(owner);
             Inventories.Add(owner, inventory);
+            return inventory;
+        }
+        public static Inventory FindInventory()
+        {
+            Inventory inventory =  null;
+            if (RobotManager.ActiveRobot != null) {
+                inventory = Inventories[RobotManager.ActiveRobot];
+            }
             return inventory;
         }
     }
