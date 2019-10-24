@@ -41,6 +41,18 @@ namespace FIVE.ControllerSystem
             {
                 robotSphere.Move(Movable.Move.Right, 5);
             }
+
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
+                {
+                    if (hitInfo.collider.gameObject.GetComponent<EnemyBehavior>() != null)
+                    {
+                        robotSphere.Attack(hitInfo.collider.gameObject);
+                    }
+                }
+            }
         }
     }
 }
