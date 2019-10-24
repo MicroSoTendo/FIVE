@@ -3,15 +3,35 @@ using MoonSharp.Interpreter;
 using System;
 using FIVE.Enemy;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace FIVE.AWSL
 {
+    [MoonSharpUserData]
+    internal class SharedData
+    {
+        public Dictionary<string, DynValue> data = new Dictionary<string, DynValue>();
+
+        public DynValue this[string k]
+        {
+            get { return data[k]; }
+            set { data[k] = value; }
+        }
+    }
+
     internal class AWSLScript
     {
+        private static SharedData shared;
+
         private readonly DynValue coroutine;
         private readonly RobotSphere robot;
 
         private readonly Script script;
+
+        static AWSLScript()
+        {
+            shared = new SharedData();
+        }
 
         internal AWSLScript(RobotSphere robot, string code)
         {
@@ -25,6 +45,7 @@ namespace FIVE.AWSL
                 coroutine = script.CreateCoroutine(script.Globals.Get("main"));
 
                 script.Globals["ID"] = robot.ID;
+                script.Globals["Shared"] = shared;
 
                 script.Globals["print"] = (Action<DynValue>)(x => Debug.Log(x));
                 script.Globals["forward"] = FuncMove(Movable.Move.Front);
@@ -34,7 +55,7 @@ namespace FIVE.AWSL
                 script.Globals["nearestEnemy"] = FuncNearestEnemy();
                 script.Globals["nearestBattery"] = FuncNearestBattery();
 
-                coroutine.Coroutine.AutoYieldCounter = 10 * robot.CPU.Speed;
+                coroutine.Coroutine.AutoYieldCounter = 1000 * robot.CPU.Speed;
             }
             catch (Exception e)
             {
