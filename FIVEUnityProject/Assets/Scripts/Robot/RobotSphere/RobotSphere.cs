@@ -17,6 +17,8 @@ namespace FIVE.Robot
     {
         public enum RobotSphereState { Idle, Walk, Jump, Open };
 
+        public GameObject BulletPrefab;
+
         // Script References
         private RobotFreeAnim animator;
 
@@ -138,6 +140,11 @@ namespace FIVE.Robot
             {
                 movable.MoveOnces[(int)move](steps);
             }
+        }
+
+        public void Attack(GameObject target)
+        {
+            Instantiate()
         }
 
         private void ExecuteScript()
