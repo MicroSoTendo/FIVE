@@ -22,6 +22,7 @@ namespace FIVE.CameraSystem
         public static Camera CurrentActiveCamera { get; private set; }
 
         private int index = 0;
+        private bool forceSwitch = false;
         private List<Camera> wall = new List<Camera>();
 
         public static IEnumerable<Camera> GetFpsCameras =>
@@ -92,10 +93,8 @@ namespace FIVE.CameraSystem
         public static void SetCameraWall()
         {
             State = StateEnum.Multiple;
-            foreach (Camera c in instance.cam2name.Keys)
-            {
-                c.enabled = false;
-            }
+            instance.index = 0;
+            instance.forceSwitch = true;
         }
 
         public static void Remove(Camera camera)
@@ -135,10 +134,11 @@ namespace FIVE.CameraSystem
                     return;
                 }
 
-                if ((int)(Time.time * 1000f) % 1000 != 0)
+                if (!forceSwitch && (int)(Time.time * 1000f) % 1000 != 0)
                 {
                     return;
                 }
+                forceSwitch = false;
 
                 wall.Clear();
                 foreach (Camera c in cam2name.Keys)
