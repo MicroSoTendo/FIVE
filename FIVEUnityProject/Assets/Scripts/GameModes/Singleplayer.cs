@@ -35,6 +35,7 @@ namespace FIVE.GameModes
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector
             CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
+            StartCoroutine(codeEditorViewModel.ToggleEditorCoroutine());
             GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
             RobotManager.ActiveRobot = robot;
             GameObject robot1 = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 20), Quaternion.identity);

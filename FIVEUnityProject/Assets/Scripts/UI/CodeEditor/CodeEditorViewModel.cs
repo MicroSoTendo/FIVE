@@ -35,10 +35,9 @@ namespace FIVE.UI.CodeEditor
             Bind(SaveButton).To(OnRunButtonClicked);
             Bind(ExitButton).To(OnCancelButtonClicked);
             CodeInputField.onValueChanged.AddListener(UpdateLineNumber);
-            MainThreadDispatcher.ScheduleCoroutine(ToggleEditorCoroutine());
         }
 
-        private IEnumerator ToggleEditorCoroutine()
+        public IEnumerator ToggleEditorCoroutine()
         {
             while (true)
             {
