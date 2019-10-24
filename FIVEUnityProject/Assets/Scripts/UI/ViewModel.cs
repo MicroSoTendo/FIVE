@@ -58,8 +58,7 @@ namespace FIVE.UI
             {
                 return null;
             }
-
-            GameObject prefab = LoadPrefab(PrefabPath);
+            GameObject prefab = Resources.Load<GameObject>(PrefabPath);
             Transform parent = this[ViewModelRenderMode].transform;
             GameObject go = Object.Instantiate(prefab, parent);
             go.SetActive(false);

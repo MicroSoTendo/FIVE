@@ -14,7 +14,6 @@ namespace FIVE.UI
     {
         private static readonly Canvas[] Canvas;
         private static readonly GameObject ViewModelsRoot;
-        private static readonly ConcurrentDictionary<string, GameObject> CachedPrefabs;
         private static readonly ConcurrentDictionary<Type, ViewModel> CachedViewModels;
         public static bool Initialized { get; private set; }
 
@@ -25,7 +24,6 @@ namespace FIVE.UI
             CanvasGroup canvasGroup = ViewModelsRoot.AddComponent<CanvasGroup>();
             Canvas = new Canvas[3];
             InitCanvas();
-            CachedPrefabs = new ConcurrentDictionary<string, GameObject>();
             CachedViewModels = new ConcurrentDictionary<Type, ViewModel>();
         }
 
@@ -33,7 +31,7 @@ namespace FIVE.UI
         {
             foreach (object value in Enum.GetValues(typeof(RenderMode)))
             {
-                var go = new GameObject {name = value.ToString()};
+                var go = new GameObject { name = value.ToString() };
                 go.transform.SetParent(ViewModelsRoot.transform);
                 Canvas c = go.AddComponent<Canvas>();
                 go.AddComponent<CanvasScaler>();
@@ -44,61 +42,26 @@ namespace FIVE.UI
             }
         }
 
-        public static IEnumerator InitializeRoutine(Action<float> progressCallBack)
+        public static IEnumerator InitializeRoutine(Action<float> progressCallback)
         {
-            if (progressCallBack == null) progressCallBack = f => { };
-            string pathPrefix = Application.dataPath + "/Resources";
-            string searchingDir = "/EntityPrefabs/UI";
-            var dirInfo = new DirectoryInfo(pathPrefix + searchingDir);
-            FileInfo[] fileInfos = dirInfo.GetFiles("*.prefab", SearchOption.AllDirectories);
+
+
             Type[] types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in assembly.GetTypes()
-                where !type.IsAbstract && typeof(ViewModel).IsAssignableFrom(type)
-                select type).ToArray();
-            int total = types.Length + fileInfos.Length * 2;
+                            from type in assembly.GetTypes()
+                            where !type.IsAbstract && typeof(ViewModel).IsAssignableFrom(type)
+                            select type).ToArray();
+            int total = types.Length;
             int finished = 0;
-            progressCallBack((float)finished / total);
-            foreach (FileInfo fileInfo in fileInfos)
-            {
-                string trimedPath = fileInfo.FullName.Replace("\\", "/").Replace(pathPrefix, "").Replace(".prefab", "")
-                    .Substring(1);
-                ResourceRequest prefabRequests = Resources.LoadAsync<GameObject>(trimedPath);
-                prefabRequests.completed += OnPrefabLoadCompleted(trimedPath, prefabRequests);
-                finished++;
-                yield return null;
-            }
-
-            while (CachedPrefabs.Count < fileInfos.Length)
-            {
-                progressCallBack((float)finished / total);
-                yield return null;
-            }
-
-            finished *= 2;
             foreach (Type type in types)
             {
                 var cached = (ViewModel)type.GetConstructor(Type.EmptyTypes)?.Invoke(null);
                 CachedViewModels.TryAdd(type, cached);
                 finished++;
-                progressCallBack((float)finished / total);
+                progressCallback((float)finished / total);
                 yield return null;
             }
 
             Initialized = true;
-        }
-
-        private static Action<AsyncOperation> OnPrefabLoadCompleted(string trimedPath,
-            ResourceRequest resourceRequest)
-        {
-            return operation =>
-            {
-                CachedPrefabs.TryAdd(trimedPath, (GameObject)resourceRequest.asset);
-            };
-        }
-
-        private static GameObject LoadPrefab(string path)
-        {
-            return CachedPrefabs.TryGetValue(path, out GameObject prefab) ? prefab : Resources.Load<GameObject>(path);
         }
 
         public static ViewModel Create<T>() where T : ViewModel
