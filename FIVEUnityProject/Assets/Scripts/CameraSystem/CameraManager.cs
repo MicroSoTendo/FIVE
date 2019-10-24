@@ -123,7 +123,7 @@ namespace FIVE.CameraSystem
 
             if (State == StateEnum.Multiple)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && wall.Count > 0)
                 {
                     int x = Mathf.FloorToInt(Input.mousePosition.x / Screen.width * 2f);
                     int y = Mathf.FloorToInt(Input.mousePosition.y / Screen.height * 2f);
@@ -135,7 +135,7 @@ namespace FIVE.CameraSystem
                     return;
                 }
 
-                if (Time.frameCount % 120 != 0)
+                if ((int)(Time.time * 1000f) % 1000 != 0)
                 {
                     return;
                 }

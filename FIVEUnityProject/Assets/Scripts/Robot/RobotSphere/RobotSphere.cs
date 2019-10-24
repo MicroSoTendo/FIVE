@@ -5,7 +5,6 @@ using FIVE.EventSystem;
 using FIVE.RobotComponents;
 using FIVE.UI;
 using FIVE.UI.CodeEditor;
-using System.Collections;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -15,6 +14,8 @@ namespace FIVE.Robot
     [RequireComponent(typeof(Battery))]
     public class RobotSphere : RobotBehaviour
     {
+        public int ID;
+
         public enum RobotSphereState { Idle, Walk, Jump, Open };
 
         public GameObject BulletPrefab;
@@ -32,10 +33,11 @@ namespace FIVE.Robot
         private FpsController fpsController;
 
         // Robot Status
-        private Movable movable => GetComponent<Movable>();
+        private Movable movable;
 
         private AWSLScript script;
         private bool scriptActive;
+
         private Camera thirdPersonCamera;
 
         // Robot Components
@@ -45,14 +47,9 @@ namespace FIVE.Robot
 
         protected override void Awake()
         {
-            GameObject eye = gameObject.FindChildRecursive(nameof(eye));
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
-            fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
+            ID = RobotManager.NextID;
 
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(),
-                parent: transform, enableAudioListener: true,
-                position: new Vector3(0, 2, 0),
-                rotation: Quaternion.Euler(90, 0, 0));
+            movable = GetComponent<Movable>();
 
             cc = GetComponent<CharacterController>();
 
@@ -61,12 +58,19 @@ namespace FIVE.Robot
             Battery = GetComponent<Battery>();
             CPU = GetComponent<CPU>();
 
-            StartCoroutine(ToggleEditorCoroutine());
             base.Awake();
         }
 
         protected override void Start()
         {
+            GameObject eye = gameObject.FindChildRecursive(nameof(eye));
+            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
+            fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + ID.ToString(),
+                parent: transform, enableAudioListener: true,
+                position: new Vector3(0, 2, 0),
+                rotation: Quaternion.Euler(90, 0, 0));
+
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
@@ -76,28 +80,17 @@ namespace FIVE.Robot
 
         private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
-            if (e.Target != this)
-                return;
             if (movable.enabled)
+            {
                 movable.ClearSchedule();
+            }
+            else
+            {
+                movable.enabled = true;
+            }
+
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
-        }
-
-        private IEnumerator ToggleEditorCoroutine()
-        {
-            while (true)
-            {
-                if (!UIManager.Get<CodeEditorViewModel>()?.IsFocused ?? true)
-                {
-                    if (Input.GetKey(KeyCode.E))
-                    {
-                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs() { Target = this }, 300);
-                    }
-                }
-
-                yield return null;
-            }
         }
 
         private void RobotSphereUpdate()
@@ -122,10 +115,6 @@ namespace FIVE.Robot
             }
         }
 
-        public void LateUpdate()
-        {
-        }
-
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
             if (movable.enabled)
@@ -144,14 +133,17 @@ namespace FIVE.Robot
 
         public void Attack(GameObject target)
         {
-            Debug.Log("Attack");
-            GameObject bullet =  Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
+            GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
         }
 
         private void ExecuteScript()
         {
             scriptActive = !script.Execute();
+            if (!scriptActive)
+            {
+                movable.enabled = RobotManager.ActiveRobot == gameObject;
+            }
         }
 
         private enum ControllerOp { FPS, RTS, };

@@ -1,16 +1,37 @@
 ﻿using FIVE.Robot;
 using MoonSharp.Interpreter;
 using System;
+using FIVE.Enemy;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace FIVE.AWSL
 {
+    [MoonSharpUserData]
+    internal class SharedData
+    {
+        public Dictionary<string, DynValue> data = new Dictionary<string, DynValue>();
+
+        public DynValue this[string k]
+        {
+            get { return data[k]; }
+            set { data[k] = value; }
+        }
+    }
+
     internal class AWSLScript
     {
+        private static SharedData shared;
+
         private readonly DynValue coroutine;
         private readonly RobotSphere robot;
 
         private readonly Script script;
+
+        static AWSLScript()
+        {
+            shared = new SharedData();
+        }
 
         internal AWSLScript(RobotSphere robot, string code)
         {
@@ -23,6 +44,9 @@ namespace FIVE.AWSL
                 script.DoString(code);
                 coroutine = script.CreateCoroutine(script.Globals.Get("main"));
 
+                script.Globals["ID"] = robot.ID;
+                script.Globals["Shared"] = shared;
+
                 script.Globals["print"] = (Action<DynValue>)(x => Debug.Log(x));
                 script.Globals["forward"] = FuncMove(Movable.Move.Front);
                 script.Globals["backward"] = FuncMove(Movable.Move.Back);
@@ -31,7 +55,7 @@ namespace FIVE.AWSL
                 script.Globals["nearestEnemy"] = FuncNearestEnemy();
                 script.Globals["nearestBattery"] = FuncNearestBattery();
 
-                coroutine.Coroutine.AutoYieldCounter = 4 * robot.CPU.Speed;
+                coroutine.Coroutine.AutoYieldCounter = 10 * robot.CPU.Speed;
             }
             catch (Exception e)
             {
@@ -67,10 +91,10 @@ namespace FIVE.AWSL
         {
             return () =>
             {
-                GameObject nearestEnemy = EnemyManager.Instance().Enemies[0];
+                GameObject nearestEnemy = EnemyManager.Enemies[0];
                 float nearestDistance = Vector3.Distance(nearestEnemy.transform.position, robot.gameObject.transform.position);
 
-                foreach (GameObject enemy in EnemyManager.Instance().Enemies)
+                foreach (GameObject enemy in EnemyManager.Enemies)
                 {
                     float distance = Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position);
                     if (Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position) < distance)
@@ -103,23 +127,6 @@ namespace FIVE.AWSL
 
                 return nearestBattery;
             };
-        }
-    }
-
-    [MoonSharpUserData]
-    internal class Message
-    {
-        public int type;
-    }
-
-    [MoonSharpUserData]
-    internal class MessageUpdateScript : Message
-    {
-        public string code;
-
-        public MessageUpdateScript()
-        {
-            type = 1;
         }
     }
 }

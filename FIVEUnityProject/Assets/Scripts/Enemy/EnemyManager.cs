@@ -1,52 +1,50 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
-public class EnemyManager : MonoBehaviour
+namespace FIVE.Enemy
 {
-    private static EnemyManager instance;
-    private float elapsedTime;
-
-    public List<GameObject> Enemies;
-
-    public GameObject Prefab;
-
-    private Queue<Vector3> spawnLocations;
-
-    private void Awake()
+    public class EnemyManager : MonoBehaviour
     {
-        instance = this;
+        private static EnemyManager instance;
+        private float elapsedTime;
+        
+        [SerializeField] private GameObject prefab;
+        public static List<GameObject> Enemies => instance.enemies;
+        private List<GameObject> enemies;
+        private Queue<Vector3> spawnLocations;
 
-        spawnLocations = new Queue<Vector3>();
-        spawnLocations.Enqueue(new Vector3(0, 0, -250));
-        spawnLocations.Enqueue(new Vector3(100, 0, 90));
-        spawnLocations.Enqueue(new Vector3(-100, 0, 90));
-        spawnLocations.Enqueue(new Vector3(0, 0, 200));
-
-        Enemies = new List<GameObject>();
-        elapsedTime = 0;
-    }
-
-    void Update()
-    {
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime >= 5.0f && Enemies.Count < 10)
+        private void Awake()
         {
-            Vector3 pos = spawnLocations.Dequeue();
-            AddEnemy(pos);
-            spawnLocations.Enqueue(pos);
+            Assert.IsNull(instance);
+            instance = this;
+
+            spawnLocations = new Queue<Vector3>();
+            spawnLocations.Enqueue(new Vector3(0, 0, -250));
+            spawnLocations.Enqueue(new Vector3(100, 0, 90));
+            spawnLocations.Enqueue(new Vector3(-100, 0, 90));
+            spawnLocations.Enqueue(new Vector3(0, 0, 200));
+
+            enemies = new List<GameObject>();
             elapsedTime = 0;
         }
-    }
 
-    public static EnemyManager Instance()
-    {
-        return instance;
-    }
+        private void Update()
+        {
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime >= 5.0f && Enemies.Count < 10)
+            {
+                Vector3 pos = spawnLocations.Dequeue();
+                AddEnemy(pos);
+                spawnLocations.Enqueue(pos);
+                elapsedTime = 0;
+            }
+        }
 
-    private void AddEnemy(Vector3 positition)
-    {
-        GameObject enemy = Instantiate(Prefab, positition, Quaternion.identity);
-        Enemies.Add(enemy);
+        private void AddEnemy(Vector3 positition)
+        {
+            GameObject enemy = Instantiate(prefab, positition, Quaternion.identity);
+            Enemies.Add(enemy);
+        }
     }
 }

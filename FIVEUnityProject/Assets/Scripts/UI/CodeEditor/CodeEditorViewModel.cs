@@ -1,9 +1,9 @@
 ﻿using FIVE.EventSystem;
-using FIVE.Robot;
-using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace FIVE.UI.CodeEditor
@@ -21,8 +21,6 @@ namespace FIVE.UI.CodeEditor
 
         public bool IsFocused => CodeInputField.isFocused;
 
-        private RobotSphere target;
-
         public CodeEditorViewModel()
         {
             CodeInputField = Get<TMP_InputField>(nameof(CodeInputField));
@@ -36,8 +34,25 @@ namespace FIVE.UI.CodeEditor
             UpdateLineNumber("");
             Bind(SaveButton).To(OnRunButtonClicked);
             Bind(ExitButton).To(OnCancelButtonClicked);
-            EventManager.Subscribe<OnToggleEditorRequested>(ToggleEditor);
             CodeInputField.onValueChanged.AddListener(UpdateLineNumber);
+            MainThreadDispatcher.ScheduleCoroutine(ToggleEditorCoroutine());
+        }
+
+        private IEnumerator ToggleEditorCoroutine()
+        {
+            while (true)
+            {
+                yield return null;
+                if (IsFocused)
+                {
+                    continue;
+                }
+                if (Input.GetKey(KeyCode.E))
+                {
+                    ToggleEnabled();
+                    yield return new WaitForSeconds(0.3f);
+                }
+            }
         }
 
         private void UpdateLineNumber(string text)
@@ -52,26 +67,24 @@ namespace FIVE.UI.CodeEditor
             LineNumber.text = sb.ToString();
         }
 
-        private void ToggleEditor(object sender, EventArgs args)
+        public override void ToggleEnabled()
         {
-            ToggleEnabled();
+            base.ToggleEnabled();
             UIManager.SetCursor(IsActive ? UIManager.CursorType.Regular : UIManager.CursorType.Aim);
-            target = (args as LauncherEditorArgs).Target;
         }
+
 
         private void OnRunButtonClicked()
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            this.RaiseEvent<OnCodeEditorSaved, UpdateScriptEventArgs>(new UpdateScriptEventArgs(target, CodeInputField.text));
-            target = null;
+            EventManager.RaiseImmediate<OnCodeEditorSaved>(this, new UpdateScriptEventArgs(CodeInputField.text));
         }
 
         private void OnCancelButtonClicked()
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            target = null;
         }
     }
 }

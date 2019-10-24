@@ -34,14 +34,14 @@ namespace FIVE.GameModes
             UIManager.Create<BSCompositeViewModel>().IsActive = false;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector
+            CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
             GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
             RobotManager.ActiveRobot = robot;
             GameObject robot1 = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 20), Quaternion.identity);
-            var enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
+            GameObject enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
             Instantiate(enemyManagerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             Inventory inventory = InventoryManager.AddInventory(robot);
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
-            CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
             inventoryViewModel.Inventory = inventory;
             inventoryViewModel.IsActive = false;
