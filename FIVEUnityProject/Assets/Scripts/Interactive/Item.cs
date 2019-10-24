@@ -160,8 +160,9 @@ namespace FIVE.Interactive
                     Destroy(mc);
                 }
 
+                GameObject o = gameObject;
                 EventManager.RaiseImmediate<OnDropItemToInventory>(this,
-                    new DropedItemToInventoryEventArgs(gameObject, null, gameObject));
+                    new DropedItemToInventoryEventArgs(o, null, o));
             }
         }
     }

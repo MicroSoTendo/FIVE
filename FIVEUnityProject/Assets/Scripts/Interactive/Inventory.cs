@@ -28,13 +28,9 @@ namespace FIVE.Interactive
         public RemoveItemRequestedEventArgs(GameObject item) => Item = item;
     }
 
-    public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs>
-    {
-    }
+    public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs> { }
 
-    public class OnRemoveItemRequested : IEventType<RemoveItemRequestedEventArgs>
-    {
-    }
+    public class OnRemoveItemRequested : IEventType<RemoveItemRequestedEventArgs> { }
 
     public enum InventoryChangedAction
     {
@@ -59,11 +55,9 @@ namespace FIVE.Interactive
         }
     }
 
-    public class OnInventoryChanged : OnObservableChanged<InventoryChangedEventArgs>
-    {
-    }
+    public class OnInventoryChanged : IEventType<InventoryChangedEventArgs> { }
 
-    public class Inventory : Observable<OnInventoryChanged, InventoryChangedEventArgs>
+    public class Inventory
     {
         private readonly List<GameObject> items = new List<GameObject>();
         public int Capacity { get; set; } = 100;
@@ -102,7 +96,7 @@ namespace FIVE.Interactive
 
         private void OnChanged(GameObject gameObject, int index, InventoryChangedAction action)
         {
-            RaiseObservableChanged(new InventoryChangedEventArgs(gameObject, index, action));
+            EventManager.RaiseImmediate<OnInventoryChanged>(this, new InventoryChangedEventArgs(gameObject, index, action));
         }
 
         public void ChangeOwner(GameObject newOwner)

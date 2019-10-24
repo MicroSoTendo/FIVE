@@ -25,10 +25,7 @@ namespace FIVE.UI.InGameDisplay
         private readonly List<(GameObject, Transform)> cellPool = new List<(GameObject, Transform)>();
         public override bool IsActive
         {
-            get
-            {
-                return base.IsActive;
-            }
+            get => base.IsActive;
             set
             {
                 base.IsActive = value;
@@ -45,10 +42,10 @@ namespace FIVE.UI.InGameDisplay
             InventoryContent = Get(nameof(InventoryContent));
             ExitButton = Get<Button>(nameof(ExitButton));
             Bind(ExitButton).To(ExitInventory);
-            EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
             contentRectTransform = InventoryContent.GetComponent<RectTransform>();
             this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
             this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
+            EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
             MainThreadDispatcher.ScheduleCoroutine(UpdateCellPool());
         }
 
