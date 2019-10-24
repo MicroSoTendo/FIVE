@@ -36,9 +36,18 @@ namespace FIVE.GameModes
             //TODO: Parametrize prefab name with a UI selector
             CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
             StartCoroutine(codeEditorViewModel.ToggleEditorCoroutine());
-            GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
+
+            GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, 0), Quaternion.identity);
             RobotManager.ActiveRobot = robot;
-            GameObject robot1 = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 20), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, 0), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, -10), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, -10), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, -10), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, -20), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, -20), Quaternion.identity);
+            RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, -20), Quaternion.identity);
+
             GameObject enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
             Instantiate(enemyManagerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             Inventory inventory = InventoryManager.AddInventory(robot);
