@@ -7,32 +7,30 @@ namespace FIVE.Robot
     public class RobotManager : MonoBehaviour
     {
         private readonly Dictionary<string, GameObject> robotPrefabs = new Dictionary<string, GameObject>();
-
-        public HashSet<GameObject> Robots = new HashSet<GameObject>();
-        public Dictionary<int, GameObject> ID2Robot = new Dictionary<int, GameObject>();
-
-        public Dictionary<(int, int, int), List<int>> HashMap = new Dictionary<(int, int, int), List<int>>();
-
-        public static RobotManager Instance { get; private set; }
-
+        private readonly Dictionary<(int, int, int), List<int>> hashMap = new Dictionary<(int, int, int), List<int>>();
+        private readonly Dictionary<int, GameObject> id2Robot = new Dictionary<int, GameObject>();
+        private readonly HashSet<GameObject> robots = new HashSet<GameObject>();
         private GameObject activeRobot;
+        private static RobotManager instance;
 
-        public GameObject ActiveRobot
+        public static HashSet<GameObject> Robots => instance.robots;
+        public static Dictionary<int, GameObject> ID2Robot => instance.id2Robot;
+        public static GameObject ActiveRobot
         {
-            get => activeRobot;
+            get => instance.activeRobot;
             set
             {
-                if (activeRobot)
-                    activeRobot.GetComponent<Movable>().enabled = false;
-                activeRobot = value;
-                activeRobot.GetComponent<Movable>().enabled = true;
+                if (instance.activeRobot)
+                    instance.activeRobot.GetComponent<Movable>().enabled = false;
+                instance.activeRobot = value;
+                instance.activeRobot.GetComponent<Movable>().enabled = true;
             }
         }
 
         private void Awake()
         {
-            Assert.IsTrue(Instance == null); // Make sure singleton
-            Instance = this;
+            Assert.IsTrue(instance == null); // Make sure singleton
+            instance = this;
             GameObject[] prefabs = Resources.LoadAll<GameObject>("EntityPrefabs/RobotPrefabs");
             foreach (GameObject prefab in prefabs)
             {
@@ -42,20 +40,21 @@ namespace FIVE.Robot
 
         public static GameObject CreateRobot(string prefabName, Vector3 pos, Quaternion quat)
         {
-            if (Instance.robotPrefabs.TryGetValue(prefabName, out GameObject prefab))
+            if (instance.robotPrefabs.TryGetValue(prefabName, out GameObject prefab))
             {
                 GameObject robot = Instantiate(prefab, pos, quat);
                 robot.GetComponent<Movable>().enabled = false;
 
-                Instance.Robots.Add(robot);
-                Instance.ID2Robot.Add(robot.GetInstanceID(), robot);
+                instance.robots.Add(robot);
+                instance.id2Robot.Add(robot.GetInstanceID(), robot);
 
                 (int x, int y, int z) k = Key(robot);
-                if (!Instance.HashMap.ContainsKey(k))
+                if (!instance.hashMap.ContainsKey(k))
                 {
-                    Instance.HashMap[k] = new List<int>();
+                    instance.hashMap[k] = new List<int>();
                 }
-                Instance.HashMap[k].Add(robot.GetInstanceID());
+
+                instance.hashMap[k].Add(robot.GetInstanceID());
 
                 return robot;
             }
@@ -65,14 +64,12 @@ namespace FIVE.Robot
 
         public static void RemoveRobot(GameObject robot)
         {
-            Instance.Robots.Remove(robot);
-            Instance.ID2Robot.Remove(robot.GetInstanceID());
+            instance.robots.Remove(robot);
+            instance.id2Robot.Remove(robot.GetInstanceID());
             (int x, int y, int z) k = Key(robot);
-            Instance.HashMap[k].Add(robot.GetInstanceID());
+            instance.hashMap[k].Add(robot.GetInstanceID());
         }
 
-        // Possible issue: 1 unity unit is large enough to have multiple robots
-        // May cause ArgumentException for existed key.
         private static (int x, int y, int z) Key(GameObject robot)
         {
             int x = (int)(robot.transform.position.x * 100);
@@ -85,7 +82,7 @@ namespace FIVE.Robot
         {
             (int x, int y, int z) k = Key(robot);
             var ret = new List<int>();
-            ret.AddRange(HashMap[k]);
+            ret.AddRange(hashMap[k]);
 
             for (int dx = -1; dx <= 1; dx++)
             {
@@ -94,9 +91,9 @@ namespace FIVE.Robot
                     for (int dz = -1; dz <= 1; dz++)
                     {
                         (int, int, int) _k = (k.x + dx, k.y + dy, k.z + dz);
-                        if (HashMap.ContainsKey(_k))
+                        if (hashMap.ContainsKey(_k))
                         {
-                            ret.AddRange(HashMap[_k]);
+                            ret.AddRange(hashMap[_k]);
                         }
                     }
                 }
