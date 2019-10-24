@@ -34,7 +34,7 @@ namespace FIVE.Robot
         private FpsController fpsController;
 
         // Robot Status
-        private Movable movable => GetComponent<Movable>();
+        private Movable Movable => GetComponent<Movable>();
 
         private AWSLScript script;
         private bool scriptActive;
@@ -84,9 +84,9 @@ namespace FIVE.Robot
                 return;
             }
 
-            if (movable.enabled)
+            if (Movable.enabled)
             {
-                movable.ClearSchedule();
+                Movable.ClearSchedule();
             }
 
             script = new AWSLScript(this, e.Code);
@@ -121,7 +121,7 @@ namespace FIVE.Robot
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
-            if (scriptActive && (!movable.enabled || movable.Moves.Count == 0))
+            if (scriptActive && (!Movable.enabled || Movable.Moves.Count == 0))
             {
                 ExecuteScript();
             }
@@ -137,16 +137,16 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            if (movable.enabled)
+            if (Movable.enabled)
             {
                 CurrentState = RobotSphereState.Walk;
                 if (schedule)
                 {
-                    movable.ScheduleMove(move, steps);
+                    Movable.ScheduleMove(move, steps);
                 }
                 else
                 {
-                    movable.MoveOnces[(int)move](steps);
+                    Movable.MoveOnces[(int)move](steps);
                 }
             }
         }
