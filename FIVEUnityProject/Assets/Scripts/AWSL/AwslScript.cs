@@ -24,6 +24,8 @@ namespace FIVE.AWSL
                 script.DoString(code);
                 coroutine = script.CreateCoroutine(script.Globals.Get("main"));
 
+                script.Globals["ID"] = robot.ID;
+
                 script.Globals["print"] = (Action<DynValue>)(x => Debug.Log(x));
                 script.Globals["forward"] = FuncMove(Movable.Move.Front);
                 script.Globals["backward"] = FuncMove(Movable.Move.Back);
@@ -32,7 +34,7 @@ namespace FIVE.AWSL
                 script.Globals["nearestEnemy"] = FuncNearestEnemy();
                 script.Globals["nearestBattery"] = FuncNearestBattery();
 
-                coroutine.Coroutine.AutoYieldCounter = 4 * robot.CPU.Speed;
+                coroutine.Coroutine.AutoYieldCounter = 10 * robot.CPU.Speed;
             }
             catch (Exception e)
             {
@@ -104,23 +106,6 @@ namespace FIVE.AWSL
 
                 return nearestBattery;
             };
-        }
-    }
-
-    [MoonSharpUserData]
-    internal class Message
-    {
-        public int type;
-    }
-
-    [MoonSharpUserData]
-    internal class MessageUpdateScript : Message
-    {
-        public string code;
-
-        public MessageUpdateScript()
-        {
-            type = 1;
         }
     }
 }

@@ -6,12 +6,10 @@ namespace FIVE.UI.CodeEditor
 {
     public class UpdateScriptEventArgs : EventArgs
     {
-        public RobotSphere Target;
         public string Code { get; }
 
-        public UpdateScriptEventArgs(RobotSphere target, string code)
+        public UpdateScriptEventArgs(string code)
         {
-            Target = target;
             Code = code;
         }
     }

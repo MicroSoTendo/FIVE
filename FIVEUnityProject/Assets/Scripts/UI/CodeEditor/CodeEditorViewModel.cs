@@ -1,9 +1,9 @@
 ﻿using FIVE.EventSystem;
-using FIVE.Robot;
-using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace FIVE.UI.CodeEditor
@@ -21,8 +21,6 @@ namespace FIVE.UI.CodeEditor
 
         public bool IsFocused => CodeInputField.isFocused;
 
-        public RobotSphere Target { get; set; }
-
         public CodeEditorViewModel()
         {
             CodeInputField = Get<TMP_InputField>(nameof(CodeInputField));
@@ -37,6 +35,24 @@ namespace FIVE.UI.CodeEditor
             Bind(SaveButton).To(OnRunButtonClicked);
             Bind(ExitButton).To(OnCancelButtonClicked);
             CodeInputField.onValueChanged.AddListener(UpdateLineNumber);
+            MainThreadDispatcher.ScheduleCoroutine(ToggleEditorCoroutine());
+        }
+
+        private IEnumerator ToggleEditorCoroutine()
+        {
+            while (true)
+            {
+                if (IsFocused)
+                {
+                    continue;
+                }
+                if (Input.GetKey(KeyCode.E))
+                {
+                    ToggleEnabled();
+                    yield return new WaitForSeconds(0.3f);
+                }
+                yield return null;
+            }
         }
 
         private void UpdateLineNumber(string text)
@@ -62,15 +78,13 @@ namespace FIVE.UI.CodeEditor
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            this.RaiseEvent<OnCodeEditorSaved, UpdateScriptEventArgs>(new UpdateScriptEventArgs(Target, CodeInputField.text));
-            Target = null;
+            this.RaiseEvent<OnCodeEditorSaved, UpdateScriptEventArgs>(new UpdateScriptEventArgs(CodeInputField.text));
         }
 
         private void OnCancelButtonClicked()
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            Target = null;
         }
     }
 }

@@ -15,13 +15,20 @@ namespace FIVE.Robot
 
         public static HashSet<GameObject> Robots => instance.robots;
         public static Dictionary<int, GameObject> ID2Robot => instance.id2Robot;
+
+        private int id = 0;
+        public static int NextID => ++instance.id;
+
         public static GameObject ActiveRobot
         {
             get => instance.activeRobot;
             set
             {
                 if (instance.activeRobot)
+                {
                     instance.activeRobot.GetComponent<Movable>().enabled = false;
+                }
+
                 instance.activeRobot = value;
                 instance.activeRobot.GetComponent<Movable>().enabled = true;
             }
@@ -44,9 +51,10 @@ namespace FIVE.Robot
             {
                 GameObject robot = Instantiate(prefab, pos, quat);
                 robot.GetComponent<Movable>().enabled = false;
+                int _id = robot.GetComponent<RobotSphere>().ID;
 
                 instance.robots.Add(robot);
-                instance.id2Robot.Add(robot.GetInstanceID(), robot);
+                instance.id2Robot.Add(_id, robot);
 
                 (int x, int y, int z) k = Key(robot);
                 if (!instance.hashMap.ContainsKey(k))
@@ -54,7 +62,7 @@ namespace FIVE.Robot
                     instance.hashMap[k] = new List<int>();
                 }
 
-                instance.hashMap[k].Add(robot.GetInstanceID());
+                instance.hashMap[k].Add(_id);
 
                 return robot;
             }
@@ -64,10 +72,11 @@ namespace FIVE.Robot
 
         public static void RemoveRobot(GameObject robot)
         {
+            int _id = robot.GetComponent<RobotSphere>().ID;
             instance.robots.Remove(robot);
-            instance.id2Robot.Remove(robot.GetInstanceID());
+            instance.id2Robot.Remove(_id);
             (int x, int y, int z) k = Key(robot);
-            instance.hashMap[k].Add(robot.GetInstanceID());
+            instance.hashMap[k].Add(_id);
         }
 
         private static (int x, int y, int z) Key(GameObject robot)
