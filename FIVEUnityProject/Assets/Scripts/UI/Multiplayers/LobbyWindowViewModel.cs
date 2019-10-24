@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using FIVE.EventSystem;
 using FIVE.Network;
 using TMPro;
 using UnityEngine;
@@ -22,6 +25,10 @@ namespace FIVE.UI.Multiplayers
         public GameObject Bar { get; }
         public TMP_Text Title { get; }
 
+        private readonly GameObject entryPrefab = Resources.Load<GameObject>("EntityPrefabs/UI/Multiplayers/RoomEntry");
+        private readonly Dictionary<GameObject, RoomInfo> entry2Info = new Dictionary<GameObject, RoomInfo>();
+        private readonly Dictionary<RoomInfo, GameObject> info2Entry = new Dictionary<RoomInfo, GameObject>();
+        private GameObject selectedEntry;
         public LobbyWindowViewModel()
         {
             ZIndex = 1;
@@ -46,6 +53,60 @@ namespace FIVE.UI.Multiplayers
             Bind(RevealButton).To(OnRevealButonClicked);
         }
 
+        public override bool IsActive
+        {
+            get => base.IsActive;
+            set
+            {
+                base.IsActive = value;
+                if (value)
+                {
+                    MainThreadDispatcher.ScheduleCoroutine(UpdateRoomInfo());
+                }
+            }
+        }
+
+        private static void SetEntryInfo(GameObject entry, RoomInfo roomInfo)
+        {
+            entry.FindChildRecursive("RoomName").GetComponent<TMP_Text>().text = roomInfo.Name;
+            entry.FindChildRecursive("PlayersCount").GetComponent<TMP_Text>().text =
+                $"{roomInfo.CurrentPlayers}/{roomInfo.MaxPlayers}";
+            entry.FindChildRecursive("Locked").SetActive(roomInfo.HasPassword);
+        }
+        public IEnumerator UpdateRoomInfo()
+        {
+            while (IsActive)
+            {
+                float yOffset = 0f;
+                foreach (RoomInfo roomInfo in NetworkManager.GetRoomInfos)
+                {
+                    if (info2Entry.ContainsKey(roomInfo))
+                    {
+                        GameObject entry = info2Entry[roomInfo];
+                        SetEntryInfo(entry, roomInfo);
+                    }
+                    else
+                    {
+                        GameObject entry = Object.Instantiate(entryPrefab, ContentTransform);
+                        info2Entry.Add(roomInfo, entry);
+                        entry2Info.Add(entry, roomInfo);
+                        SetEntryInfo(entry, roomInfo);
+                        entry.transform.localPosition += new Vector3(0f, yOffset, 0f);
+                        entry.GetComponent<Button>().onClick.AddListener(()=>OnEntryClick(entry));
+                        yOffset -= 100f;
+                    }
+                    yield return null;
+                }
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        private void OnEntryClick(GameObject entry)
+        {
+            entry.GetComponent<Button>().Select();
+            selectedEntry = entry;
+        }
+
         private void OnRevealButonClicked()
         {
             PasswordInputField.inputType ^= TMP_InputField.InputType.Password;
@@ -60,8 +121,32 @@ namespace FIVE.UI.Multiplayers
 
         private void OnJoinButtonClicked()
         {
-            //JoinButton.RaiseEvent<OnJoinButtonPressed>();
+            RoomInfo info = entry2Info[selectedEntry];
+            if (entry2Info[selectedEntry].HasPassword)
+            {
+                PasswordPopUpViewModel passwordVM = UIManager.Get<PasswordPopUpViewModel>();
+                passwordVM.IsActive = true;
+                Bind(passwordVM.ConfirmButton).To(() =>
+                {
+                    if (NetworkManager.TryJoinRoom(info.Guid, passwordVM.PasswordInputField.text))
+                    {
+                        passwordVM.IsActive = false;
+                    }
+                    else
+                    {
+                        //TODO:Popup wrong password
+                    }
+                });
+            }
+            else
+            {
+                if (NetworkManager.TryJoinRoom(info.Guid))
+                {
+                    IsActive = false;
+                }
+            }
         }
+
 
         private void Toggle(params object[] objects)
         {
@@ -80,19 +165,21 @@ namespace FIVE.UI.Multiplayers
 
         private void CreateButtonLobbyHandler()
         {
+            //UnBind(CreateButton).With(CreateButtonLobbyHandler);
+            CreateButton.onClick.RemoveAllListeners();
             Title.text = "Create Room";
             Toggle(Bar, RoomScrollView, JoinButton, ReturnButton, CreateRoomPanel);
-            UnBind(CreateButton).With(CreateButtonLobbyHandler);
-            Bind(CreateButton).To(CreateButtonCreateRoomHandler);
+            Bind(CreateButton).To(CreateRoomHandler);
         }
 
-        private void CreateButtonCreateRoomHandler()
+        private void CreateRoomHandler()
         {
             string roomName = RoomNameInputField.text;
             int size = int.Parse(RoomSizeInputField.text);
             string password = PasswordInputField.text;
-            this.RaiseEvent<OnCreateRoomRequested>(new CreateRoomRequestedEventArgs(roomName, password.Length != 0, password, size));
-            Root.SetActive(false);
+            this.RaiseEvent<OnCreateRoomRequested>(
+                new CreateRoomRequestedEventArgs(roomName, password.Length != 0, password, size));
+            IsActive = false;
         }
     }
 }
