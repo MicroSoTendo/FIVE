@@ -105,21 +105,4 @@ namespace FIVE.AWSL
             };
         }
     }
-
-    [MoonSharpUserData]
-    internal class Message
-    {
-        public int type;
-    }
-
-    [MoonSharpUserData]
-    internal class MessageUpdateScript : Message
-    {
-        public string code;
-
-        public MessageUpdateScript()
-        {
-            type = 1;
-        }
-    }
 }

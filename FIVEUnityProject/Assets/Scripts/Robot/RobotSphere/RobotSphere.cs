@@ -15,6 +15,8 @@ namespace FIVE.Robot
     [RequireComponent(typeof(Battery))]
     public class RobotSphere : RobotBehaviour
     {
+        public int ID;
+
         public enum RobotSphereState { Idle, Walk, Jump, Open };
 
         public GameObject BulletPrefab;
@@ -45,14 +47,7 @@ namespace FIVE.Robot
 
         protected override void Awake()
         {
-            GameObject eye = gameObject.FindChildRecursive(nameof(eye));
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
-            fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
-
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + GetInstanceID(),
-                parent: transform, enableAudioListener: true,
-                position: new Vector3(0, 2, 0),
-                rotation: Quaternion.Euler(90, 0, 0));
+            ID = RobotManager.NextID;
 
             cc = GetComponent<CharacterController>();
 
@@ -67,6 +62,14 @@ namespace FIVE.Robot
 
         protected override void Start()
         {
+            GameObject eye = gameObject.FindChildRecursive(nameof(eye));
+            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
+            fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
+            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + ID.ToString(),
+                parent: transform, enableAudioListener: true,
+                position: new Vector3(0, 2, 0),
+                rotation: Quaternion.Euler(90, 0, 0));
+
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
@@ -77,9 +80,15 @@ namespace FIVE.Robot
         private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
             if (e.Target != this)
+            {
                 return;
+            }
+
             if (movable.enabled)
+            {
                 movable.ClearSchedule();
+            }
+
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
         }
@@ -145,7 +154,7 @@ namespace FIVE.Robot
         public void Attack(GameObject target)
         {
             Debug.Log("Attack");
-            GameObject bullet =  Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
+            GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
         }
 
