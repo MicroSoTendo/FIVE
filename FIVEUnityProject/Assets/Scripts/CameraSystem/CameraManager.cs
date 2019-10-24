@@ -21,8 +21,8 @@ namespace FIVE.CameraSystem
 
         public static Camera CurrentActiveCamera { get; private set; }
 
-        private int index = 0;
-        private bool forceSwitch = false;
+        private int index;
+        private float switchTimeout; // ms
         private List<Camera> wall = new List<Camera>();
 
         public static IEnumerable<Camera> GetFpsCameras =>
@@ -94,7 +94,7 @@ namespace FIVE.CameraSystem
         {
             State = StateEnum.Multiple;
             instance.index = 0;
-            instance.forceSwitch = true;
+            instance.switchTimeout = -1f;
         }
 
         public static void Remove(Camera camera)
@@ -113,7 +113,7 @@ namespace FIVE.CameraSystem
             Destroy(c.gameObject);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (UIManager.Get<CodeEditorViewModel>()?.IsActive ?? false)
             {
@@ -134,25 +134,32 @@ namespace FIVE.CameraSystem
                     return;
                 }
 
-                if (!forceSwitch && (int)(Time.time * 1000f) % 1000 != 0)
+                if (switchTimeout >= 0f)
                 {
+                    switchTimeout -= Time.fixedDeltaTime * 1000f;
                     return;
                 }
-                forceSwitch = false;
+                else
+                {
+                    switchTimeout = 2000f;
+                }
 
                 wall.Clear();
-                foreach (Camera c in cam2name.Keys)
+                if (cam2name.Count > 0)
                 {
-                    c.enabled = false;
-                }
-                for (int count = 0; count < 4; count++, index++)
-                {
-                    index %= cam2name.Keys.Count;
-                    Camera c = instance.cam2name.Keys.ElementAt(index);
-                    c.enabled = true;
-                    float x = count / 2 / 2f, y = count % 2 / 2f;
-                    c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
-                    wall.Add(c);
+                    foreach (Camera c in cam2name.Keys)
+                    {
+                        c.enabled = false;
+                    }
+                    for (int count = 0; count < 4; count++, index++)
+                    {
+                        index %= cam2name.Keys.Count;
+                        Camera c = instance.cam2name.Keys.ElementAt(index);
+                        c.enabled = true;
+                        float x = count / 2 / 2f, y = count % 2 / 2f;
+                        c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
+                        wall.Add(c);
+                    }
                 }
             }
         }
