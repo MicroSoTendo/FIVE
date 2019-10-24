@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using UnityEngine;
 
 namespace FIVE.Network
 {
@@ -16,9 +17,20 @@ namespace FIVE.Network
         {
             return BitConverter.ToUInt16(bytes, startIndex);
         }
+
+        public static float ToF32(this byte[] bytes, int startIndex = 0)
+        {
+            return BitConverter.ToSingle(bytes, startIndex);
+        }
+
         public static bool ToBool(this byte[] bytes, int startIndex = 0)
         {
             return BitConverter.ToBoolean(bytes, startIndex);
+        }
+
+        public static Vector3 ToVector3(this byte[] bytes, int startIndex = 0)
+        {
+            return new Vector3(bytes.ToF32(startIndex), bytes.ToF32(startIndex + 4), bytes.ToF32(startIndex + 8));
         }
 
         public static Guid ToGuid(this byte[] bytes, int startIndex = 0)
@@ -48,6 +60,21 @@ namespace FIVE.Network
         public static byte[] ToBytes(this int i)
         {
             return BitConverter.GetBytes(i);
+        }
+
+        public static byte[] ToBytes(this float f)
+        {
+            return BitConverter.GetBytes(f);
+        }
+
+        public static byte[] ToBytes(this Vector3 v)
+        {
+            return Combine(v.x.ToBytes(), v.y.ToBytes(), v.z.ToBytes());
+        }
+
+        public static byte[] ToBytes(this Quaternion q)
+        {
+            return q.eulerAngles.ToBytes();
         }
 
         public static byte[] ToBytes(this string str)
@@ -80,7 +107,24 @@ namespace FIVE.Network
             return Combine(currentPlayers, maxPlayers, hasPassword, host, port, name);
         }
 
-        private static byte[] Combine(params byte[][] arrays)
+        public static byte[] Combine(byte[] arr1, byte[] arr2)
+        {
+            byte[] rv = new byte[arr1.Length + arr2.Length];
+            Buffer.BlockCopy(arr1, 0, rv, 0, arr1.Length);
+            Buffer.BlockCopy(arr2, 0, rv, arr1.Length, arr2.Length);
+            return rv;
+        }       
+        
+        public static byte[] Combine(byte[] arr1, byte[] arr2, byte[] arr3)
+        {
+            byte[] rv = new byte[arr1.Length + arr2.Length + arr3.Length];
+            Buffer.BlockCopy(arr1, 0, rv, 0, arr1.Length);
+            Buffer.BlockCopy(arr2, 0, rv, arr1.Length, arr2.Length);
+            Buffer.BlockCopy(arr3, 0, rv, arr1.Length + arr2.Length, arr3.Length);
+            return rv;
+        }
+
+        public static byte[] Combine(params byte[][] arrays)
         {
             byte[] rv = new byte[arrays.Sum(a => a.Length)];
             int offset = 0;
@@ -90,6 +134,12 @@ namespace FIVE.Network
                 offset += array.Length;
             }
             return rv;
+        }
+        
+        public static bool Equals(this byte[] arr1, byte[] arr2)
+        {
+            if (arr1.Length != arr2.Length) return false;
+            return !arr1.Where((t, i) => t != arr2[i]).Any();
         }
 
         public static void Write(this NetworkStream stream, byte[] bytes)
@@ -136,6 +186,13 @@ namespace FIVE.Network
             byte[] bytes = new byte[size];
             stream.Read(bytes, 0, bytes.Length);
             return bytes;
+        }        
+        
+        public static int ReadI32(this NetworkStream stream)
+        {
+            byte[] bytes = new byte[4];
+            stream.Read(bytes, 0, bytes.Length);
+            return bytes.ToI32();
         }
     }
 }
