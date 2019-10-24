@@ -78,7 +78,7 @@ namespace FIVE.UI.CodeEditor
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            this.RaiseEvent<OnCodeEditorSaved, UpdateScriptEventArgs>(new UpdateScriptEventArgs(CodeInputField.text));
+            EventManager.RaiseImmediate<OnCodeEditorSaved>(this, new UpdateScriptEventArgs(CodeInputField.text));
         }
 
         private void OnCancelButtonClicked()
