@@ -1,6 +1,8 @@
 ﻿using FIVE.Robot;
 using UnityEngine;
 
+using FIVE.CameraSystem;
+
 namespace FIVE.ControllerSystem
 {
     [RequireComponent(typeof(Movable))]
@@ -44,13 +46,17 @@ namespace FIVE.ControllerSystem
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
+                if (CameraManager.CurrentActiveCamera != null)
                 {
-                    //if (hitInfo.collider.gameObject.GetComponent<EnemyBehavior>() != null)
-                    //{
-                        robotSphere.Attack(hitInfo.collider.gameObject);
-                    //}
+                    Debug.Log("Attack");
+                    Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
+                    if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
+                    {
+                        //if (hitInfo.collider.gameObject.GetComponent<EnemyBehavior>() != null)
+                        //{
+                            robotSphere.Attack(hitInfo.point);
+                        //}
+                    }
                 }
             }
         }

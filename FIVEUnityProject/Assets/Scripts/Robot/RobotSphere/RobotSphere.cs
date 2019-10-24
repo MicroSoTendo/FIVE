@@ -132,12 +132,15 @@ namespace FIVE.Robot
             }
         }
 
-        public void Attack(GameObject target)
+        public void Attack(Vector3 target)
         {
-            //Debug.Log("Attack");
-            //Debug.Log($"Attacking {transform.forward}");
-            GameObject bullet =  Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
-            bullet.GetComponent<Bullet>().Target = target.transform.position;
+            if (movable.enabled)
+            {
+                //Debug.Log("Attack");
+                Debug.Log($"Attacking {target}");
+                GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.1f, Quaternion.identity);
+                bullet.GetComponent<Bullet>().Target = target;
+            }
         }
 
         private void ExecuteScript()
