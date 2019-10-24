@@ -5,14 +5,14 @@ public class BatteryManager : MonoBehaviour
 {
     private static BatteryManager instance;
 
-    public List<GameObject> batteries;
+    public List<GameObject> Batteries;
 
     public GameObject energy;
 
     private void Awake()
     {
         instance = this;
-        batteries = new List<GameObject>();
+        Batteries = new List<GameObject>();
     }
 
     private void Start()
@@ -43,7 +43,7 @@ public class BatteryManager : MonoBehaviour
 
         for (int i = 0; i < positionArray.Length; i++)
         {
-            batteries.Add(Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i])));
+            Batteries.Add(Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i])));
         }
     }
 

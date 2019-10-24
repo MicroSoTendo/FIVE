@@ -82,5 +82,26 @@ namespace FIVE.AWSL
                 return nearestEnemy;
             };
         }
+
+        private Func<GameObject> FuncNearestBattery()
+        {
+            return () =>
+            {
+                GameObject nearestBattery = BatteryManager.Instance().Batteries[0];
+                float nearestDistance = Vector3.Distance(nearestBattery.transform.position, robot.gameObject.transform.position);
+
+                foreach (GameObject battery in BatteryManager.Instance().Batteries)
+                {
+                    float distance = Vector3.Distance(battery.transform.position, robot.gameObject.transform.position);
+                    if (Vector3.Distance(battery.transform.position, robot.gameObject.transform.position) < distance)
+                    {
+                        nearestBattery = battery;
+                        nearestDistance = distance;
+                    }
+                }
+
+                return nearestBattery;
+            };
+        }
     }
 }
