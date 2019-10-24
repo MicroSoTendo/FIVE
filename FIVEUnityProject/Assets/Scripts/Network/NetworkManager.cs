@@ -244,18 +244,7 @@ namespace FIVE.Network
                 client.Dispose();
             }
         }
-        
-        public enum ComponentType
-        {
-            Transform = 0,
-            Animator = 1,
-        }
 
-        public enum NetworkCall
-        {
-            CreateObject = 0,
-            RemoveObject = 1,
-        }
 
         //Run by host
         private class NetworkCallPack
@@ -263,16 +252,17 @@ namespace FIVE.Network
             public NetworkCall Call;
         }
         private ConcurrentQueue<NetworkCallPack> callPacks = new ConcurrentQueue<NetworkCallPack>();
+        private readonly ConcurrentBag<(int id, List<GameObject> objects)> toBeSynced = new ConcurrentBag<(int id, List<GameObject> objects)>();
         private IEnumerator ClientHandler(int id, TcpClient client)
         {
             NetworkStream stream = client.GetStream();
-            while (true)
-            {
-                int timeSlice = (int)Time.time;
-                stream.Write(timeSlice);
-                Debug.Log(timeSlice);
-                yield return null;
-            }
+            //while (true)
+            //{
+            //    int timeSlice = (int)Time.time;
+            //    stream.Write(timeSlice);
+            //    Debug.Log(timeSlice);
+            //    yield return null;
+            //}
             //Phase 1: send all existed objects
             GameObject[] networkedGameObjects = SyncCenter.NetworkedGameObjects.ToArray();
             stream.Write(networkedGameObjects.Length);
@@ -299,43 +289,97 @@ namespace FIVE.Network
             //Phase 2: do sync
             while (true)
             {
-                //Get next network call
-                switch (stream.Read<NetworkCall>())
+                //Get client state
+                SyncHeader head = stream.Read<SyncHeader>();
+                if (head != 0)
                 {
-                    case NetworkCall.CreateObject:
-                        int resourceID = stream.ReadI32();
-                        int syncComponentCount = stream.ReadI32();
-                        
-                        break;
-                    case NetworkCall.RemoveObject:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    if (head == SyncHeader.NetworkCall)
+                    {
+                        HostResolveNetworkCall(id, stream);
+                    }
+                    if (head == SyncHeader.ComponentSync)
+                    {
+                        HostResolveComponentSync(id, stream);
+                    }
                 }
-                //Do it at host
-
-                //Broadcast to other clients
-                foreach (KeyValuePair<int, TcpClient> kvp in ConnectedClients.Where(kvp => kvp.Key != id))
+                yield return null;
+                toBeSynced.Add((id, SyncCenter.GetClientObjects(id)));
+                //Make sure collected all component sync and call
+                while (toBeSynced.Count < ConnectedClients.Count)
                 {
-                    
+                    yield return null;
                 }
-
                 //Do passive sync broadcasting
+                foreach ((int clientId, List<GameObject> gameObjects) in toBeSynced)
+                {
+                    if (clientId == id) //exclude ifself
+                    {
+                        continue;
+                    }
+
+                    foreach (GameObject go in gameObjects)
+                    {
+                        foreach (object o in SyncCenter.GetSynchronizedComponent(go))
+                        {
+                            switch (o)
+                            {
+                                case Transform t:
+                                    byte[] transformBuffer = TransformSerializer.Serialize(t);
+                                    stream.Write(ComponentType.Transform);
+                                    stream.Write(transformBuffer);
+                                    break;
+                                case Animator a:
+                                    break;
+                            }
+                        }
+                    }
+                }
 
                 yield return null;
             }
         }
 
+        private void HostResolveComponentSync(int id, NetworkStream stream)
+        {
+
+        }
+
+        private void HostResolveNetworkCall(int id, NetworkStream stream)
+        {
+            //Get next network call
+            switch (stream.Read<NetworkCall>())
+            {
+                case NetworkCall.CreateObject:
+                    int resourceID = stream.ReadI32();
+                    int syncComponentCount = stream.ReadI32();
+                        
+                    break;
+                case NetworkCall.RemoveObject:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            //Do the call at host first
+
+            //Broadcast to other clients
+            foreach (KeyValuePair<int, TcpClient> kvp in ConnectedClients.Where(kvp => kvp.Key != id))
+            {
+                    
+            }
+
+        }
+        
+
         //Run by client
         private IEnumerator HostHandler(TcpClient client)
         {
             NetworkStream stream = client.GetStream();
-            while (true)
-            {
-                int hostTimeSlice = stream.ReadI32();
-                Debug.Log(hostTimeSlice);
-                yield return null;
-            }
+            //while (true)
+            //{
+            //    int hostTimeSlice = stream.ReadI32();
+            //    Debug.Log(hostTimeSlice);
+            //    yield return null;
+            //}
             //Phase 1: fetch all existed objects
             int count = stream.ReadI32();
             for (int i = 0; i < count; i++)
@@ -363,10 +407,10 @@ namespace FIVE.Network
             //Phase 2: do sync
             while (true)
             {
-                
                 yield return null;
             }
         }
+
 
     }
 }

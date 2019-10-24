@@ -120,7 +120,7 @@ namespace ListServerCore
                 switch ((OpCode)opCode)
                 {
                     case OpCode.CreateRoom:
-                        CreateRoomHandler(networkStream);
+                        CreateRoomHandler(networkStream, 0);
                         break;
                     case OpCode.RemoveRoom:
                         RemoveRoomHandler(networkStream);
@@ -200,7 +200,7 @@ namespace ListServerCore
             RoomInfos.TryRemove(guid, out _);
         }
 
-        private static void CreateRoomHandler(NetworkStream stream)
+        private static void CreateRoomHandler(NetworkStream stream, int ip)
         {
             Console.Write("Create room requested: ");
             byte[] sizeBuffer = new byte[4];
@@ -208,6 +208,7 @@ namespace ListServerCore
             byte[] roomInfoBuffer = new byte[sizeBuffer.ToI32()];
             stream.Read(roomInfoBuffer);
             RoomInfo roomInfo = roomInfoBuffer.ToRoomInfo();
+            roomInfo.Host = ip;
             Console.WriteLine($"GUID = {roomInfo.Guid}, Room Name = {roomInfo.Name}, Max Players = {roomInfo.MaxPlayers}, Has Password = {roomInfo.HasPassword} ");
             stream.Write(roomInfo.Guid.ToBytes());
             RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
