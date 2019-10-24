@@ -7,6 +7,7 @@ using FIVE.UI;
 using FIVE.UI.Background;
 using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
+using FIVE.UI.NPC;
 using UnityEngine;
 
 namespace FIVE.GameModes
@@ -27,13 +28,16 @@ namespace FIVE.GameModes
             CameraManager.AddCamera("DefaultCamera-3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
             CameraManager.Remove("GUI Camera");
             NPCInit.Initialize();
-            var myGO = new GameObject();
-            myGO.name = "UIScreenSpace";
-            myGO.AddComponent<Canvas>();
+            //var myGO = new GameObject();
+            //myGO.name = "UIScreenSpace";
+            //myGO.AddComponent<Canvas>();
             UIManager.Create<HUDViewModel>().IsActive = true;
+            UIManager.Create<NPCDialogueViewModel>().IsActive = false;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector
             GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
+            RobotManager.Instance.ActiveRobot = robot;
+            GameObject robot1 = RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 20), Quaternion.identity);
             var enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
             Instantiate(enemyManagerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             Inventory inventory = InventoryManager.AddInventory(robot);

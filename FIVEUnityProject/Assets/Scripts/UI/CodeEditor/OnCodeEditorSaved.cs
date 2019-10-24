@@ -1,15 +1,22 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using FIVE.Robot;
+using System;
 
 namespace FIVE.UI.CodeEditor
 {
-    public class CodeEditorSavedEventArgs : EventArgs
+    public class UpdateScriptEventArgs : EventArgs
     {
+        public RobotSphere Target;
         public string Code { get; }
-        public CodeEditorSavedEventArgs(string code) => Code = code;
+
+        public UpdateScriptEventArgs(RobotSphere target, string code)
+        {
+            Target = target;
+            Code = code;
+        }
     }
 
-    public class OnCodeEditorSaved : IEventType<CodeEditorSavedEventArgs>
+    public class OnCodeEditorSaved : IEventType<UpdateScriptEventArgs>
     {
     }
 }

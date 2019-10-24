@@ -2,7 +2,6 @@
 using MoonSharp.Interpreter;
 using System;
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace FIVE.AWSL
 {
@@ -19,6 +18,7 @@ namespace FIVE.AWSL
 
             try
             {
+                UserData.RegisterAssembly();
                 script = new Script(CoreModules.None);
                 script.DoString(code);
                 coroutine = script.CreateCoroutine(script.Globals.Get("main"));
@@ -29,6 +29,7 @@ namespace FIVE.AWSL
                 script.Globals["left"] = FuncMove(Movable.Move.Left);
                 script.Globals["right"] = FuncMove(Movable.Move.Right);
                 script.Globals["nearestEnemy"] = FuncNearestEnemy();
+                script.Globals["nearestBattery"] = FuncNearestBattery();
 
                 coroutine.Coroutine.AutoYieldCounter = 4 * robot.CPU.Speed;
             }
@@ -81,6 +82,44 @@ namespace FIVE.AWSL
 
                 return nearestEnemy;
             };
+        }
+
+        private Func<GameObject> FuncNearestBattery()
+        {
+            return () =>
+            {
+                GameObject nearestBattery = BatteryManager.Instance().Batteries[0];
+                float nearestDistance = Vector3.Distance(nearestBattery.transform.position, robot.gameObject.transform.position);
+
+                foreach (GameObject battery in BatteryManager.Instance().Batteries)
+                {
+                    float distance = Vector3.Distance(battery.transform.position, robot.gameObject.transform.position);
+                    if (Vector3.Distance(battery.transform.position, robot.gameObject.transform.position) < distance)
+                    {
+                        nearestBattery = battery;
+                        nearestDistance = distance;
+                    }
+                }
+
+                return nearestBattery;
+            };
+        }
+    }
+
+    [MoonSharpUserData]
+    internal class Message
+    {
+        public int type;
+    }
+
+    [MoonSharpUserData]
+    internal class MessageUpdateScript : Message
+    {
+        public string code;
+
+        public MessageUpdateScript()
+        {
+            type = 1;
         }
     }
 }

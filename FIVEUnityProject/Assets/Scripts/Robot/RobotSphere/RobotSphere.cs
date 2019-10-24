@@ -17,6 +17,8 @@ namespace FIVE.Robot
     {
         public enum RobotSphereState { Idle, Walk, Jump, Open };
 
+        public GameObject BulletPrefab;
+
         // Script References
         private RobotFreeAnim animator;
 
@@ -24,13 +26,13 @@ namespace FIVE.Robot
 
         // private readonly ControllerOp currOp = ControllerOp.FPS;
         public RobotSphereState CurrentState = RobotSphereState.Idle;
+
         private Camera fpsCamera;
 
         private FpsController fpsController;
 
         // Robot Status
-        private float health;
-        private Movable movable;
+        private Movable movable => GetComponent<Movable>();
 
         private AWSLScript script;
         private bool scriptActive;
@@ -53,14 +55,12 @@ namespace FIVE.Robot
                 rotation: Quaternion.Euler(90, 0, 0));
 
             cc = GetComponent<CharacterController>();
-            movable = GetComponent<Movable>();
 
             scriptActive = false;
 
             Battery = GetComponent<Battery>();
             CPU = GetComponent<CPU>();
 
-            health = 100f;
             StartCoroutine(ToggleEditorCoroutine());
             base.Awake();
         }
@@ -69,14 +69,17 @@ namespace FIVE.Robot
         {
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
-            EventManager.Subscribe<OnCodeEditorSaved, CodeEditorSavedEventArgs>(OnCodeSaved);
+            EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
             OnLocalPlayerUpdate += RobotSphereUpdate;
             base.Start();
         }
 
-        private void OnCodeSaved(object sender, CodeEditorSavedEventArgs e)
+        private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
-            movable.ClearSchedule();
+            if (e.Target != this)
+                return;
+            if (movable.enabled)
+                movable.ClearSchedule();
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
         }
@@ -89,7 +92,7 @@ namespace FIVE.Robot
                 {
                     if (Input.GetKey(KeyCode.E))
                     {
-                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs(), 300);
+                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs() { Target = this }, 300);
                     }
                 }
 
@@ -109,7 +112,7 @@ namespace FIVE.Robot
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
-            if (scriptActive && movable.Moves.Count == 0)
+            if (scriptActive && (!movable.enabled || movable.Moves.Count == 0))
             {
                 ExecuteScript();
             }
@@ -125,15 +128,23 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            CurrentState = RobotSphereState.Walk;
-            if (schedule)
+            if (movable.enabled)
             {
-                movable.ScheduleMove(move, steps);
+                CurrentState = RobotSphereState.Walk;
+                if (schedule)
+                {
+                    movable.ScheduleMove(move, steps);
+                }
+                else
+                {
+                    movable.MoveOnces[(int)move](steps);
+                }
             }
-            else
-            {
-                movable.MoveOnces[(int)move](steps);
-            }
+        }
+
+        public void Attack(GameObject target)
+        {
+            Instantiate(BulletPrefab, transform.position, Quaternion.identity);
         }
 
         private void ExecuteScript()
