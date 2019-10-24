@@ -144,7 +144,7 @@ namespace FIVE.Robot
 
         public void Attack(GameObject target)
         {
-            Instantiate()
+            Instantiate(BulletPrefab, transform.position, Quaternion.identity);
         }
 
         private void ExecuteScript()
