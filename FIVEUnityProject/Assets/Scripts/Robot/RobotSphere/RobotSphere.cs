@@ -127,13 +127,16 @@ namespace FIVE.Robot
                 else
                 {
                     movable.MoveOnces[(int)move](steps);
+                    //Debug.Log($"To {transform.forward}");
                 }
             }
         }
 
         public void Attack(GameObject target)
         {
-            GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
+            //Debug.Log("Attack");
+            //Debug.Log($"Attacking {transform.forward}");
+            GameObject bullet =  Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
         }
 
