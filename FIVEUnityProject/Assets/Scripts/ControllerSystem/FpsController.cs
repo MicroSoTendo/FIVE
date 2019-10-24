@@ -1,7 +1,6 @@
-﻿using FIVE.Robot;
+﻿using FIVE.CameraSystem;
+using FIVE.Robot;
 using UnityEngine;
-
-using FIVE.CameraSystem;
 
 namespace FIVE.ControllerSystem
 {
@@ -54,7 +53,7 @@ namespace FIVE.ControllerSystem
                     {
                         //if (hitInfo.collider.gameObject.GetComponent<EnemyBehavior>() != null)
                         //{
-                            robotSphere.Attack(hitInfo.point);
+                        robotSphere.Attack(hitInfo.point);
                         //}
                     }
                 }

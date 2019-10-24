@@ -1,9 +1,9 @@
-﻿using FIVE.Robot;
+﻿using FIVE.Enemy;
+using FIVE.Robot;
 using MoonSharp.Interpreter;
 using System;
-using FIVE.Enemy;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FIVE.AWSL
 {
@@ -14,8 +14,8 @@ namespace FIVE.AWSL
 
         public DynValue this[string k]
         {
-            get { return data[k]; }
-            set { data[k] = value; }
+            get => data[k];
+            set => data[k] = value;
         }
     }
 
