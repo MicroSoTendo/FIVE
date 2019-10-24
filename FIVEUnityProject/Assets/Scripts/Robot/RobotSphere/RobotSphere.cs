@@ -5,7 +5,6 @@ using FIVE.EventSystem;
 using FIVE.RobotComponents;
 using FIVE.UI;
 using FIVE.UI.CodeEditor;
-using System.Collections;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -34,7 +33,7 @@ namespace FIVE.Robot
         private FpsController fpsController;
 
         // Robot Status
-        private Movable Movable => GetComponent<Movable>();
+        private Movable movable;
 
         private AWSLScript script;
         private bool scriptActive;
@@ -50,6 +49,8 @@ namespace FIVE.Robot
         {
             ID = RobotManager.NextID;
 
+            movable = GetComponent<Movable>();
+
             cc = GetComponent<CharacterController>();
 
             scriptActive = false;
@@ -57,7 +58,6 @@ namespace FIVE.Robot
             Battery = GetComponent<Battery>();
             CPU = GetComponent<CPU>();
 
-            StartCoroutine(ToggleEditorCoroutine());
             base.Awake();
         }
 
@@ -80,33 +80,17 @@ namespace FIVE.Robot
 
         private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
-            if (Movable.enabled)
+            if (movable.enabled)
             {
-                Movable.ClearSchedule();
+                movable.ClearSchedule();
             }
             else
             {
-                Movable.enabled = true;
+                movable.enabled = true;
             }
 
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
-        }
-
-        private IEnumerator ToggleEditorCoroutine()
-        {
-            while (true)
-            {
-                if (!UIManager.Get<CodeEditorViewModel>()?.IsFocused ?? true)
-                {
-                    if (Input.GetKey(KeyCode.E))
-                    {
-                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs() { Target = this }, 300);
-                    }
-                }
-
-                yield return null;
-            }
         }
 
         private void RobotSphereUpdate()
@@ -121,7 +105,7 @@ namespace FIVE.Robot
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
-            if (scriptActive && (!Movable.enabled || Movable.Moves.Count == 0))
+            if (scriptActive && (!movable.enabled || movable.Moves.Count == 0))
             {
                 ExecuteScript();
             }
@@ -133,16 +117,16 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            if (Movable.enabled)
+            if (movable.enabled)
             {
                 CurrentState = RobotSphereState.Walk;
                 if (schedule)
                 {
-                    Movable.ScheduleMove(move, steps);
+                    movable.ScheduleMove(move, steps);
                 }
                 else
                 {
-                    Movable.MoveOnces[(int)move](steps);
+                    movable.MoveOnces[(int)move](steps);
                 }
             }
         }
@@ -158,7 +142,7 @@ namespace FIVE.Robot
             scriptActive = !script.Execute();
             if (!scriptActive)
             {
-                Movable.enabled = RobotManager.ActiveRobot == gameObject;
+                movable.enabled = RobotManager.ActiveRobot == gameObject;
             }
         }
 

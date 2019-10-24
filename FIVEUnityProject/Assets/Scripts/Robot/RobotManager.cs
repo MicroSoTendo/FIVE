@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using FIVE.UI;
+using FIVE.UI.CodeEditor;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -42,6 +45,22 @@ namespace FIVE.Robot
             foreach (GameObject prefab in prefabs)
             {
                 robotPrefabs.Add(prefab.name, prefab);
+            }
+            StartCoroutine(ToggleEditorCoroutine());
+        }
+
+        private IEnumerator ToggleEditorCoroutine()
+        {
+            while (true)
+            {
+                if (!UIManager.Get<CodeEditorViewModel>()?.IsFocused ?? true)
+                {
+                    if (Input.GetKey(KeyCode.E))
+                    {
+                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs(), 300);
+                    }
+                }
+                yield return null;
             }
         }
 
