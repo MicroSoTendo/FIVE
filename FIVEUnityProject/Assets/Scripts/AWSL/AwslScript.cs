@@ -1,6 +1,7 @@
 ﻿using FIVE.Robot;
 using MoonSharp.Interpreter;
 using System;
+using FIVE.Enemy;
 using UnityEngine;
 
 namespace FIVE.AWSL
@@ -67,10 +68,10 @@ namespace FIVE.AWSL
         {
             return () =>
             {
-                GameObject nearestEnemy = EnemyManager.Instance().Enemies[0];
+                GameObject nearestEnemy = EnemyManager.Enemies[0];
                 float nearestDistance = Vector3.Distance(nearestEnemy.transform.position, robot.gameObject.transform.position);
 
-                foreach (GameObject enemy in EnemyManager.Instance().Enemies)
+                foreach (GameObject enemy in EnemyManager.Enemies)
                 {
                     float distance = Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position);
                     if (Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position) < distance)

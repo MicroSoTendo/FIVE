@@ -1,7 +1,6 @@
 using FIVE.EventSystem;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -55,7 +54,11 @@ namespace FIVE.UI
 
         private GameObject Instantiate()
         {
-            if (PrefabPath == null) return null;
+            if (PrefabPath == null)
+            {
+                return null;
+            }
+
             GameObject prefab = LoadPrefab(PrefabPath);
             Transform parent = this[ViewModelRenderMode].transform;
             GameObject go = Object.Instantiate(prefab, parent);
@@ -65,7 +68,11 @@ namespace FIVE.UI
 
         private void AddAllUIElements(GameObject instantiatedPrefab)
         {
-            if (instantiatedPrefab == null) return;
+            if (instantiatedPrefab == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < instantiatedPrefab.transform.childCount; i++)
             {
                 GameObject child = instantiatedPrefab.transform.GetChild(i).gameObject;

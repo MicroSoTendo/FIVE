@@ -86,16 +86,17 @@ namespace FIVE.Robot
 
         private IEnumerator ToggleEditorCoroutine()
         {
+            CodeEditorViewModel codeEditor = UIManager.Get<CodeEditorViewModel>();
             while (true)
             {
-                if (!UIManager.Get<CodeEditorViewModel>()?.IsFocused ?? true)
+                if (codeEditor.IsFocused) continue;
+                if (Input.GetKey(KeyCode.E))
                 {
-                    if (Input.GetKey(KeyCode.E))
-                    {
-                        this.RaiseEventFixed<OnToggleEditorRequested>(new LauncherEditorArgs() { Target = this }, 300);
-                    }
+                    Debug.Log("Toggled");
+                    codeEditor.ToggleEnabled();
+                    codeEditor.Target = this;
+                    yield return new WaitForSeconds(0.5f);
                 }
-
                 yield return null;
             }
         }

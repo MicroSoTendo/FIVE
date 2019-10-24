@@ -21,7 +21,7 @@ namespace FIVE.UI.CodeEditor
 
         public bool IsFocused => CodeInputField.isFocused;
 
-        private RobotSphere target;
+        public RobotSphere Target { get; set; }
 
         public CodeEditorViewModel()
         {
@@ -36,7 +36,6 @@ namespace FIVE.UI.CodeEditor
             UpdateLineNumber("");
             Bind(SaveButton).To(OnRunButtonClicked);
             Bind(ExitButton).To(OnCancelButtonClicked);
-            EventManager.Subscribe<OnToggleEditorRequested>(ToggleEditor);
             CodeInputField.onValueChanged.AddListener(UpdateLineNumber);
         }
 
@@ -52,26 +51,26 @@ namespace FIVE.UI.CodeEditor
             LineNumber.text = sb.ToString();
         }
 
-        private void ToggleEditor(object sender, EventArgs args)
+        public override void ToggleEnabled()
         {
-            ToggleEnabled();
+            base.ToggleEnabled();
             UIManager.SetCursor(IsActive ? UIManager.CursorType.Regular : UIManager.CursorType.Aim);
-            target = (args as LauncherEditorArgs).Target;
         }
+
 
         private void OnRunButtonClicked()
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            this.RaiseEvent<OnCodeEditorSaved, UpdateScriptEventArgs>(new UpdateScriptEventArgs(target, CodeInputField.text));
-            target = null;
+            this.RaiseEvent<OnCodeEditorSaved, UpdateScriptEventArgs>(new UpdateScriptEventArgs(Target, CodeInputField.text));
+            Target = null;
         }
 
         private void OnCancelButtonClicked()
         {
             IsActive = false;
             UIManager.SetCursor(UIManager.CursorType.Aim);
-            target = null;
+            Target = null;
         }
     }
 }
