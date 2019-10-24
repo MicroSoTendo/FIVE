@@ -142,9 +142,7 @@ namespace FIVE.Interactive
             {
                 return;
             }
-
-            bool closeEnough = (FindObjectOfType<RobotSphere>().transform.position - transform.position).magnitude <
-                               100f;
+            bool closeEnough = (RobotManager.ActiveRobot.transform.position - transform.position).magnitude < 100f;
             if (!closeEnough)
             {
                 return;
