@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace FIVE.Network
 {
-    public abstract class OnCreateRoomRequested : IEventType<CreateRoomRequestedEventArgs>
-    {
-    }
+    public abstract class OnCreateRoomRequested : IEventType<CreateRoomRequestedEventArgs> { }
+    public abstract class OnJoinRoomRequested : IEventType { }
 
     public class CreateRoomRequestedEventArgs : EventArgs
     {

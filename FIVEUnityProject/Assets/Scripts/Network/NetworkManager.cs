@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Random = System.Random;
+
 namespace FIVE.Network
 {
+    [RequireComponent(typeof(SyncCenter))]
     public class NetworkManager : MonoBehaviour
     {
         public enum NetworkState
@@ -18,7 +25,7 @@ namespace FIVE.Network
         private static NetworkManager instance;
         private RoomInfo hostRoomInfo;
         private string roomPassword;
-
+        private byte[] hashedPassword;
         [SerializeField] private string listServer;
         [SerializeField] private ushort listServerInfoPort;
         [SerializeField] private ushort listServerUpdatePort;
@@ -28,24 +35,31 @@ namespace FIVE.Network
         private readonly ConcurrentDictionary<Guid, RoomInfo> roomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
         public NetworkState State { get; private set; } = NetworkState.Idle;
 
-        private TcpListener server;
-        private TcpClient client;
+        //For hosting game
+        private TcpListener Server;
 
+        //For join other game
+        private TcpClient Client;
+        private int AssignedClientID;
+
+        private bool IsReceivingLobbyInfo { get; set; }
         public void Awake()
         {
             Assert.IsNull(instance);
             instance = this;
+            random = new Random((int)Time.time);
             lobbyInfoClient = new TcpClient();
             lobbyInfoClient.Connect(listServer, listServerInfoPort);
             hostInfoClient = new TcpClient();
             hostInfoClient.Connect(listServer, listServerUpdatePort);
             hostRoomInfo = new RoomInfo();
+            IsReceivingLobbyInfo = true;
             StartCoroutine(ReceiveLobbyInfo());
         }
 
         private IEnumerator ReceiveLobbyInfo()
         {
-            while (true)
+            while (IsReceivingLobbyInfo)
             {
                 while (!lobbyInfoClient.Connected)
                 {
@@ -68,19 +82,23 @@ namespace FIVE.Network
                     roomInfos.TryAdd(roomInfo.Guid, roomInfo);
                     yield return null;
                 }
-                yield return new WaitForSeconds(15f/updateRate);
+                yield return new WaitForSeconds(15f / updateRate);
             }
         }
 
-        public static void JoinRoom(Guid roomGuid)
+        public static ICollection<RoomInfo> GetRoomInfos => instance.roomInfos.Values;
+
+        public static bool TryJoinRoom(Guid roomGuid, string password = "")
         {
             if (instance.roomInfos.TryGetValue(roomGuid, out RoomInfo roomInfo))
             {
-                instance.client = new TcpClient();
-                instance.client.Connect(roomInfo.Host.ToString(), roomInfo.Port);
-                instance.State = NetworkState.Client;
+                instance.Client = new TcpClient();
+                instance.Client.Connect(roomInfo.Host.ToString(), roomInfo.Port);
+                return instance.HandShakeToServer(instance.Client, roomInfo.HasPassword, password);
             }
+            return false;
         }
+
 
         public static void CreateRoom(string name, int maxPlayers, bool hasPassword, string password)
         {
@@ -97,12 +115,12 @@ namespace FIVE.Network
                 stream.Write((int)code);
                 stream.Write(instance.hostRoomInfo);
                 instance.hostRoomInfo.Guid = stream.Read(16).ToGuid();
-                instance.server = new TcpListener(IPAddress.Loopback, instance.hostRoomInfo.Port);
-                instance.server.Start();
+                instance.Server = new TcpListener(IPAddress.Loopback, instance.hostRoomInfo.Port);
+                instance.Server.Start();
                 instance.State = NetworkState.Host;
             }
-        }        
-        
+        }
+
         public static void RemoveRoom()
         {
             if (instance.hostInfoClient.Connected)
@@ -111,11 +129,10 @@ namespace FIVE.Network
                 OpCode code = OpCode.RemoveRoom;
                 stream.Write((int)code);
                 stream.Write(instance.hostRoomInfo.Guid);
-                instance.server.Stop();
+                instance.Server.Stop();
                 instance.State = NetworkState.Idle;
             }
         }
-
         private static void UpdateRoomInfo(OpCode code)
         {
             if (instance.lobbyInfoClient.Connected)
@@ -143,7 +160,6 @@ namespace FIVE.Network
                 }
             }
         }
-
         public static void UpdateRoomName(string name)
         {
             instance.hostRoomInfo.Name = name;
@@ -164,5 +180,156 @@ namespace FIVE.Network
             instance.hostRoomInfo.HasPassword = hasPassword;
             UpdateRoomInfo(OpCode.UpdatePassword | OpCode.UpdateRoom);
         }
+
+        public static void ClientCreateObject(string name)
+        {
+
+        }
+
+
+
+
+
+        private static readonly Dictionary<int, TcpClient> ConnectedClients = new Dictionary<int, TcpClient>();
+
+        private IEnumerator Host()
+        {
+            while (true)
+            {
+                TcpClient playerClient = instance.Server.AcceptTcpClient();
+                HandShakeToClient(playerClient);
+                yield return null;
+            }
+        }
+
+        private Random random;
+
+        private int GenerateClientID()
+        {
+            return random.Next();
+        }
+
+        private bool HandShakeToServer(TcpClient client, bool hasPassword, string password)
+        {
+            NetworkStream stream = instance.Client.GetStream();
+            stream.Write((int)OpCode.JoinRequest);
+            if (hasPassword)
+            {
+                byte[] hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(password));
+                stream.Write(hash);
+            }
+            if ((OpCode)stream.Read(4).ToI32() == OpCode.AcceptJoin)
+            {
+                instance.State = NetworkState.Client;
+                AssignedClientID = stream.Read(4).ToI32();
+                StartCoroutine(HostHandler(client));
+                return true;
+            }
+
+            return false;
+        }
+
+        private void HandShakeToClient(TcpClient client)
+        {
+            NetworkStream stream = client.GetStream();
+            var code = (OpCode)stream.Read(4).ToI32();
+            if (code == OpCode.JoinRequest)
+            {
+                if (hostRoomInfo.HasPassword)
+                {
+                    byte[] hashedBytes = stream.Read(16);
+                    if (!hashedBytes.Equals(hashedPassword))
+                    {
+                        stream.Write((int)OpCode.RefuseJoin);
+                        return;
+                    }
+                }
+                stream.Write((int)OpCode.AcceptJoin);
+                int id = GenerateClientID();
+                ConnectedClients.Add(id, client);
+                stream.Write(id.ToBytes());
+                StartCoroutine(ClientHandler(id, client));
+            }
+            else
+            {
+                client.Dispose();
+            }
+        }
+        
+        public enum ComponentType
+        {
+            Transform = 0,
+            Animator = 1,
+        }
+
+        private IEnumerator ClientHandler(int id, TcpClient client)
+        {
+            NetworkStream stream = client.GetStream();
+            //Phase 1: send all existed objects
+            GameObject[] networkedGameObjects = SyncCenter.NetworkedGameObjects.ToArray();
+            stream.Write(networkedGameObjects.Length);
+            foreach (GameObject networkedGameObject in networkedGameObjects)
+            {
+                stream.Write(SyncCenter.GetResourceID(networkedGameObject));
+                List<object> list = SyncCenter.GetSynchronizedComponent(networkedGameObject);
+                stream.Write(list.Count);
+                foreach (object o in list)
+                {
+                    switch (o)
+                    {
+                        case Transform goTransform:
+                            stream.Write((int)ComponentType.Transform);
+                            stream.Write(TransformSerializer.Serialize(goTransform));
+                            break;
+                        case Animator animator:
+                            break;
+                    }
+                }
+            }
+            //Phase 2: set up player
+
+            //Phase 3: do sync
+            while (true)
+            {
+                
+            }
+        }
+
+
+        private IEnumerator HostHandler(TcpClient client)
+        {
+            NetworkStream stream = client.GetStream();
+            //Phase 1: fetch all existed objects
+            int count = stream.ReadI32();
+            for (int i = 0; i < count; i++)
+            {
+                int resourceID = stream.ReadI32();
+                GameObject go = Instantiate(SyncCenter.GetPrefab(resourceID));
+                int componentCount = stream.ReadI32();
+                for (int j = 0; j < componentCount; j++)
+                {
+                    ComponentType componentType = (ComponentType)stream.ReadI32();
+                    switch (componentType)
+                    {
+                        case ComponentType.Transform:
+                            byte[] transformBuffer = stream.Read(3 * 4 * 2);
+                            TransformSerializer.Deserialize(transformBuffer, go.transform);
+                            break;
+                        case ComponentType.Animator:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+            //Phase 2: set up player
+
+            //Phase 3: do sync
+            while (true)
+            {
+
+            }
+        }
+
     }
 }

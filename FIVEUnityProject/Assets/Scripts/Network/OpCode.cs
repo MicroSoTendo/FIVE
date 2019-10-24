@@ -11,5 +11,8 @@ namespace FIVE.Network
         UpdateCurrentPlayer = 1 << 4,
         UpdateMaxPlayer = 1 << 5,
         UpdatePassword = 1 << 6,
+        JoinRequest = 1 << 7,
+        AcceptJoin = 1 << 8,
+        RefuseJoin = 1 << 9,
     }
 }
