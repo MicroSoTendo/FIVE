@@ -176,6 +176,11 @@ namespace FIVE.Network
             stream.Write(buffer);
         }
 
+        public static void Write(this NetworkStream stream, Enum i)
+        {
+            stream.Write((int)(object)i);
+        }    
+
         public static void Read(this NetworkStream stream, byte[] bytes)
         {
             stream.Read(bytes, 0, bytes.Length);
@@ -193,6 +198,18 @@ namespace FIVE.Network
             byte[] bytes = new byte[4];
             stream.Read(bytes, 0, bytes.Length);
             return bytes.ToI32();
+        }        
+
+        public static Guid ReadGuid(this NetworkStream stream)
+        {
+            byte[] bytes = new byte[16];
+            stream.Read(bytes, 0, bytes.Length);
+            return bytes.ToGuid();
+        }
+
+        public static T Read<T>(this NetworkStream stream) where T : Enum
+        {
+            return (T)(object)stream.ReadI32();
         }
     }
 }

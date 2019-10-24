@@ -65,18 +65,13 @@ namespace FIVE.Network
                 {
                     yield return new WaitForSeconds(1f / updateRate);
                 }
-
                 NetworkStream stream = lobbyInfoClient.GetStream();
-                stream.Write(new byte[4], 0, 4);
-                byte[] sizeBuffer = new byte[4];
-                stream.Read(sizeBuffer, 0, 4);
-                int count = sizeBuffer.ToI32();
+                stream.Write(0); //Reserved header
+                int count = stream.ReadI32();
                 roomInfos.Clear();
                 for (int i = 0; i < count; i++)
                 {
-                    byte[] roomInfoBufferSize = new byte[4];
-                    stream.Read(roomInfoBufferSize, 0, 4);
-                    byte[] roomInfoBuffer = new byte[roomInfoBufferSize.ToI32()];
+                    byte[] roomInfoBuffer = new byte[stream.ReadI32()];
                     stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
                     var roomInfo = roomInfoBuffer.ToRoomInfo();
                     roomInfos.TryAdd(roomInfo.Guid, roomInfo);
@@ -111,10 +106,9 @@ namespace FIVE.Network
             if (instance.hostInfoClient.Connected)
             {
                 NetworkStream stream = instance.hostInfoClient.GetStream();
-                OpCode code = OpCode.CreateRoom;
-                stream.Write((int)code);
+                stream.Write(OpCode.CreateRoom);
                 stream.Write(instance.hostRoomInfo);
-                instance.hostRoomInfo.Guid = stream.Read(16).ToGuid();
+                instance.hostRoomInfo.Guid = stream.ReadGuid();
                 instance.Server = new TcpListener(IPAddress.Loopback, instance.hostRoomInfo.Port);
                 instance.Server.Start();
                 instance.State = NetworkState.Host;
@@ -126,8 +120,7 @@ namespace FIVE.Network
             if (instance.hostInfoClient.Connected)
             {
                 NetworkStream stream = instance.hostInfoClient.GetStream();
-                OpCode code = OpCode.RemoveRoom;
-                stream.Write((int)code);
+                stream.Write(OpCode.RemoveRoom);
                 stream.Write(instance.hostRoomInfo.Guid);
                 instance.Server.Stop();
                 instance.State = NetworkState.Idle;
@@ -139,7 +132,7 @@ namespace FIVE.Network
             {
                 NetworkStream stream = instance.hostInfoClient.GetStream();
                 code |= OpCode.UpdateRoom;
-                stream.Write((int)code);
+                stream.Write(code);
                 stream.Write(instance.hostRoomInfo.Guid);
                 switch (code)
                 {
@@ -186,10 +179,6 @@ namespace FIVE.Network
 
         }
 
-
-
-
-
         private static readonly Dictionary<int, TcpClient> ConnectedClients = new Dictionary<int, TcpClient>();
 
         private IEnumerator Host()
@@ -212,16 +201,16 @@ namespace FIVE.Network
         private bool HandShakeToServer(TcpClient client, bool hasPassword, string password)
         {
             NetworkStream stream = instance.Client.GetStream();
-            stream.Write((int)OpCode.JoinRequest);
+            stream.Write(OpCode.JoinRequest);
             if (hasPassword)
             {
                 byte[] hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(password));
                 stream.Write(hash);
             }
-            if ((OpCode)stream.Read(4).ToI32() == OpCode.AcceptJoin)
+            if (stream.Read<OpCode>() == OpCode.AcceptJoin)
             {
                 instance.State = NetworkState.Client;
-                AssignedClientID = stream.Read(4).ToI32();
+                AssignedClientID = stream.ReadI32();
                 StartCoroutine(HostHandler(client));
                 return true;
             }
@@ -232,7 +221,7 @@ namespace FIVE.Network
         private void HandShakeToClient(TcpClient client)
         {
             NetworkStream stream = client.GetStream();
-            var code = (OpCode)stream.Read(4).ToI32();
+            OpCode code = stream.Read<OpCode>();
             if (code == OpCode.JoinRequest)
             {
                 if (hostRoomInfo.HasPassword)
@@ -240,11 +229,11 @@ namespace FIVE.Network
                     byte[] hashedBytes = stream.Read(16);
                     if (!hashedBytes.Equals(hashedPassword))
                     {
-                        stream.Write((int)OpCode.RefuseJoin);
+                        stream.Write(OpCode.RefuseJoin);
                         return;
                     }
                 }
-                stream.Write((int)OpCode.AcceptJoin);
+                stream.Write(OpCode.AcceptJoin);
                 int id = GenerateClientID();
                 ConnectedClients.Add(id, client);
                 stream.Write(id.ToBytes());
@@ -260,6 +249,11 @@ namespace FIVE.Network
         {
             Transform = 0,
             Animator = 1,
+        }
+
+        public enum NetworkCall
+        {
+            CreateObject = 0,
         }
 
         private IEnumerator ClientHandler(int id, TcpClient client)
@@ -278,20 +272,27 @@ namespace FIVE.Network
                     switch (o)
                     {
                         case Transform goTransform:
-                            stream.Write((int)ComponentType.Transform);
+                            stream.Write(ComponentType.Transform);
                             stream.Write(TransformSerializer.Serialize(goTransform));
                             break;
                         case Animator animator:
                             break;
                     }
                 }
-            }
-            //Phase 2: set up player
 
-            //Phase 3: do sync
+                yield return null;
+            }
+            //Phase 2: do sync
             while (true)
             {
-                
+                switch (stream.Read<NetworkCall>())
+                {
+                    case NetworkCall.CreateObject:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
             }
         }
 
@@ -308,7 +309,7 @@ namespace FIVE.Network
                 int componentCount = stream.ReadI32();
                 for (int j = 0; j < componentCount; j++)
                 {
-                    ComponentType componentType = (ComponentType)stream.ReadI32();
+                    ComponentType componentType = stream.Read<ComponentType>();
                     switch (componentType)
                     {
                         case ComponentType.Transform:
@@ -321,10 +322,9 @@ namespace FIVE.Network
                             throw new ArgumentOutOfRangeException();
                     }
                 }
+                yield return null;
             }
-            //Phase 2: set up player
-
-            //Phase 3: do sync
+            //Phase 2: do sync
             while (true)
             {
 
