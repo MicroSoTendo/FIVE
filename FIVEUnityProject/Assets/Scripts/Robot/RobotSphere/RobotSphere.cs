@@ -144,7 +144,9 @@ namespace FIVE.Robot
 
         public void Attack(GameObject target)
         {
-            Instantiate(BulletPrefab, transform.position, Quaternion.identity);
+            Debug.Log("Attack");
+            GameObject bullet =  Instantiate(BulletPrefab, transform.position + transform.forward * 1.5f, Quaternion.identity);
+            bullet.GetComponent<Bullet>().Target = target.transform.position;
         }
 
         private void ExecuteScript()
