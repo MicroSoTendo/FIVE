@@ -84,6 +84,10 @@ namespace FIVE.Robot
             {
                 Movable.ClearSchedule();
             }
+            else
+            {
+                Movable.enabled = true;
+            }
 
             script = new AWSLScript(this, e.Code);
             scriptActive = true;
@@ -152,6 +156,8 @@ namespace FIVE.Robot
         private void ExecuteScript()
         {
             scriptActive = !script.Execute();
+            if (!scriptActive)
+                Movable.enabled = RobotManager.ActiveRobot == gameObject;
         }
 
         private enum ControllerOp { FPS, RTS, };
