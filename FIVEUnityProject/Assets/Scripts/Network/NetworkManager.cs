@@ -254,11 +254,25 @@ namespace FIVE.Network
         public enum NetworkCall
         {
             CreateObject = 0,
+            RemoveObject = 1,
         }
 
+        //Run by host
+        private class NetworkCallPack
+        {
+            public NetworkCall Call;
+        }
+        private ConcurrentQueue<NetworkCallPack> callPacks = new ConcurrentQueue<NetworkCallPack>();
         private IEnumerator ClientHandler(int id, TcpClient client)
         {
             NetworkStream stream = client.GetStream();
+            while (true)
+            {
+                int timeSlice = (int)Time.time;
+                stream.Write(timeSlice);
+                Debug.Log(timeSlice);
+                yield return null;
+            }
             //Phase 1: send all existed objects
             GameObject[] networkedGameObjects = SyncCenter.NetworkedGameObjects.ToArray();
             stream.Write(networkedGameObjects.Length);
@@ -285,21 +299,43 @@ namespace FIVE.Network
             //Phase 2: do sync
             while (true)
             {
+                //Get next network call
                 switch (stream.Read<NetworkCall>())
                 {
                     case NetworkCall.CreateObject:
+                        int resourceID = stream.ReadI32();
+                        int syncComponentCount = stream.ReadI32();
+                        
+                        break;
+                    case NetworkCall.RemoveObject:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+                //Do it at host
 
+                //Broadcast to other clients
+                foreach (KeyValuePair<int, TcpClient> kvp in ConnectedClients.Where(kvp => kvp.Key != id))
+                {
+                    
+                }
+
+                //Do passive sync broadcasting
+
+                yield return null;
             }
         }
 
-
+        //Run by client
         private IEnumerator HostHandler(TcpClient client)
         {
             NetworkStream stream = client.GetStream();
+            while (true)
+            {
+                int hostTimeSlice = stream.ReadI32();
+                Debug.Log(hostTimeSlice);
+                yield return null;
+            }
             //Phase 1: fetch all existed objects
             int count = stream.ReadI32();
             for (int i = 0; i < count; i++)
@@ -327,7 +363,8 @@ namespace FIVE.Network
             //Phase 2: do sync
             while (true)
             {
-
+                
+                yield return null;
             }
         }
 
