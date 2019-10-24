@@ -68,7 +68,7 @@ namespace ListServerCore
             return true;
         }
 
-        private static readonly HashSet<TcpClient> connectedClients = new HashSet<TcpClient>();
+        private static readonly HashSet<TcpClient> ConnectedClients = new HashSet<TcpClient>();
         private static readonly HashSet<Task> Tasks = new HashSet<Task>();
         private static void Main(string[] args)
         {
@@ -97,11 +97,11 @@ namespace ListServerCore
                     {
                         task.Dispose();
                     }
-                    foreach (TcpClient connectedClient in connectedClients)
+                    foreach (TcpClient connectedClient in ConnectedClients)
                     {
                         connectedClient.Dispose();
                     }
-                    connectedClients.Clear();
+                    ConnectedClients.Clear();
                     listenTask = Task.Run(() => { ListenUpdatePort(address, updatePort); }, tokenSource.Token);
                     broadcastTask = Task.Run(() => { ListenInfoPort(address, infoPort); }, tokenSource.Token);
                 }
@@ -111,23 +111,30 @@ namespace ListServerCore
         private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
         private static void ClientHandler(TcpClient client)
         {
-            NetworkStream networkStream = client.GetStream();
-            byte[] opCodeBuffer = new byte[4];
-            networkStream.Read(opCodeBuffer);
-            int opCode = opCodeBuffer.ToI32();
-            switch ((OpCode)opCode)
+            try
             {
-                case OpCode.CreateRoom:
-                    CreateRoomHandler(networkStream);
-                    break;
-                case OpCode.RemoveRoom:
-                    RemoveRoomHandler(networkStream);
-                    break;
-                case OpCode.UpdateRoom:
-                    UpdateRoomHandler(opCode, networkStream);
-                    break;
-                default:
-                    break;
+                NetworkStream networkStream = client.GetStream();
+                byte[] opCodeBuffer = new byte[4];
+                networkStream.Read(opCodeBuffer);
+                int opCode = opCodeBuffer.ToI32();
+                switch ((OpCode)opCode)
+                {
+                    case OpCode.CreateRoom:
+                        CreateRoomHandler(networkStream);
+                        break;
+                    case OpCode.RemoveRoom:
+                        RemoveRoomHandler(networkStream);
+                        break;
+                    case OpCode.UpdateRoom:
+                        UpdateRoomHandler(opCode, networkStream);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch
+            {
+                // ignored
             }
         }
 
@@ -214,24 +221,32 @@ namespace ListServerCore
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
-                connectedClients.Add(client);
+                ConnectedClients.Add(client);
                 Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
                 Tasks.Add(Task.Run(() => ClientHandler(client)));
             }
         }
+
         private static void SendRoomInfos(TcpClient client)
         {
             NetworkStream networkStream = client.GetStream();
             while (true)
             {
-                byte[] head = new byte[4];
-                networkStream.Read(head);
-                networkStream.Write(RoomInfos.Values.Count.ToBytes());
-                foreach (RoomInfo roomInfo in RoomInfos.Values)
+                try
                 {
-                    byte[] roomInfoBuffer = roomInfo.ToBytes();
-                    networkStream.Write(roomInfoBuffer.Length.ToBytes());
-                    networkStream.Write(roomInfoBuffer);
+                    byte[] head = new byte[4];
+                    networkStream.Read(head);
+                    networkStream.Write(RoomInfos.Values.Count.ToBytes());
+                    foreach (RoomInfo roomInfo in RoomInfos.Values)
+                    {
+                        byte[] roomInfoBuffer = roomInfo.ToBytes();
+                        networkStream.Write(roomInfoBuffer.Length.ToBytes());
+                        networkStream.Write(roomInfoBuffer);
+                    }
+                }
+                catch
+                {
+                    break;
                 }
             }
         }
@@ -244,7 +259,7 @@ namespace ListServerCore
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
-                connectedClients.Add(client);
+                ConnectedClients.Add(client);
                 Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
                 Tasks.Add(Task.Run(() => SendRoomInfos(client)));
             }
