@@ -157,7 +157,9 @@ namespace FIVE.Robot
         {
             scriptActive = !script.Execute();
             if (!scriptActive)
+            {
                 Movable.enabled = RobotManager.ActiveRobot == gameObject;
+            }
         }
 
         private enum ControllerOp { FPS, RTS, };
