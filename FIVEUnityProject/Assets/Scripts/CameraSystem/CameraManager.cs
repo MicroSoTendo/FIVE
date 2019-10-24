@@ -135,7 +135,7 @@ namespace FIVE.CameraSystem
                     return;
                 }
 
-                if (Time.frameCount % 120 != 0)
+                if ((int)(Time.time * 1000f) % 1000 != 0)
                 {
                     return;
                 }
