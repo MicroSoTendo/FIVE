@@ -42,6 +42,7 @@ namespace FIVE.UI.CodeEditor
         {
             while (true)
             {
+                yield return null;
                 if (IsFocused)
                 {
                     continue;
@@ -51,7 +52,6 @@ namespace FIVE.UI.CodeEditor
                     ToggleEnabled();
                     yield return new WaitForSeconds(0.3f);
                 }
-                yield return null;
             }
         }
 
