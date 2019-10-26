@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FIVE
 {
-    public class TwoWayMap<TKey, TValue> : IEnumerable<(TKey, TValue)>
+    public class TwoWayMap<TKey, TValue> : IEnumerable<(TKey key, TValue value)>
     {
         public int Count => keyToValue.Count;
         public TValue this[TKey key] => keyToValue[key];

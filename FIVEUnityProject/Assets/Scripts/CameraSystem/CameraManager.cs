@@ -12,8 +12,7 @@ namespace FIVE.CameraSystem
     {
         private static CameraManager instance;
         private GameObject cameraPrefab;
-        private readonly Dictionary<string, Camera> name2cam = new Dictionary<string, Camera>();
-        private readonly Dictionary<Camera, string> cam2name = new Dictionary<Camera, string>();
+        private readonly TwoWayMap<string, Camera> namedCameras = new TwoWayMap<string, Camera>();
 
         public enum StateEnum { Single, Multiple };
 
@@ -26,9 +25,9 @@ namespace FIVE.CameraSystem
         private List<Camera> wall = new List<Camera>();
 
         public static IEnumerable<Camera> GetFpsCameras =>
-            from c in instance.name2cam where c.Key.ToLower().Contains("fps") select c.Value;
+            from c in instance.namedCameras where c.key.ToLower().Contains("fps") select c.value;
 
-        public static Dictionary<string, Camera> Cameras => instance.name2cam;
+        public static IEnumerable<Camera> Cameras => instance.namedCameras.Values;
 
         private void Awake()
         {
@@ -48,8 +47,7 @@ namespace FIVE.CameraSystem
 
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera cam = gameObject.GetComponent<Camera>();
-            instance.name2cam.Add(gameObject.name, cam);
-            instance.cam2name.Add(cam, gameObject.name);
+            instance.namedCameras.Add(gameObject.name, cam);
             instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, cam));
 
             if (enableAudioListener) //Make sure only one audio listener active simutaneously
@@ -62,7 +60,7 @@ namespace FIVE.CameraSystem
 
         public static void SetAudioListener(Camera cam)
         {
-            foreach (Camera c in instance.cam2name.Keys)
+            foreach (Camera c in instance.namedCameras.Values)
             {
                 AudioListener audioListener = c.GetComponent<AudioListener>();
                 if (audioListener != null)
@@ -76,7 +74,7 @@ namespace FIVE.CameraSystem
         public static void SetCamera(Camera cam)
         {
             State = StateEnum.Single;
-            foreach (Camera c in instance.cam2name.Keys)
+            foreach (Camera c in instance.namedCameras.Values)
             {
                 c.enabled = false;
             }
@@ -87,7 +85,7 @@ namespace FIVE.CameraSystem
 
         public static void SetCamera(string name)
         {
-            SetCamera(instance.name2cam[name]);
+            SetCamera(instance.namedCameras[name]);
         }
 
         public static void SetCameraWall()
@@ -99,17 +97,14 @@ namespace FIVE.CameraSystem
 
         public static void Remove(Camera camera)
         {
-            string name = instance.cam2name[camera];
-            instance.cam2name.Remove(camera);
-            instance.name2cam.Remove(name);
+            instance.namedCameras.Remove(camera);
             Destroy(camera.gameObject);
         }
 
         public static void Remove(string name)
         {
-            Camera c = instance.name2cam[name];
-            instance.name2cam.Remove(name);
-            instance.cam2name.Remove(c);
+            Camera c = instance.namedCameras[name];
+            instance.namedCameras.Remove(c);
             Destroy(c.gameObject);
         }
 
@@ -145,16 +140,16 @@ namespace FIVE.CameraSystem
                 }
 
                 wall.Clear();
-                if (cam2name.Count > 0)
+                if (namedCameras.Count > 0)
                 {
-                    foreach (Camera c in cam2name.Keys)
+                    foreach (Camera c in namedCameras.Values)
                     {
                         c.enabled = false;
                     }
                     for (int count = 0; count < 4; count++, index++)
                     {
-                        index %= cam2name.Keys.Count;
-                        Camera c = instance.cam2name.Keys.ElementAt(index);
+                        index %= namedCameras.Keys.Count;
+                        Camera c = instance.namedCameras.Values.ElementAt(index);
                         c.enabled = true;
                         float x = count / 2 / 2f, y = count % 2 / 2f;
                         c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
