@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+[assembly: InternalsVisibleTo("FIVE")]
 namespace FIVE.EventSystem
 {
     internal sealed class MainThreadDispatcher : MonoBehaviour

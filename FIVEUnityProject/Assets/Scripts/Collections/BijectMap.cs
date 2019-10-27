@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FIVE
 {
-    public class TwoWayMap<TKey, TValue> : IEnumerable<(TKey key, TValue value)>
+    public class BijectMap<TKey, TValue> : IEnumerable<(TKey key, TValue value)>
     {
         public int Count => keyToValue.Count;
         public TValue this[TKey key] => keyToValue[key];
@@ -12,13 +12,19 @@ namespace FIVE
         private readonly Dictionary<TKey, TValue> keyToValue;
         private readonly Dictionary<TValue, TKey> valueToKey;
 
-        public TwoWayMap()
+        public BijectMap()
         {
             keyToValue = new Dictionary<TKey, TValue>();
             valueToKey = new Dictionary<TValue, TKey>();
         }
 
         public void Add(TKey key, TValue value)
+        {
+            keyToValue.Add(key, value);
+            valueToKey.Add(value, key);
+        }
+
+        public void Add(TValue value, TKey key)
         {
             keyToValue.Add(key, value);
             valueToKey.Add(value, key);
@@ -51,6 +57,16 @@ namespace FIVE
         {
             keyToValue.Clear();
             valueToKey.Clear();
+        }
+
+        public bool Contains(TKey key)
+        {
+            return keyToValue.ContainsKey(key);
+        }
+
+        public bool Contains(TValue value)
+        {
+            return valueToKey.ContainsKey(value);
         }
 
         public IEnumerator<(TKey, TValue)> GetEnumerator()

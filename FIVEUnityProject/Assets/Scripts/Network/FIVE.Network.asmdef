@@ -1,12 +1,9 @@
 {
-    "name": "FIVE",
+    "name": "FIVE.Network",
     "references": [
         "FIVE.EventSystem",
         "FIVE.Utils",
-        "FIVE.Network",
-        "FIVE.Collections",
-        "MoonSharp",
-        "Unity.TextMeshPro"
+        "FIVE.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

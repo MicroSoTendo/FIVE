@@ -167,6 +167,7 @@ namespace FIVE.EventSystem
         public static void RaiseEvent<T>(object sender, EventArgs args) where T : IEventType
         {
             RaiseEventInternal<T>(sender, args);
+
         }
 
         public static void RaiseEvent<T, TEventArgs>(object sender, TEventArgs args)
