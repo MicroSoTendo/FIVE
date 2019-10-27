@@ -5,7 +5,7 @@ using FIVE.UI.BSComposite;
 using FIVE.UI.NPC;
 using System.Collections;
 using UnityEngine;
-using static FIVE.Util;
+using static FIVE.EventSystem.Util;
 
 namespace FIVE.Interactive
 {

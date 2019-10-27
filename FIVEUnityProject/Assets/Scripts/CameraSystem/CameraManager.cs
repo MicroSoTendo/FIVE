@@ -2,9 +2,10 @@
 using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
 using System.Linq;
+using FIVE.EventSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
-using static FIVE.Util;
+using static FIVE.EventSystem.Util;
 
 namespace FIVE.CameraSystem
 {
@@ -12,7 +13,7 @@ namespace FIVE.CameraSystem
     {
         private static CameraManager instance;
         private GameObject cameraPrefab;
-        private readonly TwoWayMap<string, Camera> namedCameras = new TwoWayMap<string, Camera>();
+        private readonly BijectMap<string, Camera> namedCameras = new BijectMap<string, Camera>();
 
         public enum StateEnum { Single, Multiple };
 
