@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -36,7 +35,7 @@ namespace FIVE.Network
         public static Guid ToGuid(this byte[] bytes, int startIndex = 0)
         {
             byte[] guidBytes = new byte[16];
-            Array.Copy(bytes, startIndex, guidBytes, 0, 16);
+            Buffer.BlockCopy(bytes, startIndex, guidBytes, 0, 16);
             return new Guid(guidBytes);
         }
 
@@ -113,8 +112,8 @@ namespace FIVE.Network
             Buffer.BlockCopy(arr1, 0, rv, 0, arr1.Length);
             Buffer.BlockCopy(arr2, 0, rv, arr1.Length, arr2.Length);
             return rv;
-        }       
-        
+        }
+
         public static byte[] Combine(byte[] arr1, byte[] arr2, byte[] arr3)
         {
             byte[] rv = new byte[arr1.Length + arr2.Length + arr3.Length];
@@ -135,10 +134,14 @@ namespace FIVE.Network
             }
             return rv;
         }
-        
+
         public static bool Equals(this byte[] arr1, byte[] arr2)
         {
-            if (arr1.Length != arr2.Length) return false;
+            if (arr1.Length != arr2.Length)
+            {
+                return false;
+            }
+
             return !arr1.Where((t, i) => t != arr2[i]).Any();
         }
 
@@ -150,8 +153,8 @@ namespace FIVE.Network
         public static void Write(this NetworkStream stream, int i)
         {
             stream.Write(i.ToBytes());
-        }    
-        
+        }
+
         public static void Write(this NetworkStream stream, bool b)
         {
             stream.Write(b.ToBytes());
@@ -179,26 +182,26 @@ namespace FIVE.Network
         public static void Write(this NetworkStream stream, Enum i)
         {
             stream.Write((int)(object)i);
-        }    
+        }
 
         public static void Read(this NetworkStream stream, byte[] bytes)
         {
             stream.Read(bytes, 0, bytes.Length);
-        }        
-        
+        }
+
         public static byte[] Read(this NetworkStream stream, int size)
         {
             byte[] bytes = new byte[size];
             stream.Read(bytes, 0, bytes.Length);
             return bytes;
-        }        
-        
+        }
+
         public static int ReadI32(this NetworkStream stream)
         {
             byte[] bytes = new byte[4];
             stream.Read(bytes, 0, bytes.Length);
             return bytes.ToI32();
-        }        
+        }
 
         public static Guid ReadGuid(this NetworkStream stream)
         {
@@ -211,5 +214,6 @@ namespace FIVE.Network
         {
             return (T)(object)stream.ReadI32();
         }
+
     }
 }

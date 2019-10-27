@@ -1,45 +1,40 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace FIVE.Network
 {
-    public class SyncCenter : MonoBehaviour
+    public sealed class SyncCenter
     {
-        private static SyncCenter instance;
-        private bool IsHost;
-        private void Awake()
-        {
-            Assert.IsNull(instance);
-            instance = this;
-        }
-        private Dictionary<GameObject, int> networkedObjectToResourceID = new Dictionary<GameObject, int>();
-        private Dictionary<GameObject, List<object>> networkedObjectToSynchronizedComponents = new Dictionary<GameObject, List<object>>();
-        private Dictionary<int, GameObject> prefabDictionary = new Dictionary<int, GameObject>();
+        public static SyncCenter Instance { get; } = new SyncCenter();
+        private SyncCenter() { }
 
-        private Dictionary<int, List<GameObject>> clientIDToSyncedObjects = new Dictionary<int, List<GameObject>>();
 
-        public static List<GameObject> GetClientObjects(int id) => instance.clientIDToSyncedObjects[id];
+        //Used only if host
+        public ConcurrentDictionary<int, List<GameObject>> ClientID2GameObjects { get; } = new ConcurrentDictionary<int, List<GameObject>>();
+        public ConcurrentDictionary<GameObject, int> GameObject2ClientsID { get; } = new ConcurrentDictionary<GameObject, int>();
+
+
+        public List<Component> SyncedComponentsOwned { get; } = new List<Component>();
+        public List<Component> SyncedComponentsRemote { get; } = new List<Component>();
+
+        public BijectMap<int, Component> IDSyncedComponent { get; } = new BijectMap<int, Component>();
 
         //Instantiate object in both local and remote games
-        public static void NetworkInstantiate(GameObject prefab, Vector3 position, Quaternion rotation)
+        public void InstantiateRemote(GameObject prefab, Vector3 position, Quaternion rotation)
         {
-            if (instance.networkedObjectToResourceID.ContainsKey(prefab))
-            {
-                
-            }
-
         }
 
-        public static IEnumerable<GameObject> NetworkedGameObjects => instance.networkedObjectToResourceID.Keys;
-        public static int GetResourceID(GameObject gameObject) => instance.networkedObjectToResourceID[gameObject];
+        public void Register(Component component)
+        {
+            if (IDSyncedComponent.Contains(component))
+            {
+                throw new ArgumentException(component + " already existed.");
+            }
 
-        public static List<object> GetSynchronizedComponent(GameObject gameObject) =>
-            instance.networkedObjectToSynchronizedComponents[gameObject];
-
-        public static GameObject GetPrefab(int resourceID) => instance.prefabDictionary[resourceID];
+            IDSyncedComponent.Add(IDSyncedComponent.Count, component);
+        }
 
     }
 }

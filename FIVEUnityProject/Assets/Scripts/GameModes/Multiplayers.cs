@@ -70,11 +70,11 @@ namespace FIVE.GameModes
 
         private void CreateRoomHandler(object sender, CreateRoomRequestedEventArgs e)
         {
-            NetworkManager.CreateRoom(e.Name, e.MaxPlayer, e.HasPassword, e.Password);
+            //NetworkManager.CreateRoom(e.Name, e.MaxPlayer, hasPassword: e.HasPassword, password: e.Password);
             StartCoroutine(HostInitRoutine());
             lobbyWindow.IsActive = false;
         }
-        
+
         private void JoinRoomHandler(object sender, EventArgs e)
         {
             

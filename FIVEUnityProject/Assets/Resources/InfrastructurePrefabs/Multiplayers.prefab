@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6939421479373776041}
   - component: {fileID: 6447395235204078630}
   - component: {fileID: 7569084619800934164}
-  - component: {fileID: 3777010345257715736}
   m_Layer: 0
   m_Name: Multiplayers
   m_TagString: Untagged
@@ -61,15 +60,3 @@ MonoBehaviour:
   listServerInfoPort: 8888
   listServerUpdatePort: 8887
   updateRate: 30
---- !u!114 &3777010345257715736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6687479523435219106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d57a1f76217aedb4d9e306bda048881c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
