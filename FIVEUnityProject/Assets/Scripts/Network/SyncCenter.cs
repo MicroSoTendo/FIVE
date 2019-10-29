@@ -1,64 +1,39 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Sockets;
-using FIVE.CameraSystem;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace FIVE.Network
 {
-    public class SyncCenter : MonoBehaviour
+    public sealed class SyncCenter
     {
-        private static SyncCenter instance;
+        public static SyncCenter Instance { get; } = new SyncCenter();
+        private SyncCenter() { }
 
 
-        private Dictionary<string, Camera> cameras;
-        private HashSet<Transform> ownedTransforms = new HashSet<Transform>();
-        private HashSet<Transform> remoteTransforms = new HashSet<Transform>();
-        private Action OnUpdate;
-        
-
-        private bool IsHost;
-        private void Awake()
-        {
-            Assert.IsNull(instance);
-            instance = this;
-        }
-        private Dictionary<GameObject, int> networkedObjectToResourceID = new Dictionary<GameObject, int>();
-        private Dictionary<GameObject, List<object>> networkedObjectToSynchronizedComponents = new Dictionary<GameObject, List<object>>();
-        private Dictionary<int, GameObject> prefabDictionary = new Dictionary<int, GameObject>();
+        //Used only if host
+        public ConcurrentDictionary<int, List<GameObject>> ClientID2GameObjects { get; } = new ConcurrentDictionary<int, List<GameObject>>();
+        public ConcurrentDictionary<GameObject, int> GameObject2ClientsID { get; } = new ConcurrentDictionary<GameObject, int>();
 
 
-        public static IEnumerable<GameObject> NetworkedGameObjects => instance.networkedObjectToResourceID.Keys;
-        public static int GetResourceID(GameObject gameObject) => instance.networkedObjectToResourceID[gameObject];
+        public List<Component> SyncedComponentsOwned { get; } = new List<Component>();
+        public List<Component> SyncedComponentsRemote { get; } = new List<Component>();
 
-        public static List<object> GetSynchronizedComponent(GameObject gameObject) =>
-            instance.networkedObjectToSynchronizedComponents[gameObject];
+        public BijectMap<int, Component> IDSyncedComponent { get; } = new BijectMap<int, Component>();
 
-        public static GameObject GetPrefab(int resourceID) => instance.prefabDictionary[resourceID];
-
-        public static void RegisterLocal(Transform transform)
-        {
-            instance.ownedTransforms.Add(transform);
-        }        
-        
-        public static void RegisterRemote(Transform transform)
-        {
-            instance.ownedTransforms.Add(transform);
-        }
-
-        public void SendLocalObjects(NetworkStream stream)
-        {
-
-        }
-
-        public void ReceiveRemote(NetworkStream stream)
+        //Instantiate object in both local and remote games
+        public void InstantiateRemote(GameObject prefab, Vector3 position, Quaternion rotation)
         {
         }
 
-
-        public void Update()
+        public void Register(Component component)
         {
+            if (IDSyncedComponent.Contains(component))
+            {
+                throw new ArgumentException(component + " already existed.");
+            }
+
+            IDSyncedComponent.Add(IDSyncedComponent.Count, component);
         }
 
     }

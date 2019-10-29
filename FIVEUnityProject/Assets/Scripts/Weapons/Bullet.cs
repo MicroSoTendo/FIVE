@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,6 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        Target = new Vector3();
         elapsedTime = 0;
     }
 
@@ -27,8 +27,11 @@ public class Bullet : MonoBehaviour
         }
         else
         {
-            transform.forward = Vector3.Normalize(Target - transform.position);
-            transform.Translate(transform.forward * 1.0f);
+            if (Target != null)
+            {
+                transform.forward = Vector3.Normalize(Target - transform.position);
+                transform.Translate(transform.forward * 1.0f);
+            }
         }
     }
 

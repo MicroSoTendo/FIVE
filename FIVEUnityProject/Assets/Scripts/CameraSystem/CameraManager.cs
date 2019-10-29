@@ -2,9 +2,10 @@
 using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
 using System.Linq;
+using FIVE.EventSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
-using static FIVE.Util;
+using static FIVE.EventSystem.Util;
 
 namespace FIVE.CameraSystem
 {
@@ -12,8 +13,7 @@ namespace FIVE.CameraSystem
     {
         private static CameraManager instance;
         private GameObject cameraPrefab;
-        private readonly Dictionary<string, Camera> name2cam = new Dictionary<string, Camera>();
-        private readonly Dictionary<Camera, string> cam2name = new Dictionary<Camera, string>();
+        private readonly BijectMap<string, Camera> namedCameras = new BijectMap<string, Camera>();
 
         public enum StateEnum { Single, Multiple };
 
@@ -21,13 +21,14 @@ namespace FIVE.CameraSystem
 
         public static Camera CurrentActiveCamera { get; private set; }
 
-        private int index = 0;
+        private int index;
+        private float switchTimeout; // ms
         private List<Camera> wall = new List<Camera>();
 
         public static IEnumerable<Camera> GetFpsCameras =>
-            from c in instance.name2cam where c.Key.ToLower().Contains("fps") select c.Value;
+            from c in instance.namedCameras where c.key.ToLower().Contains("fps") select c.value;
 
-        public static Dictionary<string, Camera> Cameras => instance.name2cam;
+        public static IEnumerable<Camera> Cameras => instance.namedCameras.Values;
 
         private void Awake()
         {
@@ -35,7 +36,7 @@ namespace FIVE.CameraSystem
             instance = this;
             cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
 
-            CurrentActiveCamera = Camera.current ?? Camera.main;
+            CurrentActiveCamera = Camera.current != null ? Camera.current : Camera.main;
             Subscribe<OnMultiCameraModeRequested>(SetCameraWall);
         }
 
@@ -47,8 +48,7 @@ namespace FIVE.CameraSystem
 
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera cam = gameObject.GetComponent<Camera>();
-            instance.name2cam.Add(gameObject.name, cam);
-            instance.cam2name.Add(cam, gameObject.name);
+            instance.namedCameras.Add(gameObject.name, cam);
             instance.RaiseEvent<OnCameraCreated>(new CameraCreatedEventArgs(gameObject.name, cam));
 
             if (enableAudioListener) //Make sure only one audio listener active simutaneously
@@ -61,7 +61,7 @@ namespace FIVE.CameraSystem
 
         public static void SetAudioListener(Camera cam)
         {
-            foreach (Camera c in instance.cam2name.Keys)
+            foreach (Camera c in instance.namedCameras.Values)
             {
                 AudioListener audioListener = c.GetComponent<AudioListener>();
                 if (audioListener != null)
@@ -75,7 +75,7 @@ namespace FIVE.CameraSystem
         public static void SetCamera(Camera cam)
         {
             State = StateEnum.Single;
-            foreach (Camera c in instance.cam2name.Keys)
+            foreach (Camera c in instance.namedCameras.Values)
             {
                 c.enabled = false;
             }
@@ -86,35 +86,30 @@ namespace FIVE.CameraSystem
 
         public static void SetCamera(string name)
         {
-            SetCamera(instance.name2cam[name]);
+            SetCamera(instance.namedCameras[name]);
         }
 
         public static void SetCameraWall()
         {
             State = StateEnum.Multiple;
-            foreach (Camera c in instance.cam2name.Keys)
-            {
-                c.enabled = false;
-            }
+            instance.index = 0;
+            instance.switchTimeout = -1f;
         }
 
         public static void Remove(Camera camera)
         {
-            string name = instance.cam2name[camera];
-            instance.cam2name.Remove(camera);
-            instance.name2cam.Remove(name);
+            instance.namedCameras.Remove(camera);
             Destroy(camera.gameObject);
         }
 
         public static void Remove(string name)
         {
-            Camera c = instance.name2cam[name];
-            instance.name2cam.Remove(name);
-            instance.cam2name.Remove(c);
+            Camera c = instance.namedCameras[name];
+            instance.namedCameras.Remove(c);
             Destroy(c.gameObject);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (UIManager.Get<CodeEditorViewModel>()?.IsActive ?? false)
             {
@@ -135,24 +130,32 @@ namespace FIVE.CameraSystem
                     return;
                 }
 
-                if ((int)(Time.time * 1000f) % 1000 != 0)
+                if (switchTimeout >= 0f)
                 {
+                    switchTimeout -= Time.fixedDeltaTime * 1000f;
                     return;
+                }
+                else
+                {
+                    switchTimeout = 2000f;
                 }
 
                 wall.Clear();
-                foreach (Camera c in cam2name.Keys)
+                if (namedCameras.Count > 0)
                 {
-                    c.enabled = false;
-                }
-                for (int count = 0; count < 4; count++, index++)
-                {
-                    index %= cam2name.Keys.Count;
-                    Camera c = instance.cam2name.Keys.ElementAt(index);
-                    c.enabled = true;
-                    float x = count / 2 / 2f, y = count % 2 / 2f;
-                    c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
-                    wall.Add(c);
+                    foreach (Camera c in namedCameras.Values)
+                    {
+                        c.enabled = false;
+                    }
+                    for (int count = 0; count < 4; count++, index++)
+                    {
+                        index %= namedCameras.Keys.Count;
+                        Camera c = instance.namedCameras.Values.ElementAt(index);
+                        c.enabled = true;
+                        float x = count / 2 / 2f, y = count % 2 / 2f;
+                        c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
+                        wall.Add(c);
+                    }
                 }
             }
         }

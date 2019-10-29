@@ -7,8 +7,6 @@ namespace FIVE.EventSystem
         private readonly List<(bool requiresMain, List<HandlerNode> handlers)> storage;
         private readonly object syncroot = new object();
 
-        public int Count => storage.Count;
-
         public HandlerList()
         {
             storage = new List<(bool requiresMain, List<HandlerNode> handlers)>();

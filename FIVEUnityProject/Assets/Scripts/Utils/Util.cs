@@ -1,7 +1,7 @@
-﻿using FIVE.EventSystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace FIVE
@@ -62,38 +62,15 @@ namespace FIVE
 
             return results;
         }
-
-        public static void Subscribe<T>(Action action) where T : IEventType
+        public static IEnumerable<Type> GetDerived<T>()
         {
-            EventManager.Subscribe<T>((s, a) => action());
+            return Assembly.GetAssembly(typeof(T)).GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(T)));
         }
 
-        public static void RaiseEvent<T>(this object sender, EventArgs args = null) where T : IEventType
+        public static IEnumerable<Type> GetDerived(Type t)
         {
-            EventManager.RaiseEvent<T>(sender, args ?? EventArgs.Empty);
-        }
-
-        public static void RaiseEventFixed<T>(this object sender, EventArgs args = null, int millisecondsDelay = 0)
-            where T : IEventType
-        {
-            EventManager.RaiseEventFixed<T>(sender, args ?? EventArgs.Empty, millisecondsDelay);
-        }
-
-        public static void RaiseEvent<T, TEventArgs>(this object sender, TEventArgs args)
-            where T : IEventType<TEventArgs>
-            where TEventArgs : EventArgs
-        {
-            EventManager.RaiseEvent<T, TEventArgs>(sender, args);
-        }
-
-        public static async Task RaiseEventAsync<T>(this object sender, EventArgs args)
-        {
-            await EventManager.RaiseEventAsync<T>(sender, args);
-        }
-
-        public static async Task RaiseEventAsync<T, TEventArgs>(this object sender, EventArgs args)
-        {
-            await EventManager.RaiseEventAsync<T>(sender, args);
+            return Assembly.GetAssembly(t).GetTypes().Where(type => type.IsSubclassOf(t));
         }
     }
 }

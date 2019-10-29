@@ -78,7 +78,7 @@ namespace FIVE.UI.Multiplayers
             while (IsActive)
             {
                 float yOffset = 0f;
-                foreach (RoomInfo roomInfo in NetworkManager.GetRoomInfos)
+                foreach (RoomInfo roomInfo in /*NetworkManager.GetRoomInfos*/ new RoomInfo[]{})
                 {
                     if (info2Entry.ContainsKey(roomInfo))
                     {
@@ -128,22 +128,22 @@ namespace FIVE.UI.Multiplayers
                 passwordVM.IsActive = true;
                 Bind(passwordVM.ConfirmButton).To(() =>
                 {
-                    if (NetworkManager.TryJoinRoom(info.Guid, passwordVM.PasswordInputField.text))
-                    {
-                        passwordVM.IsActive = false;
-                    }
-                    else
-                    {
-                        //TODO:Popup wrong password
-                    }
+                    //if (NetworkManager.TryJoinRoom(info.Guid, passwordVM.PasswordInputField.text))
+                    //{
+                    //    passwordVM.IsActive = false;
+                    //}
+                    //else
+                    //{
+                    //    //TODO:Popup wrong password
+                    //}
                 });
             }
             else
             {
-                if (NetworkManager.TryJoinRoom(info.Guid))
-                {
-                    IsActive = false;
-                }
+                //if (NetworkManager.TryJoinRoom(info.Guid))
+                //{
+                //    IsActive = false;
+                //}
             }
         }
 
@@ -177,8 +177,8 @@ namespace FIVE.UI.Multiplayers
             string roomName = RoomNameInputField.text;
             int size = int.Parse(RoomSizeInputField.text);
             string password = PasswordInputField.text;
-            this.RaiseEvent<OnCreateRoomRequested>(
-                new CreateRoomRequestedEventArgs(roomName, password.Length != 0, password, size));
+            //this.RaiseEvent<OnCreateRoomRequested>(
+            //    new CreateRoomRequestedEventArgs(roomName, password.Length != 0, password, size));
             IsActive = false;
         }
     }

@@ -1,0 +1,17 @@
+{
+    "name": "FIVE.Network",
+    "references": [
+        "FIVE.EventSystem",
+        "FIVE.Utils",
+        "FIVE.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

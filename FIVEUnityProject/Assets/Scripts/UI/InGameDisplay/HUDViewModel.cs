@@ -1,11 +1,9 @@
-﻿using System;
-using FIVE.CameraSystem;
+﻿using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Robot;
 using FIVE.RobotComponents;
-using UnityEngine;
+using System;
 using UnityEngine.UI;
-using static FIVE.Util;
 
 namespace FIVE.UI.InGameDisplay
 {

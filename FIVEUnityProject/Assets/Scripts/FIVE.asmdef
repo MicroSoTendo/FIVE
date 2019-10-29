@@ -1,13 +1,17 @@
 {
     "name": "FIVE",
     "references": [
+        "FIVE.Utils",
+        "FIVE.EventSystem",
+        "FIVE.Collections",
+        "FIVE.Network",
         "MoonSharp",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": true,
+    "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],

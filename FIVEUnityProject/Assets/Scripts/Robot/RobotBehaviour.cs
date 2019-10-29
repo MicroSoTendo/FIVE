@@ -1,5 +1,4 @@
 ﻿using System;
-using FIVE.GameModes;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -14,6 +13,7 @@ namespace FIVE.Robot
         /// Update callbacks only happens on local player.
         /// </summary>
         protected Action OnLocalPlayerUpdate;
+
         protected Action OnUpdateGlobal;
 
         protected virtual void Awake()
@@ -29,7 +29,7 @@ namespace FIVE.Robot
         {
         }
 
-        protected virtual void Update()
+        protected virtual void FixedUpdate()
         {
             //if (Entry.CurrentMode == Entry.Mode.Multi && isLocalPlayer)
             //{
