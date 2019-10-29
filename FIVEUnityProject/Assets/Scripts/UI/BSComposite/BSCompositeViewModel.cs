@@ -1,6 +1,7 @@
-﻿using FIVE.Interactive.BlackSmith;
-using FIVE.UI.BlackSmith;
-using TMPro;
+﻿using FIVE.Interactive;
+using FIVE.Interactive.Blacksmith;
+using FIVE.Robot;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,68 +12,120 @@ namespace FIVE.UI.BSComposite
     {
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/Shop/BSComposite";
         protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
-        public Button Button1 { get; }
-        public Button Button2 { get; }
-        public Button Button3 { get; }
-        public Button Button4 { get; }
-        public Button Button5 { get; }
-        public Button Button6 { get; }
-        public Button Button7 { get; }
-        public Button Button8 { get; }
-        public Button Button9 { get; }
-        public Button Button10 { get; }
-        public Button Button11 { get; }
-        public Button Button12 { get; }
+        public GameObject Inventory { get; }
+        public GameObject Composite { get; }
+        public Button BackButton { get; }
+        private int[] emptyComposites;
+        private List<Button> inventoryButtons;
+        private List<Button> compositeButtons;
+        public override bool IsActive
+        {
+            get => base.IsActive;
+            set
+            {
+                base.IsActive = value;
+                if (value)
+                {
+                    UpdateInventory();
+                    ResetComposite();
+                }
+            }
+        }
 
         public BSCompositeViewModel() : base()
         {
-            Button1 = Get<Button>(nameof(Button1));
-            Bind(Button1).To(() =>OnButtonClickedComp(1));
-
-            Button2 = Get<Button>(nameof(Button2));
-            Bind(Button2).To(() => OnButtonClickedComp(2));
-
-            Button3 = Get<Button>(nameof(Button3));
-            Bind(Button3).To(() => OnButtonClickedComp(3));
-
-            Button4 = Get<Button>(nameof(Button4));
-            Bind(Button4).To(() => OnButtonClickedInv(4));
-
-            Button5 = Get<Button>(nameof(Button5));
-            Bind(Button5).To(() => OnButtonClickedInv(5));
-
-            Button6 = Get<Button>(nameof(Button6));
-            Bind(Button6).To(() => OnButtonClickedInv(6));
-
-            Button7 = Get<Button>(nameof(Button7));
-            Bind(Button7).To(() => OnButtonClickedInv(7));
-
-            Button8 = Get<Button>(nameof(Button8));
-            Bind(Button8).To(() => OnButtonClickedInv(8));
-
-            Button9 = Get<Button>(nameof(Button9));
-            Bind(Button9).To(() => OnButtonClickedInv(9));
-
-            Button10 = Get<Button>(nameof(Button10));
-            Bind(Button10).To(() => OnButtonClickedInv(10));
-
-            Button11 = Get<Button>(nameof(Button11));
-            Bind(Button11).To(() => OnButtonClickedInv(11));
-
-            Button12 = Get<Button>(nameof(Button12));
-            Bind(Button12).To(() => OnButtonClickedInv(12));
-
-
+            inventoryButtons = new List<Button>();
+            //Add inventory item buttons
+            Inventory = Get(nameof(Inventory));
+            foreach (Button button in Inventory.GetComponentsInChildren<Button>())
+            {
+                inventoryButtons.Add(button);
+                Bind(button).To(() => OnInventoryItemClicked(button));
+            }
+            compositeButtons = new List<Button>();
+            Composite = Get(nameof(Composite));
+            emptyComposites = new int[3] { 0, 0, 0 };
+            foreach (Button button in Composite.GetComponentsInChildren<Button>())
+            {
+                compositeButtons.Add(button);
+                Bind(button).To(() => OnCompositeButtonClicked(button));
+            }
+            BackButton = Get<Button>(nameof(BackButton));
+            Bind(BackButton).To(OnBackButtonClick);
         }
 
-        private void OnButtonClickedInv(int index)
+        private void OnCompositeButtonClicked(Button button)
         {
-            InventorySlotHolder a = new InventorySlotHolder();
-            a.SetParentInvToComp(index);
+            if (button.transform.childCount == 0)
+            {
+                return;
+            }
         }
-        private void OnButtonClickedComp(int index)
+
+        private void OnInventoryItemClicked(Button button)
         {
-            //BlackSmithGenerate.SetToInv();
+            if (button.transform.childCount == 0)
+            {
+                return;
+            }
+
+            GameObject item = button.transform.GetChild(0).gameObject;
+            Blacksmith.AddForComposite(RobotManager.ActiveRobot, item);
+            int count = 0; ;
+            while (count < compositeButtons.Count)
+            {
+                if (emptyComposites[count] == 0)
+                {
+                    item.SetParent(compositeButtons[count].transform);
+                    item.transform.localPosition = new Vector3(0, -37, 0);
+                    item.transform.localScale = new Vector3(7, 7, 7);
+                    break;
+                }
+            }
+            Blacksmith.AddForComposite(RobotManager.ActiveRobot, item);
         }
-    } //*/
+
+        private void ResetComposite()
+        {
+            foreach (Button button in compositeButtons)
+            {
+                if (button.transform.childCount > 0)
+                {
+                    GameObject go = button.transform.GetChild(0).gameObject;
+                    go.SetActive(false);
+                    GameObject.Destroy(go);
+                }
+            }
+        }
+        private void UpdateInventory()
+        {
+            foreach (Button button in inventoryButtons)
+            {
+                if (button.transform.childCount > 0)
+                {
+                    GameObject go = button.transform.GetChild(0).gameObject;
+                    go.SetActive(false);
+                    GameObject.Destroy(go);
+                }
+            }
+            Inventory inventory = InventoryManager.GetInventory(RobotManager.ActiveRobot);
+            if (inventory != null)
+            {
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    GameObject go = inventory.Items[i];
+                    var set = GameObject.Instantiate(go, inventoryButtons[i].transform);
+                    set.transform.localScale = new Vector3(7, 7, 7);
+                    set.transform.localPosition = new Vector3(0, -37, 0);
+                }
+            }
+        }
+
+        private void OnBackButtonClick()
+        {
+            ResetComposite();
+            IsActive = false;
+            Blacksmith.ResetList(RobotManager.ActiveRobot);
+        }
+    }
 }

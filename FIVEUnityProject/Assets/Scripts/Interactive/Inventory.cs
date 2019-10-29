@@ -65,10 +65,6 @@ namespace FIVE.Interactive
 
         public GameObject Owner { get; private set; }
 
-        public List<GameObject> ListItem
-        {
-            get => Items;
-        }
         public Inventory(GameObject owner)
         {
             Owner = owner;
