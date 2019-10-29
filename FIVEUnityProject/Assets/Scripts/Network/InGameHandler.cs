@@ -1,14 +1,65 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 using FIVE.Network.Serializers;
 using UnityEngine;
 
 namespace FIVE.Network
 {
-    public class InGameHandler
+    internal class InGameHandler : NetworkHandler
     {
+        /// <summary>
+        /// Tcp client used for connecting hosted game and syncing to server.
+        /// </summary>
+        private TcpClient client;
+
+        /// <summary>
+        /// Used by Host only
+        /// </summary>
+        private readonly Dictionary<int, TcpClient> connectedClients;
+
+        private Task inGameTask;
+        private CancellationTokenSource tokenSource;
+
+        public int UpdateRate { get; set; } = 30;
+        public InGameHandler()
+        {
+
+        }
+
+        
+
+
+        private void HostResolveComponentSync(int id, NetworkStream stream)
+        {
+        }
+
+        private void HostResolveNetworkCall(int id, NetworkStream stream)
+        {
+            ////Get next network call
+            //switch (stream.Read<PrimitiveCall>())
+            //{
+            //    case PrimitiveCall.CreateObject:
+            //        int resourceID = stream.ReadI32();
+            //        int syncComponentCount = stream.ReadI32();
+
+            //        break;
+            //    case PrimitiveCall.RemoveObject:
+            //        break;
+            //    default:
+            //        throw new ArgumentOutOfRangeException();
+            //}
+            ////Do the call at host first
+
+            ////Broadcast to other clients
+            //foreach (KeyValuePair<int, TcpClient> kvp in connectedClients.Where(kvp => kvp.Key != id))
+            //{
+            //}
+        }
         private IEnumerator InGameClientHandler(int id, TcpClient client)
         {
             NetworkStream stream = client.GetStream();
@@ -42,19 +93,19 @@ namespace FIVE.Network
             while (true)
             {
                 //Get client state
-                SyncHeader head = stream.Read<SyncHeader>();
-                if (head != 0)
-                {
-                    if (head == SyncHeader.NetworkCall)
-                    {
-                        //HostResolveNetworkCall(id, stream);
-                    }
+                //SyncHeader head = stream.Read<SyncHeader>();
+                //if (head != 0)
+                //{
+                //    if (head == SyncHeader.NetworkCall)
+                //    {
+                //        //HostResolveNetworkCall(id, stream);
+                //    }
 
-                    if (head == SyncHeader.ComponentSync)
-                    {
-                        //HostResolveComponentSync(id, stream);
-                    }
-                }
+                //    if (head == SyncHeader.ComponentSync)
+                //    {
+                //        //HostResolveComponentSync(id, stream);
+                //    }
+                //}
 
                 yield return null;
                 //toBeSynced.Add((id, SyncCenter.GetClientObjects(id)));
@@ -130,6 +181,11 @@ namespace FIVE.Network
             {
                 yield return null;
             }
+        }
+
+        protected override Task Handler()
+        {
+            throw new NotImplementedException();
         }
     }
 }

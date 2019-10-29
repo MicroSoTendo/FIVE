@@ -1,140 +1,144 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
-using UnityEngine;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FIVE.Network
 {
-    internal class LobbyHandler
+    internal class LobbyHandler : NetworkHandler
     {
-        public bool IsReceivingLobbyInfo { get; set; }
-        public int UpdateRate { get; set; } = 30;
-        private IEnumerator ReceiveLobbyInfo()
+        public readonly RoomInfo HostRoomInfo;
+        public ICollection<RoomInfo> GetRoomInfos => roomInfos.Values;
+        public RoomInfo this[Guid guid] => roomInfos[guid];
+        /// <summary>
+        /// Used for fetching room info from list server.
+        /// </summary>
+        private TcpClient listServerClient;
+        private MD5 md5;
+
+        /// <summary>
+        /// Stores all room infos fetched from list server.
+        /// </summary>
+        private readonly ConcurrentDictionary<Guid, RoomInfo> roomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
+        private readonly string listServer;
+        private readonly ushort listServerPort;
+
+        public LobbyHandler(string listServer, ushort listServerPort)
         {
-            while (IsReceivingLobbyInfo)
+            listServerClient = new TcpClient();
+            HostRoomInfo = new RoomInfo();
+            OnStart += LobbyHandlerOnStart;
+            this.listServer = listServer;
+            this.listServerPort = listServerPort;
+            md5 = MD5.Create();
+        }
+
+        protected override async Task Handler()
+        {
+            while (true)
             {
-                //while (!lobbyInfoClient.Connected)
-                //{
-                //    yield return new WaitForSeconds(1f / UpdateRate);
-                //}
-
-                //NetworkStream stream = lobbyInfoClient.GetStream();
-                //stream.Write(0); //Reserved header
-                //int count = stream.ReadI32();
-                //roomInfos.Clear();
-                //for (int i = 0; i < count; i++)
-                //{
-                //    byte[] roomInfoBuffer = new byte[stream.ReadI32()];
-                //    stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
-                //    var roomInfo = roomInfoBuffer.ToRoomInfo();
-                //    roomInfos.TryAdd(roomInfo.Guid, roomInfo);
-                //    yield return null;
-                //}
-
-                yield return new WaitForSeconds(15f / UpdateRate);
+                NetworkStream stream = listServerClient.GetStream();
+                stream.Write(ListServerCode.GetRoomInfos);
+                int roomCount = stream.ReadI32();
+                roomInfos.Clear();
+                for (int i = 0; i < roomCount; i++)
+                {
+                    byte[] roomInfoBuffer = new byte[stream.ReadI32()];
+                    stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
+                    var roomInfo = roomInfoBuffer.ToRoomInfo();
+                    roomInfos.TryAdd(roomInfo.Guid, roomInfo);
+                }
+                await Task.Delay(1000 / UpdateRate);
             }
         }
 
-        //public static ICollection<RoomInfo> GetRoomInfos => roomInfos.Values;
-
-        public static bool TryJoinRoom(Guid roomGuid, string password = "")
+        private void LobbyHandlerOnStart()
         {
-            //if (roomInfos.TryGetValue(roomGuid, out RoomInfo roomInfo))
-            //{
-            //    gameClient = new TcpClient();
-            //    gameClient.Connect(roomInfo.Host.ToString(), roomInfo.Port);
-            //    return HandShakeToServer(gameClient, roomInfo.HasPassword, password);
-            //}
-
-            return false;
+            listServerClient.Connect(listServer, listServerPort);
         }
 
-        public static void CreateRoom(string name, int maxPlayers, ushort port = 8889, bool hasPassword = false,
-            string password = "")
+
+        public void CreateRoom()
         {
-            //hostRoomInfo.CurrentPlayers = 1; //Host self
-            //hostRoomInfo.Name = name;
-            //hostRoomInfo.MaxPlayers = maxPlayers;
-            //hostRoomInfo.Port = port;
-            //hostRoomInfo.HasPassword = hasPassword;
-            //roomPassword = password;
-            //if (hostInfoClient.Connected)
-            //{
-            //    NetworkStream stream = hostInfoClient.GetStream();
-            //    stream.Write(OpCode.CreateRoom);
-            //    stream.Write(hostRoomInfo);
-            //    hostRoomInfo.Guid = stream.ReadGuid();
-            //    gameServer = new TcpListener(IPAddress.Loopback, hostRoomInfo.Port);
-            //    gameServer.Start();
-            //    State = NetworkManager.NetworkState.Host;
-            //    StartCoroutine(Host());
-            //}
+            if (!listServerClient.Connected)
+            {
+                return;
+            }
+            NetworkStream stream = listServerClient.GetStream();
+            stream.Write(ListServerCode.CreateRoom);
+            stream.Write(HostRoomInfo);
+            HostRoomInfo.Guid = stream.ReadGuid();
         }
 
-        public static void RemoveRoom()
+
+
+        public void RemoveRoom()
         {
-            //if (hostInfoClient.Connected)
-            //{
-            //    NetworkStream stream = hostInfoClient.GetStream();
-            //    stream.Write(OpCode.RemoveRoom);
-            //    stream.Write(hostRoomInfo.Guid);
-            //    gameServer.Stop();
-            //    State = NetworkManager.NetworkState.Idle;
-            //}
+            if (!listServerClient.Connected)
+            {
+                return;
+            }
+            NetworkStream stream = listServerClient.GetStream();
+            stream.Write(ListServerCode.RemoveRoom);
+            stream.Write(HostRoomInfo.Guid);
         }
 
-        private static void UpdateRoomInfo(OpCode code)
+        private void UpdateRoomInfo(ListServerCode code)
         {
-            //if (lobbyInfoClient.Connected)
-            //{
-            //    NetworkStream stream = hostInfoClient.GetStream();
-            //    code |= OpCode.UpdateRoom;
-            //    stream.Write(code);
-            //    stream.Write(hostRoomInfo.Guid);
-            //    switch (code)
-            //    {
-            //        case OpCode.UpdateName:
-            //            stream.Write(hostRoomInfo.Name);
-            //            break;
-            //        case OpCode.UpdateCurrentPlayer:
-            //            stream.Write(hostRoomInfo.CurrentPlayers);
-            //            break;
-            //        case OpCode.UpdateMaxPlayer:
-            //            stream.Write(hostRoomInfo.MaxPlayers);
-            //            break;
-            //        case OpCode.UpdatePassword:
-            //            stream.Write(hostRoomInfo.HasPassword);
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //}
+            if (listServerClient.Connected)
+            {
+                NetworkStream stream = listServerClient.GetStream();
+                code |= ListServerCode.UpdateRoom;
+                stream.Write(code);
+                stream.Write(HostRoomInfo.Guid);
+                switch (code)
+                {
+                    case ListServerCode.UpdateName:
+                        stream.Write(HostRoomInfo.Name);
+                        break;
+                    case ListServerCode.UpdateCurrentPlayer:
+                        stream.Write(HostRoomInfo.CurrentPlayers);
+                        break;
+                    case ListServerCode.UpdateMaxPlayer:
+                        stream.Write(HostRoomInfo.MaxPlayers);
+                        break;
+                    case ListServerCode.UpdatePassword:
+                        stream.Write(HostRoomInfo.HasPassword);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        public static void UpdateRoomName(string name)
+        public void UpdateRoomName(string name)
         {
-            //hostRoomInfo.Name = name;
-            UpdateRoomInfo(OpCode.UpdateName | OpCode.UpdateRoom);
+            HostRoomInfo.Name = name;
+            UpdateRoomInfo(ListServerCode.UpdateName);
         }
 
-        public static void UpdateCurrentPlayers(int current)
+        public void UpdateCurrentPlayers(int current)
         {
-            //hostRoomInfo.CurrentPlayers = current;
-            UpdateRoomInfo(OpCode.UpdateCurrentPlayer | OpCode.UpdateRoom);
+            HostRoomInfo.CurrentPlayers = current;
+            UpdateRoomInfo(ListServerCode.UpdateCurrentPlayer);
         }
 
-        public static void UpdateMaxPlayers(int max)
+        public void UpdateMaxPlayers(int max)
         {
-            //hostRoomInfo.MaxPlayers = max;
-            UpdateRoomInfo(OpCode.UpdateMaxPlayer | OpCode.UpdateRoom);
+            HostRoomInfo.MaxPlayers = max;
+            UpdateRoomInfo(ListServerCode.UpdateMaxPlayer);
         }
 
-        public static void UpdatePassword(bool hasPassword, string password)
+        public void UpdatePassword(bool hasPassword, string password)
         {
-            //hostRoomInfo.HasPassword = hasPassword;
-            UpdateRoomInfo(OpCode.UpdatePassword | OpCode.UpdateRoom);
+            HostRoomInfo.HasPassword = hasPassword;
+            if (hasPassword)
+                HostRoomInfo.SetRoomPassword(password);
+            UpdateRoomInfo(ListServerCode.UpdatePassword);
         }
+
     }
 }

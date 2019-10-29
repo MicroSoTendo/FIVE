@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FIVE.Network
 {
-    public struct RoomInfo
+    public class RoomInfo
     {
         public Guid Guid { get; set; }
         public int CurrentPlayers { get; set; }
@@ -11,16 +13,12 @@ namespace FIVE.Network
         public int Host { get; set; }
         public ushort Port { get; set; }
         public string Name { get; set; }
-
-        public RoomInfo(Guid guid, int currentPlayers, int maxPlayers, bool hasPassword, int host, ushort port, string name)
+        public byte[] HashedPassword { get; private set; }
+        public void SetRoomPassword(string newPassword)
         {
-            Guid = guid;
-            CurrentPlayers = currentPlayers;
-            MaxPlayers = maxPlayers;
-            HasPassword = hasPassword;
-            Host = host;
-            Port = port;
-            Name = name;
+            HashedPassword = Md5.ComputeHash(Encoding.UTF8.GetBytes(newPassword));
         }
+
+        private static readonly MD5 Md5 = MD5.Create();
     }
 }

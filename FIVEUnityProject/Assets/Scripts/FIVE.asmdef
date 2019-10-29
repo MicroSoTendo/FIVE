@@ -1,10 +1,10 @@
 {
     "name": "FIVE",
     "references": [
-        "FIVE.EventSystem",
         "FIVE.Utils",
-        "FIVE.Network",
+        "FIVE.EventSystem",
         "FIVE.Collections",
+        "FIVE.Network",
         "MoonSharp",
         "Unity.TextMeshPro"
     ],

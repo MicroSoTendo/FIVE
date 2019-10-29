@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -53,7 +54,7 @@ namespace FIVE.Network
             int host = bytes.ToI32(25);
             ushort port = bytes.ToU16(29);
             string name = bytes.ToName(31);
-            return new RoomInfo(guid, currentPlayers, maxPlayers, hasPassword, host, port, name);
+            return new RoomInfo { Guid = guid, CurrentPlayers = currentPlayers, MaxPlayers = maxPlayers, HasPassword = hasPassword, Host = host, Port = port, Name = name };
         }
 
         public static byte[] ToBytes(this int i)
@@ -95,6 +96,11 @@ namespace FIVE.Network
             return BitConverter.GetBytes(value);
         }
 
+        public static byte[] ToBytes<T>(this T value) where T: unmanaged, Enum
+        {
+            return BitConverter.GetBytes(Unsafe.As<T, int>(ref value));
+        }
+
         public static byte[] ToBytes(this RoomInfo roomInfo)
         {
             byte[] currentPlayers = roomInfo.CurrentPlayers.ToBytes();
@@ -133,6 +139,37 @@ namespace FIVE.Network
                 offset += array.Length;
             }
             return rv;
+        }
+
+        public static void CopyFrom(this byte[] source, byte[] arr1, byte[] arr2)
+        {
+            Buffer.BlockCopy(arr1, 0, source, 0, arr1.Length);
+            Buffer.BlockCopy(arr2, 0, source, arr1.Length, arr2.Length);
+        }      
+        
+        public static void CopyFrom(this byte[] source, byte[] arr1, byte[] arr2, byte[] arr3)
+        {
+            Buffer.BlockCopy(arr1, 0, source, 0, arr1.Length);
+            Buffer.BlockCopy(arr2, 0, source, arr1.Length, arr2.Length);
+            Buffer.BlockCopy(arr3, 0, source, arr1.Length + arr2.Length, arr3.Length);
+        }
+        public static unsafe void CopyFromUnsafe(this byte[] source, byte[] arr1, byte[] arr2)
+        {
+            fixed (byte* parr1 = arr1, parr2 = arr2, dest = source)
+            {
+                Unsafe.CopyBlock(ref (*dest), ref (*parr1), (uint)arr1.Length);
+                Unsafe.CopyBlock(ref (*(dest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
+            }
+        }
+
+        public static unsafe void CopyFromUnsafe(this byte[] source, byte[] arr1, byte[] arr2, byte[] arr3)
+        {
+            fixed (byte* parr1 = arr1, parr2 = arr2, parr3 = arr3, dest = source)
+            {
+                Unsafe.CopyBlock(ref (*dest), ref (*parr1), (uint)arr1.Length);
+                Unsafe.CopyBlock(ref (*(dest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
+                Unsafe.CopyBlock(ref (*(dest + arr1.Length + arr2.Length)), ref (*parr3), (uint)arr3.Length);
+            }
         }
 
         public static bool Equals(this byte[] arr1, byte[] arr2)
@@ -213,6 +250,57 @@ namespace FIVE.Network
         public static T Read<T>(this NetworkStream stream) where T : Enum
         {
             return (T)(object)stream.ReadI32();
+        }
+
+        
+        public static unsafe bool BytesCompare(byte[] a1, int a1StartIdx, byte[] a2, int a2StartIdx, int length)
+        {
+            //Validation
+            if (a1 == null || a2 == null || a1.Length < a1StartIdx + length || a2.Length < a2StartIdx + length)
+            {
+                return false;
+            }
+            //Pin memory
+            fixed (byte* p1 = a1, p2 = a2)
+            {
+                //Offset pointer by starting index
+                byte* x1 = p1 + a1StartIdx, x2 = p2 + a2StartIdx;
+                //Compare 8 bytes by 8 bytes
+                for (int i = 0; i < length / 8; i++, x1 += 8, x2 += 8)
+                {
+                    if (*(long*)x1 != *(long*)x2)
+                    {
+                        return false;
+                    }
+                }
+                //Compare remaining bytes
+                if ((length & 4) != 0)
+                {
+                    if (*((int*)x1) != *((int*)x2))
+                    {
+                        return false;
+                    } 
+                    x1 += 4; 
+                    x2 += 4;
+                }
+
+                if ((length & 2) != 0)
+                {
+                    if (*(short*)x1 != *(short*)x2)
+                    {
+                        return false;
+                    } 
+                    x1 += 2; 
+                    x2 += 2;
+                }
+
+                if ((length & 1) == 0)
+                {
+                    return true;
+                }
+
+                return *x1 == *x2;
+            }
         }
 
     }

@@ -25,8 +25,8 @@ namespace FIVE.GameModes
         {
             lobbyWindow = UIManager.Create<LobbyWindowViewModel>();
             lobbyWindow.IsActive = true;
-            EventManager.Subscribe<OnCreateRoomRequested, CreateRoomRequestedEventArgs>(CreateRoomHandler);
-            EventManager.Subscribe<OnJoinRoomRequested>(JoinRoomHandler);
+            //EventManager.Subscribe<OnCreateRoomRequested, CreateRoomRequestedEventArgs>(CreateRoomHandler);
+            //EventManager.Subscribe<OnJoinRoomRequested>(JoinRoomHandler);
         }
 
         private IEnumerator CommonInitRoutine()
@@ -68,7 +68,7 @@ namespace FIVE.GameModes
             yield return null;
         }
 
-        private void CreateRoomHandler(object sender, CreateRoomRequestedEventArgs e)
+        private void CreateRoomHandler(object sender, EventArgs e)
         {
             //NetworkManager.CreateRoom(e.Name, e.MaxPlayer, hasPassword: e.HasPassword, password: e.Password);
             StartCoroutine(HostInitRoutine());
