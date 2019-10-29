@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -29,6 +27,7 @@ namespace FIVE.Network
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 int clientID = await handShaker.HandShakeAsync(client);
                 clients.TryAdd(clientID, client);
+                InGameHandler.CreateHost(client);
                 //TODO: Fix above async
                 //TOOD: Start ingame handler
             }

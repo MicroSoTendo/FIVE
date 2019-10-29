@@ -7,6 +7,7 @@ namespace FIVE.Network
     {
         private readonly TcpClient client;
         private readonly HandShaker handShaker;
+        private InGameHandler inGameHandler;
         /// <summary>
         /// Client ID fetched from host after connected successfully.
         /// </summary>
@@ -22,7 +23,8 @@ namespace FIVE.Network
             if (clientID != -1)
             {
                 AssignedClientID = clientID;
-                //TODO: Start ingame client handler
+                inGameHandler = InGameHandler.CreateClient(client);
+                inGameHandler.Start();
             }
         }
     }
