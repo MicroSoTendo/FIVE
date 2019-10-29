@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -29,19 +32,20 @@ namespace FIVE.Network
             Client,
         }
 
-        private static NetworkManager instance;
+        public static NetworkManager Instance { get; private set; }
         [SerializeField] private string listServer;
         [SerializeField] private ushort listServerPort;
         [SerializeField] private int updateRate = 30;
-
         [SerializeField] private ushort gameServerPort = 8889;
         public NetworkState State { get; private set; } = NetworkState.Idle;
         private LobbyHandler lobbyHandler;
         private NetworkHandler inGameHandler;
+        private ConcurrentQueue<NetworkRequest> requests;
         public void Awake()
         {
-            Assert.IsNull(instance);
-            instance = this;
+            Assert.IsNull(Instance);
+            Instance = this;
+            requests = new ConcurrentQueue<NetworkRequest>();
             lobbyHandler = new LobbyHandler(listServer, listServerPort);
         }
 
@@ -54,7 +58,7 @@ namespace FIVE.Network
         {
             RoomInfo roomInfo = lobbyHandler[guid];
             roomInfo.SetRoomPassword(password);
-            inGameHandler = new ClientHandler(new TcpClient(), 
+            inGameHandler = new ClientHandler(new TcpClient(),
                 HandShaker.GetClientHandShaker(roomInfo));
             inGameHandler.Start();
         }
@@ -69,9 +73,43 @@ namespace FIVE.Network
             if (hasPassword)
                 roomInfo.SetRoomPassword(password);
             lobbyHandler.CreateRoom();
-            inGameHandler = new HostHandler(new TcpListener(IPAddress.Loopback, gameServerPort), 
+            inGameHandler = new HostHandler(new TcpListener(IPAddress.Loopback, gameServerPort),
                 HandShaker.GetHostHandShaker(lobbyHandler.HostRoomInfo));
             inGameHandler.Start();
         }
+
+        public void Submit(NetworkRequest request)
+        {
+            requests.Enqueue(request);
+        }
+
+        private IEnumerator ResolveRequest(NetworkRequest request)
+        {
+            while (true)
+            {
+                switch (request)
+                {
+                    case CreateObject createObject:
+                        
+                        break;
+                    case RemoveObject removeObject:
+                        break;
+                }
+                yield return null;
+            }
+        }
+
+
+        public void Update()
+        {
+            while (requests.Count > 0)
+            {
+                requests.TryDequeue(out NetworkRequest request);
+                StartCoroutine(ResolveRequest(request));
+            }
+        }
+
+
+
     }
 }
