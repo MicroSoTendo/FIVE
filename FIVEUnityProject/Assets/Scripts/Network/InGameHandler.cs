@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using FIVE.Network.Serializers;
 using UnityEngine;
-
+using static FIVE.Network.NetworkUtil;
 namespace FIVE.Network
 {
     internal abstract class InGameHandler : NetworkHandler
@@ -19,6 +20,7 @@ namespace FIVE.Network
             return new GameHost(client);
         }
 
+
         private class GameHost : InGameHandler
         {
             private readonly TcpClient client;
@@ -31,81 +33,24 @@ namespace FIVE.Network
             {
                 NetworkStream stream = client.GetStream();
                 //Phase 1: send all existed objects
-                GameObject[] networkedGameObjects = default;
-                stream.Write(networkedGameObjects.Length);
+                ICollection<GameObject> networkedGameObjects = SyncCenter.Instance.GameObjectToSyncedComponents.Keys;
+                stream.Write(networkedGameObjects.Count);
                 foreach (GameObject networkedGameObject in networkedGameObjects)
                 {
-                    //stream.Write(SyncCenter.GetResourceID(networkedGameObject));
-                    //List<object> list = SyncCenter.GetSynchronizedComponent(networkedGameObject);
-                    List<object> list = default;
-                    stream.Write(list.Count);
-                    foreach (object o in list)
-                    {
-                        switch (o)
-                        {
-                            case Transform t:
-                                stream.Write(ComponentType.Transform);
-                                Serializer.Get<Transform>().Serialize(t, out byte[] transformBytes);
-                                stream.Write(transformBytes);
-                                break;
-                            case Animator animator:
-                                break;
-                        }
-                    }
+                    List<Component> components = SyncCenter.Instance.GameObjectToSyncedComponents[networkedGameObject];
+                    int prefabID = PrefabPool.Instance[networkedGameObject];
+                    int count = components.Count;
+                    //TODO: Move buffer calculation into serializer
+                    int componentBufferSize = components.Sum(component => Serializer.GetSize(component.GetType()));
+                    stream.Write(GetBytes(prefabID, count, componentBufferSize));
+                    byte[] buffer = new byte[componentBufferSize + sizeof(int) * count];
+                    Serializer.Serialize(components, buffer);
+                    stream.Write(buffer);
                 }
 
                 //Phase 2: do sync
                 while (true)
                 {
-                    //Get client state
-                    //SyncHeader head = stream.Read<SyncHeader>();
-                    //if (head != 0)
-                    //{
-                    //    if (head == SyncHeader.NetworkCall)
-                    //    {
-                    //        //HostResolveNetworkCall(id, stream);
-                    //    }
-
-                    //    if (head == SyncHeader.ComponentSync)
-                    //    {
-                    //        //HostResolveComponentSync(id, stream);
-                    //    }
-                    //}
-
-                    //toBeSynced.Add((id, SyncCenter.GetClientObjects(id)));
-                    //Make sure collected all component sync and call
-                    //while (toBeSynced.Count < ConnectedClients.Count)
-                    //{
-                    //    yield return null;
-                    //}
-
-                    //Do passive sync broadcasting
-                    foreach ((int clientId, List<GameObject> gameObjects) in /*toBeSynced*/ new (int clientId, List<GameObject> gameObjects)[] { })
-                    {
-                        //if (clientId == id) //exclude ifself
-                        //{
-                        //    continue;
-                        //}
-
-                        foreach (GameObject go in gameObjects)
-                        {
-                            foreach (object o in new object[] { } /* SyncCenter.GetSynchronizedComponent(go)*/)
-                            {
-                                switch (o)
-                                {
-                                    case Transform t:
-
-                                        Serializer.Get<Transform>().Serialize(t, out byte[] transformBytes);
-                                        stream.Write(ComponentType.Transform);
-                                        stream.Write(transformBytes);
-                                        break;
-                                    case Animator a:
-                                        break;
-                                }
-                            }
-                        }
-                    }
-
                 }
             }
         }
@@ -124,25 +69,14 @@ namespace FIVE.Network
                 int count = stream.ReadI32();
                 for (int i = 0; i < count; i++)
                 {
-                    int resourceID = stream.ReadI32();
-                    GameObject prefab = PrefabPool.Instance[resourceID];
-                    int componentCount = stream.ReadI32();
-                    for (int j = 0; j < componentCount; j++)
-                    {
-                        ComponentType componentType = stream.Read<ComponentType>();
-                        switch (componentType)
-                        {
-                            case ComponentType.Transform:
-                                byte[] transformBuffer = stream.Read(3 * 4 * 2);
-                                //Serializer.Get<Transform>().Deserialize(transformBuffer, go.transform);
-                                break;
-                            case ComponentType.Animator:
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
-
+                    byte[] buffer = stream.Read(sizeof(int) * 3);
+                    int prefabID = buffer.ToI32();
+                    int componentCount = buffer.ToI32(sizeof(int));
+                    int componentBufferSize = buffer.ToI32(sizeof(int) * 2);
+                    // ComponentType|ComponentData - ComponentType|ComponentData - ...
+                    byte[] componentBuffer = stream.Read(componentBufferSize);
+                    NetworkRequest networkRequest = new CreateObject(prefabID, -1, componentBuffer, ActionScope.Local);
+                    NetworkManager.Instance.Submit(networkRequest);
                 }
 
                 //Phase 2: do sync
@@ -151,34 +85,6 @@ namespace FIVE.Network
                 }
 
             }
-        }
-
-
-        private void HostResolveComponentSync(int id, NetworkStream stream)
-        {
-        }
-
-        private void HostResolveNetworkCall(int id, NetworkStream stream)
-        {
-            ////Get next network call
-            //switch (stream.Read<PrimitiveCall>())
-            //{
-            //    case PrimitiveCall.CreateObject:
-            //        int resourceID = stream.ReadI32();
-            //        int syncComponentCount = stream.ReadI32();
-
-            //        break;
-            //    case PrimitiveCall.RemoveObject:
-            //        break;
-            //    default:
-            //        throw new ArgumentOutOfRangeException();
-            //}
-            ////Do the call at host first
-
-            ////Broadcast to other clients
-            //foreach (KeyValuePair<int, TcpClient> kvp in connectedClients.Where(kvp => kvp.Key != id))
-            //{
-            //}
         }
     }
 }
