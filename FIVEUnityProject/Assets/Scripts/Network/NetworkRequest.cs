@@ -17,14 +17,16 @@ namespace FIVE.Network
     {
         public int PrefabID { get; }
         public int Parent { get; }
-        public byte[] ComponentBuffer { get; }
+        public int ComponentCount { get; }
+        public byte[] ComponentData { get; }
         public ActionScope Scope { get; }
-        public CreateObject(int prefabID, int parent, byte[] componentBuffer, ActionScope scope)
+        public CreateObject(int prefabID, int parent,  int componentCount, byte[] componentData, ActionScope scope)
         {
             PrefabID = prefabID;
             Parent = parent;
-            ComponentBuffer = componentBuffer;
+            ComponentData = componentData;
             Scope = scope;
+            ComponentCount = componentCount;
         }
     }
 

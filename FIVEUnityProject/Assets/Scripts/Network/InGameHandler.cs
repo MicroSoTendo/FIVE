@@ -20,7 +20,6 @@ namespace FIVE.Network
             return new GameHost(client);
         }
 
-
         private class GameHost : InGameHandler
         {
             private readonly TcpClient client;
@@ -39,12 +38,10 @@ namespace FIVE.Network
                 {
                     List<Component> components = SyncCenter.Instance.GameObjectToSyncedComponents[networkedGameObject];
                     int prefabID = PrefabPool.Instance[networkedGameObject];
-                    int count = components.Count;
-                    //TODO: Move buffer calculation into serializer
-                    int componentBufferSize = components.Sum(component => Serializer.GetSize(component.GetType()));
-                    stream.Write(GetBytes(prefabID, count, componentBufferSize));
-                    byte[] buffer = new byte[componentBufferSize + sizeof(int) * count];
-                    Serializer.Serialize(components, buffer);
+                    int componentsCount = components.Count;
+                    int componentsBufferSize = SyncCenter.Instance.SyncedObjectBufferSize[networkedGameObject];
+                    Serializer.Serialize(components, out byte[] buffer);
+                    stream.Write(ToBytes(prefabID, componentsCount, componentsBufferSize));
                     stream.Write(buffer);
                 }
 
@@ -69,13 +66,13 @@ namespace FIVE.Network
                 int count = stream.ReadI32();
                 for (int i = 0; i < count; i++)
                 {
-                    byte[] buffer = stream.Read(sizeof(int) * 3);
+                    byte[] buffer = stream.Read(12);
                     int prefabID = buffer.ToI32();
-                    int componentCount = buffer.ToI32(sizeof(int));
-                    int componentBufferSize = buffer.ToI32(sizeof(int) * 2);
+                    int componentCount = buffer.ToI32(4);
+                    int componentBufferSize = buffer.ToI32(8);
                     // ComponentType|ComponentData - ComponentType|ComponentData - ...
-                    byte[] componentBuffer = stream.Read(componentBufferSize);
-                    NetworkRequest networkRequest = new CreateObject(prefabID, -1, componentBuffer, ActionScope.Local);
+                    byte[] componentData = stream.Read(componentBufferSize);
+                    NetworkRequest networkRequest = new CreateObject(prefabID, -1, componentCount, componentData, ActionScope.Local);
                     NetworkManager.Instance.Submit(networkRequest);
                 }
 

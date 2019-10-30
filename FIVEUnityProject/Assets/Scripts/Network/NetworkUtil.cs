@@ -62,7 +62,7 @@ namespace FIVE.Network
             return BitConverter.GetBytes(i);
         }
 
-        public static unsafe byte[] GetBytes(int a, int b)
+        public static unsafe byte[] ToBytes(int a, int b)
         {
             byte[] buffer = new byte[8];
             fixed (byte* numPtr = buffer)
@@ -73,7 +73,7 @@ namespace FIVE.Network
             return buffer;
         }        
         
-        public static unsafe byte[] GetBytes(int a, int b, int c)
+        public static unsafe byte[] ToBytes(int a, int b, int c)
         {
             byte[] buffer = new byte[12];
             fixed (byte* numPtr = buffer)
@@ -182,6 +182,15 @@ namespace FIVE.Network
             fixed (byte* parr1 = arr1, pdest = dest)
             {
                 Unsafe.CopyBlock(ref *(pdest + destStartIndex), ref (*parr1), (uint)arr1.Length);
+            }
+        }        
+        
+        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2, int destStartIndex = 0)
+        {
+            fixed (byte* parr1 = arr1, parr2 = arr2, pdest = dest)
+            {
+                Unsafe.CopyBlock(ref *(pdest + destStartIndex), ref (*parr1), (uint)arr1.Length);
+                Unsafe.CopyBlock(ref *(pdest + destStartIndex + arr1.Length), ref (*parr2), (uint)arr2.Length);
             }
         }
 
