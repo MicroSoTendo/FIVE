@@ -14,7 +14,7 @@ namespace FIVE.Network
         //Used only if host
         public ConcurrentDictionary<int, List<GameObject>> ClientID2GameObjects { get; } = new ConcurrentDictionary<int, List<GameObject>>();
         public ConcurrentDictionary<GameObject, int> GameObject2ClientsID { get; } = new ConcurrentDictionary<GameObject, int>();
-
+        public ConcurrentDictionary<GameObject, List<Component>> GameObjectToSyncedComponents { get; } = new ConcurrentDictionary<GameObject, List<Component>>();
 
         public List<Component> SyncedComponentsOwned { get; } = new List<Component>();
         public List<Component> SyncedComponentsRemote { get; } = new List<Component>();

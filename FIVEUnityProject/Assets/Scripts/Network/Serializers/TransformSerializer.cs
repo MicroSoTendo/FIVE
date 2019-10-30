@@ -1,8 +1,17 @@
 ﻿using UnityEngine;
 namespace FIVE.Network.Serializers
 {
-    public class TransformSerializer : Serializer<Transform>
+    public sealed class TransformSerializer : Serializer<Transform>
     {
+
+        static TransformSerializer()
+        {
+            Instance = new TransformSerializer();
+            SerializedSizes.Add(typeof(Transform), 24);
+        }
+
+        private TransformSerializer() { }
+
         public override void Deserialize(in byte[] bytes, Transform obj)
         {
             Vector3 eulerAngles = bytes.ToVector3();
