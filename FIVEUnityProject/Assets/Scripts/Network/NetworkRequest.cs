@@ -16,17 +16,17 @@ namespace FIVE.Network
     public class CreateObject : NetworkRequest
     {
         public int PrefabID { get; }
-        public Vector3 Position { get; }
-        public Vector3 Rotation { get; }
         public int Parent { get; }
+        public int ComponentCount { get; }
+        public byte[] ComponentData { get; }
         public ActionScope Scope { get; }
-        public CreateObject(int prefabID, Vector3 position, Vector3 rotation, int parent, ActionScope scope)
+        public CreateObject(int prefabID, int parent,  int componentCount, byte[] componentData, ActionScope scope)
         {
             PrefabID = prefabID;
-            Position = position;
-            Rotation = rotation;
             Parent = parent;
+            ComponentData = componentData;
             Scope = scope;
+            ComponentCount = componentCount;
         }
     }
 
@@ -40,6 +40,14 @@ namespace FIVE.Network
         public int NetworkID { get; }
     }
 
+    public class SyncObject : NetworkRequest
+    {
 
+    }
+
+    public class FunctionCall : NetworkRequest
+    {
+
+    }
 
 }

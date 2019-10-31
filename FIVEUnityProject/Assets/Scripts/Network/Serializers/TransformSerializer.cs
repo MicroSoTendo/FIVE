@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 namespace FIVE.Network.Serializers
 {
-    public class TransformSerializer : Serializer<Transform>
+    public static class TransformSerialize
     {
-        public override void Deserialize(in byte[] bytes, Transform obj)
+        public static int GetSize(this Serializer<Transform> transform) => 24;
+
+        public static void Deserialize(this Serializer<Transform> transform, in byte[] bytes, Transform obj)
         {
             Vector3 eulerAngles = bytes.ToVector3();
             Vector3 position = bytes.ToVector3(12);
@@ -11,9 +13,9 @@ namespace FIVE.Network.Serializers
             obj.position = position;
         }
 
-        public override void Serialize(in Transform obj, out byte[] bytes)
+        public static void Serialize(this Serializer<Transform> transform, in Transform obj, in byte[] bytes, int startIndex = 0)
         {
-            bytes = NetworkUtil.Combine(obj.eulerAngles.ToBytes(), obj.position.ToBytes());
+            bytes.CopyFromUnsafe(obj.eulerAngles.ToBytes(), obj.position.ToBytes(), startIndex);
         }
     }
 }

@@ -1,31 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using static FIVE.Util;
+﻿using System.Collections.Generic;
+using UnityEngine;
 namespace FIVE.Network.Serializers
 {
-    public abstract class Serializer 
+    public abstract class Serializer
     {
-        private static readonly Dictionary<Type, Serializer> Serializers = new Dictionary<Type, Serializer>();
-        static Serializer()
+        public static void Serialize(List<Component> components, out byte[] bytes)
         {
-            foreach (Type type in GetDerived(typeof(Serializer)))
+            int offset = 0;
+            bytes = new byte[GetTotalSize(components)];
+            foreach (Component component in components)
             {
-                Type componentType = type.BaseType.GenericTypeArguments[0];
-                Serializers.Add(componentType, type.GetConstructor(Type.EmptyTypes).Invoke(null) as Serializer);
+                DoSerialize(component, bytes, ref offset);
             }
         }
 
-        public static Serializer<T> Get<T>()
+        public static int GetTotalSize(List<Component> components)
         {
-            return (Serializer<T>)Serializers[typeof(T)];
+            int result = 0;
+            foreach (Component component in components)
+            {
+                switch (component)
+                {
+                    case Transform _:
+                        result += Serializer<Transform>.Instance.GetSize();
+                        break;
+                }
+            }
+            return result;
         }
-        
+
+        private static void DoSerialize<T>(T obj, byte[] bytes, ref int offset)
+        {
+            switch (obj)
+            {
+                case Transform transform:
+                    bytes.CopyFromUnsafe(ComponentType.Transform.ToBytes());
+                    offset += 4;
+                    Serializer<Transform>.Instance.Serialize(transform, bytes, offset);
+                    offset += Serializer<Transform>.Instance.GetSize();
+                    break;
+            }
+        }
     }
 
-    public abstract class Serializer<T> : Serializer
+    public sealed class Serializer<T> : Serializer
     {
-        public abstract void Serialize(in T obj, out byte[] bytes);
-        public abstract void Deserialize(in byte[] bytes, T obj);
-        
+        public static Serializer<T> Instance { get; } = new Serializer<T>();
+        private Serializer() { }
     }
 }

@@ -7,9 +7,15 @@ public class Bullet : MonoBehaviour
 {
     public Vector3 Target
     {
-        get;
-        set;
+        get { return _target; }
+        set
+        {
+            _target = value;
+            transform.forward = Vector3.Normalize(_target - transform.position);
+        }
     }
+
+    private Vector3 _target;
 
     private float elapsedTime;
 
@@ -20,6 +26,7 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(transform.forward);
         elapsedTime += Time.deltaTime;
         if (elapsedTime > 3.0f)
         {
@@ -29,7 +36,6 @@ public class Bullet : MonoBehaviour
         {
             if (Target != null)
             {
-                transform.forward = Vector3.Normalize(Target - transform.position);
                 transform.Translate(transform.forward * 1.0f);
             }
         }

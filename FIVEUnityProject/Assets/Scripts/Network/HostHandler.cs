@@ -8,7 +8,7 @@ namespace FIVE.Network
     {
         private readonly TcpListener listener;
         private readonly HandShaker handShaker;
-        private readonly ConcurrentDictionary<int, TcpClient> clients = new ConcurrentDictionary<int, TcpClient>();
+        private readonly ConcurrentDictionary<int, (TcpClient, InGameHandler)> clients = new ConcurrentDictionary<int, (TcpClient, InGameHandler)>();
         public HostHandler(TcpListener listener, HandShaker handShaker)
         {
             this.listener = listener;
@@ -25,11 +25,10 @@ namespace FIVE.Network
             while (true)
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
-                int clientID = await handShaker.HandShakeAsync(client);
-                clients.TryAdd(clientID, client);
-                InGameHandler.CreateHost(client);
-                //TODO: Fix above async
-                //TOOD: Start ingame handler
+                int id = await handShaker.HandShakeAsync(client);
+                var inGameHandler = InGameHandler.CreateHost(client);
+                clients.TryAdd(id, (client, inGameHandler));
+                inGameHandler.Start();
             }
         }
 

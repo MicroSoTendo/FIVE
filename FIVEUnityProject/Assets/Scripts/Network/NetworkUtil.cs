@@ -62,6 +62,29 @@ namespace FIVE.Network
             return BitConverter.GetBytes(i);
         }
 
+        public static unsafe byte[] ToBytes(int a, int b)
+        {
+            byte[] buffer = new byte[8];
+            fixed (byte* numPtr = buffer)
+            {
+                *(int*)numPtr = a;
+                *(int*)(numPtr + 4) = b;
+            }
+            return buffer;
+        }        
+        
+        public static unsafe byte[] ToBytes(int a, int b, int c)
+        {
+            byte[] buffer = new byte[12];
+            fixed (byte* numPtr = buffer)
+            {
+                *(int*)numPtr = a;
+                *(int*)(numPtr + 4) = b;
+                *(int*)(numPtr + 8) = c;
+            }
+            return buffer;
+        }
+
         public static byte[] ToBytes(this float f)
         {
             return BitConverter.GetBytes(f);
@@ -153,22 +176,40 @@ namespace FIVE.Network
             Buffer.BlockCopy(arr2, 0, source, arr1.Length, arr2.Length);
             Buffer.BlockCopy(arr3, 0, source, arr1.Length + arr2.Length, arr3.Length);
         }
-        public static unsafe void CopyFromUnsafe(this byte[] source, byte[] arr1, byte[] arr2)
+
+        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, int destStartIndex = 0)
         {
-            fixed (byte* parr1 = arr1, parr2 = arr2, dest = source)
+            fixed (byte* parr1 = arr1, pdest = dest)
             {
-                Unsafe.CopyBlock(ref (*dest), ref (*parr1), (uint)arr1.Length);
-                Unsafe.CopyBlock(ref (*(dest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
+                Unsafe.CopyBlock(ref *(pdest + destStartIndex), ref (*parr1), (uint)arr1.Length);
+            }
+        }        
+        
+        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2, int destStartIndex = 0)
+        {
+            fixed (byte* parr1 = arr1, parr2 = arr2, pdest = dest)
+            {
+                Unsafe.CopyBlock(ref *(pdest + destStartIndex), ref (*parr1), (uint)arr1.Length);
+                Unsafe.CopyBlock(ref *(pdest + destStartIndex + arr1.Length), ref (*parr2), (uint)arr2.Length);
             }
         }
 
-        public static unsafe void CopyFromUnsafe(this byte[] source, byte[] arr1, byte[] arr2, byte[] arr3)
+        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2)
         {
-            fixed (byte* parr1 = arr1, parr2 = arr2, parr3 = arr3, dest = source)
+            fixed (byte* parr1 = arr1, parr2 = arr2, pdest = dest)
             {
-                Unsafe.CopyBlock(ref (*dest), ref (*parr1), (uint)arr1.Length);
-                Unsafe.CopyBlock(ref (*(dest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
-                Unsafe.CopyBlock(ref (*(dest + arr1.Length + arr2.Length)), ref (*parr3), (uint)arr3.Length);
+                Unsafe.CopyBlock(ref (*pdest), ref (*parr1), (uint)arr1.Length);
+                Unsafe.CopyBlock(ref (*(pdest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
+            }
+        }
+
+        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2, byte[] arr3)
+        {
+            fixed (byte* parr1 = arr1, parr2 = arr2, parr3 = arr3, pdest = dest)
+            {
+                Unsafe.CopyBlock(ref (*pdest), ref (*parr1), (uint)arr1.Length);
+                Unsafe.CopyBlock(ref (*(pdest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
+                Unsafe.CopyBlock(ref (*(pdest + arr1.Length + arr2.Length)), ref (*parr3), (uint)arr3.Length);
             }
         }
 

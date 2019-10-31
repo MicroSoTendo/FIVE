@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -40,12 +39,31 @@ namespace FIVE.Network
         public NetworkState State { get; private set; } = NetworkState.Idle;
         private LobbyHandler lobbyHandler;
         private NetworkHandler inGameHandler;
-        private ConcurrentQueue<NetworkRequest> requests;
+        private ConcurrentQueue<NetworkRequest>[] poolRequests;
+        private bool[] isPoolRunning;
+        private const int PoolMask = 0b11;
+        private int nextPoolIndex = 0;
+        private int NextPoolIndex
+        {
+            get
+            {
+                nextPoolIndex &= PoolMask;
+                return nextPoolIndex++;
+            }
+        }
+
         public void Awake()
         {
             Assert.IsNull(Instance);
             Instance = this;
-            requests = new ConcurrentQueue<NetworkRequest>();
+            poolRequests = new ConcurrentQueue<NetworkRequest>[PoolMask + 1];
+            isPoolRunning = new bool[PoolMask + 1];
+            for (int i = 0; i < PoolMask + 1; i++)
+            {
+                poolRequests[i] = new ConcurrentQueue<NetworkRequest>();
+                isPoolRunning[i] = true;
+                StartCoroutine(ResolveRequest(i));
+            }
             lobbyHandler = new LobbyHandler(listServer, listServerPort);
         }
 
@@ -71,7 +89,10 @@ namespace FIVE.Network
             roomInfo.CurrentPlayers = 1; //Host self
             roomInfo.HasPassword = hasPassword;
             if (hasPassword)
+            {
                 roomInfo.SetRoomPassword(password);
+            }
+
             lobbyHandler.CreateRoom();
             inGameHandler = new HostHandler(new TcpListener(IPAddress.Loopback, gameServerPort),
                 HandShaker.GetHostHandShaker(lobbyHandler.HostRoomInfo));
@@ -80,36 +101,26 @@ namespace FIVE.Network
 
         public void Submit(NetworkRequest request)
         {
-            requests.Enqueue(request);
+            poolRequests[NextPoolIndex].Enqueue(request);
         }
 
-        private IEnumerator ResolveRequest(NetworkRequest request)
+        private IEnumerator ResolveRequest(int i)
         {
-            while (true)
+            ConcurrentQueue<NetworkRequest> queue = poolRequests[i];
+            while (isPoolRunning[i])
             {
-                switch (request)
+                if (queue.TryDequeue(out NetworkRequest request))
                 {
-                    case CreateObject createObject:
-                        
-                        break;
-                    case RemoveObject removeObject:
-                        break;
+                    switch (request)
+                    {
+                        case CreateObject createObject:
+                            break;
+                        case RemoveObject removeObject:
+                            break;
+                    }
                 }
                 yield return null;
             }
         }
-
-
-        public void Update()
-        {
-            while (requests.Count > 0)
-            {
-                requests.TryDequeue(out NetworkRequest request);
-                StartCoroutine(ResolveRequest(request));
-            }
-        }
-
-
-
     }
 }
