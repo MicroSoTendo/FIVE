@@ -16,6 +16,7 @@ namespace FIVE.UI.BSComposite
         public GameObject Composite { get; }
         public Button BackButton { get; }
         private int[] emptyComposites;
+        private int[] emptyInventory;
         private List<Button> inventoryButtons;
         private List<Button> compositeButtons;
         public override bool IsActive
@@ -45,6 +46,7 @@ namespace FIVE.UI.BSComposite
             compositeButtons = new List<Button>();
             Composite = Get(nameof(Composite));
             emptyComposites = new int[3] { 0, 0, 0 };
+            emptyInventory = new int[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             foreach (Button button in Composite.GetComponentsInChildren<Button>())
             {
                 compositeButtons.Add(button);
@@ -60,6 +62,29 @@ namespace FIVE.UI.BSComposite
             {
                 return;
             }
+            for(int i = 0; i < emptyComposites.Length; i++)
+            {
+                if(compositeButtons[i] == button)
+                {
+                    emptyComposites[i] = 0;
+                }
+            }
+            GameObject item = button.transform.GetChild(0).gameObject;
+            int count = 0;
+            while(count < inventoryButtons.Count)
+            {
+                if(emptyInventory[count] == 0)
+                {
+                    item.SetParent(inventoryButtons[count].transform);
+                    item.transform.localPosition = new Vector3(0, -37, 0);
+                    item.transform.localScale = new Vector3(7, 7, 7);
+                    emptyInventory[count] = 1;
+                    break;
+                }
+                count++;
+            }
+
+
         }
 
         private void OnInventoryItemClicked(Button button)
@@ -68,7 +93,13 @@ namespace FIVE.UI.BSComposite
             {
                 return;
             }
-
+            for (int i = 0; i < emptyInventory.Length; i++)
+            {
+                if (inventoryButtons[i] == button)
+                {
+                    emptyInventory[i] = 0;
+                }
+            }
             GameObject item = button.transform.GetChild(0).gameObject;
             Blacksmith.AddForComposite(RobotManager.ActiveRobot, item);
             int count = 0; ;
@@ -79,8 +110,10 @@ namespace FIVE.UI.BSComposite
                     item.SetParent(compositeButtons[count].transform);
                     item.transform.localPosition = new Vector3(0, -37, 0);
                     item.transform.localScale = new Vector3(7, 7, 7);
+                    emptyComposites[count] = 1;
                     break;
                 }
+                count++;
             }
             Blacksmith.AddForComposite(RobotManager.ActiveRobot, item);
         }
@@ -96,6 +129,8 @@ namespace FIVE.UI.BSComposite
                     GameObject.Destroy(go);
                 }
             }
+            emptyComposites = new int[3] { 0, 0, 0 };
+            
         }
         private void UpdateInventory()
         {
@@ -119,6 +154,7 @@ namespace FIVE.UI.BSComposite
                     set.transform.localPosition = new Vector3(0, -37, 0);
                 }
             }
+            emptyInventory = new int[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
         private void OnBackButtonClick()
