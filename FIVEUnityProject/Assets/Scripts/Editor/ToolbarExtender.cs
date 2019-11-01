@@ -32,7 +32,7 @@ namespace FIVE
             rect.xMin += 32 * ToolCount; // Tool buttons
             rect.xMin += 10; // Spacing between tools and pivot
             rect.xMin += 64 * 2; // Pivot buttons
-            rect.xMax = playButtonsPosition - 20;
+            rect.xMax = playButtonsPosition - 60;
             rect.y = 5;
             rect.height = 24;
             GUILayout.BeginArea(rect);
