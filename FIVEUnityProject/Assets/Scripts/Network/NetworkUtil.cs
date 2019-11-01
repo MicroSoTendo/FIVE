@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
-    internal static class NetworkUtil
+    public static class NetworkUtil
     {
         public static int ToI32(this byte[] bytes, int startIndex = 0)
         {
@@ -55,6 +56,11 @@ namespace FIVE.Network
             ushort port = bytes.ToU16(29);
             string name = bytes.ToName(31);
             return new RoomInfo { Guid = guid, CurrentPlayers = currentPlayers, MaxPlayers = maxPlayers, HasPassword = hasPassword, Host = host, Port = port, Name = name };
+        }
+
+        public static unsafe void Test()
+        {
+            Debug.Log($"sizeof(Vector3) = {sizeof(Vector3)}");
         }
 
         public static byte[] ToBytes(this int i)
@@ -150,6 +156,38 @@ namespace FIVE.Network
             Buffer.BlockCopy(arr2, 0, rv, arr1.Length, arr2.Length);
             Buffer.BlockCopy(arr3, 0, rv, arr1.Length + arr2.Length, arr3.Length);
             return rv;
+        }
+
+        public static unsafe byte[] CombineUnsafe(params byte[][] bytesArray)
+        {
+            byte[] combined = new byte[bytesArray.Sum(a => a.Length)];
+            int offset = 0;
+            fixed (byte* pdest = combined)
+            {
+                foreach (byte[] bytes in bytesArray)
+                {
+                    fixed (byte* pbytes = bytes)
+                        Unsafe.CopyBlock(ref *(pdest + offset), ref (*pbytes), (uint)bytes.Length);
+                    offset += bytes.Length;
+                }
+            }
+            return combined;
+        }        
+        
+        public static unsafe byte[] CombineUnsafe(List<byte[]> bytesArray)
+        {
+            byte[] combined = new byte[bytesArray.Sum(a => a.Length)];
+            int offset = 0;
+            fixed (byte* pdest = combined)
+            {
+                foreach (byte[] bytes in bytesArray)
+                {
+                    fixed (byte* pbytes = bytes)
+                        Unsafe.CopyBlock(ref *(pdest + offset), ref (*pbytes), (uint)bytes.Length);
+                    offset += bytes.Length;
+                }
+            }
+            return combined;
         }
 
         public static byte[] Combine(params byte[][] arrays)

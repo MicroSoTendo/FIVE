@@ -10,7 +10,7 @@ namespace FIVE.Network.Serializers
             bytes = new byte[GetTotalSize(components)];
             foreach (Component component in components)
             {
-                DoSerialize(component, bytes, ref offset);
+                ListSerializeHelper(component, bytes, ref offset);
             }
         }
 
@@ -19,17 +19,29 @@ namespace FIVE.Network.Serializers
             int result = 0;
             foreach (Component component in components)
             {
-                switch (component)
-                {
-                    case Transform _:
-                        result += Serializer<Transform>.Instance.GetSize();
-                        break;
-                }
+                result += GetSize(component);
             }
             return result;
         }
 
-        private static void DoSerialize<T>(T obj, byte[] bytes, ref int offset)
+        public static int GetSize(Component component)
+        {
+            int result = 0;
+            switch (component)
+            {
+                case Transform _:
+                    result = Serializer<Transform>.Instance.GetSize();
+                    break;
+                case Animator _:
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
+        private static void ListSerializeHelper<T>(T obj, byte[] bytes, ref int offset)
         {
             switch (obj)
             {

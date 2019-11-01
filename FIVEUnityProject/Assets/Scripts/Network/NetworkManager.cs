@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using FIVE.Network.Serializers;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -39,7 +40,7 @@ namespace FIVE.Network
         public NetworkState State { get; private set; } = NetworkState.Idle;
         private LobbyHandler lobbyHandler;
         private NetworkHandler inGameHandler;
-        private ConcurrentQueue<NetworkRequest>[] poolRequests;
+        private ConcurrentQueue<MainThreadRequest>[] poolRequests;
         private bool[] isPoolRunning;
         private const int PoolMask = 0b11;
         private int nextPoolIndex = 0;
@@ -56,11 +57,11 @@ namespace FIVE.Network
         {
             Assert.IsNull(Instance);
             Instance = this;
-            poolRequests = new ConcurrentQueue<NetworkRequest>[PoolMask + 1];
+            poolRequests = new ConcurrentQueue<MainThreadRequest>[PoolMask + 1];
             isPoolRunning = new bool[PoolMask + 1];
             for (int i = 0; i < PoolMask + 1; i++)
             {
-                poolRequests[i] = new ConcurrentQueue<NetworkRequest>();
+                poolRequests[i] = new ConcurrentQueue<MainThreadRequest>();
                 isPoolRunning[i] = true;
                 StartCoroutine(ResolveRequest(i));
             }
@@ -99,17 +100,17 @@ namespace FIVE.Network
             inGameHandler.Start();
         }
 
-        public void Submit(NetworkRequest request)
+        public void Submit(MainThreadRequest request)
         {
             poolRequests[NextPoolIndex].Enqueue(request);
         }
 
         private IEnumerator ResolveRequest(int i)
         {
-            ConcurrentQueue<NetworkRequest> queue = poolRequests[i];
+            ConcurrentQueue<MainThreadRequest> queue = poolRequests[i];
             while (isPoolRunning[i])
             {
-                if (queue.TryDequeue(out NetworkRequest request))
+                if (queue.TryDequeue(out MainThreadRequest request))
                 {
                     switch (request)
                     {
@@ -117,9 +118,40 @@ namespace FIVE.Network
                             break;
                         case RemoveObject removeObject:
                             break;
+                        case SyncComponent syncComponent:
+                            ResolveSync(syncComponent);
+                            break;
                     }
                 }
                 yield return null;
+            }
+        }
+
+        private unsafe void ResolveSync(SyncComponent syncComponent)
+        {
+            byte[] rawBytes = syncComponent.RawBytes;
+            fixed (byte* pBytes = rawBytes)
+            {
+                int gameObjectID = *(int*)pBytes;
+                GameObject go = SyncCenter.Instance.NetworkedGameObjects[gameObjectID];
+                int count = *((int*)pBytes + 1);
+                int offset = 8;
+                for (int i = 0; i < count; i++)
+                {
+                    ComponentType type = (ComponentType)(*(pBytes + offset));
+                    offset += 1;
+                    switch (type)
+                    {
+                        case ComponentType.Transform:
+                            Serializer<Transform>.Instance.Deserialize(pBytes + offset, go.transform);
+                            offset += 24;
+                            break;
+                        case ComponentType.Animator:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
             }
         }
     }

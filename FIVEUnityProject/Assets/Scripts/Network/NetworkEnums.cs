@@ -72,7 +72,7 @@ namespace FIVE.Network
         RemoteCall = 1 << 7,
     }
     
-    public enum ComponentType
+    public enum ComponentType : byte
     {
         Transform = 0,
         Animator = 1,

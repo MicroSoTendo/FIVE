@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
+using FIVE.Network.Serializers;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using FIVE.Network.Serializers;
 using UnityEngine;
 using static FIVE.Network.NetworkUtil;
 namespace FIVE.Network
@@ -59,28 +58,64 @@ namespace FIVE.Network
             {
                 this.client = client;
             }
+
+            private static unsafe byte[] SizeHelper(ConcurrentBag<byte[]> componentsForSync)
+            {
+                byte[] bytes = new byte[componentsForSync.Count * 4];
+                int i = 0;
+                fixed (byte* pBytes = bytes)
+                {
+                    foreach (byte[] b in componentsForSync)
+                    {
+                        *(int*)(pBytes + i) = b.Length;
+                        i += 4;
+                    }
+                }
+                return bytes;
+            }
+
             protected override Task Handler()
             {
                 NetworkStream stream = client.GetStream();
                 //Phase 1: fetch all existed objects
-                int count = stream.ReadI32();
-                for (int i = 0; i < count; i++)
                 {
-                    byte[] buffer = stream.Read(12);
-                    int prefabID = buffer.ToI32();
-                    int componentCount = buffer.ToI32(4);
-                    int componentBufferSize = buffer.ToI32(8);
-                    // ComponentType|ComponentData - ComponentType|ComponentData - ...
-                    byte[] componentData = stream.Read(componentBufferSize);
-                    NetworkRequest networkRequest = new CreateObject(prefabID, -1, componentCount, componentData, ActionScope.Local);
-                    NetworkManager.Instance.Submit(networkRequest);
+                    int count = stream.ReadI32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        byte[] buffer = stream.Read(12);
+                        int prefabID = buffer.ToI32();
+                        int componentCount = buffer.ToI32(4);
+                        int componentBufferSize = buffer.ToI32(8);
+                        // ComponentType|ComponentData - ComponentType|ComponentData - ...
+                        byte[] componentData = stream.Read(componentBufferSize);
+                        MainThreadRequest mainThreadRequest = new CreateObject(prefabID, -1, componentCount, componentData,
+                            ActionScope.Local);
+                        NetworkManager.Instance.Submit(mainThreadRequest);
+                    }
                 }
-
                 //Phase 2: do sync
-                while (true)
                 {
+                    while (true)
+                    {
+                        //Send changed components
+                        byte[][] components = SyncCenter.Instance.GetComponentsForSync();
+                        stream.Write(components.Length);
+                        foreach (byte[] buffer in components)
+                        {
+                            stream.Write(buffer.Length);
+                            stream.Write(buffer);
+                        }
+                        //Receive changed components
+                        int count = stream.ReadI32();
+                        for (int i = 0; i < count; i++)
+                        {
+                            byte[] buffer = new byte[stream.ReadI32()];
+                            stream.Read(buffer);
+                            MainThreadRequest mainThreadRequest = new SyncComponent(buffer);
+                            NetworkManager.Instance.Submit(mainThreadRequest);
+                        }
+                    }
                 }
-
             }
         }
     }
