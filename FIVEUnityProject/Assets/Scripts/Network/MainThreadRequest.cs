@@ -2,7 +2,7 @@
 
 namespace FIVE.Network
 {
-    public abstract class NetworkRequest
+    public abstract class MainThreadRequest
     {
 
     }
@@ -13,7 +13,7 @@ namespace FIVE.Network
         Local,
     }
 
-    public class CreateObject : NetworkRequest
+    public class CreateObject : MainThreadRequest
     {
         public int PrefabID { get; }
         public int Parent { get; }
@@ -30,7 +30,7 @@ namespace FIVE.Network
         }
     }
 
-    public class RemoveObject : NetworkRequest
+    public class RemoveObject : MainThreadRequest
     {
         public RemoveObject(int networkID)
         {
@@ -40,12 +40,18 @@ namespace FIVE.Network
         public int NetworkID { get; }
     }
 
-    public class SyncObject : NetworkRequest
+    public class SyncComponent : MainThreadRequest
     {
+        public byte[] RawBytes { get; }
+        public SyncComponent(byte[] buffer)
+        {
+            RawBytes = buffer;
+        }
 
+        
     }
 
-    public class FunctionCall : NetworkRequest
+    public class FunctionCall : MainThreadRequest
     {
 
     }
