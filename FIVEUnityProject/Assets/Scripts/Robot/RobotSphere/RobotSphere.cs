@@ -63,10 +63,10 @@ namespace FIVE.Robot
 
         protected override void Start()
         {
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: transform);
+            fpsCamera = CameraManager.AddCamera("Robot POV " + ID.ToString(), parent: transform);
             fpsCamera.transform.localPosition = new Vector3(0f, 0.1f, 0.07f);
             fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + ID.ToString(),
+            thirdPersonCamera = CameraManager.AddCamera("Robot " + ID.ToString(),
                 parent: transform, enableAudioListener: true,
                 position: new Vector3(0, 2, 0),
                 rotation: Quaternion.Euler(90, 0, 0));
