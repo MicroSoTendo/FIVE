@@ -30,13 +30,15 @@ namespace FIVE.Network
             /// </summary>
             Client,
         }
-
         public static NetworkManager Instance { get; private set; }
         [SerializeField] private string listServer;
         [SerializeField] private ushort listServerPort;
         [SerializeField] private int updateRate = 30;
         [SerializeField] private ushort gameServerPort = 8889;
-        public NetworkState State { get; private set; } = NetworkState.Idle;
+
+        public int PlayerIndex { get; internal set; }
+        internal int PrivateID { get; set; }
+        public NetworkState State { get; internal set; } = NetworkState.Idle;
         private LobbyHandler lobbyHandler;
         private NetworkHandler inGameHandler;
         private ConcurrentQueue<MainThreadRequest>[] poolRequests;
@@ -80,18 +82,18 @@ namespace FIVE.Network
         {
             RoomInfo roomInfo = lobbyHandler[guid];
             roomInfo.SetRoomPassword(password);
-            inGameHandler = new ClientHandler(new TcpClient(),
-                HandShaker.GetClientHandShaker(roomInfo));
+            inGameHandler = new ClientHandler(new TcpClient(), HandShaker.GetClientHandShaker(roomInfo));
             inGameHandler.Start();
         }
 
-        public void CreateRoom(string roomName, bool hasPassword, string password)
+        public void CreateRoom(string roomName, int maxPlayers, bool hasPassword, string password)
         {
             RoomInfo roomInfo = lobbyHandler.HostRoomInfo;
             roomInfo.Name = roomName;
             roomInfo.Port = gameServerPort;
             roomInfo.CurrentPlayers = 1; //Host self
             roomInfo.HasPassword = hasPassword;
+            roomInfo.MaxPlayers = maxPlayers;
             if (hasPassword)
             {
                 roomInfo.SetRoomPassword(password);

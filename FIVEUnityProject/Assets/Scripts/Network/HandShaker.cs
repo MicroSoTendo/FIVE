@@ -8,7 +8,7 @@ namespace FIVE.Network
 {
     internal abstract class HandShaker
     {
-        public abstract Task<int> HandShakeAsync(TcpClient client);
+        public abstract Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client);
 
         public static HandShaker GetClientHandShaker(RoomInfo remoteRoomInfo)
         {
@@ -27,7 +27,7 @@ namespace FIVE.Network
             {
                 this.remoteRoomInfo = remoteRoomInfo;
             }
-            public override async Task<int> HandShakeAsync(TcpClient client)
+            public override async Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client)
             {
                 await client.ConnectAsync(new IPAddress(remoteRoomInfo.Host), remoteRoomInfo.Port);
                 NetworkStream stream = client.GetStream();
@@ -46,13 +46,13 @@ namespace FIVE.Network
                 }
 
                 //Get response from server
-                buffer = stream.Read(sizeof(int) * 2);
+                buffer = stream.Read(sizeof(int) * 3);
                 var result = (GameSyncCode)buffer.ToI32();
                 if (result.HasFlag(GameSyncCode.AcceptJoin))
                 {
-                    return buffer.ToI32(4);
+                    (int publicID, int privateID) = (buffer.ToI32(4), buffer.ToI32(8));
                 }
-                return -1;
+                return (-1, -1);
             }
         }
 
@@ -61,17 +61,17 @@ namespace FIVE.Network
         {
             private readonly RoomInfo hostRoomInfo;
             private readonly Random random;
-
+            private int NextPublicID = 1;
             public HostHandShaker(RoomInfo hostRoomInfo)
             {
                 this.hostRoomInfo = hostRoomInfo;
                 random = new Random();
             }
-            private int GenerateClientID()
+            private (int publicID, int privateID) GenerateClientID()
             {
-                return random.Next(0, int.MaxValue);
+                return (NextPublicID++, random.Next(0, int.MaxValue));
             }
-            public override async Task<int> HandShakeAsync(TcpClient client)
+            public unsafe override async Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client)
             {
                 NetworkStream stream = client.GetStream();
                 bool hasPassword = hostRoomInfo.HasPassword;
@@ -80,22 +80,31 @@ namespace FIVE.Network
                 var code = (GameSyncCode)buffer.ToI32();
                 if (code.HasFlag(GameSyncCode.JoinRequest))
                 {
-                    buffer = new byte[sizeof(int) * 2];
+                    //Check if password is correct
                     if (hasPassword)
                     {
                         if (!BytesCompare(buffer, 4, hostRoomInfo.HashedPassword, 0, 16))
                         {
                             Array.Clear(buffer, 0, buffer.Length);
                             stream.Write(buffer);
-                            return -1;
+                            return (-1, -1);
                         }
                     }
-                    int clientID = GenerateClientID();
-                    buffer.CopyFromUnsafe(GameSyncCode.AcceptJoin.ToBytes(), clientID.ToBytes());
-                    stream.Write(buffer);
-                    return clientID;
+
+                    //Send back assgiend client ID
+                    byte[] idBuffer = new byte[sizeof(int) * 3];
+                    (int publicID, int privateID) = GenerateClientID();
+                    fixed (byte* pBuffer = idBuffer)
+                    {
+                        *(int*)pBuffer = (int)GameSyncCode.AcceptJoin;
+                        *((int*)pBuffer + 4) = publicID;
+                        *((int*)pBuffer + 8) = privateID;
+                    }
+                    stream.Write(idBuffer);
+                    return ( publicID,  privateID);
                 }
-                return -1;
+
+                return (-1, -1);
             }
         }
     }

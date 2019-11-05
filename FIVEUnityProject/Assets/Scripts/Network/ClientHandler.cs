@@ -8,10 +8,6 @@ namespace FIVE.Network
         private readonly TcpClient client;
         private readonly HandShaker handShaker;
         private InGameHandler inGameHandler;
-        /// <summary>
-        /// Client ID fetched from host after connected successfully.
-        /// </summary>
-        public int AssignedClientID { get; private set; }
         public ClientHandler(TcpClient client, HandShaker handShaker)
         {
             this.client = client;
@@ -19,10 +15,12 @@ namespace FIVE.Network
         }
         protected override async Task Handler()
         {
-            int clientID = await handShaker.HandShakeAsync(client);
-            if (clientID != -1)
+            (int publicID, int privateID) = await handShaker.HandShakeAsync(client);
+            if (publicID != -1)
             {
-                AssignedClientID = clientID;
+                NetworkManager.Instance.PlayerIndex = publicID;
+                NetworkManager.Instance.PrivateID = privateID;
+                NetworkManager.Instance.State = NetworkManager.NetworkState.Client;
                 inGameHandler = InGameHandler.CreateClient(client);
                 inGameHandler.Start();
             }

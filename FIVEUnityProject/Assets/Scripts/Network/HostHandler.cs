@@ -25,9 +25,9 @@ namespace FIVE.Network
             while (true)
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
-                int id = await handShaker.HandShakeAsync(client);
+                (int _, int privateID) = await handShaker.HandShakeAsync(client);
                 var inGameHandler = InGameHandler.CreateHost(client);
-                clients.TryAdd(id, (client, inGameHandler));
+                clients.TryAdd(privateID, (client, inGameHandler));
                 inGameHandler.Start();
             }
         }
