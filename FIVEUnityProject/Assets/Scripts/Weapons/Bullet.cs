@@ -19,14 +19,13 @@ public class Bullet : MonoBehaviour
 
     private float elapsedTime;
 
-    void Start()
+    private void Start()
     {
         elapsedTime = 0;
     }
 
-    void Update()
+    private void Update()
     {
-        Debug.Log(transform.forward);
         elapsedTime += Time.deltaTime;
         if (elapsedTime > 3.0f)
         {

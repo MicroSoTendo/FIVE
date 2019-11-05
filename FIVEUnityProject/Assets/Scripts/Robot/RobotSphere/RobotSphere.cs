@@ -64,7 +64,7 @@ namespace FIVE.Robot
         protected override void Start()
         {
             fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: transform);
-            fpsCamera.transform.localPosition = new Vector3(0f, 0.1f, 0.05f);
+            fpsCamera.transform.localPosition = new Vector3(0f, 0.1f, 0.07f);
             fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
             thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + ID.ToString(),
                 parent: transform, enableAudioListener: true,
@@ -113,6 +113,12 @@ namespace FIVE.Robot
             {
                 fpsController.Update();
             }
+
+            if (CurrentState == RobotSphereState.Walk)
+            {
+                fpsCamera.transform.localPosition = new Vector3(Mathf.Sin(Time.time * 8f) * 0.02f, 0.1f + Mathf.Sin(Time.time * 16f) * 0.02f, 0.07f);
+                Debug.Log(fpsCamera.transform.localPosition.x);
+            }
         }
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
@@ -127,7 +133,6 @@ namespace FIVE.Robot
                 else
                 {
                     movable.MoveOnces[(int)move](steps);
-                    //Debug.Log($"To {transform.forward}");
                 }
             }
         }
