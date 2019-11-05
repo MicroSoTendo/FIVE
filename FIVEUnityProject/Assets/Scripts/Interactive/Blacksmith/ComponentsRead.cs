@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FIVE.Interactive.BlackSmith
+namespace FIVE.Interactive.Blacksmith
 {
     public class ComponentsRead
     {

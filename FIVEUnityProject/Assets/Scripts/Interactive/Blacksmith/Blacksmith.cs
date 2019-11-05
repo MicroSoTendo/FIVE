@@ -1,5 +1,4 @@
-﻿using FIVE.EventSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.Interactive.Blacksmith

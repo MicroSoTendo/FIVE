@@ -1,11 +1,10 @@
-﻿using System;
+﻿using FIVE.Network.Serializers;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
-using FIVE.Network.Serializers;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace FIVE.Network
 {
@@ -55,7 +54,11 @@ namespace FIVE.Network
 
         public void Awake()
         {
-            Assert.IsNull(Instance);
+            if (Instance != null)
+            {
+                throw new Exception($"{nameof(NetworkManager)} can only be instantiated once");
+            }
+
             Instance = this;
             poolRequests = new ConcurrentQueue<MainThreadRequest>[PoolMask + 1];
             isPoolRunning = new bool[PoolMask + 1];
@@ -138,7 +141,7 @@ namespace FIVE.Network
                 int offset = 8;
                 for (int i = 0; i < count; i++)
                 {
-                    ComponentType type = (ComponentType)(*(pBytes + offset));
+                    var type = (ComponentType)(*(pBytes + offset));
                     offset += 1;
                     switch (type)
                     {
