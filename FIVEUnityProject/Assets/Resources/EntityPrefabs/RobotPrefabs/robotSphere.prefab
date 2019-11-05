@@ -79,7 +79,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1007354229840196
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,7 +158,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1053281735150094
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +243,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1068682732278784
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,7 +325,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1078235343884580
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,7 +404,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1092549903217196
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +483,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1115675440097858
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,7 +562,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1121543103824736
 GameObject:
   m_ObjectHideFlags: 0
@@ -648,7 +641,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1125078563940878
 GameObject:
   m_ObjectHideFlags: 0
@@ -797,7 +789,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1162930904400266
 GameObject:
   m_ObjectHideFlags: 0
@@ -877,7 +868,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1183922788193972
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,7 +947,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1190259308296600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,7 +1056,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1229685126053000
 GameObject:
   m_ObjectHideFlags: 0
@@ -1147,7 +1135,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1257407352021752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1227,7 +1214,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1295707506769890
 GameObject:
   m_ObjectHideFlags: 0
@@ -1307,7 +1293,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1301536238168096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,7 +1372,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1351442367746040
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,7 +1451,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1361342923083938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1588,7 +1571,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1365350624552382
 GameObject:
   m_ObjectHideFlags: 0
@@ -1668,7 +1650,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1387113532442184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1780,7 +1761,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1399398489051200
 GameObject:
   m_ObjectHideFlags: 0
@@ -1860,7 +1840,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1412804813743846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1946,7 +1925,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1456832829938988
 GameObject:
   m_ObjectHideFlags: 0
@@ -2026,7 +2004,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1476070767280444
 GameObject:
   m_ObjectHideFlags: 0
@@ -2106,7 +2083,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1491944993176060
 GameObject:
   m_ObjectHideFlags: 0
@@ -2186,7 +2162,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1495430637740604
 GameObject:
   m_ObjectHideFlags: 0
@@ -2266,7 +2241,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1519388695029330
 GameObject:
   m_ObjectHideFlags: 0
@@ -2346,7 +2320,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1522709418472752
 GameObject:
   m_ObjectHideFlags: 0
@@ -2426,7 +2399,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1528414366607140
 GameObject:
   m_ObjectHideFlags: 0
@@ -2506,7 +2478,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1528915638184230
 GameObject:
   m_ObjectHideFlags: 0
@@ -2764,7 +2735,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1546433115594470
 GameObject:
   m_ObjectHideFlags: 0
@@ -2844,7 +2814,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1583647332928166
 GameObject:
   m_ObjectHideFlags: 0
@@ -2924,7 +2893,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1586184751890682
 GameObject:
   m_ObjectHideFlags: 0
@@ -3036,7 +3004,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1639841557180942
 GameObject:
   m_ObjectHideFlags: 0
@@ -3116,7 +3083,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1641869330588884
 GameObject:
   m_ObjectHideFlags: 0
@@ -3202,7 +3168,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1659453755552060
 GameObject:
   m_ObjectHideFlags: 0
@@ -3282,7 +3247,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1688514203954746
 GameObject:
   m_ObjectHideFlags: 0
@@ -3363,7 +3327,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1697516419629582
 GameObject:
   m_ObjectHideFlags: 0
@@ -3443,7 +3406,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1732229205268776
 GameObject:
   m_ObjectHideFlags: 0
@@ -3523,7 +3485,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1759872719172302
 GameObject:
   m_ObjectHideFlags: 0
@@ -3608,7 +3569,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1759942847806846
 GameObject:
   m_ObjectHideFlags: 0
@@ -3688,7 +3648,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1805114280926698
 GameObject:
   m_ObjectHideFlags: 0
@@ -3800,7 +3759,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1837835325504852
 GameObject:
   m_ObjectHideFlags: 0
@@ -3910,7 +3868,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1909312303648008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4020,7 +3977,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1972368657453736
 GameObject:
   m_ObjectHideFlags: 0
@@ -4100,7 +4056,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &32209312893374144
 GameObject:
   m_ObjectHideFlags: 0
@@ -4180,7 +4135,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &7957806416375030537
 MeshFilter:
   m_ObjectHideFlags: 0

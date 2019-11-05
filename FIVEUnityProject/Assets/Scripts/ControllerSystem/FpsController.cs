@@ -11,9 +11,6 @@ namespace FIVE.ControllerSystem
         private readonly GameObject gameObject;
         private readonly RobotSphere robotSphere;
 
-        private Vector3 rot = Vector3.zero;
-        // private readonly float rotSpeed = 40f;
-
         public FpsController(CharacterController cc, GameObject gameObject)
         {
             this.cc = cc;
@@ -43,11 +40,10 @@ namespace FIVE.ControllerSystem
                 robotSphere.Move(Movable.Move.Right, 5);
             }
 
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0) && CameraManager.CurrentActiveCamera.name.StartsWith("fpsCamera"))
             {
                 if (CameraManager.CurrentActiveCamera != null)
                 {
-                    Debug.Log("Attack");
                     Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
                     {
