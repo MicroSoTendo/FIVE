@@ -117,7 +117,6 @@ namespace FIVE.Robot
             if (CurrentState == RobotSphereState.Walk)
             {
                 fpsCamera.transform.localPosition = new Vector3(Mathf.Sin(Time.time * 8f) * 0.02f, 0.1f + Mathf.Sin(Time.time * 16f) * 0.02f, 0.07f);
-                Debug.Log(fpsCamera.transform.localPosition.x);
             }
         }
 
