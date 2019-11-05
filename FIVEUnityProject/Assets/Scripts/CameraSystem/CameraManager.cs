@@ -78,7 +78,6 @@ namespace FIVE.CameraSystem
             foreach (Camera c in instance.namedCameras.Values)
             {
                 c.enabled = false;
-                c.GetComponentInChildren<CameraText>().SetEnabled(false);
             }
             cam.enabled = true;
             cam.rect = new Rect(0, 0, 1, 1);
