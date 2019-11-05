@@ -47,7 +47,6 @@ namespace FIVE.ControllerSystem
             {
                 if (CameraManager.CurrentActiveCamera != null)
                 {
-                    Debug.Log("Attack");
                     Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
                     {
