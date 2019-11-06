@@ -31,7 +31,7 @@ namespace FIVE.Interactive
 
         private void OnScanFinished()
         {
-            foreach (Camera fpsCamera in CameraManager.GetFpsCameras)
+            foreach (Camera fpsCamera in CameraManager.GetPovCameras)
             {
                 Vector3 ndc = fpsCamera.WorldToViewportPoint(transform.position);
                 if (ndc.x > 0 && ndc.x < 1 && ndc.y > 0 && ndc.y < 1 && ndc.z > 0)

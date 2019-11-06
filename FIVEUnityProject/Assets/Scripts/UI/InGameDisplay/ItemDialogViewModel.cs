@@ -94,7 +94,7 @@ namespace FIVE.UI.InGameDisplay
 
         private IEnumerator UpdatePosition(GameObject item)
         {
-            Camera fpsCamera = CameraManager.GetFpsCameras.First();
+            Camera fpsCamera = CameraManager.GetPovCameras.First();
             Renderer itemRenderer = item.GetComponent<Renderer>();
             while (isUpdate)
             {

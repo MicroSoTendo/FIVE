@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using FIVE.EventSystem;
+using FIVE.Robot;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.Interactive.Blacksmith
@@ -7,6 +9,7 @@ namespace FIVE.Interactive.Blacksmith
     {
         private static Dictionary<GameObject, List<GameObject>> CompositeItems = new Dictionary<GameObject, List<GameObject>>();
         private static Dictionary<GameObject, List<GameObject>> InventoryList = new Dictionary<GameObject, List<GameObject>>();
+        private static Dictionary<GameObject, GameObject> Result = new Dictionary<GameObject, GameObject>();
         //maybe not use static
         public static void AddForComposite(GameObject owner, GameObject item)
         {
@@ -26,14 +29,22 @@ namespace FIVE.Interactive.Blacksmith
                 items.Remove(item);
             }
         }
-
-        public static void DoComposite(GameObject owner)
+        public static GameObject GenerateResultItems()
         {
-            if (CompositeItems.TryGetValue(owner, out List<GameObject> items))
-            {
-                //Do composite with given formula
-            }
+            List<GameObject> compositeList = CompositeItems[RobotManager.ActiveRobot];
+            GameObject a = ComponentsRead.generateItem(compositeList);
+            Result[RobotManager.ActiveRobot] = a;
+            return a;
         }
+        public static GameObject GetCurrentCompositeItem(GameObject owner)
+        {
+            return Result[owner];
+        }
+        public static void RemoveResultItem(GameObject owner)
+        {
+            Result.Remove(owner);
+        }
+
         public static int CompositeListCount()
         {
             return CompositeItems.Count;

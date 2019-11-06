@@ -5,6 +5,7 @@ using FIVE.EventSystem;
 using FIVE.RobotComponents;
 using FIVE.UI;
 using FIVE.UI.CodeEditor;
+using System.Collections;
 using UnityEngine;
 
 namespace FIVE.Robot
@@ -19,6 +20,7 @@ namespace FIVE.Robot
         public enum RobotSphereState { Idle, Walk, Jump, Open };
 
         public GameObject BulletPrefab;
+        public GameObject GunfirePrefab;
 
         // Script References
         private RobotFreeAnim animator;
@@ -136,12 +138,22 @@ namespace FIVE.Robot
             }
         }
 
+        private IEnumerator ShutGunfire(GameObject gunfire)
+        {
+            yield return new WaitForSeconds(0.1f);
+            gunfire.SetActive(false);
+            Destroy(gunfire);
+        }
+
         public void Attack(Vector3 target)
         {
             if (movable.enabled)
             {
-                GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.1f, Quaternion.identity);
+                GameObject gunfire = Instantiate(GunfirePrefab, transform.position + transform.forward * 10f + new Vector3(0, 3, 0), Quaternion.identity);
+                StartCoroutine(ShutGunfire(gunfire));
+                GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
+                Debug.Log("Attack");
             }
         }
 

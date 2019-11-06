@@ -40,17 +40,14 @@ namespace FIVE.ControllerSystem
                 robotSphere.Move(Movable.Move.Right, 5);
             }
 
-            if (Input.GetKeyDown(KeyCode.Mouse0) && CameraManager.CurrentActiveCamera.name.StartsWith("fpsCamera"))
+            if (Input.GetKeyDown(KeyCode.Mouse0) && CameraManager.CurrentActiveCamera.name.StartsWith("Robot POV"))
             {
                 if (CameraManager.CurrentActiveCamera != null)
                 {
                     Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
                     {
-                        //if (hitInfo.collider.gameObject.GetComponent<EnemyBehavior>() != null)
-                        //{
                         robotSphere.Attack(hitInfo.point);
-                        //}
                     }
                 }
             }

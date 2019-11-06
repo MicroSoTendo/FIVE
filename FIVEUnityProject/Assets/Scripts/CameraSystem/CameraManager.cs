@@ -25,8 +25,8 @@ namespace FIVE.CameraSystem
         private float switchTimeout; // ms
         private List<Camera> wall = new List<Camera>();
 
-        public static IEnumerable<Camera> GetFpsCameras =>
-            from c in instance.namedCameras where c.key.ToLower().Contains("fps") select c.value;
+        public static IEnumerable<Camera> GetPovCameras =>
+            from c in instance.namedCameras where c.key.Contains("POV") select c.value;
 
         public static IEnumerable<Camera> Cameras => instance.namedCameras.Values;
 
@@ -45,6 +45,12 @@ namespace FIVE.CameraSystem
             GameObject gameObject = Instantiate(instance.cameraPrefab, parent);
             gameObject.transform.localPosition = position;
             gameObject.transform.localRotation = rotation;
+
+            Vector3 ps = gameObject.transform.localToWorldMatrix.lossyScale;
+            ps.x = 1f / ps.x;
+            ps.y = 1f / ps.y;
+            ps.z = 1f / ps.z;
+            gameObject.transform.localScale = ps;
 
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera cam = gameObject.GetComponent<Camera>();
@@ -78,7 +84,6 @@ namespace FIVE.CameraSystem
             foreach (Camera c in instance.namedCameras.Values)
             {
                 c.enabled = false;
-                c.GetComponentInChildren<CameraText>().SetEnabled(false);
             }
             cam.enabled = true;
             cam.rect = new Rect(0, 0, 1, 1);
@@ -105,9 +110,9 @@ namespace FIVE.CameraSystem
 
         public static void Remove(string name)
         {
-            Camera c = instance.namedCameras[name];
-            instance.namedCameras.Remove(c);
-            Destroy(c.gameObject);
+            Camera camera = instance.namedCameras[name];
+            instance.namedCameras.Remove(camera);
+            Destroy(camera.gameObject);
         }
 
         private void FixedUpdate()
@@ -126,7 +131,7 @@ namespace FIVE.CameraSystem
                     Camera ca = wall[x * 2 + y];
                     SetCamera(ca);
                     SetAudioListener(ca);
-                    this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: ca));
+                    this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(newCamera: ca));
                     wall.Clear();
                     return;
                 }

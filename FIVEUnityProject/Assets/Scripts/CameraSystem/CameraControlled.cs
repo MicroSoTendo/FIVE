@@ -1,19 +1,36 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public class CameraControlled : MonoBehaviour
 {
+    private TextMeshPro text;
+
     private void Start()
     {
-        GetComponentInChildren<CameraText>().SetEnabled(false);
+        text = GetComponentInChildren<TextMeshPro>();
+        text.text = name;
+        text.ForceMeshUpdate();
+        SetText(false);
     }
 
     private void OnPreRender()
     {
-        GetComponentInChildren<CameraText>().SetEnabled();
+        SetText();
     }
 
     private void OnPostRender()
     {
-        GetComponentInChildren<CameraText>().SetEnabled();
+        SetText(false);
+    }
+
+    private void OnDisable()
+    {
+        SetText(false);
+    }
+
+    private void SetText(bool e = true)
+    {
+        if (text != null)
+            text.enabled = e;
     }
 }
