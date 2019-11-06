@@ -47,10 +47,7 @@ namespace FIVE.ControllerSystem
                     Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
                     {
-                        //if (hitInfo.collider.gameObject.GetComponent<EnemyBehavior>() != null)
-                        //{
                         robotSphere.Attack(hitInfo.point);
-                        //}
                     }
                 }
             }
