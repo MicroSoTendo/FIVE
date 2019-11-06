@@ -40,7 +40,7 @@ namespace FIVE.Network
         internal int PrivateID { get; set; }
         public NetworkState State { get; internal set; } = NetworkState.Idle;
         private LobbyHandler lobbyHandler;
-        private NetworkHandler inGameHandler;
+        private NetworkHandler networkHandler;
         private ConcurrentQueue<MainThreadRequest>[] poolRequests;
         private bool[] isPoolRunning;
         private const int PoolMask = 0b11;
@@ -82,8 +82,8 @@ namespace FIVE.Network
         {
             RoomInfo roomInfo = lobbyHandler[guid];
             roomInfo.SetRoomPassword(password);
-            inGameHandler = new ClientHandler(new TcpClient(), HandShaker.GetClientHandShaker(roomInfo));
-            inGameHandler.Start();
+            networkHandler = new ClientHandler(new TcpClient(), HandShaker.GetClientHandShaker(roomInfo));
+            networkHandler.Start();
         }
 
         public void CreateRoom(string roomName, int maxPlayers, bool hasPassword, string password)
@@ -100,9 +100,10 @@ namespace FIVE.Network
             }
 
             lobbyHandler.CreateRoom();
-            inGameHandler = new HostHandler(new TcpListener(IPAddress.Loopback, gameServerPort),
+            networkHandler = new HostHandler(new TcpListener(IPAddress.Loopback, gameServerPort),
                 HandShaker.GetHostHandShaker(lobbyHandler.HostRoomInfo));
-            inGameHandler.Start();
+            networkHandler.Start();
+            State = NetworkState.Host;
         }
 
         public void Submit(MainThreadRequest request)

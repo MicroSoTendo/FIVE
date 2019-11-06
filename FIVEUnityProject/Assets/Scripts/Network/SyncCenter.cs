@@ -50,11 +50,20 @@ namespace FIVE.Network
             componentsForSync.Push(bytes);
         }
 
-        //Instantiate object in both local and remote games
-        public void InstantiateRemote(GameObject prefab, Vector3 position, Quaternion rotation)
+        public void Register(GameObject gameObject)
         {
+            if (!NetworkedGameObjects.Contains(gameObject))
+            {
+                NetworkView networkView = gameObject.AddComponent<NetworkView>();
+                int newID = random.Next(0, int.MaxValue);
+                while (NetworkedGameObjects.Contains(newID))
+                {
+                    newID =  random.Next(0, int.MaxValue);
+                }
+                networkView.networkID = newID;
+                NetworkedGameObjects.Add(newID, gameObject);
+            }
         }
-
 
         public void Register(Component component)
         {
@@ -63,17 +72,7 @@ namespace FIVE.Network
                 throw new ArgumentException(component + " already existed.");
             }
 
-            if (!NetworkedGameObjects.Contains(component.gameObject))
-            {
-                NetworkView networkView = component.gameObject.AddComponent<NetworkView>();
-                int newID = random.Next(0, int.MaxValue);
-                while (NetworkedGameObjects.Contains(newID))
-                {
-                    newID =  random.Next(0, int.MaxValue);
-                }
-
-                networkView.networkID = newID;
-            }
+            Register(component.gameObject);
 
             IDSyncedComponent.Add(IDSyncedComponent.Count, component);
             if (GameObjectToSyncedComponents.TryGetValue(component.gameObject, out List<Component> list))
@@ -87,6 +86,7 @@ namespace FIVE.Network
                 int size = Serializer.GetSize(component);
                 SyncedObjectBufferSize.TryAdd(component.gameObject, size);
             }
+            //TODO: Set unsent component
         }
 
     }

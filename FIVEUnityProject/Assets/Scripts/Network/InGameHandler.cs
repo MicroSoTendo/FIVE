@@ -27,8 +27,10 @@ namespace FIVE.Network
             {
                 this.client = client;
             }
-            protected override Task Handler()
+            protected override async Task Handler()
             {
+                
+                //TODO: Possible exceptions
                 NetworkStream stream = client.GetStream();
                 //Phase 1: send all existed objects
                 ICollection<GameObject> networkedGameObjects = SyncCenter.Instance.GameObjectToSyncedComponents.Keys;
@@ -43,10 +45,33 @@ namespace FIVE.Network
                     stream.Write(ToBytes(prefabID, componentsCount, componentsBufferSize));
                     stream.Write(buffer);
                 }
-
+                
                 //Phase 2: do sync
-                while (true)
                 {
+                    while (client.Connected)
+                    {
+                        //Receive changed components
+                        int length = stream.ReadI32();
+                        for (int i = 0; i < length; i++)
+                        {
+                           byte[] buffer = new byte[stream.ReadI32()];
+                           stream.Read(buffer);
+                        }
+                        //Wait Received All
+                        //Send changed components
+                        int count = stream.ReadI32();
+                        for (int i = 0; i < count; i++)
+                        {
+                            byte[] buffer = new byte[stream.ReadI32()];
+                            stream.Read(buffer);
+                            MainThreadRequest mainThreadRequest = new SyncComponent(buffer);
+                            NetworkManager.Instance.Submit(mainThreadRequest);
+                        }
+                    }
+                }
+                if (!client.Connected)
+                {
+                    //TODO: Handle disconnect
                 }
             }
         }
@@ -74,8 +99,9 @@ namespace FIVE.Network
                 return bytes;
             }
 
-            protected override Task Handler()
+            protected override async Task Handler()
             {
+                //TODO: Possible exception
                 NetworkStream stream = client.GetStream();
                 //Phase 1: fetch all existed objects
                 {

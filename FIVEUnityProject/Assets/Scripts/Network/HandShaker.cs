@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -61,15 +63,12 @@ namespace FIVE.Network
         {
             private readonly RoomInfo hostRoomInfo;
             private readonly Random random;
-            private int NextPublicID = 1;
+            private readonly Dictionary<int, bool> actives;
             public HostHandShaker(RoomInfo hostRoomInfo)
             {
                 this.hostRoomInfo = hostRoomInfo;
                 random = new Random();
-            }
-            private (int publicID, int privateID) GenerateClientID()
-            {
-                return (NextPublicID++, random.Next(0, int.MaxValue));
+                actives = new Dictionary<int, bool>();
             }
             public unsafe override async Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client)
             {
@@ -93,15 +92,20 @@ namespace FIVE.Network
 
                     //Send back assgiend client ID
                     byte[] idBuffer = new byte[sizeof(int) * 3];
-                    (int publicID, int privateID) = GenerateClientID();
+                    int i = actives.FirstOrDefault(kvp => !kvp.Value).Key;
+                    if (i == 0)
+                    {
+                        i = actives.Count;
+                        actives.Add(i, true);
+                    }
                     fixed (byte* pBuffer = idBuffer)
                     {
                         *(int*)pBuffer = (int)GameSyncCode.AcceptJoin;
-                        *((int*)pBuffer + 4) = publicID;
-                        *((int*)pBuffer + 8) = privateID;
+                        *(int*)(pBuffer + 4) = i;
+                        *(int*)(pBuffer + 8) = random.Next(0, int.MaxValue);
+                        stream.Write(idBuffer);
+                        return (i, *(int*)(pBuffer + 8));
                     }
-                    stream.Write(idBuffer);
-                    return ( publicID,  privateID);
                 }
 
                 return (-1, -1);

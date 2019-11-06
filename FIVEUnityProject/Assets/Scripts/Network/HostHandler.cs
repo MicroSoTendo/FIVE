@@ -8,14 +8,15 @@ namespace FIVE.Network
     {
         private readonly TcpListener listener;
         private readonly HandShaker handShaker;
-        private readonly ConcurrentDictionary<int, (TcpClient, InGameHandler)> clients = new ConcurrentDictionary<int, (TcpClient, InGameHandler)>();
+        private readonly ConcurrentDictionary<int, (TcpClient, InGameHandler)> privateIDToclients 
+            = new ConcurrentDictionary<int, (TcpClient, InGameHandler)>();
+        private readonly ConcurrentDictionary<int, (TcpClient, InGameHandler)> publicIDToclients 
+            = new ConcurrentDictionary<int, (TcpClient, InGameHandler)>();
         public HostHandler(TcpListener listener, HandShaker handShaker)
         {
             this.listener = listener;
             this.handShaker = handShaker;
         }
-
-
         /// <summary>
         /// Used by <b>Host only</b>.<br/>
         /// Handles incoming clients.
@@ -25,9 +26,10 @@ namespace FIVE.Network
             while (true)
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
-                (int _, int privateID) = await handShaker.HandShakeAsync(client);
+                (int publicID, int privateID) = await handShaker.HandShakeAsync(client);
                 var inGameHandler = InGameHandler.CreateHost(client);
-                clients.TryAdd(privateID, (client, inGameHandler));
+                privateIDToclients.TryAdd(privateID, (client, inGameHandler));
+                publicIDToclients.TryAdd(publicID, (client, inGameHandler));
                 inGameHandler.Start();
             }
         }
