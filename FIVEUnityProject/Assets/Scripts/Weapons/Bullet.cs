@@ -26,8 +26,9 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
+        //Debug.Log(transform.position);
         elapsedTime += Time.deltaTime;
-        if (elapsedTime > 3.0f)
+        if (elapsedTime > 5.0f)
         {
             gameObject.SetActive(false);
             Destroy(gameObject);
@@ -41,9 +42,19 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        gameObject.SetActive(false);
-        Destroy(gameObject);
+        if (!other.gameObject.name.StartsWith("robotSphere"))
+        {
+            if (other.gameObject.name.StartsWith("AlienBeetle"))
+            {
+                Debug.Log("Killed Alien");
+                other.gameObject.SetActive(false);
+                Destroy(other.gameObject);
+            }
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+            //Debug.Log($"Collide with {other.gameObject.name}");
+        }
     }
 }
