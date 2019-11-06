@@ -69,7 +69,7 @@ namespace FIVE.Interactive
 
         private void UpdatePosition(GameObject item)
         {
-            fpsCamera = CameraManager.GetFpsCameras.First();
+            fpsCamera = CameraManager.GetPovCameras.First();
             Vector3 position = fpsCamera.WorldToScreenPoint(item.transform.position) +
                                new Vector3(0, scannerRectTransform.sizeDelta.y / 2, 0);
             scannerTransform.position = position;

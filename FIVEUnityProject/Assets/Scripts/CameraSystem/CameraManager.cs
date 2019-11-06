@@ -25,8 +25,8 @@ namespace FIVE.CameraSystem
         private float switchTimeout; // ms
         private List<Camera> wall = new List<Camera>();
 
-        public static IEnumerable<Camera> GetFpsCameras =>
-            from c in instance.namedCameras where c.key.ToLower().Contains("fps") select c.value;
+        public static IEnumerable<Camera> GetPovCameras =>
+            from c in instance.namedCameras where c.key.Contains("POV") select c.value;
 
         public static IEnumerable<Camera> Cameras => instance.namedCameras.Values;
 
