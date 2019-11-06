@@ -46,6 +46,12 @@ namespace FIVE.CameraSystem
             gameObject.transform.localPosition = position;
             gameObject.transform.localRotation = rotation;
 
+            Vector3 ps = gameObject.transform.localToWorldMatrix.lossyScale;
+            ps.x = 1f / ps.x;
+            ps.y = 1f / ps.y;
+            ps.z = 1f / ps.z;
+            gameObject.transform.localScale = ps;
+
             gameObject.name = cameraName ?? nameof(Camera) + gameObject.GetInstanceID();
             Camera cam = gameObject.GetComponent<Camera>();
             instance.namedCameras.Add(gameObject.name, cam);
@@ -104,9 +110,9 @@ namespace FIVE.CameraSystem
 
         public static void Remove(string name)
         {
-            Camera c = instance.namedCameras[name];
-            instance.namedCameras.Remove(c);
-            Destroy(c.gameObject);
+            Camera camera = instance.namedCameras[name];
+            instance.namedCameras.Remove(camera);
+            Destroy(camera.gameObject);
         }
 
         private void FixedUpdate()

@@ -31,6 +31,6 @@ public class CameraControlled : MonoBehaviour
     private void SetText(bool e = true)
     {
         if (text != null)
-            text.enabled = e;
+            text.enabled = true;
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using FIVE.CameraSystem;
+﻿using FIVE.CameraSystem;
+using FIVE.EventSystem;
 using FIVE.Interactive;
 using FIVE.Network;
 using FIVE.Robot;
@@ -10,10 +10,9 @@ using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.Multiplayers;
 using FIVE.UI.NPC;
+using System;
 using System.Collections;
-using FIVE.EventSystem;
 using UnityEngine;
-
 
 namespace FIVE.GameModes
 {
@@ -21,6 +20,7 @@ namespace FIVE.GameModes
     public class Multiplayers : MonoBehaviour
     {
         private LobbyWindowViewModel lobbyWindow;
+
         private void Awake()
         {
             lobbyWindow = UIManager.Create<LobbyWindowViewModel>();
@@ -31,7 +31,7 @@ namespace FIVE.GameModes
 
         private void JoinRoomHandler(object sender, EventArgs eventArgs)
         {
-            JoinRoomArgs joinRoomArgs = eventArgs as JoinRoomArgs;
+            var joinRoomArgs = eventArgs as JoinRoomArgs;
             NetworkManager.Instance.JoinRoom(joinRoomArgs.Guid, joinRoomArgs.Password);
         }
 
@@ -59,7 +59,7 @@ namespace FIVE.GameModes
 
         private void CreateRoomHandler(object sender, EventArgs eventArgs)
         {
-            CreateRoomArgs createRoomArgs = eventArgs as CreateRoomArgs;
+            var createRoomArgs = eventArgs as CreateRoomArgs;
             NetworkManager.Instance.CreateRoom(createRoomArgs.Name, createRoomArgs.MaxPlayers, createRoomArgs.HasPassword, createRoomArgs.Password);
             StartCoroutine(CommonInitRoutine());
             StartCoroutine(HostInitRoutine());
@@ -94,14 +94,13 @@ namespace FIVE.GameModes
             yield break;
         }
 
-
         private IEnumerator HostInitRoutine()
         {
             yield return null;
-            CameraManager.AddCamera("DefaultCamera-1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
-            CameraManager.AddCamera("DefaultCamera-2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
-            CameraManager.AddCamera("DefaultCamera-3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
 
+            CameraManager.AddCamera("Default Camera 1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
+            CameraManager.AddCamera("Default Camera 2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
+            CameraManager.AddCamera("Default Camera 3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
 
             GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, 0), Quaternion.identity);
             RobotManager.ActiveRobot = robot;
@@ -123,8 +122,5 @@ namespace FIVE.GameModes
             CameraManager.SetCameraWall();
             yield return null;
         }
-
-
-
     }
 }
