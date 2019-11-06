@@ -1,6 +1,7 @@
 ﻿using FIVE.Interactive;
 using FIVE.Interactive.Blacksmith;
 using FIVE.Robot;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ namespace FIVE.UI.BSComposite
         protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
         public GameObject Inventory { get; }
         public GameObject Composite { get; }
+        public Button Result { get; }
         public Button BackButton { get; }
         private int[] emptyComposites;
         private int[] emptyInventory;
@@ -54,10 +56,21 @@ namespace FIVE.UI.BSComposite
             }
             BackButton = Get<Button>(nameof(BackButton));
             Bind(BackButton).To(OnBackButtonClick);
+            Result = Get<Button>(nameof(Result));
+            Bind(Result).To(OnResultButtonClick);
+        }
+
+        private void OnResultButtonClick()
+        {
+            throw new NotImplementedException();
         }
 
         private void OnCompositeButtonClicked(Button button)
         {
+            if(Result.transform.childCount != 0)
+            {
+
+            }
             if (button.transform.childCount == 0)
             {
                 return;
@@ -76,6 +89,7 @@ namespace FIVE.UI.BSComposite
                 if(emptyInventory[count] == 0)
                 {
                     item.SetParent(inventoryButtons[count].transform);
+                    Blacksmith.RemoveFromComposite(RobotManager.ActiveRobot, item);
                     item.transform.localPosition = new Vector3(0, -37, 0);
                     item.transform.localScale = new Vector3(7, 7, 7);
                     emptyInventory[count] = 1;
@@ -83,7 +97,6 @@ namespace FIVE.UI.BSComposite
                 }
                 count++;
             }
-
 
         }
 
@@ -115,7 +128,20 @@ namespace FIVE.UI.BSComposite
                 }
                 count++;
             }
-            Blacksmith.AddForComposite(RobotManager.ActiveRobot, item);
+            bool isFull = true;
+            foreach(int a in emptyComposites)
+            {
+                if(a == 0)
+                {
+                    isFull = false;
+                }
+            }
+            if (isFull)
+            {
+                GameObject resultItem = GameObject.Instantiate(Blacksmith.GenerateResultItems(), Result.transform);
+                resultItem.transform.localPosition = new Vector3(-27.4f, -11.9f, -29.8f);
+                resultItem.transform.localScale = new Vector3(20, 20,20);
+            }
         }
 
         private void ResetComposite()
