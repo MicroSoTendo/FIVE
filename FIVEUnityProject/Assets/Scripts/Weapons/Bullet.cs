@@ -37,7 +37,7 @@ public class Bullet : MonoBehaviour
         {
             if (Target != null)
             {
-                transform.Translate(Vector3.up);
+                transform.Translate(Vector3.up * 3.0f);
             }
         }
     }
@@ -54,7 +54,6 @@ public class Bullet : MonoBehaviour
             }
             gameObject.SetActive(false);
             Destroy(gameObject);
-            //Debug.Log($"Collide with {other.gameObject.name}");
         }
     }
 }
