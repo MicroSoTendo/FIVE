@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace FIVE.Robot
 {
@@ -36,7 +35,6 @@ namespace FIVE.Robot
 
         private void Awake()
         {
-            Assert.IsTrue(instance == null); // Make sure singleton
             instance = this;
             GameObject[] prefabs = Resources.LoadAll<GameObject>("EntityPrefabs/RobotPrefabs");
             foreach (GameObject prefab in prefabs)

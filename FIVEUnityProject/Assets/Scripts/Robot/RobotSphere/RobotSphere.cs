@@ -63,10 +63,10 @@ namespace FIVE.Robot
 
         protected override void Start()
         {
-            GameObject eye = gameObject.FindChildRecursive(nameof(eye));
-            fpsCamera = CameraManager.AddCamera(nameof(fpsCamera) + GetInstanceID(), parent: eye.transform);
+            fpsCamera = CameraManager.AddCamera("Robot POV " + ID.ToString(), parent: transform);
+            fpsCamera.transform.localPosition = new Vector3(0f, 0.1f, 0.07f);
             fpsCamera.gameObject.AddComponent<RobotCameraScanning>();
-            thirdPersonCamera = CameraManager.AddCamera(nameof(thirdPersonCamera) + ID.ToString(),
+            thirdPersonCamera = CameraManager.AddCamera("Robot " + ID.ToString(),
                 parent: transform, enableAudioListener: true,
                 position: new Vector3(0, 2, 0),
                 rotation: Quaternion.Euler(90, 0, 0));
@@ -113,6 +113,11 @@ namespace FIVE.Robot
             {
                 fpsController.Update();
             }
+
+            if (CurrentState == RobotSphereState.Walk)
+            {
+                fpsCamera.transform.localPosition = new Vector3(Mathf.Sin(Time.time * 8f) * 0.02f, 0.1f + Mathf.Sin(Time.time * 16f) * 0.02f, 0.07f);
+            }
         }
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
@@ -127,7 +132,6 @@ namespace FIVE.Robot
                 else
                 {
                     movable.MoveOnces[(int)move](steps);
-                    //Debug.Log($"To {transform.forward}");
                 }
             }
         }
@@ -136,8 +140,6 @@ namespace FIVE.Robot
         {
             if (movable.enabled)
             {
-                //Debug.Log("Attack");
-                Debug.Log($"Attacking {target}");
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.1f, Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
             }

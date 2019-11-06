@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using FIVE.CameraSystem;
+﻿using FIVE.CameraSystem;
 using FIVE.Interactive;
 using FIVE.Robot;
 using FIVE.TerrainSystem;
@@ -9,6 +8,7 @@ using FIVE.UI.BSComposite;
 using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.NPC;
+using System.Collections;
 using UnityEngine;
 
 namespace FIVE.GameModes
@@ -23,12 +23,16 @@ namespace FIVE.GameModes
         private IEnumerator Start()
         {
             TerrainManager.CreateTerrain(Vector3.zero);
+
             yield return null;
-            CameraManager.AddCamera("DefaultCamera-1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
-            CameraManager.AddCamera("DefaultCamera-2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
-            CameraManager.AddCamera("DefaultCamera-3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
+
+            CameraManager.AddCamera("Default Camera 1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
+            CameraManager.AddCamera("Default Camera 2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
+            CameraManager.AddCamera("Default Camera 3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
             CameraManager.Remove("GUI Camera");
+
             NPCInit.Initialize();
+
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<NPCDialogueViewModel>().IsActive = false;
             UIManager.Create<BSCompositeViewModel>().IsActive = false;
