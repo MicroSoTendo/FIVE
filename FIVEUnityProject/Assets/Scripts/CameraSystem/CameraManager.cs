@@ -131,7 +131,7 @@ namespace FIVE.CameraSystem
                     Camera ca = wall[x * 2 + y];
                     SetCamera(ca);
                     SetAudioListener(ca);
-                    this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(activeCamera: ca));
+                    this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(newCamera: ca));
                     wall.Clear();
                     return;
                 }
