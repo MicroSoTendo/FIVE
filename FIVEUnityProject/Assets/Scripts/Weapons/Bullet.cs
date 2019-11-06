@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour
         set
         {
             _target = value;
-            transform.forward = Vector3.Normalize(_target - transform.position);
+            transform.up = Vector3.Normalize(_target - transform.position);
         }
     }
 
@@ -30,12 +30,13 @@ public class Bullet : MonoBehaviour
         if (elapsedTime > 3.0f)
         {
             gameObject.SetActive(false);
+            Destroy(gameObject);
         }
         else
         {
             if (Target != null)
             {
-                transform.Translate(transform.forward * 1.0f);
+                transform.Translate(Vector3.up);
             }
         }
     }
@@ -43,5 +44,6 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }

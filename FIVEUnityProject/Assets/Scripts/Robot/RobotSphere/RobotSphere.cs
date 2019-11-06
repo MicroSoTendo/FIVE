@@ -140,8 +140,6 @@ namespace FIVE.Robot
         {
             if (movable.enabled)
             {
-                //Debug.Log("Attack");
-                Debug.Log($"Attacking {target}");
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 1.1f, Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
             }

@@ -43,7 +43,7 @@ namespace FIVE.ControllerSystem
                 robotSphere.Move(Movable.Move.Right, 5);
             }
 
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0) && CameraManager.CurrentActiveCamera.name.StartsWith("fpsCamera"))
             {
                 if (CameraManager.CurrentActiveCamera != null)
                 {
