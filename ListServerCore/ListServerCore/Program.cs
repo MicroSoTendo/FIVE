@@ -69,41 +69,53 @@ namespace ListServerCore
         }
 
         private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
-        private static unsafe void ClientHandler(TcpClient client)
+        private static readonly ConcurrentDictionary<TcpClient, Guid> HostDictionary = new ConcurrentDictionary<TcpClient, Guid>();
+        private static async Task ClientHandler(TcpClient client)
         {
-            try
+            NetworkStream networkStream = client.GetStream();
+            byte[] opCodeBuffer = new byte[2];
+            while (client.Connected)
             {
-                NetworkStream networkStream = client.GetStream();
-                byte[] opCodeBuffer = new byte[2];
-                networkStream.Read(opCodeBuffer);
-                fixed (byte* pBytes = opCodeBuffer)
+                networkStream.ReadTimeout = 5000;
+                Task<int> asyncResult = networkStream.ReadAsync(opCodeBuffer, 0, opCodeBuffer.Length);
+                await Task.Delay(5000);
+                if (asyncResult.IsCompleted && networkStream.DataAvailable)
                 {
-                    ushort* code = (ushort*)pBytes;
-                    while (true)
-                    {
-                        if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
-                        {
-                            CreateRoomHandler(networkStream, ((IPEndPoint)client.Client.RemoteEndPoint).Address);
-                        }
-                        if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
-                        {
-                            RemoveRoomHandler(networkStream);
-                        }
-                        if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
-                        {
-                            SendRoomInfos(networkStream);
-                        }
-                        if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
-                        {
-                            
-                        }
-                        
-                    }
+                    HandleListServerCode(client, opCodeBuffer);
+                }
+                else if (HostDictionary.ContainsKey(client))
+                {
+                    Console.WriteLine($"Did not receive alive tick from {((IPEndPoint)client.Client.RemoteEndPoint).Address} on time, removed.");
+                    CleanUp(client);
+                    break;
                 }
             }
-            catch
+        }
+
+        private static unsafe void HandleListServerCode(TcpClient client, byte[] opCodeBuffer)
+        {
+            fixed (byte* pBytes = opCodeBuffer)
             {
-                // ignored
+                ushort* code = (ushort*)pBytes;
+                if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
+                {
+                    CreateRoomHandler(client);
+                }
+
+                if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
+                {
+                    RemoveRoomHandler(client);
+                }
+
+                if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
+                {
+                    SendRoomInfos(client);
+                }
+
+                if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
+                {
+
+                }
             }
         }
 
@@ -161,43 +173,48 @@ namespace ListServerCore
             }
         }
 
-        private static void RemoveRoomHandler(NetworkStream networkStream)
+        private static void RemoveRoomHandler(TcpClient client)
         {
+            NetworkStream stream = client.GetStream();
             byte[] guidBytes = new byte[16];
-            networkStream.Read(guidBytes);
+            stream.Read(guidBytes);
             Guid guid = guidBytes.ToGuid();
             RoomInfos.TryRemove(guid, out _);
         }
 
-        private static void CreateRoomHandler(NetworkStream stream, IPAddress ip)
+        private static void CreateRoomHandler(TcpClient client)
         {
-            Console.Write("Create room requested: ");
+            IPAddress ip = ((IPEndPoint)client.Client.RemoteEndPoint).Address;
+            Console.Write($"Create room requested from {ip}.");
+            NetworkStream stream = client.GetStream();
             byte[] roomInfoBuffer = new byte[stream.ReadI32()];
             stream.Read(roomInfoBuffer);
             RoomInfo roomInfo = roomInfoBuffer.ToRoomInfo(ip.GetAddressBytes().ToI32());
             Console.WriteLine($"GUID = {roomInfo.Guid}, Room Name = {roomInfo.Name}, Max Players = {roomInfo.MaxPlayers}, Has Password = {roomInfo.HasPassword} ");
             stream.Write(roomInfo.Guid.ToBytes());
             RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
+            HostDictionary.TryAdd(client, roomInfo.Guid);
         }
 
-        private static void SendRoomInfos(NetworkStream networkStream)
+        private static void SendRoomInfos(TcpClient client)
         {
-            while (true)
+            byte[] buffer = RoomInfos.Count.ToBytes();
+            NetworkStream stream = client.GetStream();
+            stream.Write(buffer);
+            foreach (RoomInfo roomInfo in RoomInfos.Values)
             {
-                try
-                {
-                    networkStream.Write(RoomInfos.Count.ToBytes());
-                    foreach (RoomInfo roomInfo in RoomInfos.Values)
-                    {
-                        byte[] roomInfoBuffer = roomInfo.ToBytes();
-                        networkStream.Write(roomInfoBuffer.Length.ToBytes());
-                        networkStream.Write(roomInfoBuffer);
-                    }
-                }
-                catch
-                {
-                    break;
-                }
+                byte[] roomInfoBuffer = roomInfo.ToBytes();
+                stream.Write(roomInfoBuffer.Length.ToBytes());
+                stream.Write(roomInfoBuffer);
+            }
+        }
+
+        private static void CleanUp(TcpClient client)
+        {
+            ConnectedClients.Remove(client);
+            if (HostDictionary.TryRemove(client, out Guid guid))
+            {
+                RoomInfos.TryRemove(guid, out _);
             }
         }
 
@@ -211,7 +228,7 @@ namespace ListServerCore
                 TcpClient client = listener.AcceptTcpClient();
                 ConnectedClients.Add(client);
                 Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
-                Tasks.Add(Task.Run(() => ClientHandler(client)));
+                Tasks.Add(ClientHandler(client));
             }
         }
     }

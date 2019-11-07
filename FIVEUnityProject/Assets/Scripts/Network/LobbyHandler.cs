@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FIVE.Network
@@ -25,7 +24,7 @@ namespace FIVE.Network
         private readonly ConcurrentDictionary<Guid, RoomInfo> roomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
         private readonly string listServer;
         private readonly ushort listServerPort;
-
+        private Action ticker;
         public LobbyHandler(string listServer, ushort listServerPort)
         {
             listServerClient = new TcpClient();
@@ -34,24 +33,38 @@ namespace FIVE.Network
             this.listServer = listServer;
             this.listServerPort = listServerPort;
             md5 = MD5.Create();
+            ticker = RefreshRoomInfo;
         }
 
+        private readonly ConcurrentQueue<Action> scheduledActions = new ConcurrentQueue<Action>();
         protected override async Task Handler()
         {
             while (true)
             {
-                NetworkStream stream = listServerClient.GetStream();
-                stream.Write(ListServerCode.GetRoomInfos);
-                int roomCount = stream.ReadI32();
-                roomInfos.Clear();
-                for (int i = 0; i < roomCount; i++)
+                ticker();
+                if (scheduledActions.TryDequeue(out Action action))
                 {
-                    byte[] roomInfoBuffer = new byte[stream.ReadI32()];
-                    stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
-                    var roomInfo = roomInfoBuffer.ToRoomInfo();
-                    roomInfos.TryAdd(roomInfo.Guid, roomInfo);
+                    action();
                 }
-                await Task.Delay(1000 / UpdateRate);
+                else
+                {
+                    await Task.Delay(1000 / 30);
+                }
+            }
+        }
+
+        private void RefreshRoomInfo()
+        {
+            NetworkStream stream = listServerClient.GetStream();
+            stream.Write((ushort)ListServerCode.GetRoomInfos);
+            int roomCount = stream.ReadI32();
+            roomInfos.Clear();
+            for (int i = 0; i < roomCount; i++)
+            {
+                byte[] roomInfoBuffer = new byte[stream.ReadI32()];
+                stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
+                var roomInfo = roomInfoBuffer.ToRoomInfo();
+                roomInfos.TryAdd(roomInfo.Guid, roomInfo);
             }
         }
 
@@ -60,8 +73,12 @@ namespace FIVE.Network
             listServerClient.Connect(listServer, listServerPort);
         }
 
+        public void CreateRoom()
+        {
+            scheduledActions.Enqueue(CreateRoomInternal);
+        }
 
-        public unsafe void CreateRoom()
+        private unsafe void CreateRoomInternal()
         {
             if (!listServerClient.Connected)
             {
@@ -78,9 +95,24 @@ namespace FIVE.Network
             stream.Write(operation);
             stream.Write(roomInfoBuffer);
             HostRoomInfo.Guid = stream.ReadGuid();
+            ticker = AliveTicker;
+        }
+
+        private void AliveTicker()
+        {
+            byte[] buffer = ((ushort)ListServerCode.AliveTick).ToBytes();
+            while (true)
+            {
+                listServerClient.GetStream().Write(buffer);
+            }
         }
 
         public void RemoveRoom()
+        {
+            scheduledActions.Enqueue(RemoveRoomInternal);
+        }
+
+        private void RemoveRoomInternal()
         {
             if (!listServerClient.Connected)
             {
@@ -89,6 +121,7 @@ namespace FIVE.Network
             NetworkStream stream = listServerClient.GetStream();
             stream.Write(ListServerCode.RemoveRoom);
             stream.Write(HostRoomInfo.Guid);
+            ticker = RefreshRoomInfo;
         }
 
         private void UpdateRoomInfo(ListServerCode code)
@@ -141,7 +174,10 @@ namespace FIVE.Network
         {
             HostRoomInfo.HasPassword = hasPassword;
             if (hasPassword)
+            {
                 HostRoomInfo.SetRoomPassword(password);
+            }
+
             UpdateRoomInfo(ListServerCode.UpdatePassword);
         }
 
