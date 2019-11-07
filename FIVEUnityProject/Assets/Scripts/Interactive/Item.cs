@@ -1,15 +1,14 @@
 ﻿using FIVE.CameraSystem;
+using FIVE.EventSystem;
 using FIVE.Robot;
 using FIVE.UI.InGameDisplay;
-using System;
 using System.Collections;
 using System.Linq;
-using FIVE.EventSystem;
 using UnityEngine;
 
 namespace FIVE.Interactive
 {
-    public class Item : MonoBehaviour
+    internal class Item : MonoBehaviour
     {
         public delegate void ItemUsingAction(GameObject owner, GameObject item);
 
@@ -72,7 +71,7 @@ namespace FIVE.Interactive
             }
         }
 
-        public void OnMouseOver()
+        private void OnMouseOver()
         {
             if (!CameraManager.GetPovCameras.First()?.enabled ?? true)
             {
@@ -98,7 +97,7 @@ namespace FIVE.Interactive
             }
         }
 
-        public void OnMouseExit()
+        private void OnMouseExit()
         {
             if (!isFlashing)
             {
@@ -115,7 +114,6 @@ namespace FIVE.Interactive
 
             this.RaiseEvent<OnItemDialogDismissRequested>();
         }
-
 
         private void LateUpdate()
         {
