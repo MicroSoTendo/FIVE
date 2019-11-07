@@ -12,6 +12,7 @@ using FIVE.UI.Multiplayers;
 using FIVE.UI.NPC;
 using System.Collections;
 using System.Collections.Generic;
+using FIVE.UI.Background;
 using UnityEngine;
 
 namespace FIVE.GameModes
@@ -71,6 +72,7 @@ namespace FIVE.GameModes
 
         private IEnumerator CommonInitRoutine()
         {
+            UIManager.Get<BackgroundViewModel>().IsActive = false;
             StartCoroutine(PrefabPool.Instance.LoadPrefabs(prefabList));
             TerrainManager.CreateTerrain(Vector3.zero);
             CameraManager.Remove("GUI Camera");
@@ -99,19 +101,96 @@ namespace FIVE.GameModes
             }
         }
 
-        private Vector3 GetSpawnLocation(int playerIndex)
+        //TODO: Refactor spawn location later
+        private readonly List<(Vector3, Quaternion)>[] spawnPoints =
         {
-            //TODO: Implement
-            return default;
-        }
+            new List<(Vector3, Quaternion)>
+            {
+                
+                (new Vector3(-10, 20, 0), Quaternion.identity),
+                (new Vector3(0, 20, 0), Quaternion.identity),
+                (new Vector3(10, 20, 0), Quaternion.identity),
+                (new Vector3(-10, 20, -10), Quaternion.identity),
+                (new Vector3(0, 20, -10), Quaternion.identity),
+                (new Vector3(10, 20, -10), Quaternion.identity),
+                (new Vector3(-10, 20, -20), Quaternion.identity),
+                (new Vector3(0, 20, -20), Quaternion.identity),
+                (new Vector3(10, 20, -20), Quaternion.identity),
+            },
+            new List<(Vector3, Quaternion)>
+            {
+                (new Vector3(-50, 20, 110), Quaternion.Euler(0,90,0)),
+                (new Vector3(-50, 20, 100), Quaternion.Euler(0,90,0)),
+                (new Vector3(-50, 20, 90), Quaternion.Euler(0,90,0)),
+                (new Vector3(-60, 20, 110), Quaternion.Euler(0,90,0)),
+                (new Vector3(-60, 20, 100), Quaternion.Euler(0,90,0)),
+                (new Vector3(-60, 20, 90), Quaternion.Euler(0,90,0)),
+                (new Vector3(-70, 20, 110), Quaternion.Euler(0,90,0)),
+                (new Vector3(-70, 20, 100), Quaternion.Euler(0,90,0)),
+                (new Vector3(-70, 20, 90), Quaternion.Euler(0,90,0)),
+            },
+            new List<(Vector3, Quaternion)>
+            {
+                (new Vector3(50, 20, 110), Quaternion.Euler(0,-90,0)),
+                (new Vector3(50, 20, 100), Quaternion.Euler(0,-90,0)),
+                (new Vector3(50, 20, 90), Quaternion.Euler(0,-90,0)),
+                (new Vector3(60, 20, 110), Quaternion.Euler(0,-90,0)),
+                (new Vector3(60, 20, 100), Quaternion.Euler(0,-90,0)),
+                (new Vector3(60, 20, 90), Quaternion.Euler(0,-90,0)),
+                (new Vector3(70, 20, 110), Quaternion.Euler(0,-90,0)),
+                (new Vector3(70, 20, 100), Quaternion.Euler(0,-90,0)),
+                (new Vector3(70, 20, 90), Quaternion.Euler(0,-90,0)),
+            },
+            new List<(Vector3, Quaternion)>
+            {
+                (new Vector3(10, 20, 140), Quaternion.Euler(0,-180,0)),
+                (new Vector3(0, 20, 140), Quaternion.Euler(0,-180,0)),
+                (new Vector3(-10, 20, 140), Quaternion.Euler(0,-180,0)),
+                (new Vector3(10, 20, 150), Quaternion.Euler(0,-180,0)),
+                (new Vector3(0, 20, 150), Quaternion.Euler(0,-180,0)),
+                (new Vector3(-10, 20, 150), Quaternion.Euler(0,-180,0)),
+                (new Vector3(10, 20, 160), Quaternion.Euler(0,-180,0)),
+                (new Vector3(0, 20, 160), Quaternion.Euler(0,-180,0)),
+                (new Vector3(-10, 20, 160), Quaternion.Euler(0,-180,0)),
+            },
+            new List<(Vector3, Quaternion)>
+            {
+                (new Vector3(-10, 20, -50), Quaternion.identity),
+                (new Vector3(0, 20, -50), Quaternion.identity),
+                (new Vector3(10, 20, -50), Quaternion.identity),
+                (new Vector3(-10, 20, -60), Quaternion.identity),
+                (new Vector3(0, 20, -60), Quaternion.identity),
+                (new Vector3(10, 20, -60), Quaternion.identity),
+                (new Vector3(-10, 20, -70), Quaternion.identity),
+                (new Vector3(0, 20, -70), Quaternion.identity),
+                (new Vector3(10, 20, -70), Quaternion.identity),
+            },
+        };
 
         private IEnumerator ClientInitRoutine()
         {
-            Vector3 spawnLocation = GetSpawnLocation(NetworkManager.Instance.PlayerIndex);
-            GameObject robot = RobotManager.CreateRobot("robotSphere", spawnLocation, Quaternion.identity);
-            SyncCenter.Instance.Register(robot.GetComponent<Transform>());
-            SyncCenter.Instance.Register(robot.GetComponent<Animator>());
-            yield break;
+            Inventory inventory = null;
+            List<(Vector3, Quaternion)> points = spawnPoints[NetworkManager.Instance.PlayerIndex];
+            for (int i = 0; i < points.Count; i++)
+            {
+                (Vector3 position, Quaternion rotation) = points[i];
+                GameObject robot = RobotManager.CreateRobot("robotSphere", position, rotation);
+                if (i == 0)
+                {
+                    RobotManager.ActiveRobot = robot;
+                    inventory = InventoryManager.AddInventory(robot);
+                }
+
+                SyncCenter.Instance.Register(robot);
+                SyncCenter.Instance.Register(robot.GetComponent<Transform>());
+                SyncCenter.Instance.Register(robot.GetComponent<Animator>());
+                yield return null;
+            }
+            InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
+            ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
+            inventoryViewModel.Inventory = inventory;
+            inventoryViewModel.IsActive = false;
+            itemDialogViewModel.IsActive = false;
         }
 
         private IEnumerator HostInitRoutine()
@@ -122,18 +201,22 @@ namespace FIVE.GameModes
             CameraManager.AddCamera("Default Camera 2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
             CameraManager.AddCamera("Default Camera 3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
 
-            GameObject robot = RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, 0), Quaternion.identity);
-            RobotManager.ActiveRobot = robot;
-            RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, 0), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, 0), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, -10), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, -10), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, -10), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(-10, 20, -20), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(0, 20, -20), Quaternion.identity);
-            RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, -20), Quaternion.identity);
-
-            Inventory inventory = InventoryManager.AddInventory(robot);
+            List<(Vector3, Quaternion)> points = spawnPoints[0];
+            Inventory inventory = null;
+            for (int i = 0; i < points.Count; i++)
+            {
+                (Vector3 position, Quaternion rotation) = points[i];
+                GameObject robot = RobotManager.CreateRobot("robotSphere", position, rotation);
+                if (i == 0)
+                {
+                    RobotManager.ActiveRobot = robot;
+                    inventory = InventoryManager.AddInventory(robot);
+                }
+                SyncCenter.Instance.Register(robot);
+                SyncCenter.Instance.Register(robot.GetComponent<Transform>());
+                SyncCenter.Instance.Register(robot.GetComponent<Animator>());
+                yield return null;
+            }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
             inventoryViewModel.Inventory = inventory;
