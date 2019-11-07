@@ -43,7 +43,9 @@ public class BatteryManager : MonoBehaviour
 
         for (int i = 0; i < positionArray.Length; i++)
         {
-            Batteries.Add(Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i])));
+            var o = Instantiate(energy, positionArray[i], Quaternion.Euler(RotationArray[i]));
+            o.name = energy.name;
+            Batteries.Add(o);
         }
     }
 

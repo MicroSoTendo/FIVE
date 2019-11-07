@@ -20,7 +20,7 @@ public class NPCInit : MonoBehaviour
         Spawner = Instantiate(NPC, new Vector3(-54.2f, 10.1f, -153f), Quaternion.Euler(new Vector3(0f, 55f, 0)));
         Spawner.transform.localScale = new Vector3(10, 10, 10);
         var NPCOrange = Resources.Load<GameObject>("EntityPrefabs/NPC/NPCsinglePrefabs/NPCOrange");
-        Spawner = Instantiate(NPCOrange, new Vector3(-35.4f, 9.22f, 78.5f), Quaternion.Euler(new Vector3(0f, 140f, 0)));
+        Spawner = Instantiate(NPCOrange, new Vector3(16.7f, 9.22f, 78.5f), Quaternion.Euler(new Vector3(0f, 140f, 0)));
         Spawner.transform.localScale = new Vector3(10, 10, 10);
 
 

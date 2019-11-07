@@ -15,17 +15,28 @@ namespace ListServerCore
         private static readonly HashSet<Task> Tasks = new HashSet<Task>();
         private static void Main(string[] args)
         {
-            IPAddress address = IPAddress.Loopback;
+            IPAddress address = IPAddress.Any;
             int listenPort = 8888;
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i] == "-p" || args[i] == "-P")
+                if (args[i].ToLower() == "-p")
                 {
                     if (i + 1 < args.Length && int.TryParse(args[i + 1], out int port))
                     {
                         if (port > 0 && port < ushort.MaxValue)
                         {
                             listenPort = port;
+                        }
+                    }
+                }
+
+                if (args[i].ToLower() == "-ip")
+                {
+                    if (i + 1 < args.Length)
+                    {
+                        if (IPAddress.TryParse(args[i + 1], out IPAddress parsedAddress))
+                        {
+                            address = parsedAddress;
                         }
                     }
                 }
