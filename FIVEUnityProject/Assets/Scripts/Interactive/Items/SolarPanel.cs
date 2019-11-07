@@ -17,7 +17,7 @@ namespace FIVE.Interactive.Items
 
         private void ItemAction(GameObject owner, GameObject o)
         {
-            if(true/*is daytime*/)
+            if(SkyBoxTime.isDayTime())
             {
                 //current Energy downs slower
                 owner.GetComponent<RobotComponents.Battery>().CurrentEnergy+= 0.7f;

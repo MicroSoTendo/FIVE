@@ -16,18 +16,27 @@ namespace FIVE
         public int speed;
         private Light sun;
         private Transform sunTransform;
-        public float time;
+        public static float time;
 
         private void Awake()
         {
             GameObject lightGameObject = Instantiate(lightPrefab);
             sunTransform = lightGameObject.transform;
             sun = lightGameObject.GetComponent<Light>();
+            time = 44000;
         }
 
         private void Update()
         {
             ChangeTime();
+        }
+        public static bool isDayTime()
+        {
+            if(time < 43200)
+            {
+                return false;
+            }
+            return true;
         }
 
         public void ChangeTime()
