@@ -21,6 +21,7 @@ namespace FIVE.UI.BSComposite
         private int[] emptyInventory;
         private List<Button> inventoryButtons;
         private List<Button> compositeButtons;
+
         public override bool IsActive
         {
             get => base.IsActive;
@@ -67,26 +68,25 @@ namespace FIVE.UI.BSComposite
 
         private void OnCompositeButtonClicked(Button button)
         {
-            if(Result.transform.childCount != 0)
+            if (Result.transform.childCount != 0)
             {
-
             }
             if (button.transform.childCount == 0)
             {
                 return;
             }
-            for(int i = 0; i < emptyComposites.Length; i++)
+            for (int i = 0; i < emptyComposites.Length; i++)
             {
-                if(compositeButtons[i] == button)
+                if (compositeButtons[i] == button)
                 {
                     emptyComposites[i] = 0;
                 }
             }
             GameObject item = button.transform.GetChild(0).gameObject;
             int count = 0;
-            while(count < inventoryButtons.Count)
+            while (count < inventoryButtons.Count)
             {
-                if(emptyInventory[count] == 0)
+                if (emptyInventory[count] == 0)
                 {
                     item.SetParent(inventoryButtons[count].transform);
                     Blacksmith.RemoveFromComposite(RobotManager.ActiveRobot, item);
@@ -97,7 +97,6 @@ namespace FIVE.UI.BSComposite
                 }
                 count++;
             }
-
         }
 
         private void OnInventoryItemClicked(Button button)
@@ -129,9 +128,9 @@ namespace FIVE.UI.BSComposite
                 count++;
             }
             bool isFull = true;
-            foreach(int a in emptyComposites)
+            foreach (int a in emptyComposites)
             {
-                if(a == 0)
+                if (a == 0)
                 {
                     isFull = false;
                 }
@@ -140,7 +139,7 @@ namespace FIVE.UI.BSComposite
             {
                 GameObject resultItem = GameObject.Instantiate(Blacksmith.GenerateResultItems(), Result.transform);
                 resultItem.transform.localPosition = new Vector3(-27.4f, -11.9f, -29.8f);
-                resultItem.transform.localScale = new Vector3(20, 20,20);
+                resultItem.transform.localScale = new Vector3(20, 20, 20);
             }
         }
 
@@ -156,8 +155,8 @@ namespace FIVE.UI.BSComposite
                 }
             }
             emptyComposites = new int[3] { 0, 0, 0 };
-            
         }
+
         private void UpdateInventory()
         {
             foreach (Button button in inventoryButtons)
