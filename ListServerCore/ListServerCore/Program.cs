@@ -16,9 +16,23 @@ namespace ListServerCore
         private static void Main(string[] args)
         {
             IPAddress address = IPAddress.Loopback;
-            int infoPort = 8888;
+            int listenPort = 8888;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-p" || args[i] == "-P")
+                {
+                    if (i + 1 < args.Length && int.TryParse(args[i + 1], out int port))
+                    {
+                        if (port > 0 && port < ushort.MaxValue)
+                        {
+                            listenPort = port;
+                        }
+                    }
+                }
+            }
+
             CancellationTokenSource tokenSource = new CancellationTokenSource();
-            Task handlerTask = Task.Run(() => { InComingHandler(address, infoPort); }, tokenSource.Token);
+            Task handlerTask = Task.Run(() => { InComingHandler(address, listenPort); }, tokenSource.Token);
             while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey();
@@ -38,7 +52,7 @@ namespace ListServerCore
                         connectedClient.Dispose();
                     }
                     ConnectedClients.Clear();
-                    handlerTask = Task.Run(() => { InComingHandler(address, infoPort); }, tokenSource.Token);
+                    handlerTask = Task.Run(() => { InComingHandler(address, listenPort); }, tokenSource.Token);
                 }
             }
         }
