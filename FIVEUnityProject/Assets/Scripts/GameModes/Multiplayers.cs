@@ -33,16 +33,6 @@ namespace FIVE.GameModes
             lobbyWindow.IsActive = true;
             EventManager.Subscribe<OnJoinRoomRequested, JoinRoomArgs>(JoinRoomHandler);
             EventManager.Subscribe<OnCreateRoomRequested, CreateRoomArgs>(CreateRoomHandler);
-            StartCoroutine(FetchRoomInfos());
-        }
-
-        private IEnumerator FetchRoomInfos()
-        {
-            while (true)
-            {
-                throw new NotImplementedException();
-                yield return null;
-            }
         }
 
         private void JoinRoomHandler(object sender, JoinRoomArgs joinRoomArgs)

@@ -78,7 +78,7 @@ namespace FIVE.UI.Multiplayers
             while (IsActive)
             {
                 float yOffset = 0f;
-                foreach (RoomInfo roomInfo in /*NetworkManager.GetRoomInfos*/ new RoomInfo[]{})
+                foreach (RoomInfo roomInfo in NetworkManager.Instance.RoomInfos)
                 {
                     if (info2Entry.ContainsKey(roomInfo))
                     {
@@ -128,22 +128,14 @@ namespace FIVE.UI.Multiplayers
                 passwordVM.IsActive = true;
                 Bind(passwordVM.ConfirmButton).To(() =>
                 {
-                    //if (NetworkManager.TryJoinRoom(info.Guid, passwordVM.PasswordInputField.text))
-                    //{
-                    //    passwordVM.IsActive = false;
-                    //}
-                    //else
-                    //{
-                    //    //TODO:Popup wrong password
-                    //}
+                    this.RaiseEvent<OnJoinRoomRequested>( new JoinRoomArgs(info.Guid, passwordVM.PasswordInputField.text));
+                    passwordVM.IsActive = false;
                 });
             }
             else
             {
-                //if (NetworkManager.TryJoinRoom(info.Guid))
-                //{
-                //    IsActive = false;
-                //}
+                this.RaiseEvent<OnJoinRoomRequested>( new JoinRoomArgs(info.Guid, ""));
+                IsActive = false;
             }
         }
 

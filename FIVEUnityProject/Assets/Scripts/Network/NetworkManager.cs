@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -35,7 +36,7 @@ namespace FIVE.Network
         [SerializeField] private ushort listServerPort;
         [SerializeField] private int updateRate = 30;
         [SerializeField] private ushort gameServerPort = 8889;
-
+        public ICollection<RoomInfo> RoomInfos => lobbyHandler.GetRoomInfos;
         public int PlayerIndex { get; internal set; }
         internal int PrivateID { get; set; }
         public NetworkState State { get; internal set; } = NetworkState.Idle;
