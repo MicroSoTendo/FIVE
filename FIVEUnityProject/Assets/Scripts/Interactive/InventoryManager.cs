@@ -9,13 +9,18 @@ namespace FIVE.Interactive
 
         public static Inventory AddInventory(GameObject owner)
         {
-            Inventory inventory = new Inventory(owner);
+            var inventory = new Inventory(owner);
             Inventories.Add(owner, inventory);
             return inventory;
         }
+
         public static Inventory GetInventory(GameObject owner)
         {
-            if (owner == null) return null;
+            if (owner == null)
+            {
+                return null;
+            }
+
             if (Inventories.TryGetValue(owner, out Inventory inventory))
             {
                 return inventory;
