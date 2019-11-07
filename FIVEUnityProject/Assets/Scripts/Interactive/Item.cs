@@ -74,7 +74,7 @@ namespace FIVE.Interactive
 
         public void OnMouseOver()
         {
-            if (!CameraManager.GetFpsCameras.First()?.enabled ?? true)
+            if (!CameraManager.GetPovCameras.First()?.enabled ?? true)
             {
                 return;
             }

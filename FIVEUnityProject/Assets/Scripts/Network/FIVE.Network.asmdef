@@ -1,8 +1,6 @@
 {
     "name": "FIVE.Network",
     "references": [
-        "FIVE.EventSystem",
-        "FIVE.Utils",
         "FIVE.Collections"
     ],
     "includePlatforms": [],

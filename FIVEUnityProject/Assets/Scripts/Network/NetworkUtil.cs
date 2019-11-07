@@ -58,11 +58,6 @@ namespace FIVE.Network
             return new RoomInfo { Guid = guid, CurrentPlayers = currentPlayers, MaxPlayers = maxPlayers, HasPassword = hasPassword, Host = host, Port = port, Name = name };
         }
 
-        public static unsafe void Test()
-        {
-            Debug.Log($"sizeof(Vector3) = {sizeof(Vector3)}");
-        }
-
         public static byte[] ToBytes(this int i)
         {
             return BitConverter.GetBytes(i);
@@ -130,15 +125,19 @@ namespace FIVE.Network
             return BitConverter.GetBytes(Unsafe.As<T, int>(ref value));
         }
 
-        public static byte[] ToBytes(this RoomInfo roomInfo)
+        public static unsafe byte[] ToBytes(this RoomInfo roomInfo)
         {
-            byte[] currentPlayers = roomInfo.CurrentPlayers.ToBytes();
-            byte[] maxPlayers = roomInfo.MaxPlayers.ToBytes();
-            byte[] hasPassword = roomInfo.HasPassword.ToBytes();
-            byte[] host = roomInfo.Host.ToBytes();
-            byte[] port = roomInfo.Port.ToBytes();
-            byte[] name = roomInfo.Name.ToBytes();
-            return Combine(currentPlayers, maxPlayers, hasPassword, host, port, name);
+            const int fixedInfoSize = sizeof(int) + sizeof(int) + sizeof(bool) + sizeof(ushort);
+            byte[] buffer = new byte[fixedInfoSize + Encoding.Unicode.GetByteCount(roomInfo.Name)];
+            fixed (byte* pBuffer = buffer)
+            {
+                *(int*)pBuffer = roomInfo.CurrentPlayers;
+                *(int*)(pBuffer + sizeof(int)) = roomInfo.MaxPlayers;
+                *(bool*)(pBuffer + sizeof(int) + sizeof(int)) = roomInfo.HasPassword;
+                *(ushort*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(bool)) = roomInfo.Port;
+            }
+            buffer.CopyFrom(roomInfo.Name.ToBytes(), fixedInfoSize);
+            return buffer;
         }
 
         public static byte[] Combine(byte[] arr1, byte[] arr2)
@@ -196,59 +195,30 @@ namespace FIVE.Network
             int offset = 0;
             foreach (byte[] array in arrays)
             {
-                Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+                rv.CopyFrom(array, offset);
                 offset += array.Length;
             }
             return rv;
         }
 
-        public static void CopyFrom(this byte[] source, byte[] arr1, byte[] arr2)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyFrom(this byte[] dest, byte[] source, int destStartIndex = 0)
         {
-            Buffer.BlockCopy(arr1, 0, source, 0, arr1.Length);
-            Buffer.BlockCopy(arr2, 0, source, arr1.Length, arr2.Length);
-        }      
-        
-        public static void CopyFrom(this byte[] source, byte[] arr1, byte[] arr2, byte[] arr3)
-        {
-            Buffer.BlockCopy(arr1, 0, source, 0, arr1.Length);
-            Buffer.BlockCopy(arr2, 0, source, arr1.Length, arr2.Length);
-            Buffer.BlockCopy(arr3, 0, source, arr1.Length + arr2.Length, arr3.Length);
-        }
-
-        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, int destStartIndex = 0)
-        {
-            fixed (byte* parr1 = arr1, pdest = dest)
-            {
-                Unsafe.CopyBlock(ref *(pdest + destStartIndex), ref (*parr1), (uint)arr1.Length);
-            }
+            Unsafe.CopyBlock(ref dest[destStartIndex], ref source[0], (uint)source.Length);
         }        
         
-        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2, int destStartIndex = 0)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyFrom(this byte[] dest, byte[] source1, byte[] source2, int destStartIndex = 0)
         {
-            fixed (byte* parr1 = arr1, parr2 = arr2, pdest = dest)
-            {
-                Unsafe.CopyBlock(ref *(pdest + destStartIndex), ref (*parr1), (uint)arr1.Length);
-                Unsafe.CopyBlock(ref *(pdest + destStartIndex + arr1.Length), ref (*parr2), (uint)arr2.Length);
-            }
+            dest.CopyFrom(source1, destStartIndex);
+            dest.CopyFrom(source2, destStartIndex + source1.Length);
         }
-
-        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2)
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyFrom(this byte[] dest, byte[] source1, byte[] source2, byte[] source3, int destStartIndex = 0)
         {
-            fixed (byte* parr1 = arr1, parr2 = arr2, pdest = dest)
-            {
-                Unsafe.CopyBlock(ref (*pdest), ref (*parr1), (uint)arr1.Length);
-                Unsafe.CopyBlock(ref (*(pdest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
-            }
-        }
-
-        public static unsafe void CopyFromUnsafe(this byte[] dest, byte[] arr1, byte[] arr2, byte[] arr3)
-        {
-            fixed (byte* parr1 = arr1, parr2 = arr2, parr3 = arr3, pdest = dest)
-            {
-                Unsafe.CopyBlock(ref (*pdest), ref (*parr1), (uint)arr1.Length);
-                Unsafe.CopyBlock(ref (*(pdest + arr1.Length)), ref (*parr2), (uint)arr2.Length);
-                Unsafe.CopyBlock(ref (*(pdest + arr1.Length + arr2.Length)), ref (*parr3), (uint)arr3.Length);
-            }
+            dest.CopyFrom(source1, source2, destStartIndex);
+            dest.CopyFrom(source3, destStartIndex + source1.Length + source2.Length);
         }
 
         public static bool Equals(this byte[] arr1, byte[] arr2)
@@ -284,13 +254,6 @@ namespace FIVE.Network
         public static void Write(this NetworkStream stream, string str)
         {
             byte[] buffer = str.ToBytes();
-            stream.Write(buffer.Length);
-            stream.Write(buffer);
-        }
-
-        public static void Write(this NetworkStream stream, RoomInfo info)
-        {
-            byte[] buffer = info.ToBytes();
             stream.Write(buffer.Length);
             stream.Write(buffer);
         }

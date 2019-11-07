@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.Network
@@ -14,12 +15,18 @@ namespace FIVE.Network
         {
             prefabDatabase = new Dictionary<int, GameObject>();
             instancePrefabID = new Dictionary<GameObject, int>();
+        }
+        public bool Initialized { get; private set; }
+        public IEnumerator LoadPrefabs(IEnumerable<string> pathList)
+        {
             int id = 0;
-            GameObject[] prefabs = Resources.LoadAll<GameObject>("EntityPrefabs/");
-            foreach (GameObject prefab in prefabs)
+            foreach (string s in pathList)
             {
-                prefabDatabase.Add(id++, prefab);
+               GameObject prefab= Resources.Load<GameObject>(s);
+               prefabDatabase.Add(id++, prefab);
+               yield return null;
             }
+            Initialized = true;
         }
 
         public GameObject Instantiate(int id)

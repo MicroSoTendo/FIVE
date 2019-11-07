@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace ListServerCore
 {
     internal static class Util
     {
-        public static int ToI32(this byte[] bytes, int startIndex = 0)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe int ToI32(this byte[] bytes, int startIndex = 0)
         {
-            return BitConverter.ToInt32(bytes, startIndex);
+            fixed (byte* pbytes = &bytes[startIndex])
+            {
+                return *(int*)pbytes;
+            }
         }
+
         public static ushort ToU16(this byte[] bytes, int startIndex = 0)
         {
             return BitConverter.ToUInt16(bytes, startIndex);
@@ -30,17 +37,22 @@ namespace ListServerCore
             return Encoding.Unicode.GetString(bytes[startIndex..]);
         }
 
-        public static RoomInfo ToRoomInfo(this byte[] bytes, bool hasGuid = false)
+        public static unsafe RoomInfo ToRoomInfo(this byte[] bytes, int host)
         {
-            int offset = hasGuid ? 0 : -16;
-            Guid guid = hasGuid ? bytes.ToGuid() : Guid.NewGuid();
-            int currentPlayers = bytes.ToI32(16 + offset);
-            int maxPlayers = bytes.ToI32(20 + offset);
-            bool hasPassword = bytes.ToBool(24 + offset);
-            int host = bytes.ToI32(25 + offset);
-            ushort port = bytes.ToU16(29 + offset);
-            string name = bytes.ToName(31 + offset);
-            return new RoomInfo(guid, currentPlayers, maxPlayers, hasPassword, host, port, name);
+            Guid guid = Guid.NewGuid();
+            fixed (byte* pBuffer = bytes)
+            {
+                return new RoomInfo(
+                    guid, 
+                    *(int*)pBuffer, 
+                    *(int*)(pBuffer + sizeof(int)), 
+                    *(bool*)(pBuffer + sizeof(int) + sizeof(int)), 
+                    host,
+                    *(ushort*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(bool)), 
+                    Encoding.Unicode.GetString(pBuffer + sizeof(int) + sizeof(int) + sizeof(bool) + sizeof(ushort), 
+                        bytes.Length - sizeof(int) + sizeof(int) + sizeof(bool) + sizeof(ushort))
+                    );
+            }
         }
 
 
@@ -67,29 +79,53 @@ namespace ListServerCore
         public static byte[] ToBytes(this ushort value)
         {
             return BitConverter.GetBytes(value);
-        }
-        public static byte[] ToBytes(this RoomInfo roomInfo)
+        }        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyFrom(this byte[] dest, byte[] source, int destStartIndex = 0)
         {
-            byte[] guid = roomInfo.Guid.ToBytes();
-            byte[] currentPlayers = roomInfo.CurrentPlayers.ToBytes();
-            byte[] maxPlayers = roomInfo.MaxPlayers.ToBytes();
-            byte[] hasPassword = roomInfo.HasPassword.ToBytes();
-            byte[] host = roomInfo.Host.ToBytes();
-            byte[] port = roomInfo.Port.ToBytes();
-            byte[] name = roomInfo.Name.ToBytes();
-            return Combine(guid, currentPlayers, maxPlayers, hasPassword, host, port, name);
+            Unsafe.CopyBlock(ref dest[destStartIndex], ref source[0], (uint)source.Length);
+        }        
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyFrom(this byte[] dest, byte[] source1, byte[] source2, int destStartIndex = 0)
+        {
+            dest.CopyFrom(source1, destStartIndex);
+            dest.CopyFrom(source2, destStartIndex + source1.Length);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyFrom(this byte[] dest, byte[] source1, byte[] source2, byte[] source3, int destStartIndex = 0)
+        {
+            dest.CopyFrom(source1, source2, destStartIndex);
+            dest.CopyFrom(source3, destStartIndex + source1.Length + source2.Length);
         }
 
-        private static byte[] Combine(params byte[][] arrays)
+        public static unsafe byte[] ToBytes(this RoomInfo roomInfo)
         {
-            byte[] rv = new byte[arrays.Sum(a => a.Length)];
-            int offset = 0;
-            foreach (byte[] array in arrays)
+            byte[] buffer = new byte[31 + Encoding.Unicode.GetByteCount(roomInfo.Name)];
+            fixed (byte* pBuffer = buffer)
             {
-                Buffer.BlockCopy(array, 0, rv, offset, array.Length);
-                offset += array.Length;
+                *(Guid*) pBuffer = roomInfo.Guid;
+                *(int*)(pBuffer + 16) = roomInfo.CurrentPlayers;
+                *(int*)(pBuffer + 20) = roomInfo.MaxPlayers;
+                *(bool*)(pBuffer + 24) = roomInfo.HasPassword;
+                *(int*)(pBuffer + 25) = roomInfo.Host;
+                *(ushort*)(pBuffer + 29) = roomInfo.Port;
             }
-            return rv;
+            buffer.CopyFrom(roomInfo.Name.ToBytes(), 31);
+            return buffer;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe int ReadI32(this NetworkStream stream)
+        {
+            byte[] bytes = new byte[4];
+            stream.Read(bytes, 0, bytes.Length);
+            fixed (byte* pbytes = bytes)
+            {
+                return *(int*)pbytes;
+            }
         }
     }
 }

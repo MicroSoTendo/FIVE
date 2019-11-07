@@ -3,8 +3,8 @@ using FIVE.EventSystem;
 
 namespace FIVE.UI.Multiplayers
 {
-    public abstract class OnJoinRoomRequested : IEventType { }
-    public abstract class OnCreateRoomRequested : IEventType { }
+    public abstract class OnJoinRoomRequested : IEventType<JoinRoomArgs> { }
+    public abstract class OnCreateRoomRequested : IEventType<CreateRoomArgs> { }
 
     public class JoinRoomArgs : EventArgs
     {

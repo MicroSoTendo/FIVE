@@ -10,8 +10,8 @@ using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.Multiplayers;
 using FIVE.UI.NPC;
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.GameModes
@@ -19,26 +19,31 @@ namespace FIVE.GameModes
     [RequireComponent(typeof(NetworkManager))]
     public class Multiplayers : MonoBehaviour
     {
+        private readonly List<string> prefabList = new List<string>()
+        {
+            "EntityPrefabs/Network/RobotPrefabs/robotSphere",
+        };
         private LobbyWindowViewModel lobbyWindow;
 
         private void Awake()
         {
             lobbyWindow = UIManager.Create<LobbyWindowViewModel>();
             lobbyWindow.IsActive = true;
-            EventManager.Subscribe<OnJoinRoomRequested>(JoinRoomHandler);
-            EventManager.Subscribe<OnCreateRoomRequested>(CreateRoomHandler);
+            EventManager.Subscribe<OnJoinRoomRequested, JoinRoomArgs>(JoinRoomHandler);
+            EventManager.Subscribe<OnCreateRoomRequested, CreateRoomArgs>(CreateRoomHandler);
         }
 
-        private void JoinRoomHandler(object sender, EventArgs eventArgs)
+        private void JoinRoomHandler(object sender, JoinRoomArgs joinRoomArgs)
         {
-            var joinRoomArgs = eventArgs as JoinRoomArgs;
             NetworkManager.Instance.JoinRoom(joinRoomArgs.Guid, joinRoomArgs.Password);
+            StartCoroutine(JoinRoomWait());
         }
 
         private IEnumerator JoinRoomWait()
         {
             const float waitTime = 0.1f;
             float timer = 0;
+            //TODO: Refactor this
             while (NetworkManager.Instance.State != NetworkManager.NetworkState.Client)
             {
                 timer += waitTime;
@@ -57,9 +62,8 @@ namespace FIVE.GameModes
             }
         }
 
-        private void CreateRoomHandler(object sender, EventArgs eventArgs)
+        private void CreateRoomHandler(object sender, CreateRoomArgs createRoomArgs)
         {
-            var createRoomArgs = eventArgs as CreateRoomArgs;
             NetworkManager.Instance.CreateRoom(createRoomArgs.Name, createRoomArgs.MaxPlayers, createRoomArgs.HasPassword, createRoomArgs.Password);
             StartCoroutine(CommonInitRoutine());
             StartCoroutine(HostInitRoutine());
@@ -67,17 +71,32 @@ namespace FIVE.GameModes
 
         private IEnumerator CommonInitRoutine()
         {
+            StartCoroutine(PrefabPool.Instance.LoadPrefabs(prefabList));
             TerrainManager.CreateTerrain(Vector3.zero);
             CameraManager.Remove("GUI Camera");
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<NPCDialogueViewModel>().IsActive = false;
             UIManager.Create<BSCompositeViewModel>().IsActive = false;
-            UIManager.Create<InGameMenuViewModel>().IsActive = false;
+            InGameMenuViewModel inGameMenuViewModel = UIManager.Create<InGameMenuViewModel>();
+            inGameMenuViewModel.IsActive = false;
+            inGameMenuViewModel.ExitGameButton.onClick.AddListener(OnExit);
             NPCInit.Initialize();
             CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
             StartCoroutine(codeEditorViewModel.ToggleEditorCoroutine());
             codeEditorViewModel.IsActive = false;
+            while (!PrefabPool.Instance.Initialized)
+            {
+                yield return null;
+            }
             yield return null;
+        }
+
+        private void OnExit()
+        {
+            if (NetworkManager.Instance.State == NetworkManager.NetworkState.Host)
+            {
+                NetworkManager.Instance.Disconnect();
+            }
         }
 
         private Vector3 GetSpawnLocation(int playerIndex)
@@ -90,7 +109,8 @@ namespace FIVE.GameModes
         {
             Vector3 spawnLocation = GetSpawnLocation(NetworkManager.Instance.PlayerIndex);
             GameObject robot = RobotManager.CreateRobot("robotSphere", spawnLocation, Quaternion.identity);
-            //TODO: Network Instantiate
+            SyncCenter.Instance.Register(robot.GetComponent<Transform>());
+            SyncCenter.Instance.Register(robot.GetComponent<Animator>());
             yield break;
         }
 

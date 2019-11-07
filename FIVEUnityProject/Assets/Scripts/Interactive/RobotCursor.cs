@@ -8,7 +8,7 @@ namespace FIVE.Interactive
 {
     internal class RobotCursor : MonoBehaviour
     {
-        void Awake()
+        private void Awake()
         {
             EventManager.Subscribe<OnCameraSwitched, CameraSwitchedEventArgs>(OnCameraSwitched);
         }
@@ -19,7 +19,7 @@ namespace FIVE.Interactive
             {
                 UIManager.SetCursor(UIManager.CursorType.Regular);
             }
-            else if (e.NewCamera?.name.Contains("fps") ?? false)
+            else if (e.NewCamera != null && e.NewCamera.name.Contains("POV"))
             {
                 UIManager.SetCursor(UIManager.CursorType.Aim);
             }

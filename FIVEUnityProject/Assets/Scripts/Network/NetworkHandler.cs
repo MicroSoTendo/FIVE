@@ -31,7 +31,7 @@ namespace FIVE.Network
             HandlerTask.Dispose();
             TokenSource.Dispose();
         }
-
+        
         protected abstract Task Handler();
     }
 }

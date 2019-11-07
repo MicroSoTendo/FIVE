@@ -16,7 +16,7 @@ namespace FIVE.Network
         /// <summary>
         /// Used for fetching room info from list server.
         /// </summary>
-        private TcpClient listServerClient;
+        private readonly TcpClient listServerClient;
         private MD5 md5;
 
         /// <summary>
@@ -61,19 +61,24 @@ namespace FIVE.Network
         }
 
 
-        public void CreateRoom()
+        public unsafe void CreateRoom()
         {
             if (!listServerClient.Connected)
             {
                 return;
             }
             NetworkStream stream = listServerClient.GetStream();
-            stream.Write(ListServerCode.CreateRoom);
-            stream.Write(HostRoomInfo);
+            byte[] operation = new byte[sizeof(ushort) + sizeof(int)];
+            byte[] roomInfoBuffer = HostRoomInfo.ToBytes();
+            fixed (byte* pOperation = operation)
+            {
+                *(ushort*)pOperation = (ushort)ListServerCode.CreateRoom;
+                *(int*)(pOperation + sizeof(ushort)) = roomInfoBuffer.Length;
+            }
+            stream.Write(operation);
+            stream.Write(roomInfoBuffer);
             HostRoomInfo.Guid = stream.ReadGuid();
         }
-
-
 
         public void RemoveRoom()
         {

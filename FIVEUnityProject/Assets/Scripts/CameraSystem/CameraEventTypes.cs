@@ -27,10 +27,10 @@ namespace FIVE.CameraSystem
         public Camera OldCamera { get; }
         public Camera NewCamera { get; }
 
-        public CameraSwitchedEventArgs(Camera oldCamera = null, Camera activeCamera = null)
+        public CameraSwitchedEventArgs(Camera newCamera, Camera oldCamera = null)
         {
             OldCamera = oldCamera;
-            NewCamera = NewCamera;
+            NewCamera = newCamera;
         }
     }
 

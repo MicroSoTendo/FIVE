@@ -11,77 +11,14 @@ namespace ListServerCore
     internal class Program
     {
 
-        private static bool TryParseArgs(IReadOnlyList<string> args,
-            ref IPAddress address,
-            ref int listeningPort,
-            ref int broadcastPort)
-        {
-            bool ValidatePort(int p)
-            {
-                return p > 0 && p < 65535;
-            }
-
-            bool TryParsePort(string str, out int port)
-            {
-                if (int.TryParse(str, out port))
-                {
-                    if (ValidatePort(port))
-                    {
-                        return true;
-                    }
-                    Console.WriteLine($"Port {port} is in valid.");
-                }
-                else
-                {
-                    Console.WriteLine($"Port {str} is in valid.");
-                }
-                return false;
-            }
-
-            for (int i = 0; i < args.Count; i++)
-            {
-                switch (args[i])
-                {
-                    case "/p":
-                    case "-p":
-                        if (TryParsePort(args[i + 1], out listeningPort) && TryParsePort(args[i + 2], out broadcastPort))
-                        {
-                            i += 2;
-                        }
-                        return false;
-                    case "-a":
-                    case "/a":
-                        if (IPAddress.TryParse(args[i + 1], out address))
-                        {
-                            i++;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Port {args[i + 1]} is in valid.");
-                            return false;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return true;
-        }
-
         private static readonly HashSet<TcpClient> ConnectedClients = new HashSet<TcpClient>();
         private static readonly HashSet<Task> Tasks = new HashSet<Task>();
         private static void Main(string[] args)
         {
             IPAddress address = IPAddress.Loopback;
-            int updatePort = 8887;
             int infoPort = 8888;
-            //if (!TryParseArgs(args, ref address, ref listeningPort, ref broadcastPort))
-            //{
-            //    return;
-            //}
             CancellationTokenSource tokenSource = new CancellationTokenSource();
-            Task listenTask = Task.Run(() => { ListenUpdatePort(address, updatePort); }, tokenSource.Token);
-            Task broadcastTask = Task.Run(() => { ListenInfoPort(address, infoPort); }, tokenSource.Token);
+            Task handlerTask = Task.Run(() => { InComingHandler(address, infoPort); }, tokenSource.Token);
             while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey();
@@ -91,8 +28,7 @@ namespace ListServerCore
                 }
                 if (key.Key == ConsoleKey.R)
                 {
-                    listenTask.Dispose();
-                    broadcastTask.Dispose();
+                    handlerTask.Dispose();
                     foreach (Task task in Tasks)
                     {
                         task.Dispose();
@@ -102,34 +38,42 @@ namespace ListServerCore
                         connectedClient.Dispose();
                     }
                     ConnectedClients.Clear();
-                    listenTask = Task.Run(() => { ListenUpdatePort(address, updatePort); }, tokenSource.Token);
-                    broadcastTask = Task.Run(() => { ListenInfoPort(address, infoPort); }, tokenSource.Token);
+                    handlerTask = Task.Run(() => { InComingHandler(address, infoPort); }, tokenSource.Token);
                 }
             }
         }
 
         private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
-        private static void ClientHandler(TcpClient client)
+        private static unsafe void ClientHandler(TcpClient client)
         {
             try
             {
                 NetworkStream networkStream = client.GetStream();
-                byte[] opCodeBuffer = new byte[4];
+                byte[] opCodeBuffer = new byte[2];
                 networkStream.Read(opCodeBuffer);
-                int opCode = opCodeBuffer.ToI32();
-                switch ((OpCode)opCode)
+                fixed (byte* pBytes = opCodeBuffer)
                 {
-                    case OpCode.CreateRoom:
-                        CreateRoomHandler(networkStream, 0);
-                        break;
-                    case OpCode.RemoveRoom:
-                        RemoveRoomHandler(networkStream);
-                        break;
-                    case OpCode.UpdateRoom:
-                        UpdateRoomHandler(opCode, networkStream);
-                        break;
-                    default:
-                        break;
+                    ushort* code = (ushort*)pBytes;
+                    while (true)
+                    {
+                        if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
+                        {
+                            CreateRoomHandler(networkStream, ((IPEndPoint)client.Client.RemoteEndPoint).Address);
+                        }
+                        if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
+                        {
+                            RemoveRoomHandler(networkStream);
+                        }
+                        if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
+                        {
+                            SendRoomInfos(networkStream);
+                        }
+                        if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
+                        {
+                            
+                        }
+                        
+                    }
                 }
             }
             catch
@@ -138,14 +82,14 @@ namespace ListServerCore
             }
         }
 
-        private static void UpdateRoomHandler(int opCode, NetworkStream networkStream)
+        private static void UpdateRoomHandler(ListServerCode code, NetworkStream networkStream)
         {
             byte[] guidBytes = new byte[16];
             networkStream.Read(guidBytes);
             Guid guid = guidBytes.ToGuid();
-            switch ((OpCode)opCode)
+            switch (code)
             {
-                case OpCode.UpdateName:
+                case ListServerCode.UpdateName:
                     byte[] size = new byte[4];
                     networkStream.Read(size);
                     byte[] nameBuffer = new byte[size.ToI32()];
@@ -157,7 +101,7 @@ namespace ListServerCore
                         RoomInfos[guid] = roomInfo;
                     }
                     break;
-                case OpCode.UpdateCurrentPlayer:
+                case ListServerCode.UpdateCurrentPlayer:
                     byte[] current = new byte[4];
                     networkStream.Read(current);
                     if (RoomInfos.ContainsKey(guid))
@@ -167,7 +111,7 @@ namespace ListServerCore
                         RoomInfos[guid] = roomInfo;
                     }
                     break;
-                case OpCode.UpdateMaxPlayer:
+                case ListServerCode.UpdateMaxPlayer:
                     byte[] max = new byte[4];
                     networkStream.Read(max);
                     if (RoomInfos.ContainsKey(guid))
@@ -177,7 +121,7 @@ namespace ListServerCore
                         RoomInfos[guid] = roomInfo;
                     }
                     break;
-                case OpCode.UpdatePassword:
+                case ListServerCode.UpdatePassword:
                     byte[] flagBuffer = new byte[1];
                     networkStream.Read(flagBuffer);
                     if (RoomInfos.ContainsKey(guid))
@@ -200,15 +144,12 @@ namespace ListServerCore
             RoomInfos.TryRemove(guid, out _);
         }
 
-        private static void CreateRoomHandler(NetworkStream stream, int ip)
+        private static void CreateRoomHandler(NetworkStream stream, IPAddress ip)
         {
             Console.Write("Create room requested: ");
-            byte[] sizeBuffer = new byte[4];
-            stream.Read(sizeBuffer);
-            byte[] roomInfoBuffer = new byte[sizeBuffer.ToI32()];
+            byte[] roomInfoBuffer = new byte[stream.ReadI32()];
             stream.Read(roomInfoBuffer);
-            RoomInfo roomInfo = roomInfoBuffer.ToRoomInfo();
-            roomInfo.Host = ip;
+            RoomInfo roomInfo = roomInfoBuffer.ToRoomInfo(ip.GetAddressBytes().ToI32());
             Console.WriteLine($"GUID = {roomInfo.Guid}, Room Name = {roomInfo.Name}, Max Players = {roomInfo.MaxPlayers}, Has Password = {roomInfo.HasPassword} ");
             stream.Write(roomInfo.Guid.ToBytes());
             RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
@@ -228,16 +169,13 @@ namespace ListServerCore
             }
         }
 
-        private static void SendRoomInfos(TcpClient client)
+        private static void SendRoomInfos(NetworkStream networkStream)
         {
-            NetworkStream networkStream = client.GetStream();
             while (true)
             {
                 try
                 {
-                    byte[] head = new byte[4];
-                    networkStream.Read(head);
-                    networkStream.Write(RoomInfos.Values.Count.ToBytes());
+                    networkStream.Write(RoomInfos.Count.ToBytes());
                     foreach (RoomInfo roomInfo in RoomInfos.Values)
                     {
                         byte[] roomInfoBuffer = roomInfo.ToBytes();
@@ -252,17 +190,17 @@ namespace ListServerCore
             }
         }
 
-        private static void ListenInfoPort(IPAddress address, int broadcastPort)
+        private static void InComingHandler(IPAddress address, int port)
         {
-            TcpListener listener = new TcpListener(address, broadcastPort);
+            TcpListener listener = new TcpListener(address, port);
             listener.Start();
-            Console.WriteLine($"Broadcasting at {address}:{broadcastPort}");
+            Console.WriteLine($"Broadcasting at {address}:{port}");
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
                 ConnectedClients.Add(client);
                 Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
-                Tasks.Add(Task.Run(() => SendRoomInfos(client)));
+                Tasks.Add(Task.Run(() => ClientHandler(client)));
             }
         }
     }
