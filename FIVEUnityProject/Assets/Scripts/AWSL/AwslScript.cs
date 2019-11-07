@@ -7,18 +7,6 @@ using UnityEngine;
 
 namespace FIVE.AWSL
 {
-    [MoonSharpUserData]
-    internal class SharedData
-    {
-        public Dictionary<string, DynValue> data = new Dictionary<string, DynValue>();
-
-        public DynValue this[string k]
-        {
-            get => data[k];
-            set => data[k] = value;
-        }
-    }
-
     internal class AWSLScript
     {
         private static SharedData shared;
@@ -40,14 +28,15 @@ namespace FIVE.AWSL
             try
             {
                 UserData.RegisterAssembly();
-                script = new Script(CoreModules.None);
+                UserData.RegisterProxyType<RobotProxy, RobotSphere>(o => new RobotProxy(o));
+                script = new Script(CoreModules.TableIterators | CoreModules.Table);
                 script.DoString(code);
                 coroutine = script.CreateCoroutine(script.Globals.Get("main"));
 
-                script.Globals["ID"] = robot.ID;
                 script.Globals["Shared"] = shared;
+                script.Globals["Self"] = robot;
 
-                script.Globals["print"] = (Action<DynValue>)(x => Debug.Log(x));
+                script.Globals["print"] = (Action<DynValue>)(x => Debug.Log(x.ToDebugPrintString()));
                 script.Globals["forward"] = FuncMove(Movable.Move.Front);
                 script.Globals["backward"] = FuncMove(Movable.Move.Back);
                 script.Globals["left"] = FuncMove(Movable.Move.Left);

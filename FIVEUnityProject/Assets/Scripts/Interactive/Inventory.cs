@@ -1,9 +1,6 @@
 ﻿using FIVE.EventSystem;
-using FIVE.UI;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using UnityEngine;
 
 namespace FIVE.Interactive
@@ -25,7 +22,11 @@ namespace FIVE.Interactive
     public class RemoveItemRequestedEventArgs : EventArgs
     {
         public GameObject Item { get; }
-        public RemoveItemRequestedEventArgs(GameObject item) => Item = item;
+
+        public RemoveItemRequestedEventArgs(GameObject item)
+        {
+            Item = item;
+        }
     }
 
     public class OnDropItemToInventory : IEventType<DropedItemToInventoryEventArgs> { }
