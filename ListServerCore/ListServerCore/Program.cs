@@ -84,14 +84,17 @@ namespace ListServerCore
                     {
                         if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
                         {
+                            Console.WriteLine(nameof(ListServerCode.CreateRoom) + "received");
                             CreateRoomHandler(client);
                         }
                         if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
                         {
+                            Console.WriteLine(nameof(ListServerCode.RemoveRoom) + "received");
                             RemoveRoomHandler(client);
                         }
                         if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
                         {
+                            //Console.WriteLine(nameof(ListServerCode.GetRoomInfos) + "received");
                             SendRoomInfos(client);
                         }
                         if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)

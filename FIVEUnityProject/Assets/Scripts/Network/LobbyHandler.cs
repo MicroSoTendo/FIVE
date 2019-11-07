@@ -3,8 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -38,14 +36,15 @@ namespace FIVE.Network
             md5 = MD5.Create();
         }
 
-        private readonly ConcurrentQueue<Action> ScheduledActions = new ConcurrentQueue<Action>();
+        private readonly ConcurrentQueue<Action> scheduledActions = new ConcurrentQueue<Action>();
         protected override async Task Handler()
         {
             while (true)
             {
                 RefreshRoomInfo();
-                if (ScheduledActions.TryDequeue(out Action action))
+                if (scheduledActions.TryDequeue(out Action action))
                 {
+                    Debug.Log("LoobyHandlerRunning");
                     action();
                 }
                 else
@@ -77,15 +76,17 @@ namespace FIVE.Network
 
         public void CreateRoom()
         {
-            ScheduledActions.Enqueue(CreateRoomInternal);
+            scheduledActions.Enqueue(CreateRoomInternal);
         }
 
         private unsafe void CreateRoomInternal()
         {
+            Debug.Log("CreateRoomInternal");
             if (!listServerClient.Connected)
             {
                 return;
             }
+            Debug.Log("stream");
             NetworkStream stream = listServerClient.GetStream();
             byte[] operation = new byte[sizeof(ushort) + sizeof(int)];
             byte[] roomInfoBuffer = HostRoomInfo.ToBytes();
@@ -101,7 +102,7 @@ namespace FIVE.Network
 
         public void RemoveRoom()
         {
-            ScheduledActions.Enqueue(RemoveRoomInternal);
+            scheduledActions.Enqueue(RemoveRoomInternal);
         }
 
         private void RemoveRoomInternal()
@@ -165,7 +166,10 @@ namespace FIVE.Network
         {
             HostRoomInfo.HasPassword = hasPassword;
             if (hasPassword)
+            {
                 HostRoomInfo.SetRoomPassword(password);
+            }
+
             UpdateRoomInfo(ListServerCode.UpdatePassword);
         }
 
