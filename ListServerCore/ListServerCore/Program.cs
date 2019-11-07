@@ -155,20 +155,6 @@ namespace ListServerCore
             RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
         }
 
-        private static void ListenUpdatePort(IPAddress address, int listeningPort)
-        {
-            TcpListener listener = new TcpListener(address, listeningPort);
-            listener.Start();
-            Console.WriteLine($"Listening at {address}:{listeningPort}");
-            while (true)
-            {
-                TcpClient client = listener.AcceptTcpClient();
-                ConnectedClients.Add(client);
-                Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
-                Tasks.Add(Task.Run(() => ClientHandler(client)));
-            }
-        }
-
         private static void SendRoomInfos(NetworkStream networkStream)
         {
             while (true)
