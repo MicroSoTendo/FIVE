@@ -65,7 +65,9 @@ namespace FIVE.Interactive.Blacksmith
         {
             if (isCompositeComponents(compositeItems))
             {
-                return Resources.Load<GameObject>(PathLists[index]);
+                string a = PathLists[index];
+                var r = Resources.Load<GameObject>(PathLists[index]);
+                return r;
             }
             
             return null;
