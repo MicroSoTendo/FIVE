@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FIVE.Network
 {
@@ -36,22 +38,35 @@ namespace FIVE.Network
             md5 = MD5.Create();
         }
 
+        private readonly ConcurrentQueue<Action> ScheduledActions = new ConcurrentQueue<Action>();
         protected override async Task Handler()
         {
             while (true)
             {
-                NetworkStream stream = listServerClient.GetStream();
-                stream.Write(ListServerCode.GetRoomInfos);
-                int roomCount = stream.ReadI32();
-                roomInfos.Clear();
-                for (int i = 0; i < roomCount; i++)
+                RefreshRoomInfo();
+                if (ScheduledActions.TryDequeue(out Action action))
                 {
-                    byte[] roomInfoBuffer = new byte[stream.ReadI32()];
-                    stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
-                    var roomInfo = roomInfoBuffer.ToRoomInfo();
-                    roomInfos.TryAdd(roomInfo.Guid, roomInfo);
+                    action();
                 }
-                await Task.Delay(1000 / UpdateRate);
+                else
+                {
+                    Thread.Sleep(1000 / 30);   
+                }
+            }
+        }
+
+        private void RefreshRoomInfo()
+        {
+            NetworkStream stream = listServerClient.GetStream();
+            stream.Write(ListServerCode.GetRoomInfos);
+            int roomCount = stream.ReadI32();
+            roomInfos.Clear();
+            for (int i = 0; i < roomCount; i++)
+            {
+                byte[] roomInfoBuffer = new byte[stream.ReadI32()];
+                stream.Read(roomInfoBuffer, 0, roomInfoBuffer.Length);
+                var roomInfo = roomInfoBuffer.ToRoomInfo();
+                roomInfos.TryAdd(roomInfo.Guid, roomInfo);
             }
         }
 
@@ -60,8 +75,12 @@ namespace FIVE.Network
             listServerClient.Connect(listServer, listServerPort);
         }
 
+        public void CreateRoom()
+        {
+            ScheduledActions.Enqueue(CreateRoomInternal);
+        }
 
-        public unsafe void CreateRoom()
+        private unsafe void CreateRoomInternal()
         {
             if (!listServerClient.Connected)
             {
@@ -81,6 +100,11 @@ namespace FIVE.Network
         }
 
         public void RemoveRoom()
+        {
+            ScheduledActions.Enqueue(RemoveRoomInternal);
+        }
+
+        private void RemoveRoomInternal()
         {
             if (!listServerClient.Connected)
             {

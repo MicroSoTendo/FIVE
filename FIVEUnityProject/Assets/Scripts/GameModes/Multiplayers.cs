@@ -1,4 +1,5 @@
-﻿using FIVE.CameraSystem;
+﻿using System;
+using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Interactive;
 using FIVE.Network;
@@ -32,6 +33,16 @@ namespace FIVE.GameModes
             lobbyWindow.IsActive = true;
             EventManager.Subscribe<OnJoinRoomRequested, JoinRoomArgs>(JoinRoomHandler);
             EventManager.Subscribe<OnCreateRoomRequested, CreateRoomArgs>(CreateRoomHandler);
+            StartCoroutine(FetchRoomInfos());
+        }
+
+        private IEnumerator FetchRoomInfos()
+        {
+            while (true)
+            {
+                throw new NotImplementedException();
+                yield return null;
+            }
         }
 
         private void JoinRoomHandler(object sender, JoinRoomArgs joinRoomArgs)
@@ -184,13 +195,13 @@ namespace FIVE.GameModes
                 SyncCenter.Instance.Register(robot);
                 SyncCenter.Instance.Register(robot.GetComponent<Transform>());
                 SyncCenter.Instance.Register(robot.GetComponent<Animator>());
-                yield return null;
             }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
             inventoryViewModel.Inventory = inventory;
             inventoryViewModel.IsActive = false;
             itemDialogViewModel.IsActive = false;
+            yield return null;
         }
 
         private IEnumerator HostInitRoutine()
@@ -215,7 +226,7 @@ namespace FIVE.GameModes
                 SyncCenter.Instance.Register(robot);
                 SyncCenter.Instance.Register(robot.GetComponent<Transform>());
                 SyncCenter.Instance.Register(robot.GetComponent<Animator>());
-                yield return null;
+                //yield return null;
             }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
