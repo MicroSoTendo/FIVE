@@ -57,19 +57,55 @@ namespace FIVE.UI.BSComposite
             BackButton = Get<Button>(nameof(BackButton));
             Bind(BackButton).To(OnBackButtonClick);
             Result = Get<Button>(nameof(Result));
-            Bind(Result).To(OnResultButtonClick);
+            Bind(Result).To(() =>OnResultButtonClick(Result));
         }
 
-        private void OnResultButtonClick()
+        private void OnResultButtonClick(Button button)
         {
-            throw new NotImplementedException();
+            Inventory inventory = InventoryManager.GetInventory(RobotManager.ActiveRobot);
+            
+            if (button.transform.childCount != 0)
+            {
+                GameObject resultItem = button.transform.GetChild(0).gameObject;
+
+                inventory.Add(resultItem);
+                foreach (Button a in compositeButtons)
+                {
+                    Blacksmith.RemoveFromComposite(RobotManager.ActiveRobot, a.transform.GetChild(0).gameObject);
+                    a.transform.GetChild(0).gameObject.SetActive(false);
+                    GameObject.Destroy(a.transform.GetChild(0).gameObject);
+
+                }
+                //hard coding
+                for(int i = 0; i< 3; i++)
+                {   
+                        inventory.RemoveAt(0); 
+                }
+                for(int i = 0; i < emptyInventory.Length; i++)
+                {
+                    if(emptyInventory[i] == 0)
+                    {
+                        resultItem.transform.SetParent(inventoryButtons[i].transform);
+                        resultItem.SetActive(true);
+                        break;
+                    }
+                    
+                }
+                
+                Blacksmith.RemoveResultItem(RobotManager.ActiveRobot);
+                ResetComposite();
+                UpdateInventory();
+            }
         }
 
         private void OnCompositeButtonClicked(Button button)
         {
             if(Result.transform.childCount != 0)
             {
-
+                Blacksmith.RemoveResultItem(RobotManager.ActiveRobot);
+                GameObject a = Result.transform.GetChild(0).gameObject;
+                a.SetActive(false);
+                GameObject.Destroy(a);
             }
             if (button.transform.childCount == 0)
             {
@@ -90,8 +126,16 @@ namespace FIVE.UI.BSComposite
                 {
                     item.SetParent(inventoryButtons[count].transform);
                     Blacksmith.RemoveFromComposite(RobotManager.ActiveRobot, item);
-                    item.transform.localPosition = new Vector3(0, -37, 0);
-                    item.transform.localScale = new Vector3(7, 7, 7);
+
+                    if (item.name.Contains("Battery"))
+                    {
+                        item.transform.localScale = new Vector3(7, 7, 7);
+                        item.transform.localPosition = new Vector3(0, -37, 0);
+                    }
+                    if (item.name.Contains("Solar"))
+                    {
+                        item.transform.localPosition = new Vector3(-79, -1, -146);
+                    }
                     emptyInventory[count] = 1;
                     break;
                 }
@@ -121,8 +165,15 @@ namespace FIVE.UI.BSComposite
                 if (emptyComposites[count] == 0)
                 {
                     item.SetParent(compositeButtons[count].transform);
-                    item.transform.localPosition = new Vector3(0, -37, 0);
-                    item.transform.localScale = new Vector3(7, 7, 7);
+                    if (item.name.Contains("Battery"))
+                    {
+                        item.transform.localScale = new Vector3(7, 7, 7);
+                        item.transform.localPosition = new Vector3(0, -37, 0);
+                    }
+                    if (item.name.Contains("Solar"))
+                    {
+                        item.transform.localPosition = new Vector3(-70, -49, -146);
+                    }
                     emptyComposites[count] = 1;
                     break;
                 }
@@ -175,9 +226,19 @@ namespace FIVE.UI.BSComposite
                 for (int i = 0; i < inventory.Count; i++)
                 {
                     GameObject go = inventory.Items[i];
+                    go.SetActive(true);
                     var set = GameObject.Instantiate(go, inventoryButtons[i].transform);
-                    set.transform.localScale = new Vector3(7, 7, 7);
-                    set.transform.localPosition = new Vector3(0, -37, 0);
+
+                    if (go.name.Contains("Battery"))
+                    {
+                        set.transform.localScale = new Vector3(7, 7, 7);
+                        set.transform.localPosition = new Vector3(0, -37, 0);
+                    }
+                    if (go.name.Contains("Solar"))
+                    {
+                        set.transform.localPosition = new Vector3(-79, -1, -146);
+                    }
+                    
                 }
             }
             emptyInventory = new int[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
