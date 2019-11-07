@@ -72,42 +72,44 @@ namespace ListServerCore
         private static readonly ConcurrentDictionary<TcpClient, Guid> HostDictionary = new ConcurrentDictionary<TcpClient, Guid>();
         private static unsafe void ClientHandler(TcpClient client)
         {
-            try
+            while (true)
             {
-                NetworkStream networkStream = client.GetStream();
-                byte[] opCodeBuffer = new byte[2];
-                networkStream.Read(opCodeBuffer);
-                fixed (byte* pBytes = opCodeBuffer)
+                try
                 {
-                    ushort* code = (ushort*)pBytes;
-                    while (true)
+                    NetworkStream networkStream = client.GetStream();
+                    byte[] opCodeBuffer = new byte[2];
+                    networkStream.Read(opCodeBuffer);
+                    fixed (byte* pBytes = opCodeBuffer)
                     {
+                        ushort* code = (ushort*)pBytes;
                         if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
                         {
                             Console.WriteLine(nameof(ListServerCode.CreateRoom) + "received");
                             CreateRoomHandler(client);
                         }
+
                         if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
                         {
                             Console.WriteLine(nameof(ListServerCode.RemoveRoom) + "received");
                             RemoveRoomHandler(client);
                         }
+
                         if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
                         {
                             //Console.WriteLine(nameof(ListServerCode.GetRoomInfos) + "received");
                             SendRoomInfos(client);
                         }
+
                         if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
                         {
 
                         }
-
                     }
                 }
-            }
-            catch
-            {
-                ExceptionHandle(client);
+                catch
+                {
+                    ExceptionHandle(client);
+                }
             }
         }
 
@@ -167,7 +169,7 @@ namespace ListServerCore
 
         private static void RemoveRoomHandler(TcpClient client)
         {
-            var stream = client.GetStream();
+            NetworkStream stream = client.GetStream();
             byte[] guidBytes = new byte[16];
             stream.Read(guidBytes);
             Guid guid = guidBytes.ToGuid();

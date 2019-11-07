@@ -44,7 +44,6 @@ namespace FIVE.Network
                 RefreshRoomInfo();
                 if (scheduledActions.TryDequeue(out Action action))
                 {
-                    Debug.Log("LoobyHandlerRunning");
                     action();
                 }
                 else
@@ -81,12 +80,10 @@ namespace FIVE.Network
 
         private unsafe void CreateRoomInternal()
         {
-            Debug.Log("CreateRoomInternal");
             if (!listServerClient.Connected)
             {
                 return;
             }
-            Debug.Log("stream");
             NetworkStream stream = listServerClient.GetStream();
             byte[] operation = new byte[sizeof(ushort) + sizeof(int)];
             byte[] roomInfoBuffer = HostRoomInfo.ToBytes();
