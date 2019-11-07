@@ -72,45 +72,36 @@ namespace ListServerCore
         private static readonly ConcurrentDictionary<TcpClient, Guid> HostDictionary = new ConcurrentDictionary<TcpClient, Guid>();
         private static unsafe void ClientHandler(TcpClient client)
         {
-            while (true)
+            NetworkStream networkStream = client.GetStream();
+            byte[] opCodeBuffer = new byte[2];
+            while (client.Connected)
             {
-                try
+                networkStream.Read(opCodeBuffer);
+                fixed (byte* pBytes = opCodeBuffer)
                 {
-                    NetworkStream networkStream = client.GetStream();
-                    byte[] opCodeBuffer = new byte[2];
-                    networkStream.Read(opCodeBuffer);
-                    fixed (byte* pBytes = opCodeBuffer)
+                    ushort* code = (ushort*)pBytes;
+                    if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
                     {
-                        ushort* code = (ushort*)pBytes;
-                        if ((*code & (ushort)ListServerCode.CreateRoom) != 0)
-                        {
-                            Console.WriteLine(nameof(ListServerCode.CreateRoom) + "received");
-                            CreateRoomHandler(client);
-                        }
+                        CreateRoomHandler(client);
+                    }
 
-                        if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
-                        {
-                            Console.WriteLine(nameof(ListServerCode.RemoveRoom) + "received");
-                            RemoveRoomHandler(client);
-                        }
+                    if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
+                    {
+                        RemoveRoomHandler(client);
+                    }
 
-                        if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
-                        {
-                            //Console.WriteLine(nameof(ListServerCode.GetRoomInfos) + "received");
-                            SendRoomInfos(client);
-                        }
+                    if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
+                    {
+                        SendRoomInfos(client);
+                    }
 
-                        if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
-                        {
+                    if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
+                    {
 
-                        }
                     }
                 }
-                catch
-                {
-                    ExceptionHandle(client);
-                }
             }
+            CleanUp(client);
         }
 
         private static void UpdateRoomHandler(ListServerCode code, NetworkStream networkStream)
@@ -192,28 +183,18 @@ namespace ListServerCore
 
         private static void SendRoomInfos(TcpClient client)
         {
-            while (true)
+            byte[] buffer = RoomInfos.Count.ToBytes();
+            NetworkStream stream = client.GetStream();
+            stream.Write(buffer);
+            foreach (RoomInfo roomInfo in RoomInfos.Values)
             {
-                try
-                {
-                    NetworkStream stream = client.GetStream();
-                    stream.Write(RoomInfos.Count.ToBytes());
-                    foreach (RoomInfo roomInfo in RoomInfos.Values)
-                    {
-                        byte[] roomInfoBuffer = roomInfo.ToBytes();
-                        stream.Write(roomInfoBuffer.Length.ToBytes());
-                        stream.Write(roomInfoBuffer);
-                    }
-                }
-                catch
-                {
-                    ExceptionHandle(client);
-                    break;
-                }
+                byte[] roomInfoBuffer = roomInfo.ToBytes();
+                stream.Write(roomInfoBuffer.Length.ToBytes());
+                stream.Write(roomInfoBuffer);
             }
         }
 
-        private static void ExceptionHandle(TcpClient client)
+        private static void CleanUp(TcpClient client)
         {
             ConnectedClients.Remove(client);
             if (HostDictionary.TryRemove(client, out Guid guid))

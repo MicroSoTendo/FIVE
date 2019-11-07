@@ -56,7 +56,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21bfee54f99f4b343a289ac192d56fe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listServer: 173.255.234.168
+  listServer: 127.0.0.1
   listServerPort: 8888
   updateRate: 30
   gameServerPort: 8889
