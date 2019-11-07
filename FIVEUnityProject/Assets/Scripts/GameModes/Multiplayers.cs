@@ -77,7 +77,9 @@ namespace FIVE.GameModes
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<NPCDialogueViewModel>().IsActive = false;
             UIManager.Create<BSCompositeViewModel>().IsActive = false;
-            UIManager.Create<InGameMenuViewModel>().IsActive = false;
+            InGameMenuViewModel inGameMenuViewModel = UIManager.Create<InGameMenuViewModel>();
+            inGameMenuViewModel.IsActive = false;
+            inGameMenuViewModel.ExitGameButton.onClick.AddListener(OnExit);
             NPCInit.Initialize();
             CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
             StartCoroutine(codeEditorViewModel.ToggleEditorCoroutine());
@@ -87,6 +89,14 @@ namespace FIVE.GameModes
                 yield return null;
             }
             yield return null;
+        }
+
+        private void OnExit()
+        {
+            if (NetworkManager.Instance.State == NetworkManager.NetworkState.Host)
+            {
+                NetworkManager.Instance.Disconnect();
+            }
         }
 
         private Vector3 GetSpawnLocation(int playerIndex)

@@ -6,7 +6,7 @@ namespace FIVE.Network
     /// Used for communicating with list server.
     /// </summary>
     [Flags]
-    public enum ListServerCode
+    public enum ListServerCode : ushort
     {
         AliveTick = 1,
         GetRoomInfos = 1 << 1,

@@ -160,5 +160,10 @@ namespace FIVE.Network
                 }
             }
         }
+
+        public void Disconnect()
+        {
+            lobbyHandler.RemoveRoom();
+        }
     }
 }

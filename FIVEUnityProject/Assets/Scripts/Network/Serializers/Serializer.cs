@@ -46,7 +46,7 @@ namespace FIVE.Network.Serializers
             switch (obj)
             {
                 case Transform transform:
-                    bytes.CopyFromUnsafe(ComponentType.Transform.ToBytes());
+                    bytes.CopyFrom(ComponentType.Transform.ToBytes());
                     offset += 4;
                     Serializer<Transform>.Instance.Serialize(transform, bytes, offset);
                     offset += Serializer<Transform>.Instance.GetSize();

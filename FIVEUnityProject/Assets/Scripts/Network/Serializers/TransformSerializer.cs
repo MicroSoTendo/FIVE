@@ -24,7 +24,7 @@ namespace FIVE.Network.Serializers
 
         public static void Serialize(this Serializer<Transform> _, in Transform transform, in byte[] bytes, int startIndex = 0)
         {
-            bytes.CopyFromUnsafe(transform.ToBytes(), startIndex);
+            bytes.CopyFrom(transform.ToBytes(), startIndex);
         }
 
         public static void Serialize(this Serializer<Transform> _, in Transform transform, out byte[] bytes)
