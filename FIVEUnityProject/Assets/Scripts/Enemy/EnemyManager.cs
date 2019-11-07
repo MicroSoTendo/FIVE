@@ -20,10 +20,10 @@ namespace FIVE.Enemy
             instance = this;
 
             spawnLocations = new Queue<Vector3>();
-            spawnLocations.Enqueue(new Vector3(0, 0, -250));
-            spawnLocations.Enqueue(new Vector3(100, 0, 90));
-            spawnLocations.Enqueue(new Vector3(-100, 0, 90));
-            spawnLocations.Enqueue(new Vector3(0, 0, 200));
+            spawnLocations.Enqueue(new Vector3(-300, 5, 500));
+            spawnLocations.Enqueue(new Vector3(250, 5, 500));
+            spawnLocations.Enqueue(new Vector3(200, 5, 450));
+            spawnLocations.Enqueue(new Vector3(150, 5, 520));
 
             enemies = new List<GameObject>();
             elapsedTime = 0;
