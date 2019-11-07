@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace FIVE.Network
 {
@@ -25,7 +24,7 @@ namespace FIVE.Network
         private readonly ConcurrentDictionary<Guid, RoomInfo> roomInfos = new ConcurrentDictionary<Guid, RoomInfo>();
         private readonly string listServer;
         private readonly ushort listServerPort;
-
+        private Action ticker;
         public LobbyHandler(string listServer, ushort listServerPort)
         {
             listServerClient = new TcpClient();
@@ -34,6 +33,7 @@ namespace FIVE.Network
             this.listServer = listServer;
             this.listServerPort = listServerPort;
             md5 = MD5.Create();
+            ticker = RefreshRoomInfo;
         }
 
         private readonly ConcurrentQueue<Action> scheduledActions = new ConcurrentQueue<Action>();
@@ -41,7 +41,7 @@ namespace FIVE.Network
         {
             while (true)
             {
-                RefreshRoomInfo();
+                ticker();
                 if (scheduledActions.TryDequeue(out Action action))
                 {
                     action();
@@ -95,6 +95,16 @@ namespace FIVE.Network
             stream.Write(operation);
             stream.Write(roomInfoBuffer);
             HostRoomInfo.Guid = stream.ReadGuid();
+            ticker = AliveTicker;
+        }
+
+        private void AliveTicker()
+        {
+            byte[] buffer = ((ushort)ListServerCode.AliveTick).ToBytes();
+            while (true)
+            {
+                listServerClient.GetStream().Write(buffer);
+            }
         }
 
         public void RemoveRoom()
@@ -111,6 +121,7 @@ namespace FIVE.Network
             NetworkStream stream = listServerClient.GetStream();
             stream.Write(ListServerCode.RemoveRoom);
             stream.Write(HostRoomInfo.Guid);
+            ticker = RefreshRoomInfo;
         }
 
         private void UpdateRoomInfo(ListServerCode code)
