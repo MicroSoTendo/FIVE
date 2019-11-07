@@ -48,7 +48,6 @@ public class Bullet : MonoBehaviour
         {
             if (other.gameObject.name.StartsWith("AlienBeetle"))
             {
-                Debug.Log("Killed Alien");
                 other.gameObject.SetActive(false);
                 Destroy(other.gameObject);
             }

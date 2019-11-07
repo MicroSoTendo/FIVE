@@ -145,6 +145,14 @@ namespace FIVE.Robot
             Destroy(gunfire);
         }
 
+        private IEnumerator KillAlien(GameObject alien)
+        {
+            yield return new WaitForSeconds(0.2f);
+            alien.SetActive(false);
+            Destroy(alien);
+        }
+
+        // Attack on a target coordinate
         public void Attack(Vector3 target)
         {
             if (movable.enabled)
@@ -153,7 +161,19 @@ namespace FIVE.Robot
                 StartCoroutine(ShutGunfire(gunfire));
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
-                Debug.Log("Attack");
+            }
+        }
+
+        // Attack on a GameObject (such as AlienBeetle)
+        public void Attack(GameObject target)
+        {
+            if (movable.enabled)
+            {
+                GameObject gunfire = Instantiate(GunfirePrefab, transform.position + transform.forward * 10f + new Vector3(0, 3, 0), Quaternion.identity);
+                StartCoroutine(ShutGunfire(gunfire));
+                GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
+                bullet.GetComponent<Bullet>().Target = target.transform.position;
+                StartCoroutine(KillAlien(target));
             }
         }
 

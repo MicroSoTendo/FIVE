@@ -45,9 +45,16 @@ namespace FIVE.ControllerSystem
                 if (CameraManager.CurrentActiveCamera != null)
                 {
                     Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.SphereCast(ray, 0.5f, out RaycastHit hitInfo))
+                    if (Physics.Raycast(ray, out RaycastHit hitInfo))
                     {
-                        robotSphere.Attack(hitInfo.point);
+                        if (hitInfo.collider.gameObject.name.StartsWith("AlienBeetle"))
+                        {
+                            robotSphere.Attack(hitInfo.collider.gameObject);
+                        }
+                        else
+                        {
+                            robotSphere.Attack(hitInfo.point);
+                        }
                     }
                 }
             }
