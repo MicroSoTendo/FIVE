@@ -50,7 +50,7 @@ namespace FIVE.Network
                 }
                 else
                 {
-                    Thread.Sleep(1000 / 30);   
+                    await Task.Delay(1000 / 30);
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace FIVE.Network
         private void RefreshRoomInfo()
         {
             NetworkStream stream = listServerClient.GetStream();
-            stream.Write(ListServerCode.GetRoomInfos);
+            stream.Write((ushort)ListServerCode.GetRoomInfos);
             int roomCount = stream.ReadI32();
             roomInfos.Clear();
             for (int i = 0; i < roomCount; i++)
