@@ -49,8 +49,7 @@ sysinfo.txt
 
 # Art Assets
 FIVEUnityProject/Assets/Resources/Textures/*
-FIVEUnityProject/Assets/Models*
-FIVEUnityProject/Assets/Resources/Animation/SolarAnimation*
+# Test stuff
 FIVEUnityProject/Assets/Scenes/Test*
 FIVEUnityProject/Assets/Samples*
 FIVEUnityProject/ProjectSettings/ProjectVersion.txt
