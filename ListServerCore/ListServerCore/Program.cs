@@ -16,9 +16,23 @@ namespace ListServerCore
         private static void Main(string[] args)
         {
             IPAddress address = IPAddress.Loopback;
-            int infoPort = 8888;
+            int listenPort = 8888;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-p" || args[i] == "-P")
+                {
+                    if (i + 1 < args.Length && int.TryParse(args[i + 1], out int port))
+                    {
+                        if (port > 0 && port < ushort.MaxValue)
+                        {
+                            listenPort = port;
+                        }
+                    }
+                }
+            }
+
             CancellationTokenSource tokenSource = new CancellationTokenSource();
-            Task handlerTask = Task.Run(() => { InComingHandler(address, infoPort); }, tokenSource.Token);
+            Task handlerTask = Task.Run(() => { InComingHandler(address, listenPort); }, tokenSource.Token);
             while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey();
@@ -38,7 +52,7 @@ namespace ListServerCore
                         connectedClient.Dispose();
                     }
                     ConnectedClients.Clear();
-                    handlerTask = Task.Run(() => { InComingHandler(address, infoPort); }, tokenSource.Token);
+                    handlerTask = Task.Run(() => { InComingHandler(address, listenPort); }, tokenSource.Token);
                 }
             }
         }
@@ -153,20 +167,6 @@ namespace ListServerCore
             Console.WriteLine($"GUID = {roomInfo.Guid}, Room Name = {roomInfo.Name}, Max Players = {roomInfo.MaxPlayers}, Has Password = {roomInfo.HasPassword} ");
             stream.Write(roomInfo.Guid.ToBytes());
             RoomInfos.TryAdd(roomInfo.Guid, roomInfo);
-        }
-
-        private static void ListenUpdatePort(IPAddress address, int listeningPort)
-        {
-            TcpListener listener = new TcpListener(address, listeningPort);
-            listener.Start();
-            Console.WriteLine($"Listening at {address}:{listeningPort}");
-            while (true)
-            {
-                TcpClient client = listener.AcceptTcpClient();
-                ConnectedClients.Add(client);
-                Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
-                Tasks.Add(Task.Run(() => ClientHandler(client)));
-            }
         }
 
         private static void SendRoomInfos(NetworkStream networkStream)
