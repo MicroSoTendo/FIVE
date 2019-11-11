@@ -27,7 +27,7 @@ namespace FIVE.Network
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 (int publicID, int privateID) = await handShaker.HandShakeAsync(client);
-                var inGameHandler = InGameHandler.CreateHost(client);
+                var inGameHandler = InGameHandler.CreateHostHandler(client);
                 privateIDToclients.TryAdd(privateID, (client, inGameHandler));
                 publicIDToclients.TryAdd(publicID, (client, inGameHandler));
                 inGameHandler.Start();

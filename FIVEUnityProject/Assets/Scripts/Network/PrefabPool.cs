@@ -29,11 +29,23 @@ namespace FIVE.Network
             Initialized = true;
         }
 
-        public GameObject Instantiate(int id)
+        public GameObject Instantiate(int prefabID, Transform parent)
         {
-            var go = GameObject.Instantiate(prefabDatabase[id]);
-            instancePrefabID.Add(go, id);
+            var go = GameObject.Instantiate(prefabDatabase[prefabID], parent);
+            instancePrefabID.Add(go, prefabID);
             return go;
+        }        
+        
+        public GameObject Instantiate(int prefabID)
+        {
+            var go = GameObject.Instantiate(prefabDatabase[prefabID]);
+            instancePrefabID.Add(go, prefabID);
+            return go;
+        }
+
+        public void Remove(GameObject go)
+        {
+
         }
     }
 }

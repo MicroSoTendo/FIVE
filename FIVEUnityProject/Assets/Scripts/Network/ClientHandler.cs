@@ -21,7 +21,7 @@ namespace FIVE.Network
                 NetworkManager.Instance.PlayerIndex = publicID;
                 NetworkManager.Instance.PrivateID = privateID;
                 NetworkManager.Instance.State = NetworkManager.NetworkState.Client;
-                inGameHandler = InGameHandler.CreateClient(client);
+                inGameHandler = InGameHandler.CreateClientHandler(client);
                 inGameHandler.Start();
             }
         }

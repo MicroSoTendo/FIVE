@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FIVE.Network
 {
@@ -48,7 +49,7 @@ namespace FIVE.Network
                 }
                 else
                 {
-                    await Task.Delay(1000 / 30);
+                    await Task.Delay(1000 / 5);
                 }
             }
         }
@@ -103,6 +104,7 @@ namespace FIVE.Network
             byte[] buffer = ((ushort)ListServerCode.AliveTick).ToBytes();
             while (true)
             {
+                Debug.Log(nameof(AliveTicker));
                 listServerClient.GetStream().Write(buffer);
             }
         }

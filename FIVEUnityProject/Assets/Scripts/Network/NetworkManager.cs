@@ -1,5 +1,4 @@
-﻿using FIVE.Network.Serializers;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -73,10 +72,10 @@ namespace FIVE.Network
             }
             lobbyHandler = new LobbyHandler(listServer, listServerPort);
         }
-
-        public void Start()
+        public IEnumerator Start()
         {
             lobbyHandler.Start();
+            yield return null;
         }
 
         public void JoinRoom(Guid guid, string password)
@@ -119,46 +118,9 @@ namespace FIVE.Network
             {
                 if (queue.TryDequeue(out MainThreadRequest request))
                 {
-                    switch (request)
-                    {
-                        case CreateObject createObject:
-                            break;
-                        case RemoveObject removeObject:
-                            break;
-                        case SyncComponent syncComponent:
-                            ResolveSync(syncComponent);
-                            break;
-                    }
+                    request.Resolve();
                 }
                 yield return null;
-            }
-        }
-
-        private unsafe void ResolveSync(SyncComponent syncComponent)
-        {
-            byte[] rawBytes = syncComponent.RawBytes;
-            fixed (byte* pBytes = rawBytes)
-            {
-                int gameObjectID = *(int*)pBytes;
-                GameObject go = SyncCenter.Instance.NetworkedGameObjects[gameObjectID];
-                int count = *((int*)pBytes + 1);
-                int offset = 8;
-                for (int i = 0; i < count; i++)
-                {
-                    var type = (ComponentType)(*(pBytes + offset));
-                    offset += 1;
-                    switch (type)
-                    {
-                        case ComponentType.Transform:
-                            Serializer<Transform>.Instance.Deserialize(pBytes + offset, go.transform);
-                            offset += 24;
-                            break;
-                        case ComponentType.Animator:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
             }
         }
 
