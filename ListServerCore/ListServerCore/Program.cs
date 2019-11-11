@@ -76,19 +76,8 @@ namespace ListServerCore
             byte[] opCodeBuffer = new byte[2];
             while (client.Connected)
             {
-                networkStream.ReadTimeout = 5000;
-                Task<int> asyncResult = networkStream.ReadAsync(opCodeBuffer, 0, opCodeBuffer.Length);
-                await Task.Delay(5000);
-                if (asyncResult.IsCompleted && networkStream.DataAvailable)
-                {
-                    HandleListServerCode(client, opCodeBuffer);
-                }
-                else if (HostDictionary.ContainsKey(client))
-                {
-                    Console.WriteLine($"Did not receive alive tick from {((IPEndPoint)client.Client.RemoteEndPoint).Address} on time, removed.");
-                    CleanUp(client);
-                    break;
-                }
+                networkStream.Read(opCodeBuffer);
+                HandleListServerCode(client, opCodeBuffer);
             }
         }
 
@@ -102,17 +91,17 @@ namespace ListServerCore
                     CreateRoomHandler(client);
                 }
 
-                if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
+                else if ((*code & (ushort)ListServerCode.RemoveRoom) != 0)
                 {
                     RemoveRoomHandler(client);
                 }
 
-                if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
+                else if ((*code & (ushort)ListServerCode.GetRoomInfos) != 0)
                 {
                     SendRoomInfos(client);
                 }
 
-                if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
+                else if ((*code & (ushort)ListServerCode.UpdateRoom) != 0)
                 {
 
                 }
