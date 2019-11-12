@@ -32,7 +32,8 @@ namespace FIVE.Interactive.Blacksmith
         public static GameObject GenerateResultItems()
         {
             List<GameObject> compositeList = CompositeItems[RobotManager.ActiveRobot];
-            GameObject a = ComponentsRead.generateItem(compositeList);
+            GameObject a = ComponentsRead.GenerateItem(compositeList);
+            Debug.Assert(a.activeSelf);
             Result[RobotManager.ActiveRobot] = a;
             return a;
         }

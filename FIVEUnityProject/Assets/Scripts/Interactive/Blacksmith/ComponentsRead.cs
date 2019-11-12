@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.Interactive.Blacksmith
@@ -22,54 +21,54 @@ namespace FIVE.Interactive.Blacksmith
             for (int i = 0; i < records.Length; i++)
             {
                 string[] fields = records[i].Split(',');
-                List<string> temp = new List<string> { fields[0], fields[1], fields[2] };
+                var temp = new List<string> { fields[0], fields[1], fields[2] };
                 CompositeLists.Add(temp);
                 PathLists.Add(fields[3]);
-
             }
         }
-        private static bool isCompositeComponents(List<GameObject> compositeItems)
+
+        private static bool IsCompositeComponents(List<GameObject> compositeItems)
         {
             bool isComp = true;
             GenerateLists();
-            SortedSet<string> sortedCompositeItems = new SortedSet<string>();
+            var sortedCompositeItems = new SortedSet<string>();
             foreach (GameObject a in compositeItems)
             {
                 sortedCompositeItems.Add(a.name);
             }
-            List<string> sortedCompositeItemList = new List<string>(sortedCompositeItems);
+            var sortedCompositeItemList = new List<string>(sortedCompositeItems);
 
             for (int i = 0; i < CompositeLists.Count; i++)
             {
-                SortedSet<string> set = new SortedSet<string>(CompositeLists[i]);
-                List<string> sorteSet = new List<string>(set);
+                var set = new SortedSet<string>(CompositeLists[i]);
+                var sorteSet = new List<string>(set);
                 isComp = true;
-                for(int a = 0; a < sorteSet.Count; a++)
+                for (int a = 0; a < sorteSet.Count; a++)
                 {
                     if (!sortedCompositeItemList[a].Contains(sorteSet[a]))
                     {
                         isComp = false;
                     }
                 }
-                if(isComp == true)
+                if (isComp == true)
                 {
                     index = i;
                     break;
                 }
-                
+
             }
-                
+
             return isComp;
         }
-        public static GameObject generateItem(List<GameObject> compositeItems)
+        public static GameObject GenerateItem(List<GameObject> compositeItems)
         {
-            if (isCompositeComponents(compositeItems))
+            if (IsCompositeComponents(compositeItems))
             {
                 string a = PathLists[index];
-                var r = Resources.Load<GameObject>(PathLists[index]);
+                GameObject r = Resources.Load<GameObject>(PathLists[index]);
                 return r;
             }
-            
+
             return null;
         }
     }
