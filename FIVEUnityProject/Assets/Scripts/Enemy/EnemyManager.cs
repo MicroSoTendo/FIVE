@@ -10,8 +10,8 @@ namespace FIVE.Enemy
         private float elapsedTime;
         
         [SerializeField] private GameObject prefab;
-        public static List<GameObject> Enemies => instance.enemies;
-        private List<GameObject> enemies;
+        public static HashSet<GameObject> Enemies => instance.enemies;
+        private HashSet<GameObject> enemies;
         private Queue<Vector3> spawnLocations;
 
         private void Awake()
@@ -25,7 +25,7 @@ namespace FIVE.Enemy
             spawnLocations.Enqueue(new Vector3(200, 5, 450));
             spawnLocations.Enqueue(new Vector3(150, 5, 520));
 
-            enemies = new List<GameObject>();
+            enemies = new HashSet<GameObject>();
             elapsedTime = 0;
         }
 

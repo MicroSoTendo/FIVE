@@ -148,6 +148,7 @@ namespace FIVE.Robot
         private IEnumerator KillAlien(GameObject alien)
         {
             yield return new WaitForSeconds(0.2f);
+            Enemy.EnemyManager.Enemies.Remove(alien);
             alien.SetActive(false);
             Destroy(alien);
         }
