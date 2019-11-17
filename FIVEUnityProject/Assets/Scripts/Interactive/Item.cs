@@ -73,7 +73,7 @@ namespace FIVE.Interactive
 
         private void OnMouseOver()
         {
-            if (!CameraManager.GetPovCameras.First()?.enabled ?? true)
+            if (!CameraManager.GetPovCameras.Any(c => c.enabled))
             {
                 return;
             }
@@ -146,7 +146,7 @@ namespace FIVE.Interactive
                 return;
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(0))
             {
                 isCollected = true;
                 MeshCollider mc = GetComponent<MeshCollider>();
