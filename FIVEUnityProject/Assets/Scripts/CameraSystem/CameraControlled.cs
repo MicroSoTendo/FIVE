@@ -15,6 +15,10 @@ public class CameraControlled : MonoBehaviour
 
     private void OnPreRender()
     {
+        foreach (GameObject o in GameObject.FindGameObjectsWithTag("FaceCamera"))
+        {
+            o.transform.LookAt(o.transform.position + transform.rotation * Vector3.forward, transform.rotation * Vector3.up);
+        }
         SetText();
     }
 
@@ -31,6 +35,8 @@ public class CameraControlled : MonoBehaviour
     private void SetText(bool e = true)
     {
         if (text != null)
+        {
             text.enabled = e;
+        }
     }
 }
