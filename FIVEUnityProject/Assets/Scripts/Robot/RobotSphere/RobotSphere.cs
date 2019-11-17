@@ -80,6 +80,12 @@ namespace FIVE.Robot
             base.Start();
         }
 
+        private void OnMouseDown()
+        {
+            RobotManager.ActiveRobot = gameObject;
+            CameraManager.SetCamera(fpsCamera);
+        }
+
         private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
             if (movable.enabled)
