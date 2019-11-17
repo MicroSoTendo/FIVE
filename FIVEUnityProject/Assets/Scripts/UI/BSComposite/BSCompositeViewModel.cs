@@ -43,6 +43,8 @@ namespace FIVE.UI.BSComposite
             return inventoryButtons[i].transform.childCount == 0;
         }
 
+        private GameObject ItemOut => Result.transform.childCount > 0 ? Result.transform.GetChild(0).gameObject : null;
+
         public BSCompositeViewModel() : base()
         {
             inventoryButtons = new List<Button>();
@@ -69,9 +71,9 @@ namespace FIVE.UI.BSComposite
 
         private void OnResultButtonClick()
         {
-            if (Blacksmith.ItemOut != null)
+            if (ItemOut != null)
             {
-                InventoryManager.Inventory.Add(Blacksmith.ItemOut);
+                InventoryManager.Inventory.Add(ItemOut);
                 Blacksmith.RemoveOut();
 
                 // FIXME: remove items in inventory
@@ -88,7 +90,7 @@ namespace FIVE.UI.BSComposite
                 return;
             }
 
-            if (Blacksmith.ItemOut != null)
+            if (ItemOut != null)
             {
                 Blacksmith.RemoveOut();
                 RemoveChild0(Result);

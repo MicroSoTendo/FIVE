@@ -8,7 +8,7 @@ namespace FIVE.Interactive.Blacksmith
     {
         private static List<GameObject> ItemsIn = new List<GameObject>();
 
-        public static GameObject ItemOut { get; set; }
+        private static GameObject ItemOut;
 
         public static void AddIn(GameObject item)
         {
