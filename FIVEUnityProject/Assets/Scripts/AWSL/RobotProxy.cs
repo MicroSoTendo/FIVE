@@ -23,19 +23,15 @@ namespace FIVE.AWSL
             get
             {
                 var d = new Dictionary<string, int>();
-                Inventory i = InventoryManager.GetInventory(robot.gameObject);
-                if (i != null)
+                foreach (GameObject p in InventoryManager.Inventory.Items)
                 {
-                    foreach (GameObject p in i.Items)
+                    if (d.ContainsKey(p.name))
                     {
-                        if (d.ContainsKey(p.name))
-                        {
-                            d[p.name] += 1;
-                        }
-                        else
-                        {
-                            d[p.name] = 1;
-                        }
+                        d[p.name] += 1;
+                    }
+                    else
+                    {
+                        d[p.name] = 1;
                     }
                 }
                 return d;

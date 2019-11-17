@@ -8,8 +8,20 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
-    public static class NetworkUtil
+    internal static class NetworkUtil
     {
+        public static bool Has(this int @enum, int flag)
+        {
+            return (@enum & flag) != 0;
+        }
+        public static unsafe T CastEnum<T>(byte[] bytes) where T : unmanaged
+        {
+            fixed (byte* pBytes = bytes)
+            {
+                return *(T*)pBytes;
+            }
+        }
+
         public static int ToI32(this byte[] bytes, int startIndex = 0)
         {
             return BitConverter.ToInt32(bytes, startIndex);
@@ -101,10 +113,7 @@ namespace FIVE.Network
             return q.eulerAngles.ToBytes();
         }
 
-        public static byte[] ToBytes(this string str)
-        {
-            return Encoding.Unicode.GetBytes(str);
-        }
+    
 
         public static byte[] ToBytes(this Guid guid)
         {
@@ -123,21 +132,6 @@ namespace FIVE.Network
         public static byte[] ToBytes<T>(this T value) where T: unmanaged, Enum
         {
             return BitConverter.GetBytes(Unsafe.As<T, int>(ref value));
-        }
-
-        public static unsafe byte[] ToBytes(this RoomInfo roomInfo)
-        {
-            const int fixedInfoSize = sizeof(int) + sizeof(int) + sizeof(bool) + sizeof(ushort);
-            byte[] buffer = new byte[fixedInfoSize + Encoding.Unicode.GetByteCount(roomInfo.Name)];
-            fixed (byte* pBuffer = buffer)
-            {
-                *(int*)pBuffer = roomInfo.CurrentPlayers;
-                *(int*)(pBuffer + sizeof(int)) = roomInfo.MaxPlayers;
-                *(bool*)(pBuffer + sizeof(int) + sizeof(int)) = roomInfo.HasPassword;
-                *(ushort*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(bool)) = roomInfo.Port;
-            }
-            buffer.CopyFrom(roomInfo.Name.ToBytes(), fixedInfoSize);
-            return buffer;
         }
 
         public static byte[] Combine(byte[] arr1, byte[] arr2)
@@ -202,11 +196,42 @@ namespace FIVE.Network
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CopyFrom(this byte[] dest, int source, int destStartIndex)
+        {
+            fixed (byte* pDest = dest)
+            {
+                byte* p = pDest + destStartIndex;
+                Unsafe.CopyBlock(p, &source, 4);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CopyFrom(this byte[] dest, int source1, int source2, int destStartIndex)
+        {
+            fixed (byte* pDest = dest)
+            {
+                byte* p = pDest + destStartIndex;
+                Unsafe.CopyBlock(p, &source1, 4);
+                Unsafe.CopyBlock(p + 4, &source2, 4);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyFrom(this byte[] dest, byte[] source, int destStartIndex = 0)
         {
             Unsafe.CopyBlock(ref dest[destStartIndex], ref source[0], (uint)source.Length);
         }        
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CopyFrom<T>(this byte[] dest, T source, int destStartIndex = 0) where T : unmanaged
+        {
+            fixed (byte* pDest = dest)
+            {
+                byte* p = pDest + destStartIndex;
+                Unsafe.CopyBlock(p, &source, (uint)sizeof(T));
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyFrom(this byte[] dest, byte[] source1, byte[] source2, int destStartIndex = 0)
         {
@@ -236,9 +261,24 @@ namespace FIVE.Network
             stream.Write(bytes, 0, bytes.Length);
         }
 
-        public static void Write(this NetworkStream stream, int i)
+        public static unsafe void Write(this NetworkStream stream, int i)
+        {         
+            byte[] buffer = new byte[4];
+            fixed (byte* pBuffer = buffer)
+            {
+                *pBuffer = *(byte*)&i;
+            }
+            stream.Write(buffer);
+        }
+
+        public static unsafe void Write(this NetworkStream stream, ushort us)
         {
-            stream.Write(i.ToBytes());
+            byte[] buffer = new byte[2];
+            fixed (byte* pBuffer = buffer)
+            {
+                *pBuffer = *(byte*)&us;
+            }
+            stream.Write(buffer);
         }
 
         public static void Write(this NetworkStream stream, bool b)
@@ -251,13 +291,6 @@ namespace FIVE.Network
             stream.Write(guid.ToBytes());
         }
 
-        public static void Write(this NetworkStream stream, string str)
-        {
-            byte[] buffer = str.ToBytes();
-            stream.Write(buffer.Length);
-            stream.Write(buffer);
-        }
-
         public static void Write(this NetworkStream stream, Enum i)
         {
             stream.Write((int)(object)i);
@@ -268,6 +301,13 @@ namespace FIVE.Network
             stream.Read(bytes, 0, bytes.Length);
         }
 
+        public static byte ReadAByte(this NetworkStream stream)
+        {
+            byte[] buffer = new byte[1];
+            stream.Read(buffer, 0, 1);
+            return buffer[0];
+        }
+
         public static byte[] Read(this NetworkStream stream, int size)
         {
             byte[] bytes = new byte[size];
@@ -275,19 +315,17 @@ namespace FIVE.Network
             return bytes;
         }
 
-        public static int ReadI32(this NetworkStream stream)
+        public static unsafe int ReadI32(this NetworkStream stream)
         {
-            byte[] bytes = new byte[4];
-            stream.Read(bytes, 0, bytes.Length);
-            return bytes.ToI32();
+            byte[] buffer = new byte[4];
+            stream.Read(buffer, 0, 4);
+            fixed (byte* pBytes = buffer)
+            {
+                return *(int*)pBytes;
+            }
         }
 
-        public static Guid ReadGuid(this NetworkStream stream)
-        {
-            byte[] bytes = new byte[16];
-            stream.Read(bytes, 0, bytes.Length);
-            return bytes.ToGuid();
-        }
+
 
         public static T Read<T>(this NetworkStream stream) where T : Enum
         {

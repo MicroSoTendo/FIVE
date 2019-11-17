@@ -10,7 +10,7 @@ namespace FIVE.Interactive
 {
     internal class Item : MonoBehaviour
     {
-        public delegate void ItemUsingAction(GameObject owner, GameObject item);
+        public delegate void ItemUsingAction(GameObject item);
 
         public static readonly Color[] HighlightColors =
         {
@@ -29,7 +29,6 @@ namespace FIVE.Interactive
         private Scanner scanner;
         private float singleColorInterval = 0.5f;
         private float timer = 0;
-        public GameObject Owner { get; set; }
 
         public ItemInfo Info
         {
@@ -73,7 +72,7 @@ namespace FIVE.Interactive
 
         private void OnMouseOver()
         {
-            if (!CameraManager.GetPovCameras.First()?.enabled ?? true)
+            if (!CameraManager.GetPovCameras.Any(c => c.enabled))
             {
                 return;
             }
@@ -129,7 +128,7 @@ namespace FIVE.Interactive
             {
                 if (Input.GetMouseButtonDown(1) && !ActionExecuted)
                 {
-                    ItemAction?.Invoke(Owner, gameObject);
+                    ItemAction?.Invoke(gameObject);
                     ActionExecuted = true;
                     this.RaiseEvent<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(
                         new RemoveItemRequestedEventArgs(gameObject));
@@ -146,7 +145,7 @@ namespace FIVE.Interactive
                 return;
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(0))
             {
                 isCollected = true;
                 MeshCollider mc = GetComponent<MeshCollider>();

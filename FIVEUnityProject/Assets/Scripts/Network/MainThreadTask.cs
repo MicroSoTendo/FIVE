@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
-    public abstract class MainThreadRequest
+    public abstract class MainThreadTask
     {
-        public abstract void Resolve();
+        public abstract void Run();
     }
 
     public enum ActionScope
@@ -19,7 +19,7 @@ namespace FIVE.Network
         Local,
     }
 
-    public class CreateObject : MainThreadRequest
+    public class CreateObject : MainThreadTask
     {
         public int PrefabID { get; }
         public int Parent { get; }
@@ -35,7 +35,7 @@ namespace FIVE.Network
             ComponentCount = componentCount;
         }
 
-        public override void Resolve()
+        public override void Run()
         {
             GameObject gameObject = PrefabID == -1 ?
                 PrefabPool.Instance.Instantiate(PrefabID) :
@@ -43,7 +43,7 @@ namespace FIVE.Network
         }
     }
 
-    public class CreateObjects : MainThreadRequest
+    public class CreateObjects : MainThreadTask
     {
         public List<CreateObject> BatchCreateObjects { get; }
         public CreateObjects(List<CreateObject> batchCreateObjects)
@@ -51,16 +51,16 @@ namespace FIVE.Network
             BatchCreateObjects = batchCreateObjects;
         }
 
-        public override void Resolve()
+        public override void Run()
         {
             foreach (CreateObject createObject in BatchCreateObjects)
             {
-                createObject.Resolve();
+                createObject.Run();
             }
         }
     }
 
-    public class RemoveObjects : MainThreadRequest
+    public class RemoveObjects : MainThreadTask
     {
         public RemoveObjects(List<RemoveObjects> batchRemoveObjects)
         {
@@ -68,16 +68,16 @@ namespace FIVE.Network
         }
 
         public List<RemoveObjects> BatchRemoveObjects { get; }
-        public override void Resolve()
+        public override void Run()
         {
             foreach (RemoveObjects removeObject in BatchRemoveObjects)
             {
-                removeObject.Resolve();
+                removeObject.Run();
             }
         }
     }
 
-    public class RemoveObject : MainThreadRequest
+    public class RemoveObject : MainThreadTask
     {
         public RemoveObject(int networkID)
         {
@@ -85,13 +85,13 @@ namespace FIVE.Network
         }
 
         public int NetworkID { get; }
-        public override void Resolve()
+        public override void Run()
         {
             SyncCenter.Instance.Destroy(NetworkID);
         }
     }
 
-    public class SyncComponent : MainThreadRequest
+    public class SyncComponent : MainThreadTask
     {
         public byte[] RawBytes { get; }
         public SyncComponent(byte[] buffer)
@@ -100,7 +100,7 @@ namespace FIVE.Network
         }
 
 
-        public override unsafe void Resolve()
+        public override unsafe void Run()
         {
             fixed (byte* pBytes = RawBytes)
             {
@@ -128,7 +128,7 @@ namespace FIVE.Network
         }
     }
 
-    public class RemoteCall : MainThreadRequest
+    public class RemoteCall : MainThreadTask
     {
         private static readonly BijectMap<int, MethodInfo> RpcInfos;
         static RemoteCall()
@@ -157,7 +157,7 @@ namespace FIVE.Network
         }
         public int NetworkID { get; }
         public int RpcID { get; }
-        public override void Resolve()
+        public override void Run()
         {
             object obj = SyncCenter.Instance.NetworkIDMap[NetworkID];
             MethodInfo method = RpcInfos[RpcID];

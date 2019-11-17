@@ -1,5 +1,4 @@
 ﻿using FIVE.CameraSystem;
-using FIVE.Interactive;
 using FIVE.Robot;
 using FIVE.TerrainSystem;
 using FIVE.UI;
@@ -55,10 +54,9 @@ namespace FIVE.GameModes
 
             GameObject enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
             Instantiate(enemyManagerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            Inventory inventory = InventoryManager.AddInventory(robot);
+
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
-            inventoryViewModel.Inventory = inventory;
             inventoryViewModel.IsActive = false;
             codeEditorViewModel.IsActive = false;
             itemDialogViewModel.IsActive = false;

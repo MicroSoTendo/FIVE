@@ -73,11 +73,20 @@ namespace FIVE.Robot
                 position: new Vector3(0, 2, 0),
                 rotation: Quaternion.Euler(90, 0, 0));
 
+            var light = transform.GetComponentInChildren<Light>().gameObject;
+            light.SetParent(fpsCamera.transform);
+
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
-            OnLocalPlayerUpdate += RobotSphereUpdate;
+            OnFixedUpdate += RobotSphereUpdate;
             base.Start();
+        }
+
+        private void OnMouseDown()
+        {
+            RobotManager.ActiveRobot = gameObject;
+            CameraManager.SetCamera(fpsCamera);
         }
 
         private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
@@ -107,7 +116,7 @@ namespace FIVE.Robot
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
-            if (scriptActive && (!movable.enabled || movable.Moves.Count == 0))
+            if (scriptActive)
             {
                 ExecuteScript();
             }
@@ -148,6 +157,7 @@ namespace FIVE.Robot
         private IEnumerator KillAlien(GameObject alien)
         {
             yield return new WaitForSeconds(0.2f);
+            Enemy.EnemyManager.Enemies.Remove(alien);
             alien.SetActive(false);
             Destroy(alien);
         }

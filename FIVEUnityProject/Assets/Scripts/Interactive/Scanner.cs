@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Linq;
-using FIVE.CameraSystem;
+﻿using FIVE.CameraSystem;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +29,7 @@ namespace FIVE.Interactive
         public bool IsScanningFinished { get; private set; } = false;
         public Color TintColor { get; set; } = Color.white;
 
-        void Awake()
+        private void Awake()
         {
             canvas = GetComponent<Canvas>();
             scannerFrame = gameObject.FindChild("Frame");
@@ -69,13 +68,12 @@ namespace FIVE.Interactive
 
         private void UpdatePosition(GameObject item)
         {
-            fpsCamera = CameraManager.GetPovCameras.First();
+            fpsCamera = CameraManager.CurrentActiveCamera;
             Vector3 position = fpsCamera.WorldToScreenPoint(item.transform.position) +
                                new Vector3(0, scannerRectTransform.sizeDelta.y / 2, 0);
             scannerTransform.position = position;
             cursorTransform.position = position;
         }
-
 
         private void UpdateSize(GameObject item)
         {
