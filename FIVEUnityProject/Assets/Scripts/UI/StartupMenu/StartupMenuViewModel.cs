@@ -1,6 +1,7 @@
 using FIVE.EventSystem;
 using FIVE.UI.Background;
 using FIVE.UI.InGameDisplay;
+using FIVE.UI.RobotSelection;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,7 +31,7 @@ namespace FIVE.UI.StartupMenu
         private void OnSinglePlayerButtonClicked()
         {
             IsActive = false;
-            this.RaiseEvent<OnSinglePlayerButtonClicked>();
+            UIManager.Create<RobotSelectionViewModel>().IsActive = true;
         }
 
         private void OnMultiplayersButtonClicked()

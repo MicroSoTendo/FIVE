@@ -8,6 +8,7 @@ using FIVE.UI.BSComposite;
 using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.NPC;
+using FIVE.UI.RobotSelection;
 using System.Collections;
 using UnityEngine;
 

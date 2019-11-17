@@ -30,7 +30,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4370277563509958050}
-  - {fileID: 981818358937895823}
   m_Father: {fileID: 8191864850436876453}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -106,12 +105,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1301147340781139948}
-  m_Father: {fileID: 4859431919674054812}
+  m_Father: {fileID: 8191864850436876453}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1, y: -83}
+  m_AnchoredPosition: {x: 1, y: -275}
   m_SizeDelta: {x: 171.6, y: 59}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3931771916252020206
@@ -297,6 +296,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4859431919674054812}
+  - {fileID: 981818358937895823}
   m_Father: {fileID: 7591484631221107849}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -582,7 +582,7 @@ GameObject:
   - component: {fileID: 5277952698337785949}
   - component: {fileID: 3140077063132541696}
   m_Layer: 5
-  m_Name: TMP SubMeshUI [NotoEmoji-Regular SDF Material + LiberationSans SDF Atlas]
+  m_Name: Three
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -654,7 +654,7 @@ GameObject:
   - component: {fileID: 385834636534677362}
   - component: {fileID: 783549807839627201}
   m_Layer: 5
-  m_Name: TMP SubMeshUI [NotoEmoji-Regular SDF Material + LiberationSans SDF Atlas]
+  m_Name: Two
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1083,7 +1083,7 @@ GameObject:
   - component: {fileID: 3945777317664465166}
   - component: {fileID: 6830873594383630802}
   m_Layer: 5
-  m_Name: TMP SubMeshUI [NotoEmoji-Regular SDF Material + LiberationSans SDF Atlas]
+  m_Name: One
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
