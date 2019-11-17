@@ -113,7 +113,7 @@ namespace FIVE.Robot
             animator.Update(CurrentState);
             CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
 
-            if (scriptActive && (!movable.enabled || movable.Moves.Count == 0))
+            if (scriptActive)
             {
                 ExecuteScript();
             }
