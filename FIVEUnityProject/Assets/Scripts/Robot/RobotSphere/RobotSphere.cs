@@ -76,7 +76,7 @@ namespace FIVE.Robot
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
-            OnLocalPlayerUpdate += RobotSphereUpdate;
+            OnFixedUpdate += RobotSphereUpdate;
             base.Start();
         }
 
