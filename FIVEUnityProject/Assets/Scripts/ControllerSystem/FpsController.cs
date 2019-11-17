@@ -40,7 +40,7 @@ namespace FIVE.ControllerSystem
                 robotSphere.Move(Movable.Move.Right, 5);
             }
 
-            if (Input.GetKeyDown(KeyCode.Mouse1) && CameraManager.CurrentActiveCamera.name.StartsWith("Robot POV"))
+            if (Input.GetMouseButtonDown(1) && CameraManager.CurrentActiveCamera.name.StartsWith("Robot POV"))
             {
                 if (CameraManager.CurrentActiveCamera != null)
                 {
