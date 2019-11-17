@@ -11,30 +11,45 @@ namespace FIVE
         private State state;
         private Animator animator;
 
+        private Material red;
+        private Material bug;
         private CharacterController cc;
+        private Renderer rdr;
 
         private GameObject currTarget;
 
         private float patrolDirection;
 
         private float visionRange;
-
         private float speed;
         private float elapsedTime;
+        private float health;
 
         private void Start()
         {
             visionRange = 10.0f;
 
+            red = Resources.Load<Material>("Materials/Red");
+            bug = Resources.Load<Material>("Materials/AlienBeetle/skin1");
+            if (red == null)
+            {
+                Debug.Log("Red not found");
+            }
             cc = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
+            rdr = GetComponentInChildren<SkinnedMeshRenderer>();
+            if (rdr == null)
+            {
+                Debug.Log("Renderer not found");
+            }
 
             patrolDirection = Random.Range(0, 360);
             transform.Rotate(0, patrolDirection, 0);
             state = State.Idle;
-
+            
             speed = 10.0f;
             elapsedTime = 0;
+            health = 100.0f;
         }
 
         private void Update()
@@ -82,6 +97,17 @@ namespace FIVE
             }
         }
 
+        public void OnHit()
+        {
+            health -= 30.0f;
+            FlashRed();
+            if (health <= 0.0f)
+            {
+                gameObject.SetActive(false);
+                Destroy(gameObject);
+            }
+        }
+
         private void SearchTarget()
         {
             foreach (GameObject robot in RobotManager.Robots)
@@ -108,6 +134,17 @@ namespace FIVE
             {
                 cc.SimpleMove(transform.forward * speed);
             }
+        }
+        
+        private void FlashRed()
+        {
+            rdr.material = red;
+            Invoke("ResetColor", 0.5f);
+        }
+
+        private void ResetColor()
+        {
+            rdr.material = bug;
         }
     }
 }

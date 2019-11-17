@@ -3,56 +3,59 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+namespace FIVE
 {
-    public Vector3 Target
+    public class Bullet : MonoBehaviour
     {
-        get { return _target; }
-        set
+        public Vector3 Target
         {
-            _target = value;
-            transform.up = Vector3.Normalize(_target - transform.position);
-        }
-    }
-
-    private Vector3 _target;
-
-    private float elapsedTime;
-
-    private void Start()
-    {
-        elapsedTime = 0;
-    }
-
-    private void Update()
-    {
-        //Debug.Log(transform.position);
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime > 5.0f)
-        {
-            gameObject.SetActive(false);
-            Destroy(gameObject);
-        }
-        else
-        {
-            if (Target != null)
+            get { return _target; }
+            set
             {
-                transform.Translate(Vector3.up * 3.0f);
+                _target = value;
+                transform.up = Vector3.Normalize(_target - transform.position);
             }
         }
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!other.gameObject.name.StartsWith("robotSphere"))
+        private Vector3 _target;
+
+        private float elapsedTime;
+
+        private void Start()
         {
-            if (other.gameObject.name.StartsWith("AlienBeetle"))
+            elapsedTime = 0;
+        }
+
+        private void Update()
+        {
+            //Debug.Log(transform.position);
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime > 5.0f)
             {
-                other.gameObject.SetActive(false);
-                Destroy(other.gameObject);
+                gameObject.SetActive(false);
+                Destroy(gameObject);
             }
-            gameObject.SetActive(false);
-            Destroy(gameObject);
+            else
+            {
+                if (Target != null)
+                {
+                    transform.Translate(Vector3.up * 3.0f);
+                }
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.gameObject.name.StartsWith("robotSphere"))
+            {
+                if (other.gameObject.name.StartsWith("AlienBeetle"))
+                {
+                    EnemyBehavior enemyBehavior = other.GetComponent<EnemyBehavior>();
+                    enemyBehavior.OnHit();
+                }
+                gameObject.SetActive(false);
+                Destroy(gameObject);
+            }
         }
     }
 }
