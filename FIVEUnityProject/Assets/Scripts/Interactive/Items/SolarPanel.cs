@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using FIVE.Robot;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,20 +10,20 @@ namespace FIVE.Interactive.Items
         private float Capacity = 100;
         private Item item;
         private float Remaining = 100;
-        void Awake()
+
+        private void Awake()
         {
             item = GetComponent<Item>();
             item.ItemAction = ItemAction;
         }
 
-        private void ItemAction(GameObject owner, GameObject o)
+        private void ItemAction(GameObject o)
         {
-            if(SkyBoxTime.isDayTime())
+            if (SkyBoxTime.isDayTime())
             {
                 //current Energy downs slower
-                owner.GetComponent<RobotComponents.Battery>().CurrentEnergy+= 0.7f;
+                RobotManager.ActiveRobot.GetComponent<RobotComponents.Battery>().CurrentEnergy += 0.7f;
             }
-
         }
     }
 }

@@ -64,11 +64,8 @@ namespace FIVE.Interactive
         public int Capacity { get; set; } = 100;
         public int Count => Items.Count;
 
-        public GameObject Owner { get; private set; }
-
-        public Inventory(GameObject owner)
+        public Inventory()
         {
-            Owner = owner;
             EventManager.Subscribe<OnDropItemToInventory, DropedItemToInventoryEventArgs>(OnDropItemToInventory);
             EventManager.Subscribe<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(RemovedItem);
         }
@@ -96,15 +93,9 @@ namespace FIVE.Interactive
             EventManager.RaiseImmediate<OnInventoryChanged>(this, new InventoryChangedEventArgs(gameObject, index, action));
         }
 
-        public void ChangeOwner(GameObject newOwner)
-        {
-            Owner = newOwner;
-        }
-
         public void Add(GameObject item)
         {
             OnChanged(item, Items.Count, InventoryChangedAction.Add);
-            item.GetComponent<Item>().Owner = Owner;
             Items.Add(item);
         }
 

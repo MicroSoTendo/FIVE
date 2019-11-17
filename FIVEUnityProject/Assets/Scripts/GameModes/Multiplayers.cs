@@ -1,11 +1,10 @@
-﻿using System;
-using FIVE.CameraSystem;
+﻿using FIVE.CameraSystem;
 using FIVE.EventSystem;
-using FIVE.Interactive;
 using FIVE.Network;
 using FIVE.Robot;
 using FIVE.TerrainSystem;
 using FIVE.UI;
+using FIVE.UI.Background;
 using FIVE.UI.BSComposite;
 using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
@@ -13,7 +12,6 @@ using FIVE.UI.Multiplayers;
 using FIVE.UI.NPC;
 using System.Collections;
 using System.Collections.Generic;
-using FIVE.UI.Background;
 using UnityEngine;
 
 namespace FIVE.GameModes
@@ -25,6 +23,7 @@ namespace FIVE.GameModes
         {
             "EntityPrefabs/Network/RobotPrefabs/robotSphere",
         };
+
         private LobbyWindowViewModel lobbyWindow;
 
         private void Awake()
@@ -107,7 +106,6 @@ namespace FIVE.GameModes
         {
             new List<(Vector3, Quaternion)>
             {
-                
                 (new Vector3(-10, 20, 0), Quaternion.identity),
                 (new Vector3(0, 20, 0), Quaternion.identity),
                 (new Vector3(10, 20, 0), Quaternion.identity),
@@ -170,7 +168,6 @@ namespace FIVE.GameModes
 
         private IEnumerator ClientInitRoutine()
         {
-            Inventory inventory = null;
             List<(Vector3, Quaternion)> points = spawnPoints[NetworkManager.Instance.PlayerIndex];
             for (int i = 0; i < points.Count; i++)
             {
@@ -179,7 +176,6 @@ namespace FIVE.GameModes
                 if (i == 0)
                 {
                     RobotManager.ActiveRobot = robot;
-                    inventory = InventoryManager.AddInventory(robot);
                 }
 
                 SyncCenter.Instance.Register(robot);
@@ -188,7 +184,6 @@ namespace FIVE.GameModes
             }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
-            inventoryViewModel.Inventory = inventory;
             inventoryViewModel.IsActive = false;
             itemDialogViewModel.IsActive = false;
             yield return null;
@@ -203,7 +198,6 @@ namespace FIVE.GameModes
             CameraManager.AddCamera("Default Camera 3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
 
             List<(Vector3, Quaternion)> points = spawnPoints[0];
-            Inventory inventory = null;
             for (int i = 0; i < points.Count; i++)
             {
                 (Vector3 position, Quaternion rotation) = points[i];
@@ -211,7 +205,6 @@ namespace FIVE.GameModes
                 if (i == 0)
                 {
                     RobotManager.ActiveRobot = robot;
-                    inventory = InventoryManager.AddInventory(robot);
                 }
                 SyncCenter.Instance.Register(robot);
                 SyncCenter.Instance.Register(robot.GetComponent<Transform>());
@@ -220,7 +213,6 @@ namespace FIVE.GameModes
             }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
-            inventoryViewModel.Inventory = inventory;
             inventoryViewModel.IsActive = false;
             itemDialogViewModel.IsActive = false;
             CameraManager.SetCameraWall();

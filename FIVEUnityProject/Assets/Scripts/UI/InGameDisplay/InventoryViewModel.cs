@@ -19,10 +19,10 @@ namespace FIVE.UI.InGameDisplay
         private GameObject CellPrefab { get; } = Resources.Load<GameObject>("EntityPrefabs/UI/Inventory/Cell");
         public GameObject InventoryContent { get; }
         public Button ExitButton { get; }
-        public Inventory Inventory { get; set; }
 
         private readonly object poolLock = new object();
         private readonly List<(GameObject, Transform)> cellPool = new List<(GameObject, Transform)>();
+
         public override bool IsActive
         {
             get => base.IsActive;
@@ -53,7 +53,6 @@ namespace FIVE.UI.InGameDisplay
         {
             while (true)
             {
-
                 while (cellDictionary.Count >= cellPool.Count)
                 {
                     GameObject cell0 = Object.Instantiate(CellPrefab, contentRectTransform);
@@ -143,16 +142,21 @@ namespace FIVE.UI.InGameDisplay
                 case InventoryChangedAction.Add:
                     MainThreadDispatcher.ScheduleCoroutine(AddCell(e.Index, e.Item));
                     break;
+
                 case InventoryChangedAction.Remove:
                     MainThreadDispatcher.Destroy(cellDictionary[e.Index]);
                     cellDictionary.Remove(e.Index);
                     break;
+
                 case InventoryChangedAction.RemoveAt:
                     break;
+
                 case InventoryChangedAction.Insert:
                     break;
+
                 case InventoryChangedAction.Replace:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

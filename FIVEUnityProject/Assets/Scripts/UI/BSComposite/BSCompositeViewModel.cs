@@ -19,6 +19,7 @@ namespace FIVE.UI.BSComposite
 
         private List<Button> inventoryButtons;
         private List<Button> compositeButtons;
+
         public override bool IsActive
         {
             get => base.IsActive;
@@ -56,7 +57,6 @@ namespace FIVE.UI.BSComposite
             compositeButtons = new List<Button>();
             Composite = Get(nameof(Composite));
 
-
             foreach (Button button in Composite.GetComponentsInChildren<Button>())
             {
                 compositeButtons.Add(button);
@@ -70,24 +70,21 @@ namespace FIVE.UI.BSComposite
 
         private void OnResultButtonClick(Button button)
         {
-            Inventory inventory = InventoryManager.GetInventory(RobotManager.ActiveRobot);
-
             if (button.transform.childCount != 0)
             {
                 GameObject resultItem = button.transform.GetChild(0).gameObject;
 
-                inventory.Add(resultItem);
+                InventoryManager.Inventory.Add(resultItem);
                 foreach (Button a in compositeButtons)
                 {
                     Blacksmith.RemoveFromComposite(RobotManager.ActiveRobot, a.transform.GetChild(0).gameObject);
                     a.transform.GetChild(0).gameObject.SetActive(false);
                     GameObject.Destroy(a.transform.GetChild(0).gameObject);
-
                 }
                 //hard coding
                 for (int i = 0; i < 3; i++)
                 {
-                    inventory.RemoveAt(0);
+                    InventoryManager.Inventory.RemoveAt(0);
                 }
                 for (int i = 0; i < inventoryButtons.Count; i++)
                 {
@@ -97,7 +94,6 @@ namespace FIVE.UI.BSComposite
                         resultItem.SetActive(true);
                         break;
                     }
-
                 }
 
                 Blacksmith.RemoveResultItem(RobotManager.ActiveRobot);
@@ -122,7 +118,7 @@ namespace FIVE.UI.BSComposite
 
             GameObject item = button.transform.GetChild(0).gameObject;
 
-            for (int i = 0;  i < inventoryButtons.Count; i++)
+            for (int i = 0; i < inventoryButtons.Count; i++)
             {
                 if (IsInventoryEmpty(i))
                 {
@@ -142,7 +138,6 @@ namespace FIVE.UI.BSComposite
                     break;
                 }
             }
-
         }
 
         private void OnInventoryItemClicked(Button button)
@@ -212,12 +207,11 @@ namespace FIVE.UI.BSComposite
                     Object.Destroy(go);
                 }
             }
-            Inventory inventory = InventoryManager.GetInventory(RobotManager.ActiveRobot);
-            if (inventory != null)
+            if (InventoryManager.Inventory != null)
             {
-                for (int i = 0; i < inventory.Count; i++)
+                for (int i = 0; i < InventoryManager.Inventory.Count; i++)
                 {
-                    GameObject go = inventory.Items[i];
+                    GameObject go = InventoryManager.Inventory.Items[i];
                     go.SetActive(true);
                     GameObject set = Object.Instantiate(go, inventoryButtons[i].transform);
 
@@ -230,7 +224,6 @@ namespace FIVE.UI.BSComposite
                     {
                         set.transform.localPosition = new Vector3(-79, -1, -146);
                     }
-
                 }
             }
         }

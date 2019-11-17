@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FIVE.Robot;
+using UnityEngine;
 
 namespace FIVE.Interactive.Items
 {
@@ -8,15 +9,15 @@ namespace FIVE.Interactive.Items
         private Item item;
         private float Remaining = 100;
 
-        void Awake()
+        private void Awake()
         {
             item = GetComponent<Item>();
             item.ItemAction = ItemAction;
         }
 
-        private void ItemAction(GameObject owner, GameObject o)
+        private void ItemAction(GameObject o)
         {
-            owner.GetComponent<RobotComponents.Battery>().CurrentEnergy = Remaining;
+            RobotManager.ActiveRobot.GetComponent<RobotComponents.Battery>().CurrentEnergy = Remaining;
         }
     }
 }
