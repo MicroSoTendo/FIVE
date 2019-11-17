@@ -22,27 +22,15 @@ namespace FIVE.Network.Serializers
             transform.position = *((Vector3*)bytes + 1);
         }
 
-        public static void Serialize(this Serializer<Transform> _, in Transform transform, in byte[] bytes, int startIndex = 0)
+        public static unsafe void Serialize(this Serializer<Transform> _, in Transform transform, in byte[] bytes, int startIndex = 0)
         {
-            bytes.CopyFrom(transform.ToBytes(), startIndex);
-        }
-
-        public static void Serialize(this Serializer<Transform> _, in Transform transform, out byte[] bytes)
-        {
-            bytes = transform.ToBytes();
-        }
-
-        private static unsafe byte[] ToBytes(this Transform transform)
-        {
-            byte[] bytes = new byte[25];
-            
-            bytes[0] = (byte)ComponentType.Transform;
-            fixed (byte* pBytes = bytes)
+            fixed (byte* p = bytes)
             {
+                byte* pBytes = p + startIndex;
+                bytes[startIndex] = (byte)ComponentType.Transform;
                 *(Vector3*)(pBytes + 1) = transform.rotation.eulerAngles;
                 *(Vector3*)(pBytes + 13) = transform.position;
             }
-            return bytes;
         }
     }
 }

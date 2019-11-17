@@ -1,18 +1,19 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using FIVE.Network.InGameHandlers;
 
 namespace FIVE.Network
 {
-    internal class HostHandler : NetworkHandler
+    internal class HostGameHandler : NetworkGameHandler
     {
         private readonly TcpListener listener;
         private readonly HandShaker handShaker;
-        private readonly ConcurrentDictionary<int, (TcpClient, InGameHandler)> privateIDToclients 
-            = new ConcurrentDictionary<int, (TcpClient, InGameHandler)>();
-        private readonly ConcurrentDictionary<int, (TcpClient, InGameHandler)> publicIDToclients 
-            = new ConcurrentDictionary<int, (TcpClient, InGameHandler)>();
-        public HostHandler(TcpListener listener, HandShaker handShaker)
+        private readonly ConcurrentDictionary<int, (TcpClient, InGameGameHandler)> privateIDToclients 
+            = new ConcurrentDictionary<int, (TcpClient, InGameGameHandler)>();
+        private readonly ConcurrentDictionary<int, (TcpClient, InGameGameHandler)> publicIDToclients 
+            = new ConcurrentDictionary<int, (TcpClient, InGameGameHandler)>();
+        public HostGameHandler(TcpListener listener, HandShaker handShaker)
         {
             this.listener = listener;
             this.handShaker = handShaker;
@@ -27,7 +28,7 @@ namespace FIVE.Network
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 (int publicID, int privateID) = await handShaker.HandShakeAsync(client);
-                var inGameHandler = InGameHandler.CreateHostHandler(client);
+                var inGameHandler = InGameGameHandler.CreateHostHandler(client);
                 privateIDToclients.TryAdd(privateID, (client, inGameHandler));
                 publicIDToclients.TryAdd(publicID, (client, inGameHandler));
                 inGameHandler.Start();

@@ -48,6 +48,11 @@ namespace FIVE.Network
             return componentsForSync.ToArray();
         }
 
+        public IEnumerable<(int networkID, int rpcID)> GetScheduledCalls()
+        {
+            throw new NotImplementedException();
+        }
+
         public void AddComponentsForSync(byte[] bytes)
         {
             componentsForSync.Push(bytes);

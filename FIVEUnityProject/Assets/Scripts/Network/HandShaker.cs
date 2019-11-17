@@ -39,18 +39,18 @@ namespace FIVE.Network
                 {
                     buffer = new byte[4 + 16];
                     byte[] hash = remoteRoomInfo.HashedPassword;
-                    buffer.CopyFrom(GameSyncCode.JoinRequest.ToBytes(), hash);
+                    buffer.CopyFrom(GameSyncHeader.JoinRequest.ToBytes(), hash);
                     stream.Write(buffer);
                 }
                 else
                 {
-                    stream.Write(GameSyncCode.JoinRequest);
+                    stream.Write(GameSyncHeader.JoinRequest);
                 }
 
                 //Get response from server
                 buffer = stream.Read(sizeof(int) * 3);
-                var result = (GameSyncCode)buffer.ToI32();
-                if (result.HasFlag(GameSyncCode.AcceptJoin))
+                var result = (GameSyncHeader)buffer.ToI32();
+                if (result.HasFlag(GameSyncHeader.AcceptJoin))
                 {
                     (int publicID, int privateID) = (buffer.ToI32(4), buffer.ToI32(8));
                 }
@@ -76,8 +76,8 @@ namespace FIVE.Network
                 bool hasPassword = hostRoomInfo.HasPassword;
                 byte[] buffer = hasPassword ? new byte[4 + 16] : new byte[4];
                 stream.Read(buffer);
-                var code = (GameSyncCode)buffer.ToI32();
-                if (code.HasFlag(GameSyncCode.JoinRequest))
+                var code = (GameSyncHeader)buffer.ToI32();
+                if (code.HasFlag(GameSyncHeader.JoinRequest))
                 {
                     //Check if password is correct
                     if (hasPassword)
@@ -100,7 +100,7 @@ namespace FIVE.Network
                     }
                     fixed (byte* pBuffer = idBuffer)
                     {
-                        *(int*)pBuffer = (int)GameSyncCode.AcceptJoin;
+                        *(int*)pBuffer = (int)GameSyncHeader.AcceptJoin;
                         *(int*)(pBuffer + 4) = i;
                         *(int*)(pBuffer + 8) = random.Next(0, int.MaxValue);
                         stream.Write(idBuffer);

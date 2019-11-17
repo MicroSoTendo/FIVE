@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FIVE.Network
 {
-    internal abstract class NetworkHandler : INetworkHandler
+    internal abstract class NetworkGameHandler : IDisposable
     {
         protected Task HandlerTask;
         protected CancellationTokenSource TokenSource;
@@ -33,5 +33,11 @@ namespace FIVE.Network
         }
         
         protected abstract Task Handler();
+
+        public void Dispose()
+        {
+            HandlerTask?.Dispose();
+            TokenSource?.Dispose();
+        }
     }
 }
