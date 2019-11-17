@@ -74,7 +74,6 @@ namespace FIVE.UI.BSComposite
             if (ItemOut != null)
             {
                 InventoryManager.Inventory.Add(ItemOut);
-                Blacksmith.RemoveOut();
 
                 // FIXME: remove items in inventory
                 ResetIn();
@@ -92,7 +91,6 @@ namespace FIVE.UI.BSComposite
 
             if (ItemOut != null)
             {
-                Blacksmith.RemoveOut();
                 RemoveChild0(Result);
             }
 

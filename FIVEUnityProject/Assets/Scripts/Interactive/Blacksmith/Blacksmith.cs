@@ -8,8 +8,6 @@ namespace FIVE.Interactive.Blacksmith
     {
         private static List<GameObject> ItemsIn = new List<GameObject>();
 
-        private static GameObject ItemOut;
-
         public static void AddIn(GameObject item)
         {
             ItemsIn.Add(item);
@@ -22,13 +20,7 @@ namespace FIVE.Interactive.Blacksmith
 
         public static GameObject GenerateOut()
         {
-            ItemOut = ComponentsRead.GenerateItem(ItemsIn);
-            return ItemOut;
-        }
-
-        public static void RemoveOut()
-        {
-            ItemOut = null;
+            return ComponentsRead.GenerateItem(ItemsIn);
         }
 
         public static void ResetIn()
