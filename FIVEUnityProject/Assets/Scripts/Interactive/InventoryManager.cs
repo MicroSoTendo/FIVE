@@ -2,6 +2,6 @@
 {
     public class InventoryManager
     {
-        public static Inventory Inventory { get; private set; } = new Inventory();
+        public static Inventory Inventory { get; set; }
     }
 }
