@@ -73,40 +73,14 @@ namespace FIVE.Network
             return buffer;
         }
 
-        public static byte[] ToBytes(this float f)
+        public static unsafe byte[] ToBytes<T>(this T t) where T : unmanaged
         {
-            return BitConverter.GetBytes(f);
-        }
-
-        public static byte[] ToBytes(this Vector3 v)
-        {
-            return Combine(v.x.ToBytes(), v.y.ToBytes(), v.z.ToBytes());
-        }
-
-        public static byte[] ToBytes(this Quaternion q)
-        {
-            return q.eulerAngles.ToBytes();
-        }
-
-    
-
-        public static byte[] ToBytes(this Guid guid)
-        {
-            return guid.ToByteArray();
-        }
-
-        public static byte[] ToBytes(this bool value)
-        {
-            return BitConverter.GetBytes(value);
-        }
-        public static byte[] ToBytes(this ushort value)
-        {
-            return BitConverter.GetBytes(value);
-        }
-
-        public static byte[] ToBytes<T>(this T value) where T: unmanaged, Enum
-        {
-            return BitConverter.GetBytes(Unsafe.As<T, int>(ref value));
+            byte[] result = new byte[sizeof(T)];
+            fixed (byte* pResult = result)
+            {
+                *(T*)pResult = t;
+            }
+            return result;
         }
 
         public static byte[] Combine(byte[] arr1, byte[] arr2)
