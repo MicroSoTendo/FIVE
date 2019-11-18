@@ -147,17 +147,22 @@ namespace FIVE.Interactive
 
             if (Input.GetMouseButtonDown(0))
             {
-                isCollected = true;
-                MeshCollider mc = GetComponent<MeshCollider>();
-                if (mc != null)
-                {
-                    mc.enabled = false;
-                    Destroy(mc);
-                }
-
-                GameObject o = gameObject;
-                EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(o, null, o));
+                DropToInventory();
             }
+        }
+
+        public void DropToInventory()
+        {
+            isCollected = true;
+            MeshCollider mc = GetComponent<MeshCollider>();
+            if (mc != null)
+            {
+                mc.enabled = false;
+                Destroy(mc);
+            }
+
+            GameObject o = gameObject;
+            EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(o, null, o));
         }
     }
 }
