@@ -1,4 +1,5 @@
 ﻿using FIVE.EventSystem;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,12 +9,10 @@ namespace FIVE.Interactive
     public class DropedItemToInventoryEventArgs : EventArgs
     {
         public GameObject Picker { get; }
-        public int? Index { get; }
         public GameObject Item { get; }
 
-        public DropedItemToInventoryEventArgs(GameObject picker, int? index, GameObject item)
+        public DropedItemToInventoryEventArgs(GameObject picker, GameObject item)
         {
-            Index = index;
             Item = item;
             Picker = picker;
         }
@@ -37,9 +36,6 @@ namespace FIVE.Interactive
     {
         Add,
         Remove,
-        RemoveAt,
-        Insert,
-        Replace
     }
 
     public class InventoryChangedEventArgs : EventArgs
@@ -60,8 +56,9 @@ namespace FIVE.Interactive
 
     public class Inventory
     {
-        public List<GameObject> Items { get; } = new List<GameObject>();
-        public int Capacity { get; set; } = 100;
+        private List<GameObject> items = new List<GameObject>();
+
+        public IEnumerable<GameObject> Items => from item in items where item != null select item;
 
         public Inventory()
         {
@@ -76,15 +73,7 @@ namespace FIVE.Interactive
 
         private void OnDropItemToInventory(object sender, DropedItemToInventoryEventArgs e)
         {
-            //TODO: Size checking
-            if (e.Index == null)
-            {
-                Add(e.Item);
-            }
-            else
-            {
-                Insert(e.Index.Value, e.Item);
-            }
+            Add(e.Item);
         }
 
         private void OnChanged(GameObject gameObject, int index, InventoryChangedAction action)
@@ -94,33 +83,24 @@ namespace FIVE.Interactive
 
         public void Add(GameObject item)
         {
-            OnChanged(item, Items.Count, InventoryChangedAction.Add);
-            Items.Add(item);
-        }
-
-        public void Insert(int index, GameObject item)
-        {
-            OnChanged(item, index, InventoryChangedAction.Insert);
-            Items.Insert(index, item);
-        }
-
-        public void Replace(GameObject oldItem, GameObject newItem)
-        {
-            int index = Items.IndexOf(oldItem);
-            Items[index] = newItem;
-            OnChanged(newItem, index, InventoryChangedAction.Replace);
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (items[i] == null)
+                {
+                    items[i] = item;
+                    OnChanged(item, i, InventoryChangedAction.Add);
+                    return;
+                }
+            }
+            items.Add(item);
+            OnChanged(item, items.Count - 1, InventoryChangedAction.Add);
         }
 
         public void Remove(GameObject item)
         {
-            OnChanged(item, Items.IndexOf(item), InventoryChangedAction.Remove);
-            Items.Remove(item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            OnChanged(Items[index], index, InventoryChangedAction.RemoveAt);
-            Items.RemoveAt(index);
+            int i = items.IndexOf(item);
+            items[i] = null;
+            OnChanged(item, i, InventoryChangedAction.Remove);
         }
     }
 }

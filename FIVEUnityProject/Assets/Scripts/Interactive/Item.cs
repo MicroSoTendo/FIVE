@@ -162,7 +162,7 @@ namespace FIVE.Interactive
             }
 
             GameObject o = gameObject;
-            EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(o, null, o));
+            EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(o, o));
         }
     }
 }

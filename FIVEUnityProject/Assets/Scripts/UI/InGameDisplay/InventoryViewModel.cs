@@ -148,15 +148,6 @@ namespace FIVE.UI.InGameDisplay
                     cellDictionary.Remove(e.Index);
                     break;
 
-                case InventoryChangedAction.RemoveAt:
-                    break;
-
-                case InventoryChangedAction.Insert:
-                    break;
-
-                case InventoryChangedAction.Replace:
-                    break;
-
                 default:
                     throw new ArgumentOutOfRangeException();
             }

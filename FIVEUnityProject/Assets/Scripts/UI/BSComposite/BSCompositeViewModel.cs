@@ -112,7 +112,8 @@ namespace FIVE.UI.BSComposite
                 }
                 if (isFull)
                 {
-                    GameObject o = Object.Instantiate(Blacksmith.GenerateOut(ItemsIn), OutButton.transform);
+                    GameObject prefab = Blacksmith.GenerateOut(ItemsIn);
+                    GameObject o = Object.Instantiate(prefab, OutButton.transform);
                     o.transform.localPosition = new Vector3(-27.4f, -11.9f, -29.8f);
                     o.transform.localScale = new Vector3(20, 20, 20);
                 }
@@ -158,7 +159,19 @@ namespace FIVE.UI.BSComposite
                 ItemOut.GetComponent<Item>().DropToInventory();
                 RemoveChild0(OutButton);
 
-                // FIXME: remove items in inventory
+                foreach (Button inbutton in inButtons)
+                {
+                    GameObject item = GetChild0(inbutton);
+                    foreach (GameObject invitem in InventoryManager.Inventory.Items)
+                    {
+                        if (invitem.name.Substring(0, 5) == item.name.Substring(0, 5))
+                        {
+                            InventoryManager.Inventory.Remove(invitem);
+                            break;
+                        }
+                    }
+                }
+
                 ResetIn();
                 ResetLocalInventory();
             }
