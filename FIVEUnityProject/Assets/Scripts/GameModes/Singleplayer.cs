@@ -62,6 +62,7 @@ namespace FIVE.GameModes
             inventoryViewModel.IsActive = false;
             codeEditorViewModel.IsActive = false;
             itemDialogViewModel.IsActive = false;
+
             CameraManager.SetCameraWall();
         }
     }

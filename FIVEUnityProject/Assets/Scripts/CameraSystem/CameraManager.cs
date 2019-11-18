@@ -83,10 +83,11 @@ namespace FIVE.CameraSystem
             State = StateEnum.Single;
             foreach (Camera c in instance.namedCameras.Values)
             {
-                c.enabled = false;
+                SetCameraEnabled(c, false);
             }
-            cam.enabled = true;
             cam.rect = new Rect(0, 0, 1, 1);
+            SetCameraEnabled(cam, true);
+            SetCameraFade(cam);
             CurrentActiveCamera = cam;
         }
 
@@ -151,19 +152,29 @@ namespace FIVE.CameraSystem
                 {
                     foreach (Camera c in namedCameras.Values)
                     {
-                        c.enabled = false;
+                        SetCameraEnabled(c, false);
                     }
                     for (int count = 0; count < 4; count++, index++)
                     {
                         index %= namedCameras.Keys.Count;
                         Camera c = instance.namedCameras.Values.ElementAt(index);
-                        c.enabled = true;
+                        SetCameraEnabled(c, true);
                         float x = count / 2 / 2f, y = count % 2 / 2f;
                         c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
                         wall.Add(c);
                     }
                 }
             }
+        }
+
+        private static void SetCameraEnabled(Camera c, bool enabled)
+        {
+            c.enabled = enabled;
+        }
+
+        private static void SetCameraFade(Camera c)
+        {
+            c.GetComponent<CameraControlled>().ResetFade();
         }
     }
 }
