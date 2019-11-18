@@ -2,14 +2,18 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using FIVE.FIVE.Network;
 using UnityEngine;
 
 namespace FIVE.Network
 {
     public class NetworkManager : MonoBehaviour
-    {
+    {       
+        
         /// <summary>
         /// Describes state of this instance.
         /// </summary>
@@ -49,6 +53,7 @@ namespace FIVE.Network
         private LobbyHandler lobbyHandler;
 
         public int PlayerIndex { get; internal set; }
+        public BijectMap<int, MethodInfo> RpcInfos { get; internal set; }
         private NetworkGameHandler networkGameHandler;
 
         private float updateTimer;
@@ -67,7 +72,23 @@ namespace FIVE.Network
         public IEnumerator Start()
         {
             lobbyHandler.Start();
-            yield return null;
+            yield return null;            
+            var methods = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                from type in assembly.GetTypes()
+                from method in type.GetMethods()
+                where method.GetCustomAttributes(typeof(RPCAttribute), false).Length > 0
+                select method).ToList();
+            if (methods.Count > 0)
+            {
+                int counter = 0;
+                RpcInfos = new BijectMap<int, MethodInfo>();
+                methods.Sort();
+                foreach (MethodInfo methodInfo in methods)
+                {
+                    RpcInfos.Add(counter++, methodInfo);
+                    yield return new WaitForFixedUpdate();
+                }
+            }
         }
 
         public void JoinRoom(Guid guid, string password)

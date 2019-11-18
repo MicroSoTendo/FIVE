@@ -7,12 +7,12 @@ namespace FIVE.Network
     public class ClientSyncHandler : SyncHandler
     {
 
-        private Action OnUpdate;
+        private Action onUpdate;
         public ClientSyncHandler(TcpClient tcpClient) : base(tcpClient)
         {
-            OnUpdate = PreSync;
+            onUpdate = PreSync;
         }
-        
+
         private void PreSync()
         {
             //Receive objects from host
@@ -26,17 +26,45 @@ namespace FIVE.Network
                 go.AddComponent<NetworkView>().DeserializeFrom(buffer);
                 SyncCenter.Instance.RegisterRemote(go, networkID);
             }
-            OnUpdate = DoSync;
+            onUpdate = DoSync;
         }
 
         private void DoSync()
+        {
+            OnWrite();
+            OnRead();
+        }
+
+        private void OnRead()
+        {
+            GameSyncHeader header = Read().As<GameSyncHeader>();
+            switch (header)
+            {
+                case GameSyncHeader.JoinRequest:
+                    break;
+                case GameSyncHeader.AcceptJoin:
+                    break;
+                case GameSyncHeader.CreateObject:
+                    break;
+                case GameSyncHeader.RemoveObject:
+                    break;
+                case GameSyncHeader.ComponentSync:
+                    break;
+                case GameSyncHeader.RemoteCall:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void OnWrite()
         {
 
         }
 
         public override void Update()
         {
-            OnUpdate();
+            onUpdate();
         }
     }
 }

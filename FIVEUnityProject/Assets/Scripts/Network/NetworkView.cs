@@ -1,6 +1,5 @@
-﻿using System;
+﻿using FIVE.Network.Serializers;
 using System.Collections.Generic;
-using FIVE.Network.Serializers;
 using UnityEngine;
 
 namespace FIVE.Network
@@ -17,45 +16,18 @@ namespace FIVE.Network
             syncedComponents = new List<(int componentID, Component component)>();
         }
 
-        public byte[] Serialize()
+        public byte[] SerializeAll()
         {
-            return default;
+            byte[] buffer = new byte[serializedSize];
+            prefabID.CopyTo(buffer, 0);
+            networkID.CopyTo(buffer, 4);
+            Serializer.Serialize(syncedComponents, buffer, 8);
+            return buffer;
         }
 
         public void DeserializeFrom(byte[] buffer)
         {
-
-        }
-
-        public void LateUpdate()
-        {
-            // serializedComponents.Add(networkID.ToBytes());
-            // serializedComponents.Add(0.ToBytes());
-            // int count = 0;
-            // foreach (Component syncedComponent in syncedComponents)
-            // {
-            //     switch (syncedComponent)
-            //     {
-            //         case Transform t:
-            //             if (t.hasChanged)
-            //             {
-            //                 Serializer<Transform>.Instance.Serialize(t, out byte[] bytes);
-            //                 serializedComponents.Add(bytes);
-            //             }
-            //             break;
-            //         default:
-            //             break;
-            //     }
-            //     count++;
-            // }
-
-            // if (count > 0)
-            // {
-            //     serializedComponents[1] = count.ToBytes();
-            //     SyncCenter.Instance.AddComponentsForSync(NetworkUtil.CombineUnsafe(serializedComponents));
-            // }
-
-            // serializedComponents.Clear();
+            
         }
     }
 }

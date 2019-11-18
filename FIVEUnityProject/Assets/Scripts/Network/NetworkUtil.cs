@@ -83,6 +83,14 @@ namespace FIVE.Network
             return result;
         }
 
+        public static unsafe void CopyTo<T>(this T t, byte[] dest, int startIndex) where T : unmanaged
+        {
+            fixed (byte* pDest = &dest[startIndex])
+            {
+                *(T*)pDest = t;
+            }
+        }
+
         public static byte[] Combine(byte[] arr1, byte[] arr2)
         {
             byte[] rv = new byte[arr1.Length + arr2.Length];
