@@ -11,6 +11,7 @@ namespace FIVE.UI.InGameDisplay
     {
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/HUD";
         public Button PlayerButton { get; }
+        public Text BuffText { get; }
         public Scrollbar EnergyScrollbar { get; }
         public Button MenuButton { get; }
         public Button InventoryButton { get; }
