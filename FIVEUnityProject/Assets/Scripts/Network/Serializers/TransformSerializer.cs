@@ -10,8 +10,8 @@ namespace FIVE.Network.Serializers
 
         public static void Deserialize(this Serializer<Transform> _, in byte[] bytes, Transform obj)
         {
-            var eulerAngles = bytes.ToVector3();
-            var position = bytes.ToVector3(12);
+            Vector3 eulerAngles = bytes.As<Vector3>();
+            Vector3 position = bytes.As<Vector3>(12);
             obj.eulerAngles = eulerAngles;
             obj.position = position;
         }

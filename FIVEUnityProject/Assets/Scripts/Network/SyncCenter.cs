@@ -71,6 +71,14 @@ namespace FIVE.Network
                 networkView.networkID = newID;
                 NetworkedGameObjects.Add(newID, gameObject);
             }
+        }        
+        
+        public void RegisterRemote(GameObject gameObject, int id)
+        {
+            if (!NetworkedGameObjects.Contains(gameObject))
+            {
+                NetworkedGameObjects.Add(id, gameObject);
+            }
         }
 
         public void Register(Component component)

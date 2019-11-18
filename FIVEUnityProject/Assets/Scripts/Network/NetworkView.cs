@@ -17,6 +17,15 @@ namespace FIVE.Network
             syncedComponents = new List<(int componentID, Component component)>();
         }
 
+        public byte[] Serialize()
+        {
+            return default;
+        }
+
+        public void DeserializeFrom(byte[] buffer)
+        {
+
+        }
 
         public void LateUpdate()
         {

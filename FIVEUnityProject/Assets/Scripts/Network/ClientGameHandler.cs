@@ -20,6 +20,7 @@ namespace FIVE.Network
         private void OnHandshakeSuccess(TcpClient tcpClient)
         {
             clientHandler = SyncHandler.StartNewClient(tcpClient);
+            NetworkManager.Instance.State = NetworkManager.NetworkState.Client;
         }
 
         private void OnHandshakeFail(TcpClient c)
@@ -39,7 +40,12 @@ namespace FIVE.Network
 
         public override void Stop()
         {
-            //TODO: Stop all
+            throw new System.NotImplementedException();
+        }
+
+        public override void Update()
+        {
+            clientHandler.Update();
         }
 
         public override void Dispose()

@@ -9,12 +9,13 @@ namespace FIVE.Network
     internal class HostGameHandler : NetworkGameHandler
     {
         private readonly TcpListener listener;
+        private readonly ConcurrentBag<SyncHandler> hostHandlers;
         private CancellationTokenSource cts;
         private Task incomingConnectionTask;
-        private ConcurrentBag<SyncHandler> hostHandlers;
         public HostGameHandler()
         {
             listener = new TcpListener(IPAddress.Any, NetworkManager.Instance.RoomInfo.Port);
+            hostHandlers = new ConcurrentBag<SyncHandler>();
             Handshaker.HostHandshaker.OnHandshakeSuccess += OnHandshakeSuccess;
             Handshaker.HostHandshaker.OnHandshakeFail += OnHandshakeFail;
         }
@@ -55,8 +56,18 @@ namespace FIVE.Network
         }
 
         public override void Stop()
+        { 
+            //TODO
+        }
+        /// <summary>
+        /// Late update run from main thread.
+        /// </summary>
+        public override void Update()
         {
-            //TODO: Stop all
+            foreach (SyncHandler hostHandler in hostHandlers)
+            {
+                hostHandler.Update();
+            }
         }
 
         public override void Dispose()

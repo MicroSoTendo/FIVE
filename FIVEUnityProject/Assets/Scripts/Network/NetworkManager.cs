@@ -36,6 +36,7 @@ namespace FIVE.Network
             /// </summary>
             Client,
         }
+
         public static NetworkManager Instance { get; private set; }
         [SerializeField] private string listServer;
         [SerializeField] private ushort listServerPort;
@@ -49,7 +50,8 @@ namespace FIVE.Network
 
         public int PlayerIndex { get; internal set; }
         private NetworkGameHandler networkGameHandler;
-        private ConcurrentQueue<MainThreadTask> tasks;
+
+        private float updateTimer;
 
         public void Awake()
         {
@@ -59,7 +61,6 @@ namespace FIVE.Network
             }
             Instance = this;
             State = NetworkState.Idle;
-            tasks = new ConcurrentQueue<MainThreadTask>();
             lobbyHandler = new LobbyHandler(listServer, listServerPort);
         }
 
@@ -102,16 +103,13 @@ namespace FIVE.Network
             lobbyHandler.RemoveRoom();
         }
 
-        public void Schedule(MainThreadTask task)
-        {
-            tasks.Enqueue(task);
-        }
-
         public void LateUpdate()
         {
-            while (tasks.TryDequeue(out MainThreadTask task))
+            updateTimer += Time.deltaTime;
+            if (updateTimer > 1f / updateRate)
             {
-                task.Run();
+                networkGameHandler.Update();
+                updateTimer = 0;
             }
         }
     }

@@ -8,6 +8,7 @@ namespace FIVE.Network
     {
         public abstract void Start();
         public abstract void Stop();
+        public abstract void Update();
         public abstract void Dispose();
     }
 }
