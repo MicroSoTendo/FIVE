@@ -199,7 +199,9 @@ namespace FIVE.UI.BSComposite
                 }
                 if (go.name.Contains("Solar"))
                 {
-                    gonew.transform.localPosition = new Vector3(-79, -1, -146);
+                    
+                        gonew.transform.localScale = new Vector3(20, 20, 20);
+                        gonew.transform.localPosition = new Vector3(1.5f, -10.7f, 3.3f);
                 }
             }
         }

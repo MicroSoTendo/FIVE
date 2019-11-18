@@ -95,6 +95,12 @@ namespace FIVE.UI.InGameDisplay
             item.transform.localScale = info.UIScale;
             item.transform.localEulerAngles = info.UIRotation;
             item.transform.localPosition = info.UIPosition;
+            if (item.name.Contains("Solar"))
+            {
+                item.transform.localScale = new Vector3(60, 60, 60);
+                item.transform.localPosition = new Vector3(0, -19, 0);
+            }
+
             cell.SetActive(true);
             AddOrUpdate(index, cell);
         }
