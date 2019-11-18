@@ -22,35 +22,10 @@ namespace FIVE.Network
             }
         }
 
-        public static int ToI32(this byte[] bytes, int startIndex = 0)
+        public static unsafe T As<T>(this byte[] bytes, int startIndex = 0) where T : unmanaged
         {
-            return BitConverter.ToInt32(bytes, startIndex);
-        }
-        public static ushort ToU16(this byte[] bytes, int startIndex = 0)
-        {
-            return BitConverter.ToUInt16(bytes, startIndex);
-        }
-
-        public static float ToF32(this byte[] bytes, int startIndex = 0)
-        {
-            return BitConverter.ToSingle(bytes, startIndex);
-        }
-
-        public static bool ToBool(this byte[] bytes, int startIndex = 0)
-        {
-            return BitConverter.ToBoolean(bytes, startIndex);
-        }
-
-        public static Vector3 ToVector3(this byte[] bytes, int startIndex = 0)
-        {
-            return new Vector3(bytes.ToF32(startIndex), bytes.ToF32(startIndex + 4), bytes.ToF32(startIndex + 8));
-        }
-
-        public static Guid ToGuid(this byte[] bytes, int startIndex = 0)
-        {
-            byte[] guidBytes = new byte[16];
-            Buffer.BlockCopy(bytes, startIndex, guidBytes, 0, 16);
-            return new Guid(guidBytes);
+            fixed (byte* pBytes = &bytes[startIndex])
+                return *(T*)pBytes;
         }
 
         public static string ToName(this byte[] bytes, int startIndex = 0)
@@ -60,12 +35,12 @@ namespace FIVE.Network
 
         public static RoomInfo ToRoomInfo(this byte[] bytes)
         {
-            var guid = bytes.ToGuid();
-            int currentPlayers = bytes.ToI32(16);
-            int maxPlayers = bytes.ToI32(20);
-            bool hasPassword = bytes.ToBool(24);
-            int host = bytes.ToI32(25);
-            ushort port = bytes.ToU16(29);
+            Guid guid = bytes.As<Guid>();
+            int currentPlayers = bytes.As<int>(16);
+            int maxPlayers = bytes.As<int>(20);
+            bool hasPassword = bytes.As<bool>(24);
+            int host = bytes.As<int>(25);
+            ushort port = bytes.As<ushort>(29);
             string name = bytes.ToName(31);
             return new RoomInfo { Guid = guid, CurrentPlayers = currentPlayers, MaxPlayers = maxPlayers, HasPassword = hasPassword, Host = host, Port = port, Name = name };
         }
