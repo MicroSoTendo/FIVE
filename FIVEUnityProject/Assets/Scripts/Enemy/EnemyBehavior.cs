@@ -27,7 +27,7 @@ namespace FIVE
 
         private void Start()
         {
-            visionRange = 10.0f;
+            visionRange = 50.0f;
 
             red = Resources.Load<Material>("Materials/Red");
             bug = Resources.Load<Material>("Materials/AlienBeetle/skin1");
