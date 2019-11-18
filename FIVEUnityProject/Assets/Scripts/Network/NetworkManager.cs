@@ -44,6 +44,7 @@ namespace FIVE.Network
         public NetworkState State { get; internal set; } 
 
         public ICollection<RoomInfo> RoomInfos => lobbyHandler.GetRoomInfos;
+        public RoomInfo RoomInfo { get; private set; }
         private LobbyHandler lobbyHandler;
 
         public int PlayerIndex { get; internal set; }
@@ -70,29 +71,29 @@ namespace FIVE.Network
 
         public void JoinRoom(Guid guid, string password)
         {
-            RoomInfo roomInfo = lobbyHandler[guid];
-            roomInfo.SetRoomPassword(password);
-            networkGameHandler = new ClientGameHandler(new TcpClient(), HandShaker.GetClientHandShaker(roomInfo));
+            RoomInfo = lobbyHandler[guid];
+            RoomInfo.SetRoomPassword(password);
+
+            networkGameHandler = new ClientGameHandler();
             networkGameHandler.Start();
+            State = NetworkState.Connecting;
         }
 
         public void CreateRoom(string roomName, int maxPlayers, bool hasPassword, string password)
         {
-            RoomInfo roomInfo = lobbyHandler.HostRoomInfo;
-            roomInfo.Name = roomName;
-            roomInfo.Port = gameServerPort;
-            roomInfo.CurrentPlayers = 1; //Host self
-            roomInfo.HasPassword = hasPassword;
-            roomInfo.MaxPlayers = maxPlayers;
+            RoomInfo.Name = roomName;
+            RoomInfo.Port = gameServerPort;
+            RoomInfo.CurrentPlayers = 1; //Host self
+            RoomInfo.HasPassword = hasPassword;
+            RoomInfo.MaxPlayers = maxPlayers;
             if (hasPassword)
             {
-                roomInfo.SetRoomPassword(password);
+                RoomInfo.SetRoomPassword(password);
             }
-
             lobbyHandler.CreateRoom();
-            //networkGameHandler = new HostGameHandler(new TcpListener(IPAddress.Loopback, gameServerPort),
-            //    HandShaker.GetHostHandShaker(lobbyHandler.HostRoomInfo));
-            //networkGameHandler.Start();
+
+            networkGameHandler = new HostGameHandler();
+            networkGameHandler.Start();
             State = NetworkState.Host;
         }
 

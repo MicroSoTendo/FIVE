@@ -62,7 +62,6 @@ namespace FIVE.Interactive
     {
         public List<GameObject> Items { get; } = new List<GameObject>();
         public int Capacity { get; set; } = 100;
-        public int Count => Items.Count;
 
         public Inventory()
         {

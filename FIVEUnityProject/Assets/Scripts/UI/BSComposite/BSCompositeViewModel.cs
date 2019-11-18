@@ -13,7 +13,7 @@ namespace FIVE.UI.BSComposite
         protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
         public GameObject Inventory { get; }
         public GameObject Composite { get; }
-        public Button Result { get; }
+        public Button OutButton { get; }
         public Button BackButton { get; }
 
         private List<Button> inventoryButtons;
@@ -33,17 +33,24 @@ namespace FIVE.UI.BSComposite
             }
         }
 
-        private bool IsCompositeEmpty(int i)
+        private List<GameObject> ItemsIn
         {
-            return inButtons[i].transform.childCount == 0;
+            get
+            {
+                var items = new List<GameObject>();
+                foreach (Button b in inButtons)
+                {
+                    GameObject item = GetChild0(b);
+                    if (item != null)
+                    {
+                        items.Add(item);
+                    }
+                }
+                return items;
+            }
         }
 
-        private bool IsInventoryEmpty(int i)
-        {
-            return inventoryButtons[i].transform.childCount == 0;
-        }
-
-        private GameObject ItemOut => Result.transform.childCount > 0 ? Result.transform.GetChild(0).gameObject : null;
+        private GameObject ItemOut => GetChild0(OutButton);
 
         public BSCompositeViewModel() : base()
         {
@@ -61,122 +68,116 @@ namespace FIVE.UI.BSComposite
             foreach (Button button in Composite.GetComponentsInChildren<Button>())
             {
                 inButtons.Add(button);
-                Bind(button).To(() => OnCompositeButtonClicked(button));
+                Bind(button).To(() => OnInItemClicked(button));
             }
-            BackButton = Get<Button>(nameof(BackButton));
+            BackButton = Get<Button>("BackButton");
             Bind(BackButton).To(OnBackButtonClick);
-            Result = Get<Button>(nameof(Result));
-            Bind(Result).To(OnResultButtonClick);
-        }
-
-        private void OnResultButtonClick()
-        {
-            if (ItemOut != null)
-            {
-                InventoryManager.Inventory.Add(ItemOut);
-
-                // FIXME: remove items in inventory
-                ResetIn();
-
-                ResetLocalInventory();
-            }
-        }
-
-        private void OnCompositeButtonClicked(Button button)
-        {
-            if (button.transform.childCount == 0)
-            {
-                return;
-            }
-
-            if (ItemOut != null)
-            {
-                RemoveChild0(Result);
-            }
-
-            GameObject item = button.transform.GetChild(0).gameObject;
-
-            for (int i = 0; i < inventoryButtons.Count; i++)
-            {
-                if (IsInventoryEmpty(i))
-                {
-                    item.SetParent(inventoryButtons[i].transform);
-                    Blacksmith.RemoveIn(item);
-
-                    if (item.name.Contains("Battery"))
-                    {
-                        item.transform.localScale = new Vector3(7, 7, 7);
-                        item.transform.localPosition = new Vector3(0, -37, 0);
-                    }
-                    if (item.name.Contains("Solar"))
-                    {
-                        item.transform.localPosition = new Vector3(-79, -1, -146);
-                    }
-
-                    break;
-                }
-            }
+            OutButton = Get<Button>("Result");
+            Bind(OutButton).To(OnOutItemClick);
         }
 
         private void OnInventoryItemClicked(Button button)
         {
-            if (button.transform.childCount == 0)
+            GameObject item = GetChild0(button);
+            if (item != null)
             {
-                return;
-            }
-
-            GameObject item = button.transform.GetChild(0).gameObject;
-            for (int i = 0; i < inButtons.Count; i++)
-            {
-                if (IsCompositeEmpty(i))
+                foreach (Button inbutton in inButtons)
                 {
-                    item.SetParent(inButtons[i].transform);
-                    if (item.name.Contains("Battery"))
+                    if (!HasChild(inbutton))
                     {
-                        item.transform.localScale = new Vector3(7, 7, 7);
-                        item.transform.localPosition = new Vector3(0, -37, 0);
+                        item.SetParent(inbutton.gameObject);
+
+                        if (item.name.Contains("Battery"))
+                        {
+                            item.transform.localScale = new Vector3(7, 7, 7);
+                            item.transform.localPosition = new Vector3(0, -37, 0);
+                        }
+                        if (item.name.Contains("Solar"))
+                        {
+                            item.transform.localPosition = new Vector3(-70, -49, -146);
+                        }
+
+                        break;
                     }
-                    if (item.name.Contains("Solar"))
+                }
+
+                bool isFull = true;
+                foreach (Button inbutton in inButtons)
+                {
+                    if (!HasChild(inbutton))
                     {
-                        item.transform.localPosition = new Vector3(-70, -49, -146);
+                        isFull = false;
+                        break;
                     }
-                    break;
+                }
+                if (isFull)
+                {
+                    GameObject o = Object.Instantiate(Blacksmith.GenerateOut(ItemsIn), OutButton.transform);
+                    o.transform.localPosition = new Vector3(-27.4f, -11.9f, -29.8f);
+                    o.transform.localScale = new Vector3(20, 20, 20);
                 }
             }
-            Blacksmith.AddIn(item);
+        }
 
-            bool isFull = true;
-            for (int i = 0; i < inButtons.Count; i++)
+        private void OnInItemClicked(Button button)
+        {
+            GameObject item = GetChild0(button);
+            if (item != null)
             {
-                if (IsCompositeEmpty(i))
+                foreach (Button invbutton in inventoryButtons)
                 {
-                    isFull = false;
-                    break;
+                    if (!HasChild(invbutton))
+                    {
+                        item.SetParent(invbutton.gameObject);
+
+                        if (item.name.Contains("Battery"))
+                        {
+                            item.transform.localScale = new Vector3(7, 7, 7);
+                            item.transform.localPosition = new Vector3(0, -37, 0);
+                        }
+                        if (item.name.Contains("Solar"))
+                        {
+                            item.transform.localPosition = new Vector3(-79, -1, -146);
+                        }
+
+                        break;
+                    }
+                }
+
+                if (ItemOut != null)
+                {
+                    DestroyChild0(OutButton);
                 }
             }
-            if (isFull)
+        }
+
+        private void OnOutItemClick()
+        {
+            if (ItemOut != null)
             {
-                GameObject resultItem = Object.Instantiate(Blacksmith.GenerateOut(), Result.transform);
-                resultItem.transform.localPosition = new Vector3(-27.4f, -11.9f, -29.8f);
-                resultItem.transform.localScale = new Vector3(20, 20, 20);
+                ItemOut.GetComponent<Item>().DropToInventory();
+                RemoveChild0(OutButton);
+
+                // FIXME: remove items in inventory
+                ResetIn();
+                ResetLocalInventory();
             }
         }
 
         private void ResetIn()
         {
             ResetButtons(inButtons);
-            Blacksmith.ResetIn();
         }
 
         private void ResetLocalInventory()
         {
             ResetButtons(inventoryButtons);
 
-            for (int i = 0; i < InventoryManager.Inventory.Count; i++)
+            int i = 0;
+            foreach (GameObject go in InventoryManager.Inventory.Items)
             {
-                GameObject go = InventoryManager.Inventory.Items[i];
                 go.SetActive(true);
-                GameObject gonew = Object.Instantiate(go, inventoryButtons[i].transform);
+                GameObject gonew = Object.Instantiate(go, inventoryButtons[i++].transform);
 
                 if (go.name.Contains("Battery"))
                 {
@@ -192,16 +193,30 @@ namespace FIVE.UI.BSComposite
 
         private void OnBackButtonClick()
         {
-            ResetIn();
             IsActive = false;
+        }
+
+        private bool HasChild(Component o)
+        {
+            return o.transform.childCount > 0;
+        }
+
+        private GameObject GetChild0(Component o)
+        {
+            return HasChild(o) ? o.transform.GetChild(0).gameObject : null;
+        }
+
+        private void DestroyChild0(Component o)
+        {
+            GameObject c = o.transform.GetChild(0).gameObject;
+            c.transform.parent = null;
+            c.SetActive(false);
+            Object.Destroy(c);
         }
 
         private void RemoveChild0(Component o)
         {
-            GameObject c = o.transform.GetChild(0).gameObject;
-            c.SetActive(false);
-            Object.Destroy(c);
-            o.transform.DetachChildren();
+            o.transform.GetChild(0).parent = null;
         }
 
         private void ResetButtons(List<Button> l)
@@ -210,7 +225,7 @@ namespace FIVE.UI.BSComposite
             {
                 if (button.transform.childCount > 0)
                 {
-                    RemoveChild0(button);
+                    DestroyChild0(button);
                 }
             }
         }

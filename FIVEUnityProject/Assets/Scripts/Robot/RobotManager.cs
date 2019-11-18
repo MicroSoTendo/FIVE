@@ -74,7 +74,7 @@ namespace FIVE.Robot
             instance.robots.Remove(robot);
             instance.id2Robot.Remove(_id);
             (int x, int y, int z) k = Key(robot);
-            instance.hashMap[k].Add(_id);
+            //instance.hashMap[k].Remove(_id);
         }
 
         private static (int x, int y, int z) Key(GameObject robot)

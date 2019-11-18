@@ -10,13 +10,13 @@ namespace FIVE.Network.InGameHandlers
     {
         public static InGameGameHandler CreateClientHandler(TcpClient client)
         {
-            return new GameGameClient(client);
+            return new Client(client);
         }
 
-        private class GameGameClient : InGameGameHandler
+        private class Client : InGameGameHandler
         {
             private int timeOut = 0;
-            public GameGameClient(TcpClient client) : base(client){}
+            public Client(TcpClient client) : base(client){}
             private static unsafe byte[] SizeHelper(ConcurrentBag<byte[]> componentsForSync)
             {
                 byte[] bytes = new byte[componentsForSync.Count * 4];
@@ -108,7 +108,7 @@ namespace FIVE.Network.InGameHandlers
             }
 
 
-            protected override async Task Handler()
+            protected async Task Handler()
             {
                 while (true)
                 {
@@ -130,6 +130,21 @@ namespace FIVE.Network.InGameHandlers
                         NetworkManager.Instance.Schedule(mainThreadTask);
                     }
                 }
+            }
+
+            public override void Start()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Stop()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Dispose()
+            {
+                throw new NotImplementedException();
             }
         }
     }

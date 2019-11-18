@@ -1,115 +1,89 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using static FIVE.Network.NetworkUtil;
 
 namespace FIVE.Network
 {
-    internal abstract class HandShaker
+    internal abstract class Handshaker
     {
-        public abstract Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client);
-
-        public static HandShaker GetClientHandShaker(RoomInfo remoteRoomInfo)
+        public abstract Task HandShakeAsync(TcpClient client, CancellationToken ct);
+        public event Action<TcpClient> OnHandshakeSuccess;
+        public event Action<TcpClient> OnHandshakeFail;
+        public static Handshaker HostHandshaker { get; } = new HostSide();
+        public static Handshaker ClientHandshaker { get; } = new ClientSide();
+        private class HostSide : Handshaker
         {
-            return new ClientHandShaker(remoteRoomInfo);
-        }
-
-        public static HandShaker GetHostHandShaker(RoomInfo hostRoomInfo)
-        {
-            return new HostHandShaker(hostRoomInfo);
-        }
-        
-        private class ClientHandShaker : HandShaker
-        {
-            private readonly RoomInfo remoteRoomInfo;
-            public ClientHandShaker(RoomInfo remoteRoomInfo)
+            public override async Task HandShakeAsync(TcpClient client, CancellationToken ct)
             {
-                this.remoteRoomInfo = remoteRoomInfo;
-            }
-            public override async Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client)
-            {
-                await client.ConnectAsync(new IPAddress(remoteRoomInfo.Host), remoteRoomInfo.Port);
                 NetworkStream stream = client.GetStream();
-                byte[] buffer;
-                //Send join request
-                if (remoteRoomInfo.HasPassword)
+                byte[] headerBuffer = new byte[2];
+                await stream.ReadAsync(headerBuffer, 0, 2, ct);
+                if (!CheckHeader(headerBuffer))
                 {
-                    buffer = new byte[4 + 16];
-                    byte[] hash = remoteRoomInfo.HashedPassword;
-                    buffer.CopyFrom(GameSyncHeader.JoinRequest.ToBytes(), hash);
-                    stream.Write(buffer);
+                    OnHandshakeFail?.Invoke(client);
+                    return;
+                }
+                if (CheckPassword(stream))
+                {
+                    await stream.WriteAsync(((ushort)GameSyncHeader.AcceptJoin).ToBytes(), 0, 2, ct);
+                    OnHandshakeSuccess?.Invoke(client);
                 }
                 else
                 {
-                    stream.Write(GameSyncHeader.JoinRequest);
+                    OnHandshakeFail?.Invoke(client);
                 }
+            }
 
-                //Get response from server
-                buffer = stream.Read(sizeof(int) * 3);
-                var result = (GameSyncHeader)buffer.ToI32();
-                if (result.HasFlag(GameSyncHeader.AcceptJoin))
+            private static bool CheckPassword(NetworkStream stream)
+            {
+                if (!NetworkManager.Instance.RoomInfo.HasPassword)
                 {
-                    (int publicID, int privateID) = (buffer.ToI32(4), buffer.ToI32(8));
+                    return true;
                 }
-                return (-1, -1);
+                byte[] hashedPassword = stream.Read(16);
+                return BytesCompare(hashedPassword, 0, NetworkManager.Instance.RoomInfo.HashedPassword, 0, 16);
+            }
+
+            private static unsafe bool CheckHeader(byte[] buffer)
+            {
+                fixed (byte* pBuffer = buffer)
+                {
+                    return *(ushort*)pBuffer == (ushort)GameSyncHeader.JoinRequest;
+                }
             }
         }
 
-
-        private class HostHandShaker : HandShaker
+        private class ClientSide : Handshaker
         {
-            private readonly RoomInfo hostRoomInfo;
-            private readonly Random random;
-            private readonly Dictionary<int, bool> actives;
-            public HostHandShaker(RoomInfo hostRoomInfo)
-            {
-                this.hostRoomInfo = hostRoomInfo;
-                random = new Random();
-                actives = new Dictionary<int, bool>();
-            }
-            public unsafe override async Task<(int publicID, int privateID)> HandShakeAsync(TcpClient client)
+            public override async Task HandShakeAsync(TcpClient client, CancellationToken ct)
             {
                 NetworkStream stream = client.GetStream();
-                bool hasPassword = hostRoomInfo.HasPassword;
-                byte[] buffer = hasPassword ? new byte[4 + 16] : new byte[4];
-                stream.Read(buffer);
-                var code = (GameSyncHeader)buffer.ToI32();
-                if (code.HasFlag(GameSyncHeader.JoinRequest))
+                await stream.WriteAsync(((ushort)GameSyncHeader.JoinRequest).ToBytes(), 0, 2, ct);
+                if (NetworkManager.Instance.RoomInfo.HasPassword)
                 {
-                    //Check if password is correct
-                    if (hasPassword)
-                    {
-                        if (!BytesCompare(buffer, 4, hostRoomInfo.HashedPassword, 0, 16))
-                        {
-                            Array.Clear(buffer, 0, buffer.Length);
-                            stream.Write(buffer);
-                            return (-1, -1);
-                        }
-                    }
-
-                    //Send back assgiend client ID
-                    byte[] idBuffer = new byte[sizeof(int) * 3];
-                    int i = actives.FirstOrDefault(kvp => !kvp.Value).Key;
-                    if (i == 0)
-                    {
-                        i = actives.Count;
-                        actives.Add(i, true);
-                    }
-                    fixed (byte* pBuffer = idBuffer)
-                    {
-                        *(int*)pBuffer = (int)GameSyncHeader.AcceptJoin;
-                        *(int*)(pBuffer + 4) = i;
-                        *(int*)(pBuffer + 8) = random.Next(0, int.MaxValue);
-                        stream.Write(idBuffer);
-                        return (i, *(int*)(pBuffer + 8));
-                    }
+                    await stream.WriteAsync(NetworkManager.Instance.RoomInfo.HashedPassword, 0, 16, ct);
                 }
-
-                return (-1, -1);
+                if (CheckResult(stream))
+                {
+                    OnHandshakeSuccess?.Invoke(client);
+                }
+                else
+                {
+                    OnHandshakeFail?.Invoke(client);
+                }
             }
+
+            private unsafe bool CheckResult(NetworkStream stream)
+            {
+                byte[] buffer = stream.Read(2);
+                fixed (byte* pBuffer = buffer)
+                {
+                    return *(ushort*)pBuffer == (ushort)GameSyncHeader.AcceptJoin;
+                }
+            }
+
         }
     }
 }
