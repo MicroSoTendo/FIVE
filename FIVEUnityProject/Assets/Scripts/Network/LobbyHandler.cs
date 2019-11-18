@@ -29,7 +29,6 @@ namespace FIVE.Network
             UpdatePassword = 9
         }
 
-        public RoomInfo HostRoomInfo { get; }
         public ICollection<RoomInfo> GetRoomInfos => roomInfos.Values;
         public RoomInfo this[Guid guid] => roomInfos[guid];
         /// <summary>
@@ -47,7 +46,7 @@ namespace FIVE.Network
         private Task sendTask;
         private Task readTask;
         private Task timerTask;
-        private CancellationTokenSource cancellationTokenSource;
+        private CancellationTokenSource cts;
 
         private int timeout = 0;
         private readonly Action<NetworkStream>[] handlers;
@@ -57,7 +56,6 @@ namespace FIVE.Network
         public LobbyHandler(string listServer, ushort listServerPort)
         {
             listServerClient = new TcpClient();
-            HostRoomInfo = new RoomInfo();
             this.listServer = listServer;
             this.listServerPort = listServerPort;
             md5 = MD5.Create();
@@ -96,12 +94,12 @@ namespace FIVE.Network
         
         private void CreateRoomHandler(NetworkStream stream)
         {
-            stream.Write(HostRoomInfo.FullPacket());
+            stream.Write(NetworkManager.Instance.RoomInfo.FullPacket());
         }
 
         private void AssignGuidHandler(NetworkStream stream)
         {
-            HostRoomInfo.Guid = stream.ReadGuid();
+            NetworkManager.Instance.RoomInfo.Guid = stream.ReadGuid();
         }
 
         private void RemoveRoomHandler(NetworkStream stream)
@@ -111,36 +109,36 @@ namespace FIVE.Network
 
         private void UpdateNameHandler(NetworkStream stream)
         {
-            stream.Write(HostRoomInfo.NamePacket());
+            stream.Write(NetworkManager.Instance.RoomInfo.NamePacket());
         }  
         
         private void UpdateCurrentPlayer(NetworkStream stream)
         {
-            stream.Write(HostRoomInfo.CurrentPlayerPacket());
+            stream.Write(NetworkManager.Instance.RoomInfo.CurrentPlayerPacket());
         }
         
         private void UpdateMaxPlayer(NetworkStream stream)
         {
-            stream.Write(HostRoomInfo.MaxPlayerPacket());
+            stream.Write(NetworkManager.Instance.RoomInfo.MaxPlayerPacket());
         }
 
         private void UpdatePassword(NetworkStream stream)
         {
-            stream.Write(HostRoomInfo.PasswordPacket());
+            stream.Write(NetworkManager.Instance.RoomInfo.PasswordPacket());
         }
 
         public void Start()
         {
             listServerClient.Connect(listServer, listServerPort);
-            cancellationTokenSource = new CancellationTokenSource();
-            sendTask = SendAsync(cancellationTokenSource.Token);
-            readTask = ReadAsync(cancellationTokenSource.Token);
-            timerTask = TimerAsync(cancellationTokenSource.Token);
+            cts = new CancellationTokenSource();
+            sendTask = SendAsync(cts.Token);
+            readTask = ReadAsync(cts.Token);
+            timerTask = TimerAsync(cts.Token);
         }
 
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            cts.Cancel();
             listServerClient.GetStream().Close();
             listServerClient.Close();
         }
@@ -209,19 +207,19 @@ namespace FIVE.Network
 
         public void UpdateRoomName(string name)
         {
-            HostRoomInfo.Name = name;
+            NetworkManager.Instance.RoomInfo.Name = name;
             sendQueue.Enqueue(ListServerHeader.UpdateName);
         }
 
         public void UpdateCurrentPlayers(int current)
         {
-            HostRoomInfo.CurrentPlayers = current;
+            NetworkManager.Instance.RoomInfo.CurrentPlayers = current;
             sendQueue.Enqueue(ListServerHeader.UpdateCurrentPlayer);
         }
 
         public void UpdateMaxPlayers(int max)
         {
-            HostRoomInfo.MaxPlayers = max;
+            NetworkManager.Instance.RoomInfo.MaxPlayers = max;
             sendQueue.Enqueue(ListServerHeader.UpdateMaxPlayer);
         }
 
@@ -229,9 +227,9 @@ namespace FIVE.Network
         {
             if (hasPassword)
             {
-                HostRoomInfo.SetRoomPassword(password);
+                NetworkManager.Instance.RoomInfo.SetRoomPassword(password);
             }
-            if (HostRoomInfo.HasPassword != hasPassword)
+            if (NetworkManager.Instance.RoomInfo.HasPassword != hasPassword)
             {
                 sendQueue.Enqueue(ListServerHeader.UpdatePassword);
             }

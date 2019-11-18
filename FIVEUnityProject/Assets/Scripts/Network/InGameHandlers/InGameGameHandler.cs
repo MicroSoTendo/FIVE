@@ -8,18 +8,18 @@ namespace FIVE.Network.InGameHandlers
 {
     internal abstract partial class InGameGameHandler : NetworkGameHandler
     {
-        protected readonly TcpClient Client;
+        protected readonly TcpClient TcpClient;
         protected readonly NetworkStream Stream;
         protected InGameGameHandler(TcpClient client)
         {
-            Client = client;
+            TcpClient = client;
             Stream = client.GetStream();
         }
 
         protected abstract void PreSync();
         protected abstract void OnSend();
         protected abstract void OnReceive();
-        protected override async Task Handler()
+        protected async Task Handler()
         {
             PreSync();
             Task sendTask = Send();
@@ -29,7 +29,7 @@ namespace FIVE.Network.InGameHandlers
 
         private async Task Send()
         {
-            while (Client.Connected)
+            while (TcpClient.Connected)
             {
                 //GameSyncCode header = GameSyncCode.AliveTick;
                 
@@ -42,7 +42,7 @@ namespace FIVE.Network.InGameHandlers
 
         private async Task Receive()
         {
-            while (Client.Connected)
+            while (TcpClient.Connected)
             {
                 byte[] headerBuffer = new byte[2];
                 await Stream.ReadAsync(headerBuffer, 0, 2);

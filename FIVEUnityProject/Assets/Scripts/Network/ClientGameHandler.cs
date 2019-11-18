@@ -1,29 +1,34 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
-using FIVE.Network.InGameHandlers;
 
 namespace FIVE.Network
 {
     internal class ClientGameHandler : NetworkGameHandler
     {
         private readonly TcpClient client;
-        private readonly HandShaker handShaker;
-        private InGameGameHandler inGameGameHandler;
-        public ClientGameHandler(TcpClient client, HandShaker handShaker)
+        private IPEndPoint ipEndPoint;
+        private byte[] hashedPassword;
+        public ClientGameHandler()
         {
-            this.client = client;
-            this.handShaker = handShaker;
+            client = new TcpClient();
         }
-        protected override async Task Handler()
+
+        public override void Start()
         {
-            (int publicID, int privateID) = await handShaker.HandShakeAsync(client);
-            if (publicID != -1)
-            {
-                NetworkManager.Instance.PlayerIndex = publicID;
-                NetworkManager.Instance.State = NetworkManager.NetworkState.Client;
-                inGameGameHandler = InGameGameHandler.CreateClientHandler(client);
-                inGameGameHandler.Start();
-            }
+            int ip = NetworkManager.Instance.RoomInfo.Host;
+            ushort port = NetworkManager.Instance.RoomInfo.Port;
+            client.Connect(new IPAddress(ip), port);
+        }
+
+        public override void Stop()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
