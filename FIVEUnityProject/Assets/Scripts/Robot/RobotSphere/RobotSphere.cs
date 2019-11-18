@@ -47,6 +47,8 @@ namespace FIVE.Robot
 
         public CPU CPU { get; private set; }
 
+        private float health;
+
         protected override void Awake()
         {
             ID = RobotManager.NextID;
@@ -80,6 +82,9 @@ namespace FIVE.Robot
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
             EventManager.Subscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
             OnFixedUpdate += RobotSphereUpdate;
+
+            health = 100.0f;
+
             base.Start();
         }
 
@@ -183,6 +188,33 @@ namespace FIVE.Robot
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target.transform.position;
                 StartCoroutine(KillAlien(target));
+            }
+        }
+
+        public void OnHit()
+        {
+            health -= 10.0f;
+            if (health <= 0)
+            {
+                if (RobotManager.ID2Robot.Count == 1)
+                {
+                    // lose
+                }
+                else
+                {
+                    GameObject nextRobot = RobotManager.ID2Robot[ID];
+                    int id = ID + 1;
+                    while (!RobotManager.ID2Robot.ContainsKey(id))
+                    {
+                        id++;
+                    }
+                    RobotManager.ActiveRobot = RobotManager.ID2Robot[id];
+                    CameraManager.SetCamera(RobotManager.ActiveRobot.GetComponent<RobotSphere>().fpsCamera);
+
+                    RobotManager.RemoveRobot(gameObject);
+                    gameObject.SetActive(false);
+                    Destroy(gameObject);
+                }
             }
         }
 

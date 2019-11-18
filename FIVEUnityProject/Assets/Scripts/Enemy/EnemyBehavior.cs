@@ -46,7 +46,7 @@ namespace FIVE
             patrolDirection = Random.Range(0, 360);
             transform.Rotate(0, patrolDirection, 0);
             state = State.Idle;
-            
+
             speed = 10.0f;
             elapsedTime = 0;
             health = 100.0f;
@@ -64,7 +64,12 @@ namespace FIVE
             }
             else
             {
+                currTarget.GetComponent<RobotSphere>().OnHit();
                 animator.SetTrigger("attack1");
+                if (!currTarget.activeSelf)
+                {
+                    currTarget = null;
+                }
             }
 
             if (currTarget == null)
@@ -135,7 +140,7 @@ namespace FIVE
                 cc.SimpleMove(transform.forward * speed);
             }
         }
-        
+
         private void FlashRed()
         {
             rdr.material = red;
