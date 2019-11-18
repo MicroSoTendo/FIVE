@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Concurrent;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,16 +11,18 @@ namespace FIVE.Network
         private readonly TcpListener listener;
         private CancellationTokenSource cts;
         private Task incomingConnectionTask;
-
+        private ConcurrentBag<SyncHandler> hostHandlers;
         public HostGameHandler()
         {
             listener = new TcpListener(IPAddress.Any, NetworkManager.Instance.RoomInfo.Port);
             Handshaker.HostHandshaker.OnHandshakeSuccess += OnHandshakeSuccess;
             Handshaker.HostHandshaker.OnHandshakeFail += OnHandshakeFail;
         }
-        private void OnHandshakeSuccess(TcpClient client)
+
+
+        private void OnHandshakeSuccess(TcpClient tcpClient)
         {
-            //TODO: Start InGameHandler
+            hostHandlers.Add(SyncHandler.StartNewHost(tcpClient));
         }
 
         private void OnHandshakeFail(TcpClient client)

@@ -8,17 +8,18 @@ namespace FIVE.Network
     internal class ClientGameHandler : NetworkGameHandler
     {
         private readonly TcpClient client;
-        CancellationTokenSource cts;
+        private CancellationTokenSource cts;
         private Task handshakeTask;
+        private SyncHandler clientHandler;
         public ClientGameHandler()
         {
             client = new TcpClient();
             Handshaker.ClientHandshaker.OnHandshakeSuccess += OnHandshakeSuccess;
             Handshaker.ClientHandshaker.OnHandshakeFail += OnHandshakeFail;
         }
-        private void OnHandshakeSuccess(TcpClient c)
+        private void OnHandshakeSuccess(TcpClient tcpClient)
         {
-            //TODO: Start InGameHandler
+            clientHandler = SyncHandler.StartNewClient(tcpClient);
         }
 
         private void OnHandshakeFail(TcpClient c)
