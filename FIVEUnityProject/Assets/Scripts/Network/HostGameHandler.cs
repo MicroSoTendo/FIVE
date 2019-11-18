@@ -17,16 +17,16 @@ namespace FIVE.Network
             Handshaker.HostHandshaker.OnHandshakeSuccess += OnHandshakeSuccess;
             Handshaker.HostHandshaker.OnHandshakeFail += OnHandshakeFail;
         }
+        private void OnHandshakeSuccess(TcpClient client)
+        {
+            //TODO: Start InGameHandler
+        }
 
         private void OnHandshakeFail(TcpClient client)
         {
             //TODO: Close client
         }
 
-        private void OnHandshakeSuccess(TcpClient client)
-        {
-            //TODO: Start InGameHandler
-        }
 
         /// <summary>
         /// Used by <b>Host only</b>.<br/>

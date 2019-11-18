@@ -75,7 +75,7 @@ namespace FIVE.Network
                 }
             }
 
-            private unsafe bool CheckResult(NetworkStream stream)
+            private static unsafe bool CheckResult(NetworkStream stream)
             {
                 byte[] buffer = stream.Read(2);
                 fixed (byte* pBuffer = buffer)
