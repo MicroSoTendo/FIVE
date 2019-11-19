@@ -1,8 +1,8 @@
-﻿using FIVE.UI;
+﻿using FIVE.EventSystem;
+using FIVE.UI;
 using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
 using System.Linq;
-using FIVE.EventSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
 using static FIVE.EventSystem.Util;
@@ -154,11 +154,16 @@ namespace FIVE.CameraSystem
                     {
                         SetCameraEnabled(c, false);
                     }
+                    bool justswitched = index == 0;
                     for (int count = 0; count < 4; count++, index++)
                     {
                         index %= namedCameras.Keys.Count;
                         Camera c = instance.namedCameras.Values.ElementAt(index);
                         SetCameraEnabled(c, true);
+                        if (justswitched)
+                        {
+                            SetCameraFade(c);
+                        }
                         float x = count / 2 / 2f, y = count % 2 / 2f;
                         c.rect = new Rect(x, y, 1f / 2f, 1f / 2f);
                         wall.Add(c);
