@@ -40,33 +40,19 @@ public class CameraControlled : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        ResetFade();
-    }
-
     public AnimationCurve FadeCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(0.5f, 0));
-
-    private float _alpha = 1;
     private Texture2D _texture;
-    private bool _done;
-    private float _time;
+    private float _alpha, _time;
 
     public void ResetFade()
     {
-        _done = false;
         _alpha = 1;
         _time = 0;
     }
 
     private void OnGUI()
     {
-        if (_done)
-        {
-            return;
-        }
-
-        if (Event.current.type.Equals(EventType.Repaint))
+        if (_alpha > 0 && Event.current.type.Equals(EventType.Repaint))
         {
             if (_texture == null)
             {
@@ -79,11 +65,6 @@ public class CameraControlled : MonoBehaviour
             _time += Time.deltaTime;
             _alpha = FadeCurve.Evaluate(_time);
             GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), _texture, ScaleMode.StretchToFill);
-
-            if (_alpha <= 0)
-            {
-                _done = true;
-            }
         }
     }
 }
