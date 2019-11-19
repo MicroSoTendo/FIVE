@@ -1,10 +1,9 @@
-﻿using FIVE.EventSystem;
+﻿using FIVE.CameraSystem;
+using FIVE.EventSystem;
 using FIVE.UI;
 using FIVE.UI.Background;
-using FIVE.UI.InGameDisplay;
 using FIVE.UI.StartupMenu;
 using System.Collections;
-using FIVE.CameraSystem;
 using UnityEngine;
 
 namespace FIVE.GameModes
@@ -14,8 +13,11 @@ namespace FIVE.GameModes
         private Camera guiCamera;
         [SerializeField] private GameObject Singelplayer = null;
         [SerializeField] private GameObject Multiplayers = null;
+
         public enum Mode { Single, Multi }
+
         public static Mode CurrentMode { get; private set; }
+
         private IEnumerator Start()
         {
             guiCamera = CameraManager.AddCamera("GUI Camera", enableAudioListener: true);
