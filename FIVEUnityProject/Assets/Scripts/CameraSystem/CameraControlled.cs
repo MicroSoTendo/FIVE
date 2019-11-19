@@ -45,7 +45,7 @@ public class CameraControlled : MonoBehaviour
         ResetFade();
     }
 
-    public AnimationCurve FadeCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(0.3f, 0.7f, -1.8f, -1.2f), new Keyframe(0.5f, 0));
+    public AnimationCurve FadeCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(0.5f, 0));
 
     private float _alpha = 1;
     private Texture2D _texture;
