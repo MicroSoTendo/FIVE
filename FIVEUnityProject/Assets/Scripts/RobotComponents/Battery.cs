@@ -1,27 +1,18 @@
-﻿using System;
-using FIVE.EventSystem;
+﻿using FIVE.EventSystem;
+using System;
 using UnityEngine;
 
 namespace FIVE.RobotComponents
 {
     public class Battery : RobotComponent
     {
-        private float capacity;
         private int chargeSpeed;
 
         private float currentEnergy;
-        public int DechargeSpeed;
 
         private bool isCharging;
 
-        public float Capacity
-        {
-            get => capacity;
-            set
-            {
-                capacity = value;
-            }
-        }
+        public float Capacity { get; set; }
 
         public float CurrentEnergy
         {
@@ -29,8 +20,7 @@ namespace FIVE.RobotComponents
             set
             {
                 currentEnergy = value;
-                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(
-                    new RobotEnergyChangedEventArgs(value));
+                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(new RobotEnergyChangedEventArgs(value));
             }
         }
 
@@ -38,19 +28,20 @@ namespace FIVE.RobotComponents
         {
             Capacity = 100.0f;
             CurrentEnergy = Capacity;
-            DechargeSpeed = 1;
+            PowerConsumption = 0.1f;
         }
 
         public void Update()
         {
             if (isCharging)
             {
-                CurrentEnergy += Mathf.Clamp(chargeSpeed * Time.deltaTime, 0, Capacity);
+                currentEnergy += chargeSpeed;
             }
-            else
+            foreach (RobotComponent c in GetComponents<RobotComponent>())
             {
-                CurrentEnergy -= Mathf.Clamp(DechargeSpeed * Time.deltaTime, 0, Capacity);
+                currentEnergy -= c.PowerConsumption * Time.deltaTime;
             }
+            CurrentEnergy = Mathf.Clamp(CurrentEnergy, 0, Capacity);
         }
 
         public void Charge(int chargeSpeed)
@@ -68,7 +59,11 @@ namespace FIVE.RobotComponents
     public class RobotEnergyChangedEventArgs : EventArgs
     {
         public float NewEnergyLevel { get; }
-        public RobotEnergyChangedEventArgs(float newEnergyLevel) => NewEnergyLevel = newEnergyLevel;
+
+        public RobotEnergyChangedEventArgs(float newEnergyLevel)
+        {
+            NewEnergyLevel = newEnergyLevel;
+        }
     }
 
     public abstract class OnRobotEnergyChanged : IEventType<RobotEnergyChangedEventArgs>
