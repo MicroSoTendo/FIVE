@@ -38,6 +38,7 @@ namespace FIVE.GameModes
             UIManager.Create<NPCDialogueViewModel>().IsActive = false;
             UIManager.Create<BSCompositeViewModel>().IsActive = false;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
+            UIManager.Create<RecipeViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector
             CodeEditorViewModel codeEditorViewModel = UIManager.Create<CodeEditorViewModel>();
             StartCoroutine(codeEditorViewModel.ToggleEditorCoroutine());

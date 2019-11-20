@@ -46,7 +46,8 @@ namespace FIVE.UI.InGameDisplay
             this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
             this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
             EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
-            MainThreadDispatcher.ScheduleCoroutine(UpdateCellPool());
+            MainThreadDispatcher.ScheduleCoroutine(
+               UpdateCellPool());
         }
 
         public IEnumerator UpdateCellPool()

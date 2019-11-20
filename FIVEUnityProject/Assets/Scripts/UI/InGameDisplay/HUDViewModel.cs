@@ -17,6 +17,7 @@ namespace FIVE.UI.InGameDisplay
         public Button InventoryButton { get; }
         public Button ScanButton { get; }
         public Button MultiCameraModeButton { get; }
+        public Button RecipeButton { get; }
 
         public HUDViewModel() : base()
         {
@@ -25,13 +26,20 @@ namespace FIVE.UI.InGameDisplay
             MenuButton = Get<Button>(nameof(MenuButton));
             InventoryButton = Get<Button>(nameof(InventoryButton));
             ScanButton = Get<Button>(nameof(ScanButton));
+            RecipeButton = Get<Button>(nameof(RecipeButton));
             MultiCameraModeButton = Get<Button>(nameof(MultiCameraModeButton));
             Bind(MultiCameraModeButton).To(OnMultiCameraModeButtonPressed);
             Bind(InventoryButton).To(OnInventoryClicked);
             Bind(MenuButton).To(OnOptionClicked);
             Bind(ScanButton).To(OnScanClicked);
+            Bind(RecipeButton).To(OnRecipeClicked);
             EventManager.Subscribe<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(UpdateEnergy);
             MultiCameraModeButton.gameObject.SetActive(true);
+        }
+
+        private void OnRecipeClicked()
+        {
+            UIManager.Get<RecipeViewModel>().ToggleEnabled();
         }
 
         private void OnMultiCameraModeButtonPressed()
