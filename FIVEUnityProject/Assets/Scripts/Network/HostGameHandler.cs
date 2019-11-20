@@ -31,6 +31,12 @@ namespace FIVE.Network
             //TODO: Close client
         }
 
+        public override void Start()
+        {
+            listener.Start();
+            cts = new CancellationTokenSource();
+            incomingConnectionTask = HandleIncomingAsync(cts.Token);
+        }
 
         /// <summary>
         /// Used by <b>Host only</b>.<br/>
@@ -48,25 +54,23 @@ namespace FIVE.Network
             }
         }
 
-        public override void Start()
-        {
-            listener.Start();
-            cts = new CancellationTokenSource();
-            incomingConnectionTask = HandleIncomingAsync(cts.Token);
-        }
-
         public override void Stop()
         { 
-            //TODO
+            listener.Stop();
+            foreach (SyncHandler hostHandler in hostHandlers)
+            {
+                hostHandler.Stop();
+            }
+            cts.Cancel();
         }
         /// <summary>
         /// Late update run from main thread.
         /// </summary>
-        public override void Update()
+        public override void LateUpdate()
         {
             foreach (SyncHandler hostHandler in hostHandlers)
             {
-                hostHandler.Update();
+                hostHandler.LateUpdate();
             }
         }
 

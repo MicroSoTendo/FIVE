@@ -32,10 +32,15 @@ namespace FIVE.Network
             ID = GetNextPlayerID();
             ConnectedTcpClients.TryAdd(ID, tcpClient);
             onUpdate = PreSync;
+            handlers = new Action<byte[], int>[]
+            {
+                CreateObject,
+                RemoveObject,
+                ComponentSync,
+                RPC,
+            };
         }
-
-        private Action<byte[]>[] handlers;
-
+        private readonly Action<byte[], int>[] handlers;
         private void PreSync()
         {
             //Send all existed gameobjects
@@ -51,15 +56,15 @@ namespace FIVE.Network
 
         private void DoSync()
         {
-            OnRead();
-            OnWrite();
+            OnReceive();
+            OnSend();
         }
 
-        private void OnRead()
+        private void OnReceive()
         {
         }
 
-        private void OnWrite()
+        private void OnSend()
         {
 
         }
@@ -67,7 +72,7 @@ namespace FIVE.Network
         private void ResolvePakcet(byte[] packet)
         {
             GameSyncHeader header = packet.As<GameSyncHeader>();
-            handlers[(ushort)header](packet);
+            handlers[(ushort)header](packet, 2);
         }
 
         private void CreateObject(byte[] buffer, int offset = 0)
@@ -79,7 +84,7 @@ namespace FIVE.Network
             nv.networkID = networkID;
             nv.prefabID = prefabID;
             nv.DeserializeFrom(buffer);
-            SyncCenter.Instance.RegisterRemote(go, networkID);
+            SyncCenter.Instance.RegisterFromRemote(go, networkID);
             //TODO: Send this to other clients
         }
 
@@ -101,7 +106,7 @@ namespace FIVE.Network
             NetworkManager.Instance.RpcInfos[rpcCode].Invoke(go, null);
         }
 
-        public override void Update()
+        protected override void DoUpdate()
         {
             onUpdate();
         }

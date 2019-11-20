@@ -76,7 +76,7 @@ namespace ListServerCore
             byte[] opCodeBuffer = new byte[2];
             while (client.Connected)
             {
-                networkStream.Read(opCodeBuffer);
+                await networkStream.ReadAsync(opCodeBuffer,0,2);
                 HandleListServerCode(client, opCodeBuffer);
             }
         }

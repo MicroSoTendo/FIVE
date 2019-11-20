@@ -45,11 +45,6 @@ namespace FIVE.Network
             return new RoomInfo { Guid = guid, CurrentPlayers = currentPlayers, MaxPlayers = maxPlayers, HasPassword = hasPassword, Host = host, Port = port, Name = name };
         }
 
-        public static byte[] ToBytes(this int i)
-        {
-            return BitConverter.GetBytes(i);
-        }
-
         public static unsafe byte[] ToBytes(int a, int b)
         {
             byte[] buffer = new byte[8];
@@ -83,7 +78,7 @@ namespace FIVE.Network
             return result;
         }
 
-        public static unsafe void CopyTo<T>(this T t, byte[] dest, int startIndex) where T : unmanaged
+        public static unsafe void CopyTo<T>(this T t, byte[] dest, int startIndex = 0) where T : unmanaged
         {
             fixed (byte* pDest = &dest[startIndex])
             {
