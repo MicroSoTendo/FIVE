@@ -45,17 +45,8 @@ namespace FIVE.Interactive
             EventManager.Subscribe<OnDropItemToInventory, DropedItemToInventoryEventArgs>(OnDropItemToInventory);
             EventManager.Subscribe<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(RemovedItem);
             Items.CollectionChanged += ItemsCollectionChanged;
-            MainThreadDispatcher.ScheduleCoroutine(routine());
         }
 
-        private IEnumerator routine()
-        {
-            while (true)
-            {
-                Debug.Log(Items.Count);
-                yield return new WaitForSeconds(0.1f);
-            }
-        }
         private static void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             sender.RaiseImmediate<OnInventoryChanged>(e);
