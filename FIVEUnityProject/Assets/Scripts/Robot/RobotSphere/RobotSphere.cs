@@ -212,6 +212,8 @@ namespace FIVE.Robot
                     CameraManager.SetCamera(RobotManager.ActiveRobot.GetComponent<RobotSphere>().fpsCamera);
 
                     RobotManager.RemoveRobot(gameObject);
+                    CameraManager.Remove(fpsCamera);
+                    CameraManager.Remove(thirdPersonCamera);
                     gameObject.SetActive(false);
                     Destroy(gameObject);
                 }
