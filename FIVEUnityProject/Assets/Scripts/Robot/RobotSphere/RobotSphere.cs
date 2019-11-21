@@ -179,7 +179,10 @@ namespace FIVE.Robot
         {
             yield return new WaitForSeconds(0.2f);
             EnemyBehavior enemyBehavior = alien.GetComponent<EnemyBehavior>();
-            enemyBehavior?.OnHit();
+            if (enemyBehavior != null)
+            {
+                enemyBehavior.OnHit();
+            }
         }
 
         // Attack on a target coordinate

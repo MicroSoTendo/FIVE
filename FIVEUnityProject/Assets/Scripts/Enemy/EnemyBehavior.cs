@@ -134,6 +134,7 @@ namespace FIVE
         {
             health -= 30.0f;
             FlashRed();
+            GetComponent<AudioSource>().Play();
             if (health <= 0.0f)
             {
                 gameObject.SetActive(false);

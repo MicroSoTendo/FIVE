@@ -42,19 +42,16 @@ namespace FIVE.ControllerSystem
 
             if (Input.GetMouseButtonDown(1) && CameraManager.CurrentActiveCamera.name.StartsWith("Robot POV"))
             {
-                if (CameraManager.CurrentActiveCamera != null)
+                Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hitInfo))
                 {
-                    Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out RaycastHit hitInfo))
+                    if (hitInfo.collider.gameObject.name.StartsWith("AlienBeetle"))
                     {
-                        if (hitInfo.collider.gameObject.name.StartsWith("AlienBeetle"))
-                        {
-                            robotSphere.Attack(hitInfo.collider.gameObject);
-                        }
-                        else
-                        {
-                            robotSphere.Attack(hitInfo.point);
-                        }
+                        robotSphere.Attack(hitInfo.collider.gameObject);
+                    }
+                    else
+                    {
+                        robotSphere.Attack(hitInfo.point);
                     }
                 }
             }
