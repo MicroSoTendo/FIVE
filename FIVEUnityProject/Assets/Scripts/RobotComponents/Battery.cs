@@ -21,7 +21,11 @@ namespace FIVE.RobotComponents
             set
             {
                 currentEnergy = Mathf.Clamp(value, 0f, Capacity);
-                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(new RobotEnergyChangedEventArgs(CurrentEnergy));
+                if (GetComponent<RobotSphere>().ID == 1)
+                {
+                    Debug.Log(currentEnergy);
+                }
+                EventManager.RaiseImmediate<OnRobotEnergyChanged>(this, new RobotEnergyChangedEventArgs(currentEnergy));
             }
         }
 
@@ -29,10 +33,10 @@ namespace FIVE.RobotComponents
         {
             Capacity = 100.0f;
             CurrentEnergy = Capacity;
-            PowerConsumption = 0.1f;
+            PowerConsumption = 0.01f;
         }
 
-        public void Update()
+        private void Update()
         {
             if (isCharging)
             {

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace FIVE
 {
     [RequireComponent(typeof(CharacterController))]
-    public class Movable : RobotComponent
+    public class Movable : MonoBehaviour
     {
         public delegate void MoveOnce(int steps);
 
@@ -36,20 +36,15 @@ namespace FIVE
             RotateSpeed = 30.0f;
 
             MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
-            PowerConsumption = 30.5f;
         }
 
         private void Update()
         {
-            if (Moves.Count <= 0)
+            if (Moves.Count > 0)
             {
-                PowerConsumption = 0.5f;
-                return;
+                Move move = Moves.Dequeue();
+                MoveOnces[(int)move](1);
             }
-
-            Move move = Moves.Dequeue();
-            MoveOnces[(int)move](1);
-            PowerConsumption = 30.0f;
         }
 
         public void ClearSchedule()
@@ -68,21 +63,30 @@ namespace FIVE
         public void Forward(int steps)
         {
             cc.Move(gameObject.transform.forward * MoveSpeed);
+            ConsumePower();
         }
 
         public void Backward(int steps)
         {
             cc.Move(-gameObject.transform.forward * MoveSpeed);
+            ConsumePower();
         }
 
         public void TurnLeft(int steps)
         {
             gameObject.transform.Rotate(0, -steps, 0);
+            ConsumePower();
         }
 
         public void TurnRight(int steps)
         {
             gameObject.transform.Rotate(0, steps, 0);
+            ConsumePower();
+        }
+
+        private void ConsumePower(float n = 2.0f)
+        {
+            GetComponent<Battery>().CurrentEnergy -= n * Time.deltaTime;
         }
     }
 }
