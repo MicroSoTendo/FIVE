@@ -13,9 +13,9 @@ namespace ListServerCore
     {
 
         private static readonly HashSet<TcpClient> ConnectedClients = new HashSet<TcpClient>();
-        private static readonly HashSet<Task> SendTasks = new HashSet<Task>();
-        private static readonly HashSet<Task> ReadTasks = new HashSet<Task>();
-        private static readonly HashSet<Task> TimerTasks = new HashSet<Task>();
+        private static readonly ConcurrentDictionary<TcpClient,Task> SendTasks = new ConcurrentDictionary<TcpClient,Task>();
+        private static readonly ConcurrentDictionary<TcpClient,Task> ReadTasks = new ConcurrentDictionary<TcpClient,Task>();
+        private static readonly ConcurrentDictionary<TcpClient,Task> TimerTasks = new ConcurrentDictionary<TcpClient,Task>();
         
         private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfosByGuid = new ConcurrentDictionary<Guid, RoomInfo>();
         private static readonly ConcurrentDictionary<TcpClient, Guid> GuidByClient = new ConcurrentDictionary<TcpClient, Guid>();
@@ -108,7 +108,7 @@ namespace ListServerCore
                 if (key.Key == ConsoleKey.R)
                 {
                     handlerTask.Dispose();
-                    foreach (Task task in SendTasks)
+                    foreach (Task task in SendTasks.Values)
                     {
                         task.Dispose();
                     }
@@ -157,11 +157,13 @@ namespace ListServerCore
             {
                 await Task.Delay(1000, ct);
                 Timer[client] += 1000;
-                if (Timer[client] > 5000)
+                if (Timer[client] > 3000)
                 {
                     GuidByClient.TryRemove(client, out Guid guid);
                     RoomInfosByGuid.TryRemove(guid, out RoomInfo roomInfo);
                     Console.WriteLine($"Timeout: {roomInfo.Name} removed");
+                    TimerTasks.TryRemove(client, out _);
+                    break;
                 }
             }
         }
@@ -295,9 +297,9 @@ namespace ListServerCore
                 TcpClient client = await listener.AcceptTcpClientAsync();
                 ConnectedClients.Add(client);
                 Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
-                SendTasks.Add(ClientWriteAsync(client, ct));
-                ReadTasks.Add(ClientReadAsync(client, ct));
-                TimerTasks.Add(ClientTimeoutAsync(client, ct));
+                SendTasks.TryAdd(client, ClientWriteAsync(client, ct));
+                ReadTasks.TryAdd(client, ClientReadAsync(client, ct));
+                TimerTasks.TryAdd(client, ClientTimeoutAsync(client, ct));
             }
         }
     }
