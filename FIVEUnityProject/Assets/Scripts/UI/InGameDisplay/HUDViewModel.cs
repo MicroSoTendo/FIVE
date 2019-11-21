@@ -12,6 +12,11 @@ namespace FIVE.UI.InGameDisplay
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/HUD";
         public Button PlayerButton { get; }
         public Text BuffText { get; }
+        public Text SunText { get; }
+        public Text RainText { get; }
+        public Text FogText { get; }
+        public Text CloudText { get; }
+
         public Scrollbar EnergyScrollbar { get; }
         public Button MenuButton { get; }
         public Button InventoryButton { get; }
@@ -28,6 +33,10 @@ namespace FIVE.UI.InGameDisplay
             ScanButton = Get<Button>(nameof(ScanButton));
             RecipeButton = Get<Button>(nameof(RecipeButton));
             MultiCameraModeButton = Get<Button>(nameof(MultiCameraModeButton));
+            SunText = Get<Text>(nameof(SunText));
+            RainText = Get<Text>(nameof(RainText));
+            FogText = Get<Text>(nameof(FogText));
+            CloudText = Get<Text>(nameof(CloudText));
             Bind(MultiCameraModeButton).To(OnMultiCameraModeButtonPressed);
             Bind(InventoryButton).To(OnInventoryClicked);
             Bind(MenuButton).To(OnOptionClicked);
@@ -62,9 +71,14 @@ namespace FIVE.UI.InGameDisplay
             UIManager.Get<InventoryViewModel>().ToggleEnabled();
         }
 
+        private void ChangeText()
+        {
+            SunText.gameObject.SetActive(false);
+        }
         private void OnOptionClicked()
         {
             UIManager.Get<InGameMenuViewModel>().ToggleEnabled();
         }
+        //private void 
     }
 }
