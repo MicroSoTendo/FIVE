@@ -1,6 +1,6 @@
-﻿
-using FIVE.Robot;
+﻿using FIVE.Robot;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE
@@ -8,6 +8,8 @@ namespace FIVE
     [RequireComponent(typeof(CharacterController))]
     public class EnemyBehavior : MonoBehaviour
     {
+        public static List<GameObject> DropPickups;
+
         private enum State { Idle, Walk, Attack, };
 
         private State state;
@@ -26,6 +28,31 @@ namespace FIVE
         private float speed;
         private float elapsedTime;
         private float health;
+
+        private void Awake()
+        {
+            if (DropPickups == null)
+            {
+                DropPickups = new List<GameObject>();
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Ceramic_Blue"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Electrolytic"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_MemoryBackup"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Polypropylene"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_LightEmitting"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_Shottky"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_Zener"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/inductor_Air"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/inductor_Ferrite"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Inductor_Ferrite_Torodial"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Big"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Medium"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Small"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO92"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO126"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO220"));
+                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Wire"));
+            }
+        }
 
         private void Start()
         {
@@ -107,6 +134,7 @@ namespace FIVE
             if (health <= 0.0f)
             {
                 gameObject.SetActive(false);
+                GenPickups();
                 Destroy(gameObject);
             }
         }
@@ -162,6 +190,12 @@ namespace FIVE
         private void ResetColor()
         {
             rdr.material = bug;
+        }
+
+        private void GenPickups()
+        {
+            int index = Random.Range(0, DropPickups.Count);
+            Instantiate(DropPickups[index], transform.position, Quaternion.identity);
         }
     }
 }
