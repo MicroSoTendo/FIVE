@@ -21,10 +21,6 @@ namespace FIVE.RobotComponents
             set
             {
                 currentEnergy = Mathf.Clamp(value, 0f, Capacity);
-                if (GetComponent<RobotSphere>().ID == 1)
-                {
-                    Debug.Log(currentEnergy);
-                }
                 EventManager.RaiseImmediate<OnRobotEnergyChanged>(this, new RobotEnergyChangedEventArgs(currentEnergy));
             }
         }
