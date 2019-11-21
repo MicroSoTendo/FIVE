@@ -33,24 +33,27 @@ namespace FIVE
         {
             if (DropPickups == null)
             {
-                DropPickups = new List<GameObject>();
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Ceramic_Blue"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Electrolytic"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_MemoryBackup"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Polypropylene"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_LightEmitting"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_Shottky"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_Zener"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/inductor_Air"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/inductor_Ferrite"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Inductor_Ferrite_Torodial"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Big"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Medium"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Small"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO92"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO126"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO220"));
-                DropPickups.Add(Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Wire"));
+                DropPickups = new List<GameObject>
+                {
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Ceramic_Blue"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Electrolytic"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_MemoryBackup"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Capacitor_Polypropylene"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_LightEmitting"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_Schottky"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Diode_Zener"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/inductor_Air"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/inductor_Ferrite"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Inductor_Ferrite_Toroidal"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Big"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Medium"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Resistor_Small"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO92"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO126"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Transistor_TO220"),
+                    Resources.Load<GameObject>("EntityPrefabs/ElectronicPrefabs/Presentation/Wire")
+                };
+                Debug.Assert(DropPickups.TrueForAll(o => o != null));
             }
         }
 
