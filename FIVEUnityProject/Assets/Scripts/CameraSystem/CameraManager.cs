@@ -1,4 +1,5 @@
 ﻿using FIVE.EventSystem;
+using FIVE.Robot;
 using FIVE.UI;
 using FIVE.UI.CodeEditor;
 using System.Collections.Generic;
@@ -87,8 +88,10 @@ namespace FIVE.CameraSystem
             }
             cam.rect = new Rect(0, 0, 1, 1);
             SetCameraEnabled(cam, true);
+            SetAudioListener(cam);
             SetCameraFade(cam);
             CurrentActiveCamera = cam;
+            instance.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(newCamera: cam));
         }
 
         public static void SetCamera(string name)
@@ -130,9 +133,15 @@ namespace FIVE.CameraSystem
                     int x = Mathf.FloorToInt(Input.mousePosition.x / Screen.width * 2f);
                     int y = Mathf.FloorToInt(Input.mousePosition.y / Screen.height * 2f);
                     Camera ca = wall[x * 2 + y];
-                    SetCamera(ca);
                     SetAudioListener(ca);
-                    this.RaiseEvent<OnCameraSwitched, CameraSwitchedEventArgs>(new CameraSwitchedEventArgs(newCamera: ca));
+                    if (ca.name.Contains("Robot"))
+                    {
+                        ca.transform.parent.GetComponent<RobotSphere>().SwitchToThis();
+                    }
+                    else
+                    {
+                        SetCamera(ca);
+                    }
                     wall.Clear();
                     return;
                 }

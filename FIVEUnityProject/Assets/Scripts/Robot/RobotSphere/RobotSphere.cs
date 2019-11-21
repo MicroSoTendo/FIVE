@@ -90,6 +90,11 @@ namespace FIVE.Robot
 
         private void OnMouseDown()
         {
+            SwitchToThis();
+        }
+
+        public void SwitchToThis()
+        {
             RobotManager.ActiveRobot = gameObject;
             CameraManager.SetCamera(fpsCamera);
         }
