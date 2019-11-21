@@ -1,4 +1,5 @@
 ﻿using FIVE.Robot;
+using FIVE.RobotComponents;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,8 +22,7 @@ namespace FIVE.Interactive.Items
         {
             if (SkyBoxTime.isDayTime())
             {
-                //current Energy downs slower
-                RobotManager.ActiveRobot.GetComponent<RobotComponents.Battery>().CurrentEnergy += 0.7f;
+                SolarSingleton.PowerCharge = 1.0f;
             }
         }
     }

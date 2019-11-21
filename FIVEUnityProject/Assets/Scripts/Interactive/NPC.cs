@@ -1,9 +1,9 @@
 ﻿using FIVE.CameraSystem;
 using FIVE.Robot;
 using FIVE.UI;
-using FIVE.UI.BSComposite;
 using FIVE.UI.NPC;
 using System.Collections;
+using FIVE.UI.InGameDisplay;
 using UnityEngine;
 using static FIVE.EventSystem.Util;
 
@@ -81,7 +81,7 @@ namespace FIVE.Interactive
             }
             if (gameObject.name.Contains("Orange"))
             {
-                UIManager.Get<BSCompositeViewModel>().IsActive = true;
+                UIManager.Get<BlacksmithViewModel>().IsActive = true;
             }
             
         }

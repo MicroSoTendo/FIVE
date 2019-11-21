@@ -1,4 +1,5 @@
 ﻿using FIVE.EventSystem;
+using FIVE.Robot;
 using System;
 using UnityEngine;
 
@@ -19,8 +20,8 @@ namespace FIVE.RobotComponents
             get => currentEnergy;
             set
             {
-                currentEnergy = value;
-                this.RaiseEvent<OnRobotEnergyChanged, RobotEnergyChangedEventArgs>(new RobotEnergyChangedEventArgs(value));
+                currentEnergy = Mathf.Clamp(value, 0f, Capacity);
+                EventManager.RaiseImmediate<OnRobotEnergyChanged>(this, new RobotEnergyChangedEventArgs(currentEnergy));
             }
         }
 
@@ -28,20 +29,15 @@ namespace FIVE.RobotComponents
         {
             Capacity = 100.0f;
             CurrentEnergy = Capacity;
-            PowerConsumption = 0.1f;
+            PowerConsumption = 0.01f;
         }
 
-        public void Update()
+        protected override void RCUpdate()
         {
             if (isCharging)
             {
-                currentEnergy += chargeSpeed;
+                CurrentEnergy += chargeSpeed;
             }
-            foreach (RobotComponent c in GetComponents<RobotComponent>())
-            {
-                currentEnergy -= c.PowerConsumption * Time.deltaTime;
-            }
-            CurrentEnergy = Mathf.Clamp(CurrentEnergy, 0, Capacity);
         }
 
         public void Charge(int chargeSpeed)

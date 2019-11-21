@@ -3,6 +3,7 @@ using FIVE.EventSystem;
 using FIVE.Robot;
 using FIVE.RobotComponents;
 using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace FIVE.UI.InGameDisplay
@@ -58,7 +59,10 @@ namespace FIVE.UI.InGameDisplay
 
         private void UpdateEnergy(object sender, RobotEnergyChangedEventArgs e)
         {
-            EnergyScrollbar.size = e.NewEnergyLevel / 100f;
+            if (sender is Component robot && robot.gameObject == RobotManager.ActiveRobot)
+            {
+                EnergyScrollbar.size = e.NewEnergyLevel / 100f;
+            }
         }
 
         private void OnScanClicked()

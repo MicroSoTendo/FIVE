@@ -75,7 +75,7 @@ namespace FIVE.Robot
                 position: new Vector3(0, 2, 0),
                 rotation: Quaternion.Euler(90, 0, 0));
 
-            var light = transform.GetComponentInChildren<Light>().gameObject;
+            GameObject light = transform.GetComponentInChildren<Light>().gameObject;
             light.SetParent(fpsCamera.transform);
 
             animator = new RobotFreeAnim(gameObject);
@@ -175,6 +175,7 @@ namespace FIVE.Robot
                 StartCoroutine(ShutGunfire(gunfire));
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
+                fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
             }
         }
 
@@ -188,6 +189,7 @@ namespace FIVE.Robot
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target.transform.position;
                 StartCoroutine(KillAlien(target));
+                fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
             }
         }
 
@@ -212,6 +214,8 @@ namespace FIVE.Robot
                     CameraManager.SetCamera(RobotManager.ActiveRobot.GetComponent<RobotSphere>().fpsCamera);
 
                     RobotManager.RemoveRobot(gameObject);
+                    CameraManager.Remove(fpsCamera);
+                    CameraManager.Remove(thirdPersonCamera);
                     gameObject.SetActive(false);
                     Destroy(gameObject);
                 }

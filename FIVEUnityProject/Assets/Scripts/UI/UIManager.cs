@@ -25,6 +25,9 @@ namespace FIVE.UI
 
         public static void SetCursor(CursorType cursorType)
         {
+            //TODO: Fix
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            return;
             switch (cursorType)
             {
                 case CursorType.Aim:

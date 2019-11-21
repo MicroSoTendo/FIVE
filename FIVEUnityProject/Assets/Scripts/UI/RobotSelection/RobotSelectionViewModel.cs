@@ -1,16 +1,10 @@
 ﻿using FIVE.EventSystem;
-using FIVE.Interactive;
-using FIVE.Interactive.Blacksmith;
-using FIVE.Robot;
 using FIVE.UI.StartupMenu;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace FIVE.UI.RobotSelection
 {
-    
+
     public class RobotSelectionViewModel : ViewModel
     {
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/RobotSelection";
@@ -30,7 +24,7 @@ namespace FIVE.UI.RobotSelection
 
         private void OnSelectThreeButtonClick()
         {
-            
+
             IsActive = false;
             this.RaiseEvent<OnSinglePlayerButtonClicked>();
         }
