@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FIVE.Network
 {
@@ -48,7 +49,7 @@ namespace FIVE.Network
         private CancellationTokenSource cts;
 
         private int timeout = 0;
-        private readonly Action<NetworkStream>[] handlers;
+        private readonly Dictionary<ListServerHeader, Action<TcpClient>> handlers;
 
         private readonly ConcurrentQueue<ListServerHeader> sendQueue;
 
@@ -59,27 +60,28 @@ namespace FIVE.Network
             this.listServerPort = listServerPort;
             md5 = MD5.Create();
             sendQueue = new ConcurrentQueue<ListServerHeader>();
-            handlers = new Action<NetworkStream>[]
+            handlers = new Dictionary<ListServerHeader, Action<TcpClient>>
             {
-                AliveTickHandler,
-                RoomInfosHandler,
-                AssignGuidHandler,
-                CreateRoomHandler,
-                RemoveRoomHandler,
-                UpdateNameHandler,
-                UpdateCurrentPlayer,  
-                UpdateMaxPlayer,
-                UpdatePassword
+                {ListServerHeader.AliveTick , AliveTickHandler},
+                {ListServerHeader.RoomInfos, RoomInfosHandler},
+                {ListServerHeader.AssignGuid, AssignGuidHandler},
+                {ListServerHeader.CreateRoom, CreateRoomHandler},
+                {ListServerHeader.RemoveRoom, RemoveRoomHandler},
+                {ListServerHeader.UpdateName, UpdateNameHandler},
+                {ListServerHeader.UpdateCurrentPlayer, UpdateCurrentPlayer},  
+                {ListServerHeader.UpdateMaxPlayer, UpdateMaxPlayer},
+                {ListServerHeader.UpdatePassword, UpdatePassword}
             };
         }
 
-        private void AliveTickHandler(NetworkStream _)
+        private void AliveTickHandler(TcpClient client)
         {
             Interlocked.Exchange(ref timeout, 0);
         }
 
-        private void RoomInfosHandler(NetworkStream stream)
+        private void RoomInfosHandler(TcpClient client)
         {
+            NetworkStream stream = client.GetStream();
             roomInfos.Clear();
             int roomCount = stream.ReadI32();
             for (int i = 0; i < roomCount; i++)
@@ -91,39 +93,39 @@ namespace FIVE.Network
             }
         } 
         
-        private void CreateRoomHandler(NetworkStream stream)
+        private void CreateRoomHandler(TcpClient client)
         {
-            stream.Write(NetworkManager.Instance.RoomInfo.FullPacket());
+            client.GetStream().Write(NetworkManager.Instance.CurrentRoomInfo.FullPacket());
         }
 
-        private void AssignGuidHandler(NetworkStream stream)
+        private void AssignGuidHandler(TcpClient client)
         {
-            NetworkManager.Instance.RoomInfo.Guid = stream.ReadGuid();
+            NetworkManager.Instance.CurrentRoomInfo.Guid = client.GetStream().ReadGuid();
         }
 
-        private void RemoveRoomHandler(NetworkStream stream)
+        private void RemoveRoomHandler(TcpClient client)
         {
-            stream.WriteByte((byte)ListServerHeader.RemoveRoom);
+            client.GetStream().WriteByte((byte)ListServerHeader.RemoveRoom);
         }
 
-        private void UpdateNameHandler(NetworkStream stream)
+        private void UpdateNameHandler(TcpClient client)
         {
-            stream.Write(NetworkManager.Instance.RoomInfo.NamePacket());
+            client.GetStream().Write(NetworkManager.Instance.CurrentRoomInfo.NamePacket());
         }  
         
-        private void UpdateCurrentPlayer(NetworkStream stream)
+        private void UpdateCurrentPlayer(TcpClient client)
         {
-            stream.Write(NetworkManager.Instance.RoomInfo.CurrentPlayerPacket());
+            client.GetStream().Write(NetworkManager.Instance.CurrentRoomInfo.CurrentPlayerPacket());
         }
         
-        private void UpdateMaxPlayer(NetworkStream stream)
+        private void UpdateMaxPlayer(TcpClient client)
         {
-            stream.Write(NetworkManager.Instance.RoomInfo.MaxPlayerPacket());
+            client.GetStream().Write(NetworkManager.Instance.CurrentRoomInfo.MaxPlayerPacket());
         }
 
-        private void UpdatePassword(NetworkStream stream)
+        private void UpdatePassword(TcpClient client)
         {
-            stream.Write(NetworkManager.Instance.RoomInfo.PasswordPacket());
+            client.GetStream().Write(NetworkManager.Instance.CurrentRoomInfo.PasswordPacket());
         }
 
         public void Start()
@@ -132,7 +134,7 @@ namespace FIVE.Network
             cts = new CancellationTokenSource();
             sendTask = SendAsync(cts.Token);
             readTask = ReadAsync(cts.Token);
-            timerTask = TimerAsync(cts.Token);
+            //timerTask = TimerAsync(cts.Token);
         }
 
         public void Stop()
@@ -157,18 +159,17 @@ namespace FIVE.Network
 
         private async Task SendAsync(CancellationToken ct)
         {
-            if (listServerClient.Connected)
+            if (!listServerClient.Connected)
             {
                 return;
             }
 
-            NetworkStream stream = listServerClient.GetStream();
             while (!ct.IsCancellationRequested)
             {
                 while (!ct.IsCancellationRequested && 
                        sendQueue.TryDequeue(out ListServerHeader header))
                 {
-                    handlers[(byte)header](stream);
+                    handlers[header](listServerClient);
                 }
                 await Task.Delay(30, ct);
             }
@@ -176,15 +177,15 @@ namespace FIVE.Network
 
         private async Task ReadAsync(CancellationToken ct)
         {
-            if (listServerClient.Connected)
+            if (!listServerClient.Connected)
             {
                 return;
             }
             NetworkStream stream = listServerClient.GetStream();
             while (!ct.IsCancellationRequested)
             {
-                byte headerBuffer = stream.ReadAByte();
-                handlers[headerBuffer](stream);
+                ListServerHeader header = stream.Read(1).As<ListServerHeader>();
+                handlers[header](listServerClient);
                 await Task.Delay(500, ct);
             }
         }
@@ -201,19 +202,19 @@ namespace FIVE.Network
 
         public void UpdateRoomName(string name)
         {
-            NetworkManager.Instance.RoomInfo.Name = name;
+            NetworkManager.Instance.CurrentRoomInfo.Name = name;
             sendQueue.Enqueue(ListServerHeader.UpdateName);
         }
 
         public void UpdateCurrentPlayers(int current)
         {
-            NetworkManager.Instance.RoomInfo.CurrentPlayers = current;
+            NetworkManager.Instance.CurrentRoomInfo.CurrentPlayers = current;
             sendQueue.Enqueue(ListServerHeader.UpdateCurrentPlayer);
         }
 
         public void UpdateMaxPlayers(int max)
         {
-            NetworkManager.Instance.RoomInfo.MaxPlayers = max;
+            NetworkManager.Instance.CurrentRoomInfo.MaxPlayers = max;
             sendQueue.Enqueue(ListServerHeader.UpdateMaxPlayer);
         }
 
@@ -221,9 +222,9 @@ namespace FIVE.Network
         {
             if (hasPassword)
             {
-                NetworkManager.Instance.RoomInfo.SetRoomPassword(password);
+                NetworkManager.Instance.CurrentRoomInfo.SetRoomPassword(password);
             }
-            if (NetworkManager.Instance.RoomInfo.HasPassword != hasPassword)
+            if (NetworkManager.Instance.CurrentRoomInfo.HasPassword != hasPassword)
             {
                 sendQueue.Enqueue(ListServerHeader.UpdatePassword);
             }

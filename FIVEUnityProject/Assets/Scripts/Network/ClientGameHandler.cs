@@ -31,8 +31,8 @@ namespace FIVE.Network
 
         public override void Start()
         {
-            int ip = NetworkManager.Instance.RoomInfo.Host;
-            ushort port = NetworkManager.Instance.RoomInfo.Port;
+            int ip = NetworkManager.Instance.CurrentRoomInfo.Host;
+            ushort port = NetworkManager.Instance.CurrentRoomInfo.Port;
             client.Connect(new IPAddress(ip), port);
             cts = new CancellationTokenSource();
             handshakeTask = Handshaker.ClientHandshaker.HandShakeAsync(client, cts.Token);

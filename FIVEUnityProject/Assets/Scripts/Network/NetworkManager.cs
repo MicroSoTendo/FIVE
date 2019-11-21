@@ -50,7 +50,7 @@ namespace FIVE.Network
         public NetworkState State { get; internal set; } 
 
         public ICollection<RoomInfo> RoomInfos => lobbyHandler.GetRoomInfos;
-        public RoomInfo RoomInfo { get; private set; }
+        public RoomInfo CurrentRoomInfo { get; private set; } = new RoomInfo();
         private LobbyHandler lobbyHandler;
 
         public int PlayerIndex { get; internal set; }
@@ -96,8 +96,8 @@ namespace FIVE.Network
 
         public void JoinRoom(Guid guid, string password)
         {
-            RoomInfo = lobbyHandler[guid];
-            RoomInfo.SetRoomPassword(password);
+            CurrentRoomInfo = lobbyHandler[guid];
+            CurrentRoomInfo.SetRoomPassword(password);
 
             networkGameHandler = new ClientGameHandler();
             networkGameHandler.Start();
@@ -106,14 +106,14 @@ namespace FIVE.Network
 
         public void CreateRoom(string roomName, int maxPlayers, bool hasPassword, string password)
         {
-            RoomInfo.Name = roomName;
-            RoomInfo.Port = gameServerPort;
-            RoomInfo.CurrentPlayers = 1; //Host self
-            RoomInfo.HasPassword = hasPassword;
-            RoomInfo.MaxPlayers = maxPlayers;
+            CurrentRoomInfo.Name = roomName;
+            CurrentRoomInfo.Port = gameServerPort;
+            CurrentRoomInfo.CurrentPlayers = 1; //Host self
+            CurrentRoomInfo.HasPassword = hasPassword;
+            CurrentRoomInfo.MaxPlayers = maxPlayers;
             if (hasPassword)
             {
-                RoomInfo.SetRoomPassword(password);
+                CurrentRoomInfo.SetRoomPassword(password);
             }
             lobbyHandler.CreateRoom();
 

@@ -14,7 +14,7 @@ namespace FIVE.Network
         private Task incomingConnectionTask;
         public HostGameHandler()
         {
-            listener = new TcpListener(IPAddress.Any, NetworkManager.Instance.RoomInfo.Port);
+            listener = new TcpListener(IPAddress.Any, NetworkManager.Instance.CurrentRoomInfo.Port);
             hostHandlers = new ConcurrentBag<SyncHandler>();
             Handshaker.HostHandshaker.OnHandshakeSuccess += OnHandshakeSuccess;
             Handshaker.HostHandshaker.OnHandshakeFail += OnHandshakeFail;

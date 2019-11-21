@@ -38,12 +38,12 @@ namespace FIVE.Network
 
             private static bool CheckPassword(NetworkStream stream)
             {
-                if (!NetworkManager.Instance.RoomInfo.HasPassword)
+                if (!NetworkManager.Instance.CurrentRoomInfo.HasPassword)
                 {
                     return true;
                 }
                 byte[] hashedPassword = stream.Read(16);
-                return BytesCompare(hashedPassword, 0, NetworkManager.Instance.RoomInfo.HashedPassword, 0, 16);
+                return BytesCompare(hashedPassword, 0, NetworkManager.Instance.CurrentRoomInfo.HashedPassword, 0, 16);
             }
 
             private static unsafe bool CheckHeader(byte[] buffer)
@@ -61,9 +61,9 @@ namespace FIVE.Network
             {
                 NetworkStream stream = client.GetStream();
                 await stream.WriteAsync(((ushort)GameSyncHeader.JoinRequest).ToBytes(), 0, 2, ct);
-                if (NetworkManager.Instance.RoomInfo.HasPassword)
+                if (NetworkManager.Instance.CurrentRoomInfo.HasPassword)
                 {
-                    await stream.WriteAsync(NetworkManager.Instance.RoomInfo.HashedPassword, 0, 16, ct);
+                    await stream.WriteAsync(NetworkManager.Instance.CurrentRoomInfo.HashedPassword, 0, 16, ct);
                 }
                 if (CheckResult(stream))
                 {
