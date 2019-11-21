@@ -2494,6 +2494,7 @@ GameObject:
   - component: {fileID: 8035860890383841827}
   - component: {fileID: 2507954002220415329}
   - component: {fileID: 8964330923447369542}
+  - component: {fileID: 4505614565824162122}
   m_Layer: 0
   m_Name: robotSphere
   m_TagString: Untagged
@@ -2611,7 +2612,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d512b5b5806ded48b13cebbf9e119e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PowerConsumption: 0
   Speed: 0
 --- !u!114 &8964330923447369542
 MonoBehaviour:
@@ -2625,7 +2625,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea7165a013ac60845ba9acc320905023, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DechargeSpeed: 0
+--- !u!114 &4505614565824162122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528915638184230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e12e932ab8dbef74db8cb91b17d645c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1533244445735912
 GameObject:
   m_ObjectHideFlags: 0
@@ -4240,13 +4251,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 4233126744529218029}
-    characterCount: 2
+    characterCount: 0
     spriteCount: 0
     spaceCount: 0
-    wordCount: 1
+    wordCount: 0
     linkCount: 0
-    lineCount: 1
-    pageCount: 1
+    lineCount: 0
+    pageCount: 0
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
