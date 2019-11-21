@@ -222,13 +222,14 @@ namespace FIVE.Robot
                 }
                 else
                 {
-                    int id = RobotManager.ID2Robot.GetEnumerator().Current.Key;
-                    RobotManager.ActiveRobot = RobotManager.ID2Robot[id];
-                    CameraManager.SetCamera(RobotManager.ActiveRobot.GetComponent<RobotSphere>().fpsCamera);
-
                     RobotManager.RemoveRobot(gameObject);
                     CameraManager.Remove(fpsCamera);
                     CameraManager.Remove(thirdPersonCamera);
+
+                    System.Collections.Generic.Dictionary<int, GameObject>.Enumerator it = RobotManager.ID2Robot.GetEnumerator();
+                    it.MoveNext();
+                    it.Current.Value.GetComponent<RobotSphere>().SwitchToThis();
+
                     gameObject.SetActive(false);
                     Destroy(gameObject);
                 }
