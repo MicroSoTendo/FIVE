@@ -13,6 +13,7 @@ namespace FIVE.Robot
     [RequireComponent(typeof(Movable))]
     [RequireComponent(typeof(CPU))]
     [RequireComponent(typeof(Battery))]
+    [RequireComponent(typeof(AudioSource))]
     public class RobotSphere : RobotBehaviour
     {
         public int ID;
