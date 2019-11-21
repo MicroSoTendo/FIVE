@@ -18,6 +18,8 @@ namespace FIVE.ControllerSystem
             robotSphere = gameObject.GetComponent<RobotSphere>();
         }
 
+        private float lastshot;
+
         public void Update()
         {
             if (Input.GetKey(KeyCode.W))
@@ -40,18 +42,26 @@ namespace FIVE.ControllerSystem
                 robotSphere.Move(Movable.Move.Right, 5);
             }
 
-            if (Input.GetMouseButtonDown(1) && CameraManager.CurrentActiveCamera.name.StartsWith("Robot POV"))
+            if (Input.GetMouseButton(1))
             {
-                Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hitInfo))
+                if (CameraManager.CurrentActiveCamera.name.StartsWith("Robot POV"))
                 {
-                    if (hitInfo.collider.gameObject.name.StartsWith("AlienBeetle"))
+                    if (Time.time - lastshot > 0.15f)
                     {
-                        robotSphere.Attack(hitInfo.collider.gameObject);
-                    }
-                    else
-                    {
-                        robotSphere.Attack(hitInfo.point);
+                        lastshot = Time.time;
+
+                        Ray ray = CameraManager.CurrentActiveCamera.ScreenPointToRay(Input.mousePosition);
+                        if (Physics.Raycast(ray, out RaycastHit hitInfo))
+                        {
+                            if (hitInfo.collider.gameObject.name.StartsWith("AlienBeetle"))
+                            {
+                                robotSphere.Attack(hitInfo.collider.gameObject);
+                            }
+                            else
+                            {
+                                robotSphere.Attack(hitInfo.point);
+                            }
+                        }
                     }
                 }
             }

@@ -196,6 +196,8 @@ namespace FIVE.Robot
                 bullet.GetComponent<Bullet>().Target = target;
                 fpsCamera.GetComponent<CameraShake>().ShakeCamera(1.5f, 0.5f);
                 Shot.Play();
+
+                GetComponent<Battery>().CurrentEnergy -= 0.001f;
             }
         }
 
@@ -211,6 +213,8 @@ namespace FIVE.Robot
                 StartCoroutine(KillAlien(target));
                 fpsCamera.GetComponent<CameraShake>().ShakeCamera(1.5f, 0.5f);
                 Shot.Play();
+
+                GetComponent<Battery>().CurrentEnergy -= 0.001f;
             }
         }
 
