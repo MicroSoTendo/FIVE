@@ -191,7 +191,7 @@ namespace FIVE.Robot
                 StartCoroutine(ShutGunfire(gunfire));
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
-                fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
+                fpsCamera.GetComponent<CameraShake>().ShakeCamera(1.5f, 0.5f);
                 Shot.Play();
             }
         }
@@ -206,7 +206,7 @@ namespace FIVE.Robot
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target.transform.position;
                 StartCoroutine(KillAlien(target));
-                fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
+                fpsCamera.GetComponent<CameraShake>().ShakeCamera(1.5f, 0.5f);
                 Shot.Play();
             }
         }
