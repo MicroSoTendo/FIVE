@@ -121,41 +121,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!84 &174026679
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  serializedVersion: 3
-  m_Width: 2048
-  m_Height: 2048
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!114 &221292341 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2277921807377769394, guid: dd728c769a2231345a617745e2092122,
@@ -246,41 +211,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b2448d7ad76ff46bab248a00cec2dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!84 &1221887166
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  serializedVersion: 3
-  m_Width: 512
-  m_Height: 512
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &1505153200
 GameObject:
   m_ObjectHideFlags: 0
@@ -5105,6 +5035,41 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 8083497250558504707}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1558410528
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  serializedVersion: 3
+  m_Width: 512
+  m_Height: 512
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!21 &1632326833
 Material:
   serializedVersion: 6
@@ -5208,6 +5173,41 @@ MonoBehaviour:
   - {fileID: 8399917682610804045, guid: d40b14f7a222a40458a2731f5bf43567, type: 3}
   - {fileID: 7673448739380194672, guid: 35e889fded39d7b46bbc778622dea305, type: 3}
   - {fileID: 5635016158228287630, guid: 83a996776e9dd7546b93aef52980138f, type: 3}
+--- !u!84 &2011077581
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  serializedVersion: 3
+  m_Width: 256
+  m_Height: 256
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 1
+  m_ColorFormat: 48
+  m_MipMap: 1
+  m_GenerateMips: 0
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 4
+  m_VolumeDepth: 1
 --- !u!1 &2017403113
 GameObject:
   m_ObjectHideFlags: 0
@@ -10029,6 +10029,41 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!84 &2137391955
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  serializedVersion: 3
+  m_Width: 2048
+  m_Height: 2048
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1001 &3697065842809857355
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10040,6 +10075,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enviro Directional Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 5223345398227098772, guid: df00b886f0aa9354c90222c352889358,
+        type: 3}
+      propertyPath: _material
+      value: 
+      objectReference: {fileID: 1632326833}
+    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.4863031
+      objectReference: {fileID: 0}
+    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.47658926
+      objectReference: {fileID: 0}
+    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.46658105
+      objectReference: {fileID: 0}
+    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.8918916
+      objectReference: {fileID: 0}
+    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
+        type: 3}
+      propertyPath: m_Shadows.m_Strength
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 4448134570466423655, guid: df00b886f0aa9354c90222c352889358,
         type: 3}
@@ -10096,36 +10161,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 0.4863031
-      objectReference: {fileID: 0}
-    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 0.47658926
-      objectReference: {fileID: 0}
-    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 0.46658105
-      objectReference: {fileID: 0}
-    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 0.8918916
-      objectReference: {fileID: 0}
-    - target: {fileID: 5690866268030848521, guid: df00b886f0aa9354c90222c352889358,
-        type: 3}
-      propertyPath: m_Shadows.m_Strength
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5223345398227098772, guid: df00b886f0aa9354c90222c352889358,
-        type: 3}
-      propertyPath: _material
-      value: 
-      objectReference: {fileID: 1632326833}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df00b886f0aa9354c90222c352889358, type: 3}
 --- !u!1001 &3974405126104255061
@@ -10269,31 +10304,31 @@ PrefabInstance:
         type: 3}
       propertyPath: weatherMap
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1558410528}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: cloudShadowMap
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2137391955}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: cloudAnim.y
-      value: -0.44909084
+      value: -0.030249624
       objectReference: {fileID: 0}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: cloudAnim.z
-      value: -0.5840333
+      value: 0.36038238
       objectReference: {fileID: 0}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: cloudAnimNonScaled.y
-      value: -6.4641023
+      value: -6.622675
       objectReference: {fileID: 0}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: cirrusAnim.y
-      value: 0.3763765
+      value: 0.28748104
       objectReference: {fileID: 0}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
@@ -10529,12 +10564,12 @@ PrefabInstance:
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: Weather.snowStrength
-      value: 9.3761e-41
+      value: 8.4e-42
       objectReference: {fileID: 0}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
       propertyPath: Weather.curSnowStrength
-      value: 9.3761e-41
+      value: 8.4e-42
       objectReference: {fileID: 0}
     - target: {fileID: 2871667606546631823, guid: e9aef967d9f644049b06e4145ebb555a,
         type: 3}
@@ -10555,6 +10590,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_CustomBakedTexture
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 771056443963979968, guid: e9aef967d9f644049b06e4145ebb555a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9aef967d9f644049b06e4145ebb555a, type: 3}
