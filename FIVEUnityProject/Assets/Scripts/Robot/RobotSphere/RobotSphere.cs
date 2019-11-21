@@ -22,6 +22,9 @@ namespace FIVE.Robot
         public GameObject BulletPrefab;
         public GameObject GunfirePrefab;
 
+        private AudioSource Shot;
+        private AudioSource Walk;
+
         // Script References
         private RobotFreeAnim animator;
 
@@ -61,6 +64,9 @@ namespace FIVE.Robot
 
             Battery = GetComponent<Battery>();
             CPU = GetComponent<CPU>();
+
+            Shot = GetComponents<AudioSource>()[0];
+            Walk = GetComponents<AudioSource>()[1];
 
             base.Awake();
         }
@@ -138,6 +144,10 @@ namespace FIVE.Robot
             if (CurrentState == RobotSphereState.Walk)
             {
                 fpsCamera.transform.localPosition = new Vector3(Mathf.Sin(Time.time * 8f) * 0.02f, 0.1f + Mathf.Sin(Time.time * 16f) * 0.02f, 0.07f);
+                if (!Walk.isPlaying)
+                {
+                    Walk.Play();
+                }
             }
         }
 
@@ -181,7 +191,7 @@ namespace FIVE.Robot
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
                 fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
-                GetComponent<AudioSource>().Play();
+                Shot.Play();
             }
         }
 
@@ -196,7 +206,7 @@ namespace FIVE.Robot
                 bullet.GetComponent<Bullet>().Target = target.transform.position;
                 StartCoroutine(KillAlien(target));
                 fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
-                GetComponent<AudioSource>().Play();
+                Shot.Play();
             }
         }
 
