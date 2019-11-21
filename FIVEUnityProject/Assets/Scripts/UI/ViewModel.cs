@@ -98,7 +98,6 @@ namespace FIVE.UI
             {
                 return UIElements[name].GetComponent<T>();
             }
-
             return Root.FindChildRecursive(name).GetComponent<T>();
         }
 

@@ -37,20 +37,18 @@ namespace FIVE.Interactive
 
     public class Inventory
     {
-        private readonly ObservableCollection<GameObject> items
-            = new ObservableCollection<GameObject>();
+        public ObservableCollection<GameObject> Items { get; } = new ObservableCollection<GameObject>();
 
-        public IEnumerable<GameObject> Items => items;
         public Inventory()
         {
             EventManager.Subscribe<OnDropItemToInventory, DropedItemToInventoryEventArgs>(OnDropItemToInventory);
             EventManager.Subscribe<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(RemovedItem);
-            items.CollectionChanged += Items_CollectionChanged;
+            Items.CollectionChanged += ItemsCollectionChanged;
         }
 
-        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private static void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            this.RaiseImmediate<OnInventoryChanged>(e);
+            sender.RaiseImmediate<OnInventoryChanged>(e);
         }
 
         private void RemovedItem(object sender, RemoveItemRequestedEventArgs e)
@@ -65,12 +63,12 @@ namespace FIVE.Interactive
 
         public void Add(GameObject item)
         {
-            items.Add(item);
+            Items.Add(item);
         }
 
         public void Remove(GameObject item)
         {
-            items.Remove(item);
+            Items.Remove(item);
         }
     }
 }
