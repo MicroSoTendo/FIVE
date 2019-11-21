@@ -13,6 +13,7 @@ namespace FIVE.Robot
     [RequireComponent(typeof(Movable))]
     [RequireComponent(typeof(CPU))]
     [RequireComponent(typeof(Battery))]
+    [RequireComponent(typeof(AudioSource))]
     public class RobotSphere : RobotBehaviour
     {
         public int ID;
@@ -190,7 +191,7 @@ namespace FIVE.Robot
                 StartCoroutine(ShutGunfire(gunfire));
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target;
-                fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
+                fpsCamera.GetComponent<CameraShake>().ShakeCamera(1.5f, 0.5f);
                 Shot.Play();
             }
         }
@@ -205,7 +206,7 @@ namespace FIVE.Robot
                 GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
                 bullet.GetComponent<Bullet>().Target = target.transform.position;
                 StartCoroutine(KillAlien(target));
-                fpsCamera.GetComponent<CameraShake>().ShakeCamera(0.5f, 0.5f);
+                fpsCamera.GetComponent<CameraShake>().ShakeCamera(1.5f, 0.5f);
                 Shot.Play();
             }
         }
@@ -221,13 +222,14 @@ namespace FIVE.Robot
                 }
                 else
                 {
-                    int id = RobotManager.ID2Robot.GetEnumerator().Current.Key;
-                    RobotManager.ActiveRobot = RobotManager.ID2Robot[id];
-                    CameraManager.SetCamera(RobotManager.ActiveRobot.GetComponent<RobotSphere>().fpsCamera);
-
                     RobotManager.RemoveRobot(gameObject);
                     CameraManager.Remove(fpsCamera);
                     CameraManager.Remove(thirdPersonCamera);
+
+                    System.Collections.Generic.Dictionary<int, GameObject>.Enumerator it = RobotManager.ID2Robot.GetEnumerator();
+                    it.MoveNext();
+                    it.Current.Value.GetComponent<RobotSphere>().SwitchToThis();
+
                     gameObject.SetActive(false);
                     Destroy(gameObject);
                 }

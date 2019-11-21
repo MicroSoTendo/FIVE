@@ -1,19 +1,16 @@
-﻿using System;
+﻿using FIVE.FIVE.Network;
+using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
-using FIVE.FIVE.Network;
 using UnityEngine;
 
 namespace FIVE.Network
 {
     public class NetworkManager : MonoBehaviour
-    {       
-        
+    {
+
         /// <summary>
         /// Describes state of this instance.
         /// </summary>
@@ -24,7 +21,7 @@ namespace FIVE.Network
             /// </summary>
             Idle,
 
-            
+
             /// <summary>
             /// Hosting a networked game.
             /// </summary>
@@ -47,7 +44,7 @@ namespace FIVE.Network
         [SerializeField] private int updateRate = 30;
         [SerializeField] private ushort gameServerPort = 8889;
         [SerializeField] private bool localMode = false;
-        public NetworkState State { get; internal set; } 
+        public NetworkState State { get; internal set; }
 
         public ICollection<RoomInfo> RoomInfos => lobbyHandler.GetRoomInfos;
         public RoomInfo CurrentRoomInfo { get; private set; } = new RoomInfo();
@@ -74,24 +71,45 @@ namespace FIVE.Network
             }
         }
 
+        private class MethodComparer : IComparer<MethodInfo>
+        {
+            public int Compare(MethodInfo x, MethodInfo y)
+            {
+                return x == null ? 1 : x.Name.CompareTo(y);
+            }
+        }
+
         public IEnumerator Start()
         {
-            var methods = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in assembly.GetTypes()
-                from method in type.GetMethods()
-                where method.GetCustomAttributes(typeof(RPCAttribute), false).Length > 0
-                select method).ToList();
-            if (methods.Count > 0)
+            var methodsInfos = new SortedSet<MethodInfo>(new MethodComparer());
+            foreach (Assembly assembly in RPCAttribute.ValidAssemblies)
             {
-                int counter = 0;
-                RpcInfos = new BijectMap<int, MethodInfo>();
-                methods.Sort();
-                foreach (MethodInfo methodInfo in methods)
+                foreach (Type type in assembly.GetTypes())
                 {
-                    RpcInfos.Add(counter++, methodInfo);
+                    if (typeof(IRpcInvokeable).IsAssignableFrom(type))
+                    {
+                        foreach (MethodInfo methodInfo in type.GetMethods())
+                        {
+                            if (methodInfo.GetCustomAttributes(typeof(RPCAttribute), false).Length > 0)
+                            {
+                                methodsInfos.Add(methodInfo);
+                            }
+                        }
+                    }
                     yield return new WaitForFixedUpdate();
                 }
             }
+            if (methodsInfos.Count > 0)
+            {
+                RpcInfos = new BijectMap<int, MethodInfo>();
+                int counter = 0;
+                foreach (MethodInfo methodsInfo in methodsInfos)
+                {
+                    RpcInfos.Add(counter++, methodsInfo);
+                    yield return new WaitForFixedUpdate();
+                }
+            }
+            Debug.Log("NetworkManager Started");
         }
 
         public void JoinRoom(Guid guid, string password)

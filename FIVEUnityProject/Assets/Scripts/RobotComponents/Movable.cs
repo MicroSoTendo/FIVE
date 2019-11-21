@@ -16,26 +16,18 @@ namespace FIVE
         private CharacterController cc;
 
         public float MoveSpeed;
-
         public Vector3 MoveTarget;
-
         public float RotateSpeed;
-
         public float RotateTarget;
 
-        public MoveOnce[] MoveOnces
-        {
-            get;
-            private set;
-        }
+        public MoveOnce[] MoveOnces { get; private set; }
 
-        private void Start()
+        private void Awake()
         {
             cc = GetComponent<CharacterController>();
+            MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight };
             MoveSpeed = 0.15f;
             RotateSpeed = 30.0f;
-
-            MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
         }
 
         private void Update()

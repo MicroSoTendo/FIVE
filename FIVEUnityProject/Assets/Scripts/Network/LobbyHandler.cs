@@ -10,25 +10,24 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
-    internal class LobbyHandler : IDisposable
-    {   
-        
-        /// <summary>
-        /// Used for communicating with list server.
-        /// </summary>
-        private enum ListServerHeader : byte
-        {
-            AliveTick = 1,
-            RoomInfos = 2,
-            AssignGuid = 3,
-            CreateRoom = 4,
-            RemoveRoom = 5,
-            UpdateName = 6,
-            UpdateCurrentPlayer = 7,
-            UpdateMaxPlayer = 8,
-            UpdatePassword = 9
-        }
+    /// <summary>
+    /// Used for communicating with list server.
+    /// </summary>
+    public enum ListServerHeader : byte
+    {
+        AliveTick = 1,
+        RoomInfos = 2,
+        AssignGuid = 3,
+        CreateRoom = 4,
+        RemoveRoom = 5,
+        UpdateName = 6,
+        UpdateCurrentPlayer = 7,
+        UpdateMaxPlayer = 8,
+        UpdatePassword = 9
+    }
 
+    internal class LobbyHandler : IDisposable
+    {
         public ICollection<RoomInfo> GetRoomInfos => roomInfos.Values;
         public RoomInfo this[Guid guid] => roomInfos[guid];
         /// <summary>
@@ -45,10 +44,7 @@ namespace FIVE.Network
         private readonly ushort listServerPort;
         private Task sendTask;
         private Task readTask;
-        private Task timerTask;
         private CancellationTokenSource cts;
-
-        private int timeout = 0;
         private readonly Dictionary<ListServerHeader, Action<TcpClient>> handlers;
 
         private readonly ConcurrentQueue<ListServerHeader> sendQueue;
@@ -76,7 +72,7 @@ namespace FIVE.Network
 
         private void AliveTickHandler(TcpClient client)
         {
-            Interlocked.Exchange(ref timeout, 0);
+            client.GetStream().WriteByte((byte)ListServerHeader.AliveTick);
         }
 
         private void RoomInfosHandler(TcpClient client)
@@ -144,19 +140,6 @@ namespace FIVE.Network
             listServerClient.Close();
         }
 
-        private async Task TimerAsync(CancellationToken ct)
-        {
-            while (!ct.IsCancellationRequested)
-            {
-                await Task.Delay(100, ct);
-                Interlocked.Add(ref timeout, 100);
-                if (Interlocked.CompareExchange(ref timeout, 0, 0) > 5000)
-                {
-                    Stop();
-                }
-            }
-        }
-
         private async Task SendAsync(CancellationToken ct)
         {
             if (!listServerClient.Connected)
@@ -166,10 +149,13 @@ namespace FIVE.Network
 
             while (!ct.IsCancellationRequested)
             {
-                while (!ct.IsCancellationRequested && 
-                       sendQueue.TryDequeue(out ListServerHeader header))
+                if (sendQueue.TryDequeue(out ListServerHeader header))
                 {
                     handlers[header](listServerClient);
+                }
+                else
+                {
+                    handlers[ListServerHeader.AliveTick](listServerClient);
                 }
                 await Task.Delay(30, ct);
             }
@@ -236,7 +222,6 @@ namespace FIVE.Network
             md5?.Dispose();
             sendTask?.Dispose();
             readTask?.Dispose();
-            timerTask?.Dispose();
         }
     }
 
@@ -244,25 +229,27 @@ namespace FIVE.Network
     {
         internal static unsafe byte[] FullPacket(this RoomInfo roomInfo)
         {
-            const int fixedSize =
+            const int headerSize =
                 sizeof(byte) + //header
-                sizeof(int) + //size of roomInfo (exclude itself)
+                sizeof(int); //size of following
+            const int roomInfoFixedSize =
                 sizeof(int) + //current player
                 sizeof(int) + //max player
                 sizeof(bool) + //password flag
                 sizeof(ushort); //listening port
             string name = roomInfo.Name;
-            byte[] buffer = new byte[fixedSize + Encoding.Unicode.GetByteCount(name)];
-            buffer[0] = 4;
+            int nameBytesCount = Encoding.Unicode.GetByteCount(name);
+            byte[] buffer = new byte[headerSize + roomInfoFixedSize + nameBytesCount];
+            buffer[0] = (byte)ListServerHeader.CreateRoom;
             fixed (byte* pBuffer = &buffer[1])
             {
-                *(int*)pBuffer = buffer.Length - sizeof(int);
+                *(int*)pBuffer = roomInfoFixedSize + nameBytesCount;
                 *(int*)(pBuffer + sizeof(int)) = roomInfo.CurrentPlayers;
                 *(int*)(pBuffer + sizeof(int) + sizeof(int)) = roomInfo.MaxPlayers;
                 *(bool*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(int)) = roomInfo.HasPassword;
                 *(ushort*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(bool)) = roomInfo.Port;
             }
-            Encoding.Unicode.GetBytes(name, 0, name.Length, buffer, 4);
+            Encoding.Unicode.GetBytes(name, 0, name.Length, buffer, headerSize + roomInfoFixedSize);
             return buffer;
         }
 
@@ -280,17 +267,17 @@ namespace FIVE.Network
         internal static byte[] NamePacket(this RoomInfo roomInfo)
         {
             string str = roomInfo.Name;
-            byte[] buffer = new byte[5 + Encoding.Unicode.GetByteCount(str)];
-            buffer[0] = 6;
+            byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int) + Encoding.Unicode.GetByteCount(str)];
+            buffer[0] = (byte)ListServerHeader.UpdateName;
             Encoding.Unicode.GetBytes(str, 0, str.Length, buffer, 5);
             return buffer;
         }        
         
         internal static unsafe byte[] CurrentPlayerPacket(this RoomInfo roomInfo)
         {
-            byte[] buffer = new byte[5];
-            buffer[0] = 7;
-            fixed (byte* pBuffer = &buffer[1])
+            byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int)];
+            buffer[0] = (byte)ListServerHeader.UpdateCurrentPlayer;
+            fixed (byte* pBuffer = &buffer[sizeof(ListServerHeader)])
             {
                 *(int*)pBuffer = roomInfo.CurrentPlayers;
             }
@@ -299,9 +286,9 @@ namespace FIVE.Network
         
         internal static unsafe byte[] MaxPlayerPacket(this RoomInfo roomInfo)
         {
-            byte[] buffer = new byte[5];
-            buffer[0] = 8;
-            fixed (byte* pBuffer = &buffer[1])
+            byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int)];
+            buffer[0] = (byte)ListServerHeader.UpdateMaxPlayer;
+            fixed (byte* pBuffer = &buffer[sizeof(ListServerHeader)])
             {
                 *(int*)pBuffer = roomInfo.MaxPlayers;
             }
@@ -311,7 +298,7 @@ namespace FIVE.Network
         internal static byte[] PasswordPacket(this RoomInfo roomInfo)
         {
             byte[] buffer = new byte[2];
-            buffer[0] = 9;
+            buffer[0] = (byte)ListServerHeader.UpdatePassword;
             buffer[1] = roomInfo.HasPassword ? (byte)1 : (byte)0;
             return buffer;
         }
