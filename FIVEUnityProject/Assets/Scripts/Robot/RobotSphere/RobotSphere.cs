@@ -204,7 +204,6 @@ namespace FIVE.Robot
                 }
                 else
                 {
-                    GameObject nextRobot = RobotManager.ID2Robot[ID];
                     int id = ID + 1;
                     while (!RobotManager.ID2Robot.ContainsKey(id))
                     {
@@ -230,7 +229,5 @@ namespace FIVE.Robot
                 movable.enabled = RobotManager.ActiveRobot == gameObject;
             }
         }
-
-        private enum ControllerOp { FPS, RTS, };
     }
 }
