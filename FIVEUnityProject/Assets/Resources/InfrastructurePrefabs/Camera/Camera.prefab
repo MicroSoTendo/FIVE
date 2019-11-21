@@ -78,7 +78,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &4424810539767806087
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -218,7 +217,7 @@ GameObject:
   - component: {fileID: 3532059688778701596}
   - component: {fileID: 3065403215060587929}
   - component: {fileID: 4957378924842100815}
-  - component: {fileID: -2226192515118353536}
+  - component: {fileID: 1431317157048638925}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -359,7 +358,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-2226192515118353536
+--- !u!114 &1431317157048638925
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
