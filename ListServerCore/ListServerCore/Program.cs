@@ -15,14 +15,23 @@ namespace ListServerCore
         private static readonly HashSet<TcpClient> ConnectedClients = new HashSet<TcpClient>();
         private static readonly HashSet<Task> SendTasks = new HashSet<Task>();
         private static readonly HashSet<Task> ReadTasks = new HashSet<Task>();
-        private static readonly ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>> SendQueue = new ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>>();
+        private static readonly HashSet<Task> TimerTasks = new HashSet<Task>();
+        private static readonly ConcurrentDictionary<TcpClient, int> Timer = new ConcurrentDictionary<TcpClient, int>();
+        private static readonly ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>> SendQueue 
+            = new ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>>();
         private static readonly Dictionary<ListServerHeader, Action<TcpClient>> Handlers =
             new Dictionary<ListServerHeader, Action<TcpClient>>
             {
                 {ListServerHeader.CreateRoom, CreateRoom },
+                {ListServerHeader.AliveTick, AliveTick },
                 {ListServerHeader.AssignGuid, AssignGuid },
                 {ListServerHeader.RoomInfos, RoomInfos }
             };
+
+        private static void AliveTick(TcpClient client)
+        {
+            Timer[client] = 0;
+        }
 
         private static unsafe void RoomInfos(TcpClient client)
         {
@@ -139,6 +148,19 @@ namespace ListServerCore
             }
         }
 
+        private static async Task ClientTimeoutAsync(TcpClient client, CancellationToken ct)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                await Task.Delay(1000, ct);
+                Timer[client] += 1000;
+                if (Timer[client] > 5000)
+                {
+                    RemoveRoomHandler(client);
+                }
+            }
+        }
+
         private static unsafe void HandleListServerHeader(TcpClient client, byte[] headerBuffer)
         {
             fixed (byte* pBytes = headerBuffer)
@@ -147,6 +169,7 @@ namespace ListServerCore
                 if (Handlers.TryGetValue(header, out Action<TcpClient> handler))
                 {
                     handler(client);
+                    AliveTick(client);
                 }
             }
         }
@@ -269,6 +292,7 @@ namespace ListServerCore
                 Console.WriteLine($"{(client.Client.RemoteEndPoint as IPEndPoint)?.Address} Connected ");
                 SendTasks.Add(ClientWriteAsync(client, ct));
                 ReadTasks.Add(ClientReadAsync(client, ct));
+                TimerTasks.Add(ClientTimeoutAsync(client, ct));
             }
         }
     }

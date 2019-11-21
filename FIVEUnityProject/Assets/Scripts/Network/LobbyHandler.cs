@@ -27,10 +27,7 @@ namespace FIVE.Network
     }
 
     internal class LobbyHandler : IDisposable
-    {   
-        
-        
-
+    {
         public ICollection<RoomInfo> GetRoomInfos => roomInfos.Values;
         public RoomInfo this[Guid guid] => roomInfos[guid];
         /// <summary>
@@ -47,10 +44,7 @@ namespace FIVE.Network
         private readonly ushort listServerPort;
         private Task sendTask;
         private Task readTask;
-        private Task timerTask;
         private CancellationTokenSource cts;
-
-        private int timeout = 0;
         private readonly Dictionary<ListServerHeader, Action<TcpClient>> handlers;
 
         private readonly ConcurrentQueue<ListServerHeader> sendQueue;
@@ -78,7 +72,7 @@ namespace FIVE.Network
 
         private void AliveTickHandler(TcpClient client)
         {
-            Interlocked.Exchange(ref timeout, 0);
+            client.GetStream().WriteByte((byte)ListServerHeader.AliveTick);
         }
 
         private void RoomInfosHandler(TcpClient client)
@@ -146,19 +140,6 @@ namespace FIVE.Network
             listServerClient.Close();
         }
 
-        private async Task TimerAsync(CancellationToken ct)
-        {
-            while (!ct.IsCancellationRequested)
-            {
-                await Task.Delay(100, ct);
-                Interlocked.Add(ref timeout, 100);
-                if (Interlocked.CompareExchange(ref timeout, 0, 0) > 5000)
-                {
-                    Stop();
-                }
-            }
-        }
-
         private async Task SendAsync(CancellationToken ct)
         {
             if (!listServerClient.Connected)
@@ -168,10 +149,13 @@ namespace FIVE.Network
 
             while (!ct.IsCancellationRequested)
             {
-                while (!ct.IsCancellationRequested && 
-                       sendQueue.TryDequeue(out ListServerHeader header))
+                if (sendQueue.TryDequeue(out ListServerHeader header))
                 {
                     handlers[header](listServerClient);
+                }
+                else
+                {
+                    handlers[ListServerHeader.AliveTick](listServerClient);
                 }
                 await Task.Delay(30, ct);
             }
@@ -238,7 +222,6 @@ namespace FIVE.Network
             md5?.Dispose();
             sendTask?.Dispose();
             readTask?.Dispose();
-            timerTask?.Dispose();
         }
     }
 
@@ -284,17 +267,17 @@ namespace FIVE.Network
         internal static byte[] NamePacket(this RoomInfo roomInfo)
         {
             string str = roomInfo.Name;
-            byte[] buffer = new byte[5 + Encoding.Unicode.GetByteCount(str)];
-            buffer[0] = 6;
+            byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int) + Encoding.Unicode.GetByteCount(str)];
+            buffer[0] = (byte)ListServerHeader.UpdateName;
             Encoding.Unicode.GetBytes(str, 0, str.Length, buffer, 5);
             return buffer;
         }        
         
         internal static unsafe byte[] CurrentPlayerPacket(this RoomInfo roomInfo)
         {
-            byte[] buffer = new byte[5];
-            buffer[0] = 7;
-            fixed (byte* pBuffer = &buffer[1])
+            byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int)];
+            buffer[0] = (byte)ListServerHeader.UpdateCurrentPlayer;
+            fixed (byte* pBuffer = &buffer[sizeof(ListServerHeader)])
             {
                 *(int*)pBuffer = roomInfo.CurrentPlayers;
             }
@@ -303,9 +286,9 @@ namespace FIVE.Network
         
         internal static unsafe byte[] MaxPlayerPacket(this RoomInfo roomInfo)
         {
-            byte[] buffer = new byte[5];
-            buffer[0] = 8;
-            fixed (byte* pBuffer = &buffer[1])
+            byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int)];
+            buffer[0] = (byte)ListServerHeader.UpdateMaxPlayer;
+            fixed (byte* pBuffer = &buffer[sizeof(ListServerHeader)])
             {
                 *(int*)pBuffer = roomInfo.MaxPlayers;
             }
@@ -315,7 +298,7 @@ namespace FIVE.Network
         internal static byte[] PasswordPacket(this RoomInfo roomInfo)
         {
             byte[] buffer = new byte[2];
-            buffer[0] = 9;
+            buffer[0] = (byte)ListServerHeader.UpdatePassword;
             buffer[1] = roomInfo.HasPassword ? (byte)1 : (byte)0;
             return buffer;
         }
