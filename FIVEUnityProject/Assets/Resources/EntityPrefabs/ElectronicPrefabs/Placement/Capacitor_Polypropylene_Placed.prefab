@@ -96,9 +96,9 @@ MonoBehaviour:
   itemInfo:
     Name: 
     Description: 
-    UIScale: {x: 0, y: 0, z: 0}
+    UIScale: {x: 4500, y: 4500, z: 4500}
     UIRotation: {x: 0, y: 0, z: 0}
-    UIPosition: {x: 0, y: 0, z: 0}
+    UIPosition: {x: 0, y: -25, z: -35}
 --- !u!64 &7236791601789180328
 MeshCollider:
   m_ObjectHideFlags: 0

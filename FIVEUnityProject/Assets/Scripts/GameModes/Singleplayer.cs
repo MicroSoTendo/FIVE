@@ -65,5 +65,12 @@ namespace FIVE.GameModes
 
             CameraManager.SetCameraWall();
         }
+        void Update()
+        {
+            if (SkyBoxTime.isDayTime())
+            {
+
+            }
+        }
     }
 }

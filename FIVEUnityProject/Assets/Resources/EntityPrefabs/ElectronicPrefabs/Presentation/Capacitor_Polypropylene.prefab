@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 408346}
   - component: {fileID: 3370896}
   - component: {fileID: 2360406}
+  - component: {fileID: -6613317594031221445}
+  - component: {fileID: 3839515677222892489}
   m_Layer: 0
   m_Name: Capacitor_Polypropylene
   m_TagString: Untagged
@@ -79,3 +81,35 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &-6613317594031221445
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141266}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300090, guid: cb62f1f8a6c91ea7c822fa603299339a, type: 3}
+--- !u!114 &3839515677222892489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c50ee77147fee49b6d46ffe41d6fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemInfo:
+    Name: 
+    Description: 
+    UIScale: {x: 0, y: 0, z: 0}
+    UIRotation: {x: 0, y: 0, z: 0}
+    UIPosition: {x: 0, y: 0, z: 0}
