@@ -8,7 +8,12 @@ namespace FIVE.RobotComponents
 
         private void Update()
         {
+            RCUpdate();
             GetComponent<Battery>().CurrentEnergy -= PowerConsumption * Time.deltaTime;
+        }
+
+        protected virtual void RCUpdate()
+        {
         }
     }
 }

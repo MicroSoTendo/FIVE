@@ -10,7 +10,7 @@ namespace FIVE.RobotComponents
 
     public class Solar : RobotComponent
     {
-        private void Update()
+        protected override void RCUpdate()
         {
             PowerConsumption = -SolarSingleton.PowerCharge;
         }

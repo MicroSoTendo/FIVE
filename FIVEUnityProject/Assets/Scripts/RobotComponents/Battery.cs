@@ -32,7 +32,7 @@ namespace FIVE.RobotComponents
             PowerConsumption = 0.01f;
         }
 
-        private void Update()
+        protected override void RCUpdate()
         {
             if (isCharging)
             {
