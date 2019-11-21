@@ -31,7 +31,7 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-                    ScheduleCoroutine(SetUpItems());
+                    ScheduleCoroutine(SetUpCells());
                 }
             }
         }
@@ -57,22 +57,33 @@ namespace FIVE.UI.InGameDisplay
         {
             IsActive = false;
         }
-        private IEnumerator SetUpItems()
+
+        private IEnumerator SetUpCells()
+        {
+            yield return new WaitForEndOfFrame();
+            int i = 0;
+            float cellWidth = 180; //TODO: get by call
+            int totalColumns = (int)(ContentRectTransform.rect.width / cellWidth);
+            foreach ((GameObject cell, Transform content) in cells)
+            {
+                int x = i % totalColumns;
+                int y = i / totalColumns;
+                cell.GetComponent<RectTransform>().anchoredPosition =
+                    new Vector2(x * cellWidth, -y * cellWidth);
+                i++;
+                yield return new WaitForFixedUpdate();
+            }
+        }
+
+        private IEnumerator UpdateItems()
         {
             ObservableCollection<GameObject> items = InventoryManager.Inventory.Items;
             //Ensure size
-            yield return new WaitForEndOfFrame();
-            float cellWidth = 200; //TODO: get by call
-            int totalColumns = (int)(ContentRectTransform.rect.width / cellWidth);
             while (items.Count > cells.Count)
             {
                 GameObject cell = Object.Instantiate(CellPrefab, ContentRectTransform);
                 int i = cells.Count;
                 cell.name = $"Cell-{i}";
-                int x = i % totalColumns;
-                int y = i / totalColumns;
-                cell.GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(x * cellWidth, -y * cellWidth);
                 Transform contenTransform = cell.FindChildRecursive("Content").transform;
                 cells.Add((cell, contenTransform));
                 yield return new WaitForFixedUpdate();
@@ -105,11 +116,15 @@ namespace FIVE.UI.InGameDisplay
                 }
                 yield return new WaitForFixedUpdate();
             }
+            if (IsActive)
+            {
+                ScheduleCoroutine(SetUpCells());
+            }
         }
 
         private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ScheduleCoroutine(SetUpItems());
+            ScheduleCoroutine(UpdateItems());
         }
     }
 }
