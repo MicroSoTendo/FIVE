@@ -15,7 +15,6 @@ namespace FIVE.Network
         /// <summary>
         /// Used for communicating with list server.
         /// </summary>
-        [Flags]
         private enum ListServerHeader : byte
         {
             AliveTick = 1,
@@ -145,11 +144,9 @@ namespace FIVE.Network
 
         private async Task TimerAsync(CancellationToken ct)
         {
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
                 await Task.Delay(100, ct);
-                if (ct.IsCancellationRequested)
-                    return;
                 Interlocked.Add(ref timeout, 100);
                 if (Interlocked.CompareExchange(ref timeout, 0, 0) > 5000)
                 {
@@ -166,12 +163,11 @@ namespace FIVE.Network
             }
 
             NetworkStream stream = listServerClient.GetStream();
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                while (sendQueue.TryDequeue(out ListServerHeader header))
+                while (!ct.IsCancellationRequested && 
+                       sendQueue.TryDequeue(out ListServerHeader header))
                 {
-                    if (ct.IsCancellationRequested)
-                        return;
                     handlers[(byte)header](stream);
                 }
                 await Task.Delay(30, ct);
@@ -185,10 +181,8 @@ namespace FIVE.Network
                 return;
             }
             NetworkStream stream = listServerClient.GetStream();
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                if (ct.IsCancellationRequested)
-                    return;
                 byte headerBuffer = stream.ReadAByte();
                 handlers[headerBuffer](stream);
                 await Task.Delay(500, ct);

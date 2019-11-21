@@ -113,19 +113,23 @@ namespace ListServerCore
                 *(int*)(pBuffer + 25) = roomInfo.Host;
                 *(ushort*)(pBuffer + 29) = roomInfo.Port;
             }
-            buffer.CopyFrom(roomInfo.Name.ToBytes(), 31);
+            Encoding.Unicode.GetBytes(roomInfo.Name, 0, roomInfo.Name.Length, buffer, 31);
             return buffer;
         }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe int ReadI32(this NetworkStream stream)
+
+        public static unsafe T Read<T>(this NetworkStream stream) where T : unmanaged
         {
-            byte[] bytes = new byte[4];
-            stream.Read(bytes, 0, bytes.Length);
-            fixed (byte* pbytes = bytes)
+            byte[] buffer = new byte[sizeof(T)];
+            stream.Read(buffer, 0, buffer.Length);
+            fixed (byte* pBuffer = buffer)
             {
-                return *(int*)pbytes;
+                return *(T*) pBuffer;
             }
+        }        
+        
+        public static unsafe void ReadTo<T>(this NetworkStream stream, byte[] buffer, int offset = 0) where T : unmanaged
+        {
+            stream.Read(buffer, offset, sizeof(T));
         }
     }
 }
