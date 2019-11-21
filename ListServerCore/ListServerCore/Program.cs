@@ -16,7 +16,12 @@ namespace ListServerCore
         private static readonly HashSet<Task> SendTasks = new HashSet<Task>();
         private static readonly HashSet<Task> ReadTasks = new HashSet<Task>();
         private static readonly HashSet<Task> TimerTasks = new HashSet<Task>();
-        private static readonly ConcurrentDictionary<TcpClient, int> Timer = new ConcurrentDictionary<TcpClient, int>();
+        
+        private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfosByGuid = new ConcurrentDictionary<Guid, RoomInfo>();
+        private static readonly ConcurrentDictionary<TcpClient, Guid> GuidByClient = new ConcurrentDictionary<TcpClient, Guid>();
+
+        private static readonly ConcurrentDictionary<TcpClient, int> Timer 
+            = new ConcurrentDictionary<TcpClient, int>();
         private static readonly ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>> SendQueue 
             = new ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>>();
         private static readonly Dictionary<ListServerHeader, Action<TcpClient>> Handlers =
@@ -117,8 +122,6 @@ namespace ListServerCore
             }
         }
 
-        private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfosByGuid = new ConcurrentDictionary<Guid, RoomInfo>();
-        private static readonly ConcurrentDictionary<TcpClient, Guid> GuidByClient = new ConcurrentDictionary<TcpClient, Guid>();
         private static async Task ClientReadAsync(TcpClient client, CancellationToken ct)
         {
             NetworkStream networkStream = client.GetStream();
@@ -156,7 +159,9 @@ namespace ListServerCore
                 Timer[client] += 1000;
                 if (Timer[client] > 5000)
                 {
-                    RemoveRoomHandler(client);
+                    GuidByClient.TryRemove(client, out Guid guid);
+                    RoomInfosByGuid.TryRemove(guid, out RoomInfo roomInfo);
+                    Console.WriteLine($"Timeout: {roomInfo.Name} removed");
                 }
             }
         }
