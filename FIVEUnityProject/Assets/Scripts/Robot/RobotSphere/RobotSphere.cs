@@ -119,7 +119,7 @@ namespace FIVE.Robot
 
             // update animation at beginning to ensure consistency
             animator.Update(CurrentState);
-            CurrentState = cc.velocity.magnitude < float.Epsilon ? RobotSphereState.Idle : RobotSphereState.Walk;
+            CurrentState = cc.velocity.magnitude < float.Epsilon || GetComponent<Battery>().CurrentEnergy <= 0f ? RobotSphereState.Idle : RobotSphereState.Walk;
 
             if (scriptActive)
             {
@@ -138,7 +138,7 @@ namespace FIVE.Robot
 
         public void Move(Movable.Move move, int steps, bool schedule = false)
         {
-            if (movable.enabled)
+            if (GetComponent<Battery>().CurrentEnergy > 0f && movable.enabled)
             {
                 CurrentState = RobotSphereState.Walk;
                 if (schedule)
@@ -204,11 +204,7 @@ namespace FIVE.Robot
                 }
                 else
                 {
-                    int id = ID + 1;
-                    while (!RobotManager.ID2Robot.ContainsKey(id))
-                    {
-                        id++;
-                    }
+                    int id = RobotManager.ID2Robot.GetEnumerator().Current.Key;
                     RobotManager.ActiveRobot = RobotManager.ID2Robot[id];
                     CameraManager.SetCamera(RobotManager.ActiveRobot.GetComponent<RobotSphere>().fpsCamera);
 

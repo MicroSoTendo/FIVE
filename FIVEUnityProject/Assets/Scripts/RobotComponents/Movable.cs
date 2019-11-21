@@ -62,31 +62,48 @@ namespace FIVE
 
         public void Forward(int steps)
         {
-            cc.Move(gameObject.transform.forward * MoveSpeed);
-            ConsumePower();
+            if (ConsumePower())
+            {
+                cc.Move(gameObject.transform.forward * MoveSpeed);
+            }
         }
 
         public void Backward(int steps)
         {
-            cc.Move(-gameObject.transform.forward * MoveSpeed);
-            ConsumePower();
+            if (ConsumePower())
+            {
+                cc.Move(-gameObject.transform.forward * MoveSpeed);
+            }
         }
 
         public void TurnLeft(int steps)
         {
-            gameObject.transform.Rotate(0, -steps, 0);
-            ConsumePower();
+            if (ConsumePower())
+            {
+                gameObject.transform.Rotate(0, -steps, 0);
+            }
         }
 
         public void TurnRight(int steps)
         {
-            gameObject.transform.Rotate(0, steps, 0);
-            ConsumePower();
+            if (ConsumePower())
+            {
+                gameObject.transform.Rotate(0, steps, 0);
+            }
         }
 
-        private void ConsumePower(float n = 2.0f)
+        private bool ConsumePower(float n = 0.5f)
         {
-            GetComponent<Battery>().CurrentEnergy -= n * Time.deltaTime;
+            Battery battery = GetComponent<Battery>();
+            if (battery.CurrentEnergy > 0f)
+            {
+                battery.CurrentEnergy -= n * Time.deltaTime;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

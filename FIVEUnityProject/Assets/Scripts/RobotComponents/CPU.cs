@@ -10,7 +10,7 @@ namespace FIVE.RobotComponents
         private void Start()
         {
             Speed = 1;
-            PowerConsumption = 1.0f;
+            PowerConsumption = 0.1f;
         }
     }
 }

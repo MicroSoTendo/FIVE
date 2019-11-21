@@ -29,7 +29,6 @@ namespace FIVE.RobotComponents
         {
             Capacity = 100.0f;
             CurrentEnergy = Capacity;
-            PowerConsumption = 0.01f;
         }
 
         protected override void RCUpdate()
