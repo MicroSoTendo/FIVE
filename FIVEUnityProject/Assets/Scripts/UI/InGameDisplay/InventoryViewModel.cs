@@ -1,15 +1,14 @@
 ﻿using FIVE.CameraSystem;
 using FIVE.EventSystem;
 using FIVE.Interactive;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 using static FIVE.EventSystem.MainThreadDispatcher;
+using Object = UnityEngine.Object;
 
 namespace FIVE.UI.InGameDisplay
 {
@@ -94,8 +93,11 @@ namespace FIVE.UI.InGameDisplay
                 (GameObject cell, Transform content) = cells[i];
                 if (i >= items.Count)
                 {
-                    if(content.childCount > 0)
+                    if (content.childCount > 0)
+                    {
                         Destroy(content.GetChild(0).gameObject);
+                    }
+
                     content.DetachChildren();
                     cell.SetActive(false);
                 }
