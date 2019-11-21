@@ -43,9 +43,9 @@ namespace FIVE.Network
             throw new System.NotImplementedException();
         }
 
-        public override void Update()
+        public override void LateUpdate()
         {
-            clientHandler.Update();
+            clientHandler.LateUpdate();
         }
 
         public override void Dispose()

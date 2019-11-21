@@ -4,10 +4,11 @@ using FIVE.Interactive;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
-
+using static FIVE.EventSystem.MainThreadDispatcher;
 namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryViewModel : ViewModel
@@ -45,9 +46,8 @@ namespace FIVE.UI.InGameDisplay
             contentRectTransform = InventoryContent.GetComponent<RectTransform>();
             this[RenderMode.ScreenSpaceCamera].worldCamera = Camera.current;
             this[RenderMode.ScreenSpaceCamera].planeDistance = 0.5f;
-            EventManager.Subscribe<OnInventoryChanged, InventoryChangedEventArgs>(OnInventoryChanged);
-            MainThreadDispatcher.ScheduleCoroutine(
-               UpdateCellPool());
+            EventManager.Subscribe<OnInventoryChanged, NotifyCollectionChangedEventArgs>(OnInventoryChanged);
+            ScheduleCoroutine(UpdateCellPool());
         }
 
         public IEnumerator UpdateCellPool()
@@ -83,27 +83,26 @@ namespace FIVE.UI.InGameDisplay
             IsActive = false;
         }
 
-        private IEnumerator AddCell(int index, GameObject item)
+        private void DoAddCell(int index, GameObject item)
         {
-            while (index > cellPool.Count)
+            IEnumerator Routine()
             {
-                yield return null;
-            }
-            (GameObject cell, Transform itemHolder) = cellPool[index];
-            item.transform.SetParent(itemHolder);
-            item.GetComponent<MeshRenderer>().receiveShadows = false;
-            ItemInfo info = item.GetComponent<Item>().Info;
-            item.transform.localScale = info.UIScale;
-            item.transform.localEulerAngles = info.UIRotation;
-            item.transform.localPosition = info.UIPosition;
-            if (item.name.Contains("Solar"))
-            {
-                item.transform.localScale = new Vector3(60, 60, 60);
-                item.transform.localPosition = new Vector3(0, -19, 0);
-            }
+                while (index > cellPool.Count)
+                {
+                    yield return null;
+                }
 
-            cell.SetActive(true);
-            AddOrUpdate(index, cell);
+                (GameObject cell, Transform itemHolder) = cellPool[index];
+                item.transform.SetParent(itemHolder);
+                item.GetComponent<MeshRenderer>().receiveShadows = false;
+                ItemInfo info = item.GetComponent<Item>().Info;
+                item.transform.localScale = info.UIScale;
+                item.transform.localEulerAngles = info.UIRotation;
+                item.transform.localPosition = info.UIPosition;
+                cell.SetActive(true);
+                AddOrUpdate(index, cell);
+            }
+            ScheduleCoroutine(Routine());
         }
 
         private void AddOrUpdate(int index, GameObject go)
@@ -122,7 +121,7 @@ namespace FIVE.UI.InGameDisplay
         {
             if (IsActive)
             {
-                MainThreadDispatcher.ScheduleCoroutine(SetUpCellsCoroutine());
+                ScheduleCoroutine(SetUpCellsCoroutine());
             }
         }
 
@@ -137,24 +136,30 @@ namespace FIVE.UI.InGameDisplay
                 GameObject cell = keyValuePair.Value;
                 int x = index % totalColumns;
                 int y = index / totalColumns;
-                cell.GetComponent<RectTransform>().anchoredPosition = new Vector2(x * cellWidth, -y * cellWidth);
+                cell.GetComponent<RectTransform>().anchoredPosition = 
+                    new Vector2(x * cellWidth, -y * cellWidth);
                 yield return null;
             }
         }
 
-        private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
+        private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
-                case InventoryChangedAction.Add:
-                    MainThreadDispatcher.ScheduleCoroutine(AddCell(e.Index, e.Item));
+                case NotifyCollectionChangedAction.Add:
+                    DoAddCell(e.NewStartingIndex, e.NewItems[0] as GameObject);
                     break;
-
-                case InventoryChangedAction.Remove:
-                    MainThreadDispatcher.Destroy(cellDictionary[e.Index]);
-                    cellDictionary.Remove(e.Index);
+                case NotifyCollectionChangedAction.Move:
                     break;
-
+                case NotifyCollectionChangedAction.Remove:
+                    GameObject go = cellDictionary[e.OldStartingIndex];
+                    cellDictionary.Remove(e.OldStartingIndex);
+                    Destroy(go);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

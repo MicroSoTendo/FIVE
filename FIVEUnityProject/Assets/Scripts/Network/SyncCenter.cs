@@ -19,6 +19,7 @@ namespace FIVE.Network
             GameObject2ClientsID = new ConcurrentDictionary<GameObject, int>();
             componentsForSync = new ConcurrentStack<byte[]>();
             NetworkedGameObjects = new BijectMap<int, GameObject>();
+            NetworkViews = new BijectMap<int, NetworkView>();
             IDSyncedComponent = new BijectMap<int, Component>();
             random = new Random(GetHashCode());
         }
@@ -37,6 +38,7 @@ namespace FIVE.Network
         public ConcurrentDictionary<GameObject, int> SyncedObjectBufferSize { get; }
 
         public BijectMap<int, GameObject> NetworkedGameObjects { get; }
+        public BijectMap<int, NetworkView> NetworkViews { get; }
         public BijectMap<int, Component> IDSyncedComponent { get; } 
 
         public BijectMap<int, object> NetworkIDMap { get; } = new BijectMap<int, object>();
@@ -50,14 +52,9 @@ namespace FIVE.Network
 
         public IEnumerable<(int networkID, int rpcID)> GetScheduledCalls()
         {
-            throw new NotImplementedException();
+            yield return (0, 0);
         }
-
-        public void AddComponentsForSync(byte[] bytes)
-        {
-            componentsForSync.Push(bytes);
-        }
-
+        
         public void Register(GameObject gameObject)
         {
             if (!NetworkedGameObjects.Contains(gameObject))
@@ -73,7 +70,7 @@ namespace FIVE.Network
             }
         }        
         
-        public void RegisterRemote(GameObject gameObject, int id)
+        public void RegisterFromRemote(GameObject gameObject, int id)
         {
             if (!NetworkedGameObjects.Contains(gameObject))
             {
@@ -103,11 +100,6 @@ namespace FIVE.Network
                 SyncedObjectBufferSize.TryAdd(component.gameObject, size);
             }
             //TODO: Set unsent component
-        }
-        //TODO: SyncCenter or PrefabPool?
-        public void Destroy(int networkID)
-        {
-            GameObject.Destroy(NetworkedGameObjects[networkID]);
         }
     }
 }

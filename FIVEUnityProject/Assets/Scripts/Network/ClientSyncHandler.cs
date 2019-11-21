@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using UnityEngine;
 
@@ -15,54 +16,76 @@ namespace FIVE.Network
 
         private void PreSync()
         {
+            if (!TryRead(out byte[] data))
+            {
+                return;
+            }
             //Receive objects from host
-            int objectsCount = Read().As<int>();
+            int objectsCount = data.As<int>();
             for (int i = 0; i < objectsCount; i++)
             {
-                byte[] buffer = Read();
-                int prefabID = buffer.As<int>();
-                int networkID = buffer.As<int>(4);
-                GameObject go = PrefabPool.Instance.Instantiate(prefabID);
-                go.AddComponent<NetworkView>().DeserializeFrom(buffer);
-                SyncCenter.Instance.RegisterRemote(go, networkID);
+                if (TryRead(out byte[] buffer))
+                {
+                    int prefabID = buffer.As<int>();
+                    int networkID = buffer.As<int>(4);
+                    GameObject go = PrefabPool.Instance.Instantiate(prefabID);
+                    go.AddComponent<NetworkView>().DeserializeFrom(buffer);
+                    SyncCenter.Instance.RegisterFromRemote(go, networkID);
+                }
             }
             onUpdate = DoSync;
         }
 
         private void DoSync()
         {
-            OnWrite();
-            OnRead();
+            OnSend();
+            OnReceive();
         }
 
-        private void OnRead()
+        private void OnSend()
         {
-            GameSyncHeader header = Read().As<GameSyncHeader>();
-            switch (header)
+            SendCreateObject();
+            SendRemoveObject();
+            SendComponentSync();
+            SendRemoteCall();
+        }
+
+        private void SendRemoteCall()
+        {
+            foreach ((int networkID, int rpcID) in SyncCenter.Instance.GetScheduledCalls())
             {
-                case GameSyncHeader.JoinRequest:
-                    break;
-                case GameSyncHeader.AcceptJoin:
-                    break;
-                case GameSyncHeader.CreateObject:
-                    break;
-                case GameSyncHeader.RemoveObject:
-                    break;
-                case GameSyncHeader.ComponentSync:
-                    break;
-                case GameSyncHeader.RemoteCall:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                //TODO:
             }
         }
 
-        private void OnWrite()
+        private void SendComponentSync()
         {
-
+            foreach (NetworkView nv in SyncCenter.Instance.NetworkViews.Values)
+            {
+                foreach (byte[] buffer in nv.serializedComponent)
+                {
+                    Send(buffer);
+                }
+            }
         }
 
-        public override void Update()
+        private void SendRemoveObject()
+        {
+        }
+
+        private void SendCreateObject()
+        {
+            
+        }
+
+        private void OnReceive()
+        {
+            TryRead(out byte[] buffer);
+        }
+
+
+
+        protected override void DoUpdate()
         {
             onUpdate();
         }

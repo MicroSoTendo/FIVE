@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,69 +19,96 @@ namespace FIVE.Network
             return new ClientSyncHandler(tcpClient);
         }
 
-        public abstract void Update();
-
+        protected abstract void DoUpdate();
         protected NetworkStream Stream { get; }
-        
-        private readonly ConcurrentQueue<byte[]> sendQueue;
-        private readonly ConcurrentQueue<byte[]> readQueue;
+        private readonly ConcurrentQueue<TimeStamp> sendQueue;
+        private readonly ConcurrentQueue<TimeStamp> readQueue;
         private CancellationTokenSource cts;
         private Task readTask;
         private Task sendTask;
+        protected TimeStamp LocalStamp;
+        protected TimeStamp RemoteStamp;
+
         protected SyncHandler(TcpClient client)
         {
             Stream = client.GetStream();
-            sendQueue = new ConcurrentQueue<byte[]>();
-            readQueue = new ConcurrentQueue<byte[]>();
+            sendQueue = new ConcurrentQueue<TimeStamp>();
+            readQueue = new ConcurrentQueue<TimeStamp>();
             cts = new CancellationTokenSource();
-            readTask = ReadAsync(cts.Token);
-            sendTask = SendAsync(cts.Token);
+            readTask = ReadStampAsync(cts.Token);
+            sendTask = SendStampAsync(cts.Token);
+            LocalStamp = new TimeStamp {Time = 0};
         }
 
-        private async Task SendAsync(CancellationToken ct)
+        private async Task SendStampAsync(CancellationToken ct)
         {
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                while (sendQueue.TryDequeue(out byte[] buffer))
+                while (sendQueue.TryDequeue(out TimeStamp stamp))
                 {
-                    await Stream.WriteAsync(buffer, 0, buffer.Length, ct);
+                    await Stream.WriteAsync(stamp.Time.ToBytes(), 0, 4, ct);
+                    await Stream.WriteAsync(stamp.Data.Count.ToBytes(), 0, 4, ct);
+                    while (stamp.Data.TryDequeue(out byte[] data))
+                    {
+                        await Stream.WriteAsync(data, 0, data.Length, ct);
+                    }
                 }
             }
         }
 
-        private async Task ReadAsync(CancellationToken ct)
+
+        private async Task ReadStampAsync(CancellationToken ct)
         {
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                byte[] sizeBuffer = new byte[4];
-                await Stream.ReadAsync(sizeBuffer, 0, 4, ct);
-                readQueue.Enqueue(UnsafeReadHelper(sizeBuffer));
+                byte[] timeBuffer = new byte[4];
+                await Stream.ReadAsync(timeBuffer, 0, 4, ct);
+                byte[] countBuffer = new byte[4];
+                await Stream.ReadAsync(countBuffer, 0, 4, ct);
+                readQueue.Enqueue(UnsafeReadHelper(timeBuffer, countBuffer));
             }
         }
 
-        private unsafe byte[] UnsafeReadHelper(byte[] sizeBuffer)
+        private unsafe TimeStamp UnsafeReadHelper(byte[] timeBuffer, byte[] countBuffer)
         {
-            fixed (byte* pSizeBuffer = sizeBuffer)
+            var ts = new TimeStamp();
+            fixed(byte* pTime = timeBuffer, pCount = countBuffer)
             {
-                byte[] buffer = new byte[*(int*)pSizeBuffer];
-                Stream.Read(buffer);
-                return buffer;
+                ts.Time = *(int*)pTime;
+                for (int i = 0; i < *(int*)pCount; i++)
+                {
+                    int bufferSize = Stream.ReadI32();
+                    byte[] buffer = new byte[bufferSize];
+                    Stream.Read(buffer);
+                    ts.Data.Enqueue(buffer);
+                }
             }
+            return ts;
         }
 
         protected void Send(byte[] buffer)
         {
-            sendQueue.Enqueue(buffer.Length.ToBytes());
-            sendQueue.Enqueue(buffer);
+            LocalStamp.Data.Enqueue(buffer.Length.ToBytes());
+            LocalStamp.Data.Enqueue(buffer);
         }
 
-        protected byte[] Read()
+        protected bool TryRead(out byte[] data)
         {
-            while (true)
-            {
-                if (readQueue.TryDequeue(out byte[] next))
-                    return next;
-            }
+            data = default;
+            return RemoteStamp != null && RemoteStamp.Data.TryDequeue(out data);
+        }
+
+        public void LateUpdate()
+        {
+            LocalStamp = new TimeStamp();
+            RemoteStamp = readQueue.TryDequeue(out TimeStamp newStamp) ? newStamp : null;
+            DoUpdate();
+            sendQueue.Enqueue(LocalStamp);
+        }
+
+        public void Stop()
+        {
+            cts.Cancel();
         }
     }
 }

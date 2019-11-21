@@ -46,6 +46,7 @@ namespace FIVE.Network
         [SerializeField] private ushort listServerPort;
         [SerializeField] private int updateRate = 30;
         [SerializeField] private ushort gameServerPort = 8889;
+        [SerializeField] private bool localMode = false;
         public NetworkState State { get; internal set; } 
 
         public ICollection<RoomInfo> RoomInfos => lobbyHandler.GetRoomInfos;
@@ -66,13 +67,15 @@ namespace FIVE.Network
             }
             Instance = this;
             State = NetworkState.Idle;
-            lobbyHandler = new LobbyHandler(listServer, listServerPort);
+            if (!localMode)
+            {
+                lobbyHandler = new LobbyHandler(listServer, listServerPort);
+                lobbyHandler.Start();
+            }
         }
 
         public IEnumerator Start()
         {
-            lobbyHandler.Start();
-            yield return null;            
             var methods = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from type in assembly.GetTypes()
                 from method in type.GetMethods()
@@ -126,11 +129,14 @@ namespace FIVE.Network
 
         public void LateUpdate()
         {
-            updateTimer += Time.deltaTime;
-            if (updateTimer > 1f / updateRate)
+            if (!localMode)
             {
-                networkGameHandler.Update();
-                updateTimer = 0;
+                updateTimer += Time.deltaTime;
+                if (updateTimer > 1f / updateRate)
+                {
+                    networkGameHandler.LateUpdate();
+                    updateTimer = 0;
+                }
             }
         }
     }

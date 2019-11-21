@@ -92,12 +92,6 @@ namespace FIVE.UI
             IsActive ^= true;
         }
 
-        public virtual void Destroy()
-        {
-            Root.SetActive(false);
-            Object.Destroy(Root);
-        }
-
         protected T Get<T>(string name)
         {
             if (UIElements.ContainsKey(name))

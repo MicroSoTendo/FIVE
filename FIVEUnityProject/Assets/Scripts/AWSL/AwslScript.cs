@@ -144,7 +144,7 @@ namespace FIVE.AWSL
                     }
                 }
 
-                if (nearestDistance < 400.0f)
+                if (nearestDistance < 80.0f)
                 {
                     robot.Attack(nearestEnemy);
                 }

@@ -1,4 +1,6 @@
-﻿using FIVE.Robot;
+﻿
+using FIVE.Robot;
+using System.Collections;
 using UnityEngine;
 
 namespace FIVE
@@ -64,12 +66,8 @@ namespace FIVE
             }
             else
             {
-                currTarget.GetComponent<RobotSphere>().OnHit();
                 animator.SetTrigger("attack1");
-                if (!currTarget.activeSelf)
-                {
-                    currTarget = null;
-                }
+                StartCoroutine(AttackDelay());
             }
 
             if (currTarget == null)
@@ -138,6 +136,20 @@ namespace FIVE
             else
             {
                 cc.SimpleMove(transform.forward * speed);
+            }
+        }
+
+        private IEnumerator AttackDelay()
+        {
+            yield return new WaitForSeconds(1f);
+
+            if (currTarget != null)
+            {
+                currTarget.GetComponent<RobotSphere>().OnHit();
+                if (!currTarget.activeSelf)
+                {
+                    currTarget = null;
+                }
             }
         }
 

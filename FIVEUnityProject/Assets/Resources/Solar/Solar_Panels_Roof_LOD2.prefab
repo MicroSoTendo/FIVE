@@ -80,6 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1430604965793042584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,6 +96,6 @@ MonoBehaviour:
   itemInfo:
     Name: 
     Description: 
-    UIScale: {x: 0, y: 0, z: 0}
+    UIScale: {x: 60, y: 60, z: 60}
     UIRotation: {x: 0, y: 0, z: 0}
-    UIPosition: {x: 0, y: 0, z: 0}
+    UIPosition: {x: 0, y: -19, z: 0}

@@ -15,6 +15,11 @@ namespace FIVE.EventSystem
             EventManager.RaiseEvent<T>(sender, args ?? EventArgs.Empty);
         }
 
+        public static void RaiseImmediate<T>(this object sender, EventArgs args = null) where T : IEventType
+        {
+            EventManager.RaiseImmediate<T>(sender, args ?? EventArgs.Empty);
+        }
+
         public static void RaiseEventFixed<T>(this object sender, EventArgs args = null, int millisecondsDelay = 0)
             where T : IEventType
         {
