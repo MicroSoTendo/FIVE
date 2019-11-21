@@ -10,24 +10,26 @@ using UnityEngine;
 
 namespace FIVE.Network
 {
+    /// <summary>
+    /// Used for communicating with list server.
+    /// </summary>
+    public enum ListServerHeader : byte
+    {
+        AliveTick = 1,
+        RoomInfos = 2,
+        AssignGuid = 3,
+        CreateRoom = 4,
+        RemoveRoom = 5,
+        UpdateName = 6,
+        UpdateCurrentPlayer = 7,
+        UpdateMaxPlayer = 8,
+        UpdatePassword = 9
+    }
+
     internal class LobbyHandler : IDisposable
     {   
         
-        /// <summary>
-        /// Used for communicating with list server.
-        /// </summary>
-        private enum ListServerHeader : byte
-        {
-            AliveTick = 1,
-            RoomInfos = 2,
-            AssignGuid = 3,
-            CreateRoom = 4,
-            RemoveRoom = 5,
-            UpdateName = 6,
-            UpdateCurrentPlayer = 7,
-            UpdateMaxPlayer = 8,
-            UpdatePassword = 9
-        }
+        
 
         public ICollection<RoomInfo> GetRoomInfos => roomInfos.Values;
         public RoomInfo this[Guid guid] => roomInfos[guid];
@@ -244,25 +246,27 @@ namespace FIVE.Network
     {
         internal static unsafe byte[] FullPacket(this RoomInfo roomInfo)
         {
-            const int fixedSize =
+            const int headerSize =
                 sizeof(byte) + //header
-                sizeof(int) + //size of roomInfo (exclude itself)
+                sizeof(int); //size of following
+            const int roomInfoFixedSize =
                 sizeof(int) + //current player
                 sizeof(int) + //max player
                 sizeof(bool) + //password flag
                 sizeof(ushort); //listening port
             string name = roomInfo.Name;
-            byte[] buffer = new byte[fixedSize + Encoding.Unicode.GetByteCount(name)];
-            buffer[0] = 4;
+            int nameBytesCount = Encoding.Unicode.GetByteCount(name);
+            byte[] buffer = new byte[headerSize + roomInfoFixedSize + nameBytesCount];
+            buffer[0] = (byte)ListServerHeader.CreateRoom;
             fixed (byte* pBuffer = &buffer[1])
             {
-                *(int*)pBuffer = buffer.Length - sizeof(int);
+                *(int*)pBuffer = roomInfoFixedSize + nameBytesCount;
                 *(int*)(pBuffer + sizeof(int)) = roomInfo.CurrentPlayers;
                 *(int*)(pBuffer + sizeof(int) + sizeof(int)) = roomInfo.MaxPlayers;
                 *(bool*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(int)) = roomInfo.HasPassword;
                 *(ushort*)(pBuffer + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(bool)) = roomInfo.Port;
             }
-            Encoding.Unicode.GetBytes(name, 0, name.Length, buffer, 4);
+            Encoding.Unicode.GetBytes(name, 0, name.Length, buffer, headerSize + roomInfoFixedSize);
             return buffer;
         }
 
