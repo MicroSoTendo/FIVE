@@ -129,7 +129,7 @@ namespace FIVE.Network
 
         public void LateUpdate()
         {
-            if (!localMode)
+            if (!localMode && State != NetworkState.Idle)
             {
                 updateTimer += Time.deltaTime;
                 if (updateTimer > 1f / updateRate)
