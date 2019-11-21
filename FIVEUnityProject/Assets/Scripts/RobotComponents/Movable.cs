@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using FIVE.RobotComponents;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE
 {
     [RequireComponent(typeof(CharacterController))]
-    public class Movable : MonoBehaviour
+    public class Movable : RobotComponent
     {
         public delegate void MoveOnce(int steps);
 
@@ -35,15 +36,20 @@ namespace FIVE
             RotateSpeed = 30.0f;
 
             MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight, };
+            PowerConsumption = 30.5f;
         }
 
         private void Update()
         {
-            if (Moves.Count > 0)
+            if (Moves.Count <= 0)
             {
-                Move move = Moves.Dequeue();
-                MoveOnces[(int)move](1);
+                PowerConsumption = 0.5f;
+                return;
             }
+
+            Move move = Moves.Dequeue();
+            MoveOnces[(int)move](1);
+            PowerConsumption = 30.0f;
         }
 
         public void ClearSchedule()

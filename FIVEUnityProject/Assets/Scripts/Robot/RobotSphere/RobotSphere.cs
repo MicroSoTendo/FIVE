@@ -75,7 +75,7 @@ namespace FIVE.Robot
                 position: new Vector3(0, 2, 0),
                 rotation: Quaternion.Euler(90, 0, 0));
 
-            var light = transform.GetComponentInChildren<Light>().gameObject;
+            GameObject light = transform.GetComponentInChildren<Light>().gameObject;
             light.SetParent(fpsCamera.transform);
 
             animator = new RobotFreeAnim(gameObject);

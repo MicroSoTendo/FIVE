@@ -4,6 +4,11 @@ namespace FIVE.RobotComponents
 {
     public class RobotComponent : MonoBehaviour
     {
-        [Range(0f, 10f)] public float PowerConsumption = 0;
+        public float PowerConsumption { get; protected set; }
+
+        private void Update()
+        {
+            GetComponent<Battery>().CurrentEnergy -= PowerConsumption * Time.deltaTime;
+        }
     }
 }
