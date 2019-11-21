@@ -94,6 +94,9 @@ namespace FIVE.UI.InGameDisplay
                 (GameObject cell, Transform content) = cells[i];
                 if (i >= items.Count)
                 {
+                    if(content.childCount > 0)
+                        Destroy(content.GetChild(0).gameObject);
+                    content.DetachChildren();
                     cell.SetActive(false);
                 }
                 else

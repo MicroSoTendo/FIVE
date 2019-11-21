@@ -1,5 +1,6 @@
 ﻿using FIVE.EventSystem;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -44,8 +45,17 @@ namespace FIVE.Interactive
             EventManager.Subscribe<OnDropItemToInventory, DropedItemToInventoryEventArgs>(OnDropItemToInventory);
             EventManager.Subscribe<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(RemovedItem);
             Items.CollectionChanged += ItemsCollectionChanged;
+            MainThreadDispatcher.ScheduleCoroutine(routine());
         }
 
+        private IEnumerator routine()
+        {
+            while (true)
+            {
+                Debug.Log(Items.Count);
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
         private static void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             sender.RaiseImmediate<OnInventoryChanged>(e);
@@ -53,22 +63,13 @@ namespace FIVE.Interactive
 
         private void RemovedItem(object sender, RemoveItemRequestedEventArgs e)
         {
-            Remove(e.Item);
+            Items.Remove(e.Item);
         }
 
         private void OnDropItemToInventory(object sender, DropedItemToInventoryEventArgs e)
         {
-            Add(e.Item);
+            Items.Add(e.Item);
         }
 
-        public void Add(GameObject item)
-        {
-            Items.Add(item);
-        }
-
-        public void Remove(GameObject item)
-        {
-            Items.Remove(item);
-        }
     }
 }

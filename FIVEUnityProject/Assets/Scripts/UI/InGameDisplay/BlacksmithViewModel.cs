@@ -1,20 +1,18 @@
-﻿using FIVE.Interactive;
-using System;
+﻿using FIVE.CameraSystem;
+using FIVE.EventSystem;
+using FIVE.Interactive;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using FIVE.CameraSystem;
-using FIVE.EventSystem;
-using TMPro;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 using static FIVE.EventSystem.MainThreadDispatcher;
+using Object = UnityEngine.Object;
 
 namespace FIVE.UI.InGameDisplay
 {
-    ///*
     public class BlacksmithViewModel : ViewModel
     {
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/Blacksmith/Blacksmith";
@@ -37,14 +35,15 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-                    ScheduleCoroutine(SetUpInventoryItems());
+                    ScheduleCoroutine(UpdateItems());
                 }
             }
         }
 
         private readonly List<(GameObject cell, Transform content)> inventoryCells = new List<(GameObject cell, Transform content)>();
         private readonly List<GameObject> copyItems = new List<GameObject>();
-        private readonly HashSet<GameObject> compositeItems = new HashSet<GameObject>();
+        private readonly Dictionary<GameObject, GameObject> copyItemsMap = new Dictionary<GameObject, GameObject>();
+        private readonly HashSet<GameObject> compositeCells = new HashSet<GameObject>();
 
         public BlacksmithViewModel()
         {
@@ -60,75 +59,119 @@ namespace FIVE.UI.InGameDisplay
             EventManager.Subscribe<OnInventoryChanged, NotifyCollectionChangedEventArgs>(OnInventoryChanged);
         }
 
-        private IEnumerator MakeCopy()
+        private IEnumerator SetCompositeCells()
         {
-            ObservableCollection<GameObject> items = InventoryManager.Inventory.Items;
-            for (int i = 0; i < copyItems.Count; i++)
+            yield return new WaitForEndOfFrame();
+            int i = 0;
+            float cellWidth = 180; //TODO: get by call
+            foreach (GameObject cell in compositeCells)
             {
-                if (i >= items.Count)
-                {
-                    Destroy(copyItems[i]);
-                }
-                else
-                {
-                    GameObject copy = copyItems[i];
-                    GameObject original = items[i];
-                    if (copy.GetComponent<Item>().Info.Name != original.GetComponent<Item>().Info.Name)
-                    {
-                        copyItems[i] = Object.Instantiate(original, InventoryContentTransform);
-                    }
-                }
+                int y = i;
+                cell.GetComponent<RectTransform>().anchoredPosition =
+                    new Vector2(0, -y * cellWidth);
+                i++;
                 yield return new WaitForFixedUpdate();
             }
-            if (IsActive)
+        }
+
+        private IEnumerator SetInventoryCells()
+        {
+            yield return new WaitForEndOfFrame();
+            int i = 0;
+            float cellWidth = 180; //TODO: get by call
+            int totalColumns = (int)(InventoryContentTransform.rect.width / cellWidth);
+            foreach ((GameObject cell, Transform content) in inventoryCells)
             {
-                ScheduleCoroutine(SetUpInventoryItems());
+                if (!compositeCells.Contains(cell))
+                {
+                    int x = i % totalColumns;
+                    int y = i / totalColumns;
+                    cell.GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(x * cellWidth, -y * cellWidth);
+                    i++;
+                }
+                yield return new WaitForFixedUpdate();
             }
         }
 
         private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ScheduleCoroutine(MakeCopy());
+            ScheduleCoroutine(UpdateItems());
         }
 
         private void OnBuildButtonClick()
         {
+            var list = compositeCells.Select(compositeItem => compositeItem.FindChildRecursive("Content").transform.GetChild(0).gameObject).ToList();
 
+            if (Blacksmith.TryGenerateItem(list, out GameObject newGoPrefab))
+            {
+                GameObject newItem = Object.Instantiate(newGoPrefab);
+                foreach (GameObject item in list)
+                {
+                    GameObject origin = copyItemsMap[item];
+                    InventoryManager.Inventory.Items.Remove(origin);
+                }
+                compositeCells.Clear();
+                this.RaiseImmediate<OnDropItemToInventory>(new DropedItemToInventoryEventArgs(null, newItem));
+            }
         }
 
         private void OnBackButtonClick()
         {
             IsActive = false;
+            compositeCells.Clear();
         }
 
-        private IEnumerator SetUpCompositeItems(GameObject cell)
+        private IEnumerator AddCompositeItems(GameObject cell)
         {
             yield return new WaitForEndOfFrame();
             cell.SetParent(CompositeContentTransform);
             float cellSize = 180; //TODO: get by call
             cell.GetComponent<RectTransform>().anchoredPosition =
-                new Vector2(0,  inventoryCells.Count * cellSize);
-            compositeItems.Add(cell);
+                new Vector2(0, inventoryCells.Count * cellSize);
+            compositeCells.Add(cell);
+            ScheduleCoroutine(SetInventoryCells());
+            ScheduleCoroutine(SetCompositeCells());
         }
-        private IEnumerator SetUpInventoryItems()
+
+        private IEnumerator UpdateItems()
         {
+            for (int i = 0; i < InventoryManager.Inventory.Items.Count; i++)
+            {
+                GameObject original = InventoryManager.Inventory.Items[i];
+                if (i < copyItems.Count)
+                {
+                    GameObject copy = copyItems[i];
+                    if (copy.GetComponent<Item>().Info.Name != original.GetComponent<Item>().Info.Name)
+                    {
+                        if (copyItemsMap.ContainsKey(copy))
+                        {
+                            copyItemsMap.Remove(copy);
+                        }
+                        copyItems[i] = Object.Instantiate(original);
+                        copyItemsMap.Add(copy, original);
+                    }
+                }
+                else
+                {
+                    GameObject copy = Object.Instantiate(original);
+                    copyItems.Add(copy);
+                    copyItemsMap.Add(copy, original);
+                }
+                yield return new WaitForFixedUpdate();
+            }
             //Ensure size
-            yield return new WaitForEndOfFrame();
-            float cellSize = 180; //TODO: get by call
-            int totalColumns = (int)(InventoryContentTransform.rect.width / cellSize);
             while (copyItems.Count > inventoryCells.Count)
             {
                 GameObject cell = Object.Instantiate(CellPrefab, InventoryContentTransform);
-                Button button = cell.GetComponentInChildren<Button>();
                 int i = inventoryCells.Count;
                 cell.name = $"Cell-{i}";
-                int x = i % totalColumns;
-                int y = i / totalColumns;
-                cell.GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(x * cellSize, -y * cellSize);
                 Transform contenTransform = cell.FindChildRecursive("Content").transform;
                 inventoryCells.Add((cell, contenTransform));
-                button.onClick.AddListener(()=>OnInventoryItemClicked(cell));
+
+                Button button = cell.GetComponentInChildren<Button>();
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() => OnInventoryItemClicked(cell));
                 yield return new WaitForFixedUpdate();
             }
             //
@@ -142,22 +185,33 @@ namespace FIVE.UI.InGameDisplay
                 else
                 {
                     GameObject item = copyItems[i];
-                    item.SetParent(content);
-                    item.GetComponent<MeshRenderer>().receiveShadows = false;
-                    ItemInfo info = item.GetComponent<Item>().Info;
-                    item.transform.localScale = info.UIScale;
-                    item.transform.localEulerAngles = info.UIRotation;
-                    item.transform.localPosition = info.UIPosition;
-                    cell.SetActive(true);
+                    if (item.transform.parent == null ||
+                        !item.transform.parent.gameObject.name.Contains("Content"))
+                    {
+                        item.transform.SetParent(content);
+                        item.GetComponent<MeshRenderer>().receiveShadows = false;
+                        ItemInfo info = item.GetComponent<Item>().Info;
+                        item.transform.localScale = info.UIScale;
+                        item.transform.localEulerAngles = info.UIRotation;
+                        item.transform.localPosition = info.UIPosition;
+                    }
+                    else if (content.transform.parent != content)
+                    {
+                        item.transform.SetParent(content);
+                    }
                 }
                 yield return new WaitForFixedUpdate();
+            }
+            if (IsActive)
+            {
+                ScheduleCoroutine(SetInventoryCells());
             }
         }
 
 
         private void OnInventoryItemClicked(GameObject cell)
         {
-            ScheduleCoroutine(SetUpCompositeItems(cell));
+            ScheduleCoroutine(AddCompositeItems(cell));
         }
 
     }
