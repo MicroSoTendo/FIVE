@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FIVE
 {
@@ -9,7 +6,7 @@ namespace FIVE
     {
         public Vector3 Target
         {
-            get { return _target; }
+            get => _target;
             set
             {
                 _target = value;
@@ -53,8 +50,9 @@ namespace FIVE
                     EnemyBehavior enemyBehavior = other.GetComponent<EnemyBehavior>();
                     enemyBehavior.OnHit();
                 }
-                gameObject.SetActive(false);
-                Destroy(gameObject);
+                GetComponentInChildren<TrailRenderer>().enabled = false;
+                GetComponentInChildren<ParticleSystem>().Play();
+                Destroy(gameObject, 1f);
             }
         }
     }
