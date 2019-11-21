@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3300722}
   - component: {fileID: 2369154}
   - component: {fileID: 8354826095241169121}
+  - component: {fileID: 7236791601789180328}
   m_Layer: 0
   m_Name: Capacitor_Polypropylene_Placed
   m_TagString: Untagged
@@ -98,3 +99,17 @@ MonoBehaviour:
     UIScale: {x: 0, y: 0, z: 0}
     UIRotation: {x: 0, y: 0, z: 0}
     UIPosition: {x: 0, y: 0, z: 0}
+--- !u!64 &7236791601789180328
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121362}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300102, guid: cb62f1f8a6c91ea7c822fa603299339a, type: 3}
