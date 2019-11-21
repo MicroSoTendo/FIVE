@@ -261,7 +261,7 @@ namespace ListServerCore
         {
             TcpListener listener = new TcpListener(address, port);
             listener.Start();
-            Console.WriteLine($"Broadcasting at {address}:{port}");
+            Console.WriteLine($"Listening at {address}:{port}");
             while (!ct.IsCancellationRequested)
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
