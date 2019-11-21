@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace FIVE.Interactive.Blacksmith
+namespace FIVE.Interactive
 {
-    public class ComponentsRead
+    public class Blacksmith
     {
         private static TextAsset csvFile;
         private static string[] records;
@@ -27,7 +27,7 @@ namespace FIVE.Interactive.Blacksmith
             }
         }
 
-        private static bool IsCompositeComponents(List<GameObject> compositeItems)
+        private static bool IsCompositeComponents(IEnumerable<GameObject> compositeItems)
         {
             bool isComp = true;
             GenerateLists();
@@ -60,16 +60,16 @@ namespace FIVE.Interactive.Blacksmith
 
             return isComp;
         }
-        public static GameObject GenerateItem(List<GameObject> compositeItems)
+        public static bool TryGenerateItem(IEnumerable<GameObject> inItems, out GameObject outItem)
         {
-            if (IsCompositeComponents(compositeItems))
+            if (IsCompositeComponents(inItems))
             {
                 string a = PathLists[index];
-                GameObject r = Resources.Load<GameObject>(PathLists[index]);
-                return r;
+                outItem = Resources.Load<GameObject>(PathLists[index]);
+                return true;
             }
-
-            return null;
+            outItem = default;
+            return false;
         }
     }
 }

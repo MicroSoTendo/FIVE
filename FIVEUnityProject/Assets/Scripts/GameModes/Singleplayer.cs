@@ -4,7 +4,6 @@ using FIVE.Robot;
 using FIVE.TerrainSystem;
 using FIVE.UI;
 using FIVE.UI.Background;
-using FIVE.UI.BSComposite;
 using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.NPC;
@@ -36,7 +35,7 @@ namespace FIVE.GameModes
 
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<NPCDialogueViewModel>().IsActive = false;
-            UIManager.Create<BSCompositeViewModel>().IsActive = false;
+            UIManager.Create<BlacksmithViewModel>().IsActive = false;
             UIManager.Create<InGameMenuViewModel>().IsActive = false;
             UIManager.Create<RecipeViewModel>().IsActive = false;
             //TODO: Parametrize prefab name with a UI selector

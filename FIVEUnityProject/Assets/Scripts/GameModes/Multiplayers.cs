@@ -5,7 +5,6 @@ using FIVE.Robot;
 using FIVE.TerrainSystem;
 using FIVE.UI;
 using FIVE.UI.Background;
-using FIVE.UI.BSComposite;
 using FIVE.UI.CodeEditor;
 using FIVE.UI.InGameDisplay;
 using FIVE.UI.Multiplayers;
@@ -78,7 +77,7 @@ namespace FIVE.GameModes
             CameraManager.Remove("GUI Camera");
             UIManager.Create<HUDViewModel>().IsActive = true;
             UIManager.Create<NPCDialogueViewModel>().IsActive = false;
-            UIManager.Create<BSCompositeViewModel>().IsActive = false;
+            UIManager.Create<BlacksmithViewModel>().IsActive = false;
             InGameMenuViewModel inGameMenuViewModel = UIManager.Create<InGameMenuViewModel>();
             inGameMenuViewModel.IsActive = false;
             inGameMenuViewModel.ExitGameButton.onClick.AddListener(OnExit);
