@@ -26,7 +26,7 @@ namespace FIVE
         {
             cc = GetComponent<CharacterController>();
             MoveOnces = new MoveOnce[4] { Forward, Backward, TurnLeft, TurnRight };
-            MoveSpeed = 0.15f;
+            MoveSpeed = 0.5f;
             RotateSpeed = 30.0f;
         }
 
