@@ -1,10 +1,15 @@
 ﻿using System.Collections.Concurrent;
 
-namespace FIVE.Network
+namespace FIVE.Network.Core
 {
     public class TimeStamp
     {
-        public int Time { get; set; }
+        public TimeStamp(int time)
+        {
+            Time = time;
+        }
+
+        public int Time { get; }
         public ConcurrentQueue<byte[]> Data { get; set; } = new ConcurrentQueue<byte[]>();
     }
 }

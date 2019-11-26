@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using FIVE.Network.Core;
+using UnityEngine;
+
 namespace FIVE.Network.Serializers
 {
     public static class TransformSerialize

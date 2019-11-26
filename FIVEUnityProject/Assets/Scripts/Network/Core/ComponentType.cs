@@ -1,4 +1,4 @@
-﻿namespace FIVE.Network
+﻿namespace FIVE.Network.Core
 {
     public enum ComponentType : byte
     {

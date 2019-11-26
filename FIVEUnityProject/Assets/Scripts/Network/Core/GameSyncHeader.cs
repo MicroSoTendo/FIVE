@@ -1,14 +1,15 @@
-﻿using System;
-
-namespace FIVE.Network
+﻿namespace FIVE.Network.Core
 {
 
     /// <summary>
     /// Used for commnuicating between Host and Client.
     /// </summary>
-    [Flags]
     public enum GameSyncHeader : ushort
-    {
+    {   
+        /// <summary>
+        /// 0 is never allowed.
+        /// </summary>
+        Invalid = 0,
         /// <summary>
         /// Used by <b>Client</b> only.<br/>
         /// Sent to host for requesting joining room.
@@ -18,31 +19,41 @@ namespace FIVE.Network
         /// Used by <b>Host</b> only.<br/>
         /// Sent to client for accept join, otherwise refuse join.
         /// </summary>
-        AcceptJoin = 1 << 1,
+        AcceptJoin = 2,
         /// <summary>
-        /// Used by <b>Client</b> only.<br/>
-        /// Sent by host to confirm connection is alive.
+        /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
+        /// Make sure connection is still alive.
         /// </summary>
-        AliveTick = 1 << 1,
+        AliveTick = 3,
+        /// <summary>
+        /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
+        /// Start a time stamp.
+        /// </summary>
+        StampBegin = 4,        
+        /// <summary>
+        /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
+        /// End a time stamp.
+        /// </summary>
+        StampEnd = 5,
         /// <summary>
         /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
         /// Request creating object(s).
         /// </summary>
-        CreateObject = 1 << 2,
+        CreateObject = 6,
         /// <summary>
         /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
         /// Request removing object(s).
         /// </summary>
-        RemoveObject = 1 << 3,
+        RemoveObject = 7,
         /// <summary>
         /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
         /// Indicating whether components need syncing.
         /// </summary>
-        ComponentSync = 1 << 4,
+        ComponentSync = 8,
         /// <summary>
         /// Can be used by both <b>Client</b> and <b>Host</b>.<br/>
         /// Indicating whether remote call(s) exist.
         /// </summary>
-        RemoteCall = 1 << 5
+        RemoteCall = 9
     }
 }

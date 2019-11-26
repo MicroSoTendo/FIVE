@@ -22,23 +22,23 @@ namespace FIVE.Network
             int id = 0;
             foreach (string s in pathList)
             {
-               GameObject prefab= Resources.Load<GameObject>(s);
-               prefabDatabase.Add(id++, prefab);
-               yield return null;
+                GameObject prefab = Resources.Load<GameObject>(s);
+                prefabDatabase.Add(id++, prefab);
+                yield return null;
             }
             Initialized = true;
         }
 
         public GameObject Instantiate(int prefabID, Transform parent)
         {
-            var go = GameObject.Instantiate(prefabDatabase[prefabID], parent);
+            var go = Object.Instantiate(prefabDatabase[prefabID], parent);
             instancePrefabID.Add(go, prefabID);
             return go;
-        }        
-        
+        }
+
         public GameObject Instantiate(int prefabID)
         {
-            var go = GameObject.Instantiate(prefabDatabase[prefabID]);
+            GameObject go = Object.Instantiate(prefabDatabase[prefabID]);
             instancePrefabID.Add(go, prefabID);
             return go;
         }

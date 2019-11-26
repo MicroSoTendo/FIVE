@@ -1,4 +1,4 @@
-﻿namespace FIVE.Network
+﻿namespace FIVE.Network.Rpc
 {
     public interface IRpcInvokeable
     {
