@@ -35,7 +35,7 @@ namespace FIVE.GameModes
 
         private void JoinRoomHandler(object sender, JoinRoomArgs joinRoomArgs)
         {
-            NetworkManager.Instance.JoinRoom(joinRoomArgs.Guid, joinRoomArgs.Password);
+            //NetworkManager.Instance.JoinRoom(joinRoomArgs.Guid, joinRoomArgs.Password);
             StartCoroutine(JoinRoomWait());
         }
 
@@ -44,27 +44,28 @@ namespace FIVE.GameModes
             const float waitTime = 0.1f;
             float timer = 0;
             //TODO: Refactor this
-            while (NetworkManager.Instance.State != NetworkManager.NetworkState.Client)
-            {
-                timer += waitTime;
-                if (timer > 2f)
-                {
-                    //TODO: POP up timeout
-                    break;
-                }
-                yield return new WaitForSeconds(waitTime);
-            }
+            //while (NetworkManager.Instance.State != NetworkManager.NetworkState.Client)
+            //{
+            //    timer += waitTime;
+            //    if (timer > 2f)
+            //    {
+            //        //TODO: POP up timeout
+            //        break;
+            //    }
+            //    yield return new WaitForSeconds(waitTime);
+            //}
 
-            if (NetworkManager.Instance.State == NetworkManager.NetworkState.Client)
-            {
-                StartCoroutine(CommonInitRoutine());
-                StartCoroutine(ClientInitRoutine());
-            }
+            //if (NetworkManager.Instance.State == NetworkManager.NetworkState.Client)
+            //{
+            //    StartCoroutine(CommonInitRoutine());
+            //    StartCoroutine(ClientInitRoutine());
+            //}
+            return null;
         }
 
         private void CreateRoomHandler(object sender, CreateRoomArgs createRoomArgs)
         {
-            NetworkManager.Instance.CreateRoom(createRoomArgs.Name, createRoomArgs.MaxPlayers, createRoomArgs.HasPassword, createRoomArgs.Password);
+            //NetworkManager.Instance.CreateRoom(createRoomArgs.Name, createRoomArgs.MaxPlayers, createRoomArgs.HasPassword, createRoomArgs.Password);
             StartCoroutine(CommonInitRoutine());
             StartCoroutine(HostInitRoutine());
         }
@@ -94,10 +95,10 @@ namespace FIVE.GameModes
 
         private void OnExit()
         {
-            if (NetworkManager.Instance.State == NetworkManager.NetworkState.Host)
-            {
-                NetworkManager.Instance.Disconnect();
-            }
+            //if (NetworkManager.Instance.State == NetworkManager.NetworkState.Host)
+            //{
+            //    NetworkManager.Instance.Disconnect();
+            //}
         }
 
         //TODO: Refactor spawn location later
@@ -167,7 +168,7 @@ namespace FIVE.GameModes
 
         private IEnumerator ClientInitRoutine()
         {
-            List<(Vector3, Quaternion)> points = spawnPoints[NetworkManager.Instance.PlayerIndex];
+            List<(Vector3, Quaternion)> points = spawnPoints[0];
             for (int i = 0; i < points.Count; i++)
             {
                 (Vector3 position, Quaternion rotation) = points[i];
@@ -177,9 +178,9 @@ namespace FIVE.GameModes
                     RobotManager.ActiveRobot = robot;
                 }
 
-                SyncCenter.Instance.Register(robot);
-                SyncCenter.Instance.Register(robot.GetComponent<Transform>());
-                SyncCenter.Instance.Register(robot.GetComponent<Animator>());
+                //SyncCenter.Instance.Register(robot);
+                //SyncCenter.Instance.Register(robot.GetComponent<Transform>());
+                //SyncCenter.Instance.Register(robot.GetComponent<Animator>());
             }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();
             ItemDialogViewModel itemDialogViewModel = UIManager.Create<ItemDialogViewModel>();
@@ -205,9 +206,9 @@ namespace FIVE.GameModes
                 {
                     RobotManager.ActiveRobot = robot;
                 }
-                SyncCenter.Instance.Register(robot);
-                SyncCenter.Instance.Register(robot.GetComponent<Transform>());
-                SyncCenter.Instance.Register(robot.GetComponent<Animator>());
+                //SyncCenter.Instance.Register(robot);
+                //SyncCenter.Instance.Register(robot.GetComponent<Transform>());
+                //SyncCenter.Instance.Register(robot.GetComponent<Animator>());
                 //yield return null;
             }
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();

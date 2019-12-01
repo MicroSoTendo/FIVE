@@ -13,16 +13,16 @@ namespace ListServerCore
     {
 
         private static readonly HashSet<TcpClient> ConnectedClients = new HashSet<TcpClient>();
-        private static readonly ConcurrentDictionary<TcpClient,Task> SendTasks = new ConcurrentDictionary<TcpClient,Task>();
-        private static readonly ConcurrentDictionary<TcpClient,Task> ReadTasks = new ConcurrentDictionary<TcpClient,Task>();
-        private static readonly ConcurrentDictionary<TcpClient,Task> TimerTasks = new ConcurrentDictionary<TcpClient,Task>();
-        
+        private static readonly ConcurrentDictionary<TcpClient, Task> SendTasks = new ConcurrentDictionary<TcpClient, Task>();
+        private static readonly ConcurrentDictionary<TcpClient, Task> ReadTasks = new ConcurrentDictionary<TcpClient, Task>();
+        private static readonly ConcurrentDictionary<TcpClient, Task> TimerTasks = new ConcurrentDictionary<TcpClient, Task>();
+
         private static readonly ConcurrentDictionary<Guid, RoomInfo> RoomInfosByGuid = new ConcurrentDictionary<Guid, RoomInfo>();
         private static readonly ConcurrentDictionary<TcpClient, Guid> GuidByClient = new ConcurrentDictionary<TcpClient, Guid>();
 
-        private static readonly ConcurrentDictionary<TcpClient, int> Timer 
+        private static readonly ConcurrentDictionary<TcpClient, int> Timer
             = new ConcurrentDictionary<TcpClient, int>();
-        private static readonly ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>> SendQueue 
+        private static readonly ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>> SendQueue
             = new ConcurrentDictionary<TcpClient, ConcurrentQueue<ListServerHeader>>();
         private static readonly Dictionary<ListServerHeader, Action<TcpClient>> Handlers =
             new Dictionary<ListServerHeader, Action<TcpClient>>
@@ -38,14 +38,17 @@ namespace ListServerCore
             Timer[client] = 0;
         }
 
+        private static volatile bool isSendingRoomInfo;
         private static unsafe void RoomInfos(TcpClient client)
         {
+            if (isSendingRoomInfo) return;
+            isSendingRoomInfo = true;
             NetworkStream stream = client.GetStream();
             byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(int)];
             fixed (byte* pBuffer = buffer)
             {
-                *(ListServerHeader*) pBuffer = ListServerHeader.RoomInfos;
-                *(int*) (pBuffer + sizeof(ListServerHeader)) = RoomInfosByGuid.Count;
+                *(ListServerHeader*)pBuffer = ListServerHeader.RoomInfos;
+                *(int*)(pBuffer + sizeof(ListServerHeader)) = RoomInfosByGuid.Count;
             }
             stream.Write(buffer);
             foreach (RoomInfo roomInfo in RoomInfosByGuid.Values)
@@ -54,6 +57,7 @@ namespace ListServerCore
                 stream.Write(roomInfoBuffer.Length.ToBytes());
                 stream.Write(roomInfoBuffer);
             }
+            isSendingRoomInfo = false;
         }
 
         private static unsafe void AssignGuid(TcpClient client)
@@ -61,12 +65,13 @@ namespace ListServerCore
             byte[] buffer = new byte[sizeof(ListServerHeader) + sizeof(Guid)];
             fixed (byte* pBuffer = buffer)
             {
-                *(ListServerHeader*) pBuffer = ListServerHeader.AssignGuid;
-                *(Guid*) (pBuffer + sizeof(ListServerHeader)) = GuidByClient[client];
+                *(ListServerHeader*)pBuffer = ListServerHeader.AssignGuid;
+                *(Guid*)(pBuffer + sizeof(ListServerHeader)) = GuidByClient[client];
             }
             client.GetStream().Write(buffer);
         }
 
+        private static CancellationTokenSource cts;
         private static void Main(string[] args)
         {
             IPAddress address = IPAddress.Any;
@@ -96,7 +101,7 @@ namespace ListServerCore
                 }
             }
 
-            CancellationTokenSource cts = new CancellationTokenSource();
+            cts = new CancellationTokenSource();
             Task handlerTask = HandleIncomingAsync(address, listenPort, cts.Token);
             while (true)
             {
@@ -104,20 +109,6 @@ namespace ListServerCore
                 if (key.Key == ConsoleKey.Q)
                 {
                     cts.Cancel();
-                }
-                if (key.Key == ConsoleKey.R)
-                {
-                    handlerTask.Dispose();
-                    foreach (Task task in SendTasks.Values)
-                    {
-                        task.Dispose();
-                    }
-                    foreach (TcpClient connectedClient in ConnectedClients)
-                    {
-                        connectedClient.Dispose();
-                    }
-                    ConnectedClients.Clear();
-                    handlerTask = HandleIncomingAsync(address, listenPort, cts.Token);
                 }
             }
         }

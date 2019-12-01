@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace FIVE.FIVE.Network
+namespace FIVE.Network.Rpc
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class RPCAttribute : Attribute
+    public class RpcAttribute : Attribute
     {
         public static HashSet<Assembly> ValidAssemblies { get; } = new HashSet<Assembly>();
     }

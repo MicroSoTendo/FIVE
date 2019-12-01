@@ -1,9 +1,6 @@
-﻿using FIVE.FIVE.Network;
+﻿using FIVE.Network.Core;
+using FIVE.Network.Lobby;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace FIVE.Network
@@ -38,25 +35,24 @@ namespace FIVE.Network
             Client,
         }
 
-        public static NetworkManager Instance { get; private set; }
-        [SerializeField] private string listServer;
-        [SerializeField] private ushort listServerPort;
-        [SerializeField] private int updateRate = 30;
+        private static NetworkManager Instance { get; set; }
+
+        [SerializeField] private bool hasLobby = true;
+        [SerializeField] private string lobbyServerName;
+        [SerializeField] private ushort lobbyServerPort;
+        [SerializeField] private int lobbyUpdateRate = 5;
+
         [SerializeField] private ushort gameServerPort = 8889;
-        [SerializeField] private bool localMode = false;
+        [SerializeField] private int gameServerUpdateRate = 30;
+
+        [SerializeField] private bool debugMode = false;
         public NetworkState State { get; internal set; }
-
-        public ICollection<RoomInfo> RoomInfos => lobbyHandler.GetRoomInfos;
-        public RoomInfo CurrentRoomInfo { get; private set; } = new RoomInfo();
-        private LobbyHandler lobbyHandler;
-
         public int PlayerIndex { get; internal set; }
-        public BijectMap<int, MethodInfo> RpcInfos { get; internal set; }
-        private NetworkGameHandler networkGameHandler;
+        private LobbyClient lobbyClient;
+        private GameClient gameClient;
+        private GameServer gameServer;
 
-        private float updateTimer;
-
-        public void Awake()
+        private void Awake()
         {
             if (Instance != null)
             {
@@ -64,98 +60,60 @@ namespace FIVE.Network
             }
             Instance = this;
             State = NetworkState.Idle;
-            if (!localMode)
+            if (debugMode)
             {
-                lobbyHandler = new LobbyHandler(listServer, listServerPort);
-                lobbyHandler.Start();
+                return;
+            }
+
+            if (hasLobby)
+            {
+                lobbyClient = gameObject.AddComponent<LobbyClient>();
+                lobbyClient.LobbyServerName = lobbyServerName;
+                lobbyClient.LobbyServerPort = lobbyServerPort;
+                lobbyClient.UpdateRate = lobbyUpdateRate;
             }
         }
 
-        private class MethodComparer : IComparer<MethodInfo>
-        {
-            public int Compare(MethodInfo x, MethodInfo y)
-            {
-                return x == null ? 1 : x.Name.CompareTo(y);
-            }
-        }
 
-        public IEnumerator Start()
+        private void Start()
         {
-            var methodsInfos = new SortedSet<MethodInfo>(new MethodComparer());
-            foreach (Assembly assembly in RPCAttribute.ValidAssemblies)
+            if (hasLobby)
             {
-                foreach (Type type in assembly.GetTypes())
-                {
-                    if (typeof(IRpcInvokeable).IsAssignableFrom(type))
-                    {
-                        foreach (MethodInfo methodInfo in type.GetMethods())
-                        {
-                            if (methodInfo.GetCustomAttributes(typeof(RPCAttribute), false).Length > 0)
-                            {
-                                methodsInfos.Add(methodInfo);
-                            }
-                        }
-                    }
-                    yield return new WaitForFixedUpdate();
-                }
+                lobbyClient.enabled = true;
             }
-            if (methodsInfos.Count > 0)
-            {
-                RpcInfos = new BijectMap<int, MethodInfo>();
-                int counter = 0;
-                foreach (MethodInfo methodsInfo in methodsInfos)
-                {
-                    RpcInfos.Add(counter++, methodsInfo);
-                    yield return new WaitForFixedUpdate();
-                }
-            }
+
             Debug.Log("NetworkManager Started");
         }
 
+        #region Public APIs
+        
         public void JoinRoom(Guid guid, string password)
         {
-            CurrentRoomInfo = lobbyHandler[guid];
-            CurrentRoomInfo.SetRoomPassword(password);
-
-            networkGameHandler = new ClientGameHandler();
-            networkGameHandler.Start();
+            RoomInfo roomInfo = lobbyClient.GetRoomInfo(guid);
+            gameClient = gameObject.AddComponent<GameClient>();
+            gameClient.GameServerAddress = roomInfo.Host;
+            gameClient.GameServerPort = roomInfo.Port;
+            gameClient.enabled = true;
             State = NetworkState.Connecting;
         }
 
         public void CreateRoom(string roomName, int maxPlayers, bool hasPassword, string password)
         {
-            CurrentRoomInfo.Name = roomName;
-            CurrentRoomInfo.Port = gameServerPort;
-            CurrentRoomInfo.CurrentPlayers = 1; //Host self
-            CurrentRoomInfo.HasPassword = hasPassword;
-            CurrentRoomInfo.MaxPlayers = maxPlayers;
-            if (hasPassword)
-            {
-                CurrentRoomInfo.SetRoomPassword(password);
-            }
-            lobbyHandler.CreateRoom();
-
-            networkGameHandler = new HostGameHandler();
-            networkGameHandler.Start();
+            lobbyClient.CreateRoom(roomName, maxPlayers, hasPassword, password);
+            gameServer = gameObject.AddComponent<GameServer>();
+            gameServer.ListeningPort = gameServerPort;
+            gameServer.UpdateRate = gameServerUpdateRate;
+            gameServer.enabled = true;
             State = NetworkState.Host;
         }
 
-        public void Disconnect()
+        public GameObject Instantiate()
         {
-            lobbyHandler.RemoveRoom();
+            throw new NotImplementedException();
         }
+        
 
-        public void LateUpdate()
-        {
-            if (!localMode && State != NetworkState.Idle)
-            {
-                updateTimer += Time.deltaTime;
-                if (updateTimer > 1f / updateRate)
-                {
-                    networkGameHandler.LateUpdate();
-                    updateTimer = 0;
-                }
-            }
-        }
+        #endregion
+
     }
 }

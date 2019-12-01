@@ -1,9 +1,8 @@
-﻿using System;
-using FIVE.Network.Serializers;
+﻿using FIVE.Network.Serializers;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FIVE.Network
+namespace FIVE.Network.Core
 {
     public class NetworkView : MonoBehaviour
     {
@@ -38,7 +37,9 @@ namespace FIVE.Network
             foreach ((int componentID, Component component) in syncedComponents)
             {
                 if (Serializer.TrySerialize(componentID, component, out byte[] buffer))
+                {
                     serializedComponent.Add(buffer);
+                }
             }
         }
     }

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using FIVE.Network.Lobby;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-using UnityEngine;
 
 namespace FIVE.Network
 {
-    internal static class NetworkUtil
+    internal static class Util
     {
         public static bool Has(this int @enum, int flag)
         {
@@ -25,7 +25,9 @@ namespace FIVE.Network
         public static unsafe T As<T>(this byte[] bytes, int startIndex = 0) where T : unmanaged
         {
             fixed (byte* pBytes = &bytes[startIndex])
+            {
                 return *(T*)pBytes;
+            }
         }
 
         public static string ToName(this byte[] bytes, int startIndex = 0)
@@ -54,8 +56,8 @@ namespace FIVE.Network
                 *(int*)(numPtr + 4) = b;
             }
             return buffer;
-        }        
-        
+        }
+
         public static unsafe byte[] ToBytes(int a, int b, int c)
         {
             byte[] buffer = new byte[12];
@@ -112,13 +114,16 @@ namespace FIVE.Network
                 foreach (byte[] bytes in bytesArray)
                 {
                     fixed (byte* pbytes = bytes)
+                    {
                         Unsafe.CopyBlock(ref *(pdest + offset), ref (*pbytes), (uint)bytes.Length);
+                    }
+
                     offset += bytes.Length;
                 }
             }
             return combined;
-        }        
-        
+        }
+
         public static unsafe byte[] CombineUnsafe(List<byte[]> bytesArray)
         {
             byte[] combined = new byte[bytesArray.Sum(a => a.Length)];
@@ -128,7 +133,10 @@ namespace FIVE.Network
                 foreach (byte[] bytes in bytesArray)
                 {
                     fixed (byte* pbytes = bytes)
+                    {
                         Unsafe.CopyBlock(ref *(pdest + offset), ref (*pbytes), (uint)bytes.Length);
+                    }
+
                     offset += bytes.Length;
                 }
             }
@@ -172,8 +180,8 @@ namespace FIVE.Network
         public static void CopyFrom(this byte[] dest, byte[] source, int destStartIndex = 0)
         {
             Unsafe.CopyBlock(ref dest[destStartIndex], ref source[0], (uint)source.Length);
-        }        
-        
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void CopyFrom<T>(this byte[] dest, T source, int destStartIndex = 0) where T : unmanaged
         {
@@ -190,7 +198,7 @@ namespace FIVE.Network
             dest.CopyFrom(source1, destStartIndex);
             dest.CopyFrom(source2, destStartIndex + source1.Length);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyFrom(this byte[] dest, byte[] source1, byte[] source2, byte[] source3, int destStartIndex = 0)
         {
@@ -214,7 +222,7 @@ namespace FIVE.Network
         }
 
         public static unsafe void Write(this NetworkStream stream, int i)
-        {         
+        {
             byte[] buffer = new byte[4];
             fixed (byte* pBuffer = buffer)
             {
@@ -279,12 +287,17 @@ namespace FIVE.Network
 
 
 
-        public static T Read<T>(this NetworkStream stream) where T : Enum
+        public static unsafe T Read<T>(this NetworkStream stream) where T : unmanaged
         {
-            return (T)(object)stream.ReadI32();
+            byte[] buffer = new byte[sizeof(T)];
+            stream.Read(buffer, 0, sizeof(T));
+            fixed (byte* pBuffer = buffer)
+            {
+                return *(T*)pBuffer;
+            }
         }
 
-        
+
         public static unsafe bool BytesCompare(byte[] a1, int a1StartIdx, byte[] a2, int a2StartIdx, int length)
         {
             //Validation
@@ -311,8 +324,8 @@ namespace FIVE.Network
                     if (*((int*)x1) != *((int*)x2))
                     {
                         return false;
-                    } 
-                    x1 += 4; 
+                    }
+                    x1 += 4;
                     x2 += 4;
                 }
 
@@ -321,8 +334,8 @@ namespace FIVE.Network
                     if (*(short*)x1 != *(short*)x2)
                     {
                         return false;
-                    } 
-                    x1 += 2; 
+                    }
+                    x1 += 2;
                     x2 += 2;
                 }
 

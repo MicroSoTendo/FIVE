@@ -138,10 +138,7 @@ namespace FIVE.CameraSystem
                     {
                         ca.transform.parent.GetComponent<RobotSphere>().SwitchToThis();
                     }
-                    else
-                    {
-                        SetCamera(ca);
-                    }
+                    SetCamera(ca);
                     wall.Clear();
                     return;
                 }

@@ -45,7 +45,7 @@ namespace FIVE.AWSL
                 script.Globals["nearestBattery"] = FuncNearestBattery();
                 script.Globals["attackEnemy"] = FuncAttackNearestEnemy();
 
-                coroutine.Coroutine.AutoYieldCounter = 10 * robot.CPU.Speed;
+                coroutine.Coroutine.AutoYieldCounter = 6 * robot.CPU.Speed;
             }
             catch (Exception e)
             {
@@ -59,7 +59,7 @@ namespace FIVE.AWSL
             {
                 Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward,
                     out RaycastHit hitinfo);
-                script.Globals["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
+                script.Globals["Distance"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
                 DynValue result = coroutine.Coroutine.Resume();
                 return result.Type != DataType.YieldRequest;
@@ -81,15 +81,13 @@ namespace FIVE.AWSL
         {
             return () =>
             {
-                HashSet<GameObject>.Enumerator iter = EnemyManager.Enemies.GetEnumerator();
-                GameObject nearestEnemy = iter.Current;
-                float nearestDistance = Vector3.Distance(nearestEnemy.transform.position, robot.gameObject.transform.position);
+                GameObject nearestEnemy = null;
+                float nearestDistance = 1000;
 
-                while (iter.MoveNext())
+                foreach (GameObject enemy in EnemyManager.Enemies)
                 {
-                    GameObject enemy = iter.Current;
                     float distance = Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position);
-                    if (Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position) < distance)
+                    if (distance < nearestDistance)
                     {
                         nearestEnemy = enemy;
                         nearestDistance = distance;
@@ -125,26 +123,20 @@ namespace FIVE.AWSL
         {
             return () =>
             {
-                Debug.Log("Func");
-                HashSet<GameObject>.Enumerator iter = EnemyManager.Enemies.GetEnumerator();
-                iter.MoveNext();
-                GameObject nearestEnemy = iter.Current;
-                Debug.Log("Second");
-                float nearestDistance = Vector3.Distance(nearestEnemy.transform.position, robot.gameObject.transform.position);
-                Debug.Log("Third");
+                GameObject nearestEnemy = null;
+                float nearestDistance = 1000;
 
-                while (iter.MoveNext())
+                foreach (GameObject enemy in EnemyManager.Enemies)
                 {
-                    GameObject enemy = iter.Current;
                     float distance = Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position);
-                    if (Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position) < distance)
+                    if (distance < nearestDistance)
                     {
                         nearestEnemy = enemy;
                         nearestDistance = distance;
                     }
                 }
 
-                if (nearestDistance < 80.0f)
+                if (nearestEnemy != null && nearestDistance < 80.0f)
                 {
                     robot.Attack(nearestEnemy);
                 }

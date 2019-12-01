@@ -79,7 +79,7 @@ namespace FIVE
             transform.Rotate(0, patrolDirection, 0);
             state = State.Idle;
 
-            speed = 10.0f;
+            speed = 20.0f;
             elapsedTime = 0;
             health = 100.0f;
         }
@@ -132,11 +132,12 @@ namespace FIVE
 
         public void OnHit()
         {
-            health -= 30.0f;
+            health -= 10.0f;
             FlashRed();
             GetComponent<AudioSource>().Play();
             if (health <= 0.0f)
             {
+                Enemy.EnemyManager.Remove(gameObject);
                 gameObject.SetActive(false);
                 GenPickups();
                 Destroy(gameObject);

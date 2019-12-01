@@ -41,10 +41,15 @@ namespace FIVE.Enemy
             }
         }
 
-        private void AddEnemy(Vector3 positition)
+        public void AddEnemy(Vector3 positition)
         {
             GameObject enemy = Instantiate(prefab, positition, Quaternion.identity);
             Enemies.Add(enemy);
+        }
+
+        public static void Remove(GameObject enemy)
+        {
+            instance.enemies.Remove(enemy);
         }
     }
 }
