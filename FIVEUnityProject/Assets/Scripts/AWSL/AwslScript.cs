@@ -2,7 +2,6 @@
 using FIVE.Robot;
 using MoonSharp.Interpreter;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.AWSL
@@ -41,7 +40,7 @@ namespace FIVE.AWSL
                 script.Globals["backward"] = FuncMove(Movable.Move.Back);
                 script.Globals["left"] = FuncMove(Movable.Move.Left);
                 script.Globals["right"] = FuncMove(Movable.Move.Right);
-                script.Globals["nearestEnemy"] = FuncNearestEnemy();
+                script.Globals["findEnemy"] = FuncFindNearestEnemy();
                 script.Globals["nearestBattery"] = FuncNearestBattery();
                 script.Globals["attackEnemy"] = FuncAttackNearestEnemy();
 
@@ -77,12 +76,18 @@ namespace FIVE.AWSL
             return x => robot.GetComponent<RobotSphere>().Move(dir, (int)x, true);
         }
 
-        private Func<GameObject> FuncNearestEnemy()
+        [MoonSharpUserData]
+        public class Position
+        {
+            public float X, Y;
+        }
+
+        private Func<Position> FuncFindNearestEnemy()
         {
             return () =>
             {
                 GameObject nearestEnemy = null;
-                float nearestDistance = 1000;
+                float nearestDistance = 10000;
 
                 foreach (GameObject enemy in EnemyManager.Enemies)
                 {
@@ -94,11 +99,17 @@ namespace FIVE.AWSL
                     }
                 }
 
-                return nearestEnemy;
+                Vector3 d = nearestEnemy.transform.position - robot.transform.position;
+                d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                return new Position
+                {
+                    X = d.x,
+                    Y = d.z,
+                };
             };
         }
 
-        private Func<GameObject> FuncNearestBattery()
+        private Func<Position> FuncNearestBattery()
         {
             return () =>
             {
@@ -115,7 +126,13 @@ namespace FIVE.AWSL
                     }
                 }
 
-                return nearestBattery;
+                Vector3 d = nearestBattery.transform.position - robot.transform.position;
+                d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                return new Position
+                {
+                    X = d.x,
+                    Y = d.z,
+                };
             };
         }
 
@@ -124,7 +141,7 @@ namespace FIVE.AWSL
             return () =>
             {
                 GameObject nearestEnemy = null;
-                float nearestDistance = 1000;
+                float nearestDistance = 10000;
 
                 foreach (GameObject enemy in EnemyManager.Enemies)
                 {
