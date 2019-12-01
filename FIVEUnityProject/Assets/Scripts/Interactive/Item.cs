@@ -1,16 +1,16 @@
 ﻿using FIVE.CameraSystem;
 using FIVE.EventSystem;
-using FIVE.Robot;
 using FIVE.UI.InGameDisplay;
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
 
 namespace FIVE.Interactive
 {
-    internal class Item : MonoBehaviour
+    public class Item : MonoBehaviour
     {
-        public delegate void ItemUsingAction(GameObject item);
+        public delegate void ItemEvent(Item item);
 
         public static readonly Color[] HighlightColors =
         {
@@ -20,7 +20,6 @@ namespace FIVE.Interactive
 
         private int currentColor = 0;
         private Coroutine flashingCoroutine;
-        private bool isCollected;
         private bool isFlashing;
 
         [SerializeField] private ItemInfo itemInfo;
@@ -36,18 +35,27 @@ namespace FIVE.Interactive
             set => itemInfo = value;
         }
 
-        public float ScanningSpeed { get; set; } = 1f; //TODO: Get from CPU
         public bool IsRotating { get; set; } = false;
-        public bool IsPickable { get; set; }
+        public bool Collected { get; set; } = false;
+        public Action ItemUseAction { get; set; }
 
-        public ItemUsingAction ItemAction { get; set; }
-        public bool ActionExecuted { get; set; } = false;
+        public static event ItemEvent LeftClicked;
+        public static event ItemEvent ItemUsed;
 
         private void Awake()
         {
             itemRenderer = GetComponent<Renderer>();
             scanner = Instantiate(Resources.Load<GameObject>("EntityPrefabs/UI/Scanner"), transform)
                 .GetComponent<Scanner>();
+        }
+
+        public void Use()
+        {
+            if (Collected)
+            {
+                ItemUseAction?.Invoke();
+                ItemUsed?.Invoke(this);
+            }
         }
 
         private IEnumerator FlashingSelf()
@@ -77,7 +85,7 @@ namespace FIVE.Interactive
                 return;
             }
 
-            if (isCollected)
+            if (Collected)
             {
                 return;
             }
@@ -93,6 +101,11 @@ namespace FIVE.Interactive
             {
                 this.RaiseEvent<OnItemDialogRequested, ItemDialogRequestedEventArgs>(
                     new ItemDialogRequestedEventArgs(gameObject));
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                LeftClicked?.Invoke(this);
             }
         }
 
@@ -120,49 +133,6 @@ namespace FIVE.Interactive
             {
                 transform.localEulerAngles += new Vector3(0, Time.deltaTime * 90f, 0);
             }
-        }
-
-        private void Update()
-        {
-            if (IsRotating)
-            {
-                if (Input.GetMouseButtonDown(1) && !ActionExecuted)
-                {
-                    ItemAction?.Invoke(gameObject);
-                    ActionExecuted = true;
-                    this.RaiseEvent<OnRemoveItemRequested, RemoveItemRequestedEventArgs>(
-                        new RemoveItemRequestedEventArgs(gameObject));
-                }
-            }
-
-            if (!isFlashing)
-            {
-                return;
-            }
-            bool closeEnough = (RobotManager.ActiveRobot.transform.position - transform.position).magnitude < 100f;
-            if (!closeEnough)
-            {
-                return;
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                DropToInventory();
-            }
-        }
-
-        public void DropToInventory()
-        {
-            isCollected = true;
-            MeshCollider mc = GetComponent<MeshCollider>();
-            if (mc != null)
-            {
-                mc.enabled = false;
-                Destroy(mc);
-            }
-
-            GameObject o = gameObject;
-            EventManager.RaiseImmediate<OnDropItemToInventory>(this, new DropedItemToInventoryEventArgs(o, o));
         }
     }
 }

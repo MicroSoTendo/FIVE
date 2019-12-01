@@ -109,10 +109,10 @@ namespace FIVE.UI.InGameDisplay
                 foreach (GameObject item in list)
                 {
                     GameObject origin = copyItemsMap[item];
-                    InventoryManager.Inventory.Items.Remove(origin);
+                    //InventoryManager.Inventory.Items.Remove(origin);
                 }
                 compositeCells.Clear();
-                this.RaiseImmediate<OnDropItemToInventory>(new DropedItemToInventoryEventArgs(null, newItem));
+                //this.RaiseImmediate<OnDropItemToInventory>(new DropedItemToInventoryEventArgs(null, newItem));
             }
         }
 
@@ -138,7 +138,8 @@ namespace FIVE.UI.InGameDisplay
         {
             for (int i = 0; i < InventoryManager.Inventory.Items.Count; i++)
             {
-                GameObject original = InventoryManager.Inventory.Items[i];
+                //TODO:
+                GameObject original = InventoryManager.Inventory.Items[i].gameObject;
                 if (i < copyItems.Count)
                 {
                     GameObject copy = copyItems[i];

@@ -1,7 +1,4 @@
-﻿using FIVE.Robot;
-using FIVE.RobotComponents;
-using System.Collections;
-using System.Collections.Generic;
+﻿using FIVE.RobotComponents;
 using UnityEngine;
 
 namespace FIVE.Interactive.Items
@@ -15,10 +12,10 @@ namespace FIVE.Interactive.Items
         private void Awake()
         {
             item = GetComponent<Item>();
-            item.ItemAction = ItemAction;
+            item.ItemUseAction = UseAction;
         }
 
-        private void ItemAction(GameObject o)
+        private void UseAction()
         {
             if (SkyBoxTime.isDayTime())
             {

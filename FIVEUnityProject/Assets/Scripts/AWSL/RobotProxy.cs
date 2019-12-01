@@ -23,8 +23,9 @@ namespace FIVE.AWSL
             get
             {
                 var d = new Dictionary<string, int>();
-                foreach (GameObject p in InventoryManager.Inventory.Items)
+                foreach (Item item in InventoryManager.Inventory.Items)
                 {
+                    GameObject p = item.gameObject;
                     if (d.ContainsKey(p.name))
                     {
                         d[p.name] += 1;

@@ -12,10 +12,10 @@ namespace FIVE.Interactive.Items
         private void Awake()
         {
             item = GetComponent<Item>();
-            item.ItemAction = ItemAction;
+            item.ItemUseAction = UseAction;
         }
 
-        private void ItemAction(GameObject o)
+        private void UseAction()
         {
             RobotManager.ActiveRobot.GetComponent<RobotComponents.Battery>().CurrentEnergy = Remaining;
         }

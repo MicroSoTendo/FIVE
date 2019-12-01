@@ -2,7 +2,6 @@
 using FIVE.EventSystem;
 using FIVE.Interactive;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -14,13 +13,14 @@ namespace FIVE.UI.InGameDisplay
 {
     internal class InventoryViewModel : ViewModel
     {
+        private readonly ObservableCollection<Cell> cells = new ObservableCollection<Cell>();
         protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryScrollView";
         protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
         private GameObject CellPrefab { get; } = Resources.Load<GameObject>("EntityPrefabs/UI/Inventory/Cell");
         private RectTransform ContentRectTransform { get; }
         public GameObject InventoryContent { get; }
         public Button ExitButton { get; }
-        private readonly List<(GameObject cell, Transform content)> cells = new List<(GameObject cell, Transform content)>();
+
         public override bool IsActive
         {
             get => base.IsActive;
@@ -30,7 +30,10 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-                    ScheduleCoroutine(SetUpCells());
+                    foreach (Cell cell in cells)
+                    {
+                        cell.SetUpPosition();
+                    }
                 }
             }
         }
@@ -57,73 +60,37 @@ namespace FIVE.UI.InGameDisplay
             IsActive = false;
         }
 
-        private IEnumerator SetUpCells()
-        {
-            yield return new WaitForEndOfFrame();
-            int i = 0;
-            float cellWidth = 180; //TODO: get by call
-            int totalColumns = (int)(ContentRectTransform.rect.width / cellWidth);
-            foreach ((GameObject cell, Transform content) in cells)
-            {
-                int x = i % totalColumns;
-                int y = i / totalColumns;
-                cell.GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(x * cellWidth, -y * cellWidth);
-                i++;
-                yield return new WaitForFixedUpdate();
-            }
-        }
-
         private IEnumerator UpdateItems()
         {
-            ObservableCollection<GameObject> items = InventoryManager.Inventory.Items;
-            //Ensure size
-            while (items.Count > cells.Count)
+            ObservableCollection<Item> items = InventoryManager.Inventory.Items;
+            for (int i = 0; i < items.Count; i++)
             {
-                GameObject cell = Object.Instantiate(CellPrefab, ContentRectTransform);
-                int i = cells.Count;
-                cell.name = $"Cell-{i}";
-                Transform contenTransform = cell.FindChildRecursive("Content").transform;
-                cells.Add((cell, contenTransform));
-                yield return new WaitForFixedUpdate();
-            }
-            //
-            for (int i = 0; i < cells.Count; i++)
-            {
-                (GameObject cell, Transform content) = cells[i];
-                if (i >= items.Count)
+                Item item = items[i];
+                if (cells.Count > i)
                 {
-                    if (content.childCount > 0)
-                    {
-                        Destroy(content.GetChild(0).gameObject);
-                    }
-
-                    content.DetachChildren();
-                    cell.SetActive(false);
+                    Cell cell = cells[i];
+                    cell.Index = i;
+                    cell.SetItem(item);
                 }
                 else
                 {
-                    GameObject item = items[i];
-                    if (item.transform.parent == null ||
-                        !item.transform.parent.gameObject.name.Contains("Content"))
-                    {
-                        item.transform.SetParent(content);
-                        item.GetComponent<MeshRenderer>().receiveShadows = false;
-                        ItemInfo info = item.GetComponent<Item>().Info;
-                        item.transform.localScale = info.UIScale;
-                        item.transform.localEulerAngles = info.UIRotation;
-                        item.transform.localPosition = info.UIPosition;
-                    }
-                    else if (content.transform.parent != content)
-                    {
-                        item.transform.SetParent(content);
-                    }
+                    GameObject cellGo = Object.Instantiate(CellPrefab, ContentRectTransform);
+                    Cell newCell = cellGo.GetComponent<Cell>();
+                    newCell.Index = i;
+                    newCell.Clicked += () => cells.Remove(newCell);
+                    newCell.SetItem(items[i]);
+                    cells.Add(newCell);
                 }
+
                 yield return new WaitForFixedUpdate();
             }
+
             if (IsActive)
             {
-                ScheduleCoroutine(SetUpCells());
+                foreach (Cell cell in cells)
+                {
+                    cell.SetUpPosition();
+                }
             }
         }
 
