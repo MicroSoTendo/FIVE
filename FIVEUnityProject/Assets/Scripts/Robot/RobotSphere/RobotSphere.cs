@@ -53,6 +53,7 @@ namespace FIVE.Robot
 
         private float health;
 
+        private GameObject flashlight;
         protected override void Awake()
         {
             ID = RobotManager.NextID;
@@ -84,6 +85,8 @@ namespace FIVE.Robot
 
             GameObject light = transform.GetComponentInChildren<Light>().gameObject;
             light.SetParent(fpsCamera.transform);
+            light.SetActive(false);
+            flashlight = light;
 
             animator = new RobotFreeAnim(gameObject);
             fpsController = new FpsController(GetComponent<CharacterController>(), gameObject);
@@ -93,6 +96,10 @@ namespace FIVE.Robot
             health = 100.0f;
 
             base.Start();
+        }
+        public void switchOnLight()
+        {
+            flashlight.SetActive(true);
         }
 
         private void OnMouseDown()
