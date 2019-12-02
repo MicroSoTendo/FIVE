@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static FIVE.EventSystem.MainThreadDispatcher;
@@ -21,7 +20,7 @@ namespace FIVE.UI.InGameDisplay
         protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
         public GameObject InventoryContent { get; }
         private RectTransform InventoryContentTransform { get; }
-        public GameObject CompositeContent { get; }
+        public GameObject SynthesisContent { get; }
         private RectTransform SynthesisContentTransform { get; }
         public GameObject ResultPanel { get; }
         public Button BuildButton { get; }
@@ -36,28 +35,37 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
+                    UpdateInventoryCells();
+                    UpdateSynthesisCells();
+                }
+                else
+                {
+                    synthesisItems.Clear();
+                    synthesisCells.Clear();
                 }
             }
         }
 
         private readonly Dictionary<Item, Item> item2CopyItems = new Dictionary<Item, Item>();
         private readonly Dictionary<Item, Item> copyItems2Items = new Dictionary<Item, Item>();
-        private readonly ObservableCollection<Cell> inventoryCells =  new ObservableCollection<Cell>();
-        private readonly HashSet<Item> inventoryItems =  new HashSet<Item>();
+
+        private readonly ObservableCollection<Cell> inventoryCells = new ObservableCollection<Cell>();
+        private readonly HashSet<Item> inventoryItems = new HashSet<Item>();
         private readonly HashSet<Cell> synthesisCells = new HashSet<Cell>();
-        private readonly HashSet<Item> synthesisItems =  new HashSet<Item>();
+        private readonly HashSet<Item> synthesisItems = new HashSet<Item>();
 
         public BlacksmithViewModel()
         {
             BackButton = Get<Button>(nameof(BackButton));
-            Bind(BackButton).To(OnBackButtonClick);
             BuildButton = Get<Button>(nameof(BuildButton));
-            Bind(BuildButton).To(OnBuildButtonClick);
             InventoryContent = Get(nameof(InventoryContent));
-            InventoryContentTransform = InventoryContent.GetComponent<RectTransform>();
-            CompositeContent = Get(nameof(CompositeContent));
-            SynthesisContentTransform = CompositeContent.GetComponent<RectTransform>();
+            SynthesisContent = Get(nameof(SynthesisContent));
             ResultPanel = Get(nameof(ResultPanel));
+
+            Bind(BackButton).To(OnBackButtonClick);
+            Bind(BuildButton).To(OnBuildButtonClick);
+            InventoryContentTransform = InventoryContent.GetComponent<RectTransform>();
+            SynthesisContentTransform = SynthesisContent.GetComponent<RectTransform>();
             EventManager.Subscribe<OnInventoryChanged, NotifyCollectionChangedEventArgs>(OnInventoryChanged);
         }
 
@@ -68,7 +76,7 @@ namespace FIVE.UI.InGameDisplay
 
         private void OnBuildButtonClick()
         {
-            var cell2Items = synthesisCells.ToDictionary(compositeCell => compositeCell, compositeCell => compositeCell.Item.gameObject);
+            var cell2Items = synthesisCells.ToDictionary(synthesisCell => synthesisCell, synthesisCell => synthesisCell.Item.gameObject);
 
             if (Blacksmith.TrySynthesize(cell2Items.Values, out GameObject newItemPrefab))
             {
@@ -76,9 +84,9 @@ namespace FIVE.UI.InGameDisplay
                 GameObject newItem = Object.Instantiate(newItemPrefab);
                 Item item = newItem.GetComponent<Item>();
                 inventory.Add(item);
-                foreach (Cell compositeCell in synthesisCells)
+                foreach (Cell synthesisCell in synthesisCells)
                 {
-                    Item original = copyItems2Items[compositeCell.Item];
+                    Item original = copyItems2Items[synthesisCell.Item];
                     inventory.Remove(original);
                 }
                 synthesisCells.Clear();
@@ -126,25 +134,29 @@ namespace FIVE.UI.InGameDisplay
                     //Do not show if it's in synthesis window
                     if (!synthesisItems.Contains(copyItem))
                     {
+                        Cell cell;
                         if (inventoryCells.Count > j)
                         {
-                            Cell cell = inventoryCells[j];
-                            cell.Index = j;
-                            cell.SetItem(copyItem);
+                            cell = inventoryCells[j];
                         }
                         else
                         {
-                            GameObject cellGo = Object.Instantiate(CellPrefab, InventoryContentTransform);
-                            Cell newCell = cellGo.GetComponent<Cell>();
-                            inventoryCells.Add(newCell);
-                            newCell.Index = j;
-                            newCell.Clicked += () => OnInventoryCellClicked(newCell);
-                            newCell.SetItem(copyItem);
+                            cell = Object.Instantiate(CellPrefab, InventoryContentTransform).GetComponent<Cell>();
+                            inventoryCells.Add(cell);
+                            inventoryItems.Add(copyItem);
                         }
+                        cell.Index = j;
+                        cell.SetItem(copyItem);
+                        cell.Clicked = () => OnInventoryCellClicked(cell);
                         j++;
                     }
                 }
                 yield return new WaitForFixedUpdate();
+            }
+
+            if (IsActive)
+            {
+                UpdateInventoryCells();
             }
         }
 

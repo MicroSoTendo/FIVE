@@ -46,12 +46,6 @@ namespace FIVE.UI.InGameDisplay
         private void OnClicked()
         {
             Clicked?.Invoke();
-            Destroy(gameObject);
-            if (Item == null)
-            {
-                return;
-            }
-            Item.Use();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -69,7 +63,6 @@ namespace FIVE.UI.InGameDisplay
             {
                 return;
             }
-
             Item.IsRotating = false;
         }
 

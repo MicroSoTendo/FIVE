@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7721704071027588851}
   m_Layer: 5
-  m_Name: CompositeSlidingArea
+  m_Name: SynthesisSlidingArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1386773562870387084}
   m_Layer: 5
-  m_Name: CompositeContent
+  m_Name: SynthesisContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,7 +68,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0005548743}
+  m_AnchoredPosition: {x: 0, y: -0.000022584572}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &3248019148207057264
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 7899265157872100295}
   - component: {fileID: 2117951439415728294}
   m_Layer: 5
-  m_Name: CompositeScrollView
+  m_Name: SynthesisScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -537,7 +537,7 @@ GameObject:
   - component: {fileID: 5886076382340041390}
   - component: {fileID: 3244070768207007115}
   m_Layer: 5
-  m_Name: CompositeViewport
+  m_Name: SynthesisViewport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -704,7 +704,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 27.95
+  m_fontSize: 31.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -860,7 +860,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 27.95
+  m_fontSize: 31.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1009,7 +1009,7 @@ GameObject:
   - component: {fileID: 3608364372853057660}
   - component: {fileID: 9002205096282296420}
   m_Layer: 5
-  m_Name: CompositeHandle
+  m_Name: SynthesisHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1030,7 +1030,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: -0.00036621094}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1312,7 +1312,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8721728649419548561}
   m_Layer: 5
-  m_Name: CompositePanel
+  m_Name: SynthesisPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1491,8 +1491,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8765697837783078036}
   m_HandleRect: {fileID: 1931804774224917207}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.96503335
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1583,12 +1583,12 @@ GameObject:
   - component: {fileID: 2115020400562861632}
   - component: {fileID: 751700822853607032}
   m_Layer: 5
-  m_Name: CompositeScrollbar
+  m_Name: SynthesisScrollbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2419263083021865467
 RectTransform:
   m_ObjectHideFlags: 0

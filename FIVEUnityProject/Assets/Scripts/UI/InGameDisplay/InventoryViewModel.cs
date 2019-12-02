@@ -60,28 +60,32 @@ namespace FIVE.UI.InGameDisplay
             IsActive = false;
         }
 
+        private void OnInventoryCellClicked(Cell cell)
+        {
+            cell.Item.Use();
+            cells.Remove(cell);
+            ScheduleDestroy(cell.gameObject);
+        }
+
         private IEnumerator UpdateItems()
         {
             ObservableCollection<Item> items = InventoryManager.Inventory.Items;
             for (int i = 0; i < items.Count; i++)
             {
                 Item item = items[i];
+                Cell cell;
                 if (cells.Count > i)
                 {
-                    Cell cell = cells[i];
-                    cell.Index = i;
-                    cell.SetItem(item);
+                    cell = cells[i];
                 }
                 else
                 {
-                    GameObject cellGo = Object.Instantiate(CellPrefab, ContentRectTransform);
-                    Cell newCell = cellGo.GetComponent<Cell>();
-                    newCell.Index = i;
-                    newCell.Clicked += () => cells.Remove(newCell);
-                    newCell.SetItem(items[i]);
-                    cells.Add(newCell);
+                    cell = Object.Instantiate(CellPrefab, ContentRectTransform).GetComponent<Cell>();
+                    cells.Add(cell);
                 }
-
+                cell.Index = i;
+                cell.SetItem(item);
+                cell.Clicked = () => OnInventoryCellClicked(cell);
                 yield return new WaitForFixedUpdate();
             }
 
