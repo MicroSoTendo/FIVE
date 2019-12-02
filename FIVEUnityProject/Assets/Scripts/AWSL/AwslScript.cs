@@ -44,7 +44,7 @@ namespace FIVE.AWSL
                 script.Globals["nearestBattery"] = FuncNearestBattery();
                 script.Globals["attackEnemy"] = FuncAttackNearestEnemy();
 
-                coroutine.Coroutine.AutoYieldCounter = 6 * robot.CPU.Speed;
+                coroutine.Coroutine.AutoYieldCounter = 10 * robot.CPU.Speed;
             }
             catch (Exception e)
             {

@@ -88,12 +88,12 @@ namespace FIVE
             state = State.Idle;
 
             attackRange = cc.radius + 3.0f;
-            speed = 80.0f;
+            speed = 1000.0f;
             elapsedTime = 0;
             health = 100.0f;
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             elapsedTime += Time.deltaTime;
             if (state == State.Idle)
