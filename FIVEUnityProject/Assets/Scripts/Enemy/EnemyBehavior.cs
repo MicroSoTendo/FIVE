@@ -10,6 +10,11 @@ namespace FIVE
     {
         public static List<GameObject> DropPickups;
 
+        public GameObject BulletPrefab;
+        public GameObject GunfirePrefab;
+
+        private AudioSource Shot;
+
         private enum State { Idle, Walk, Attack, };
 
         private State state;
@@ -25,6 +30,7 @@ namespace FIVE
         private float patrolDirection;
 
         private float visionRange;
+        private float attackRange;
         private float speed;
         private float elapsedTime;
         private float health;
@@ -55,6 +61,8 @@ namespace FIVE
                 };
                 Debug.Assert(DropPickups.TrueForAll(o => o != null));
             }
+
+            Shot = GetComponents<AudioSource>()[0];
         }
 
         private void Start()
@@ -79,6 +87,7 @@ namespace FIVE
             transform.Rotate(0, patrolDirection, 0);
             state = State.Idle;
 
+            attackRange = cc.radius + 3.0f;
             speed = 20.0f;
             elapsedTime = 0;
             health = 100.0f;
@@ -113,21 +122,42 @@ namespace FIVE
                     state = State.Idle;
                     currTarget = null;
                 }
-                else if (distance < 6.0f)
-                {
-                    state = State.Attack;
-                }
                 else
                 {
-                    state = State.Walk;
-                    Vector3 direction = currTarget.transform.position - transform.position;
-                    transform.forward = direction;
-                    if (direction.magnitude > 5.0f)
-                    {
-                        cc.SimpleMove(Vector3.Normalize(direction) * speed);
-                    }
+                    state = State.Idle;
+                    Attack(currTarget);
                 }
             }
+        }
+
+        private IEnumerator ShutGunfire(GameObject gunfire)
+        {
+            yield return new WaitForSeconds(0.1f);
+            gunfire.SetActive(false);
+            Destroy(gunfire);
+        }
+
+        private IEnumerator AttackPlayer(GameObject player)
+        {
+            yield return new WaitForSeconds(0.2f);
+            if (player != null)
+            {
+                RobotSphere enemyBehavior = player.GetComponent<RobotSphere>();
+                if (enemyBehavior != null)
+                {
+                    enemyBehavior.OnHit();
+                }
+            }
+        }
+
+        public void Attack(GameObject target)
+        {
+            GameObject gunfire = Instantiate(GunfirePrefab, transform.position + transform.forward * 10f + new Vector3(0, 3, 0), Quaternion.identity);
+            StartCoroutine(ShutGunfire(gunfire));
+            GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
+            bullet.GetComponent<Bullet>().Target = target.transform.position;
+            StartCoroutine(AttackPlayer(target));
+            Shot.Play();
         }
 
         public void OnHit()
