@@ -155,7 +155,11 @@ namespace FIVE.AWSL
 
                 if (nearestEnemy != null && nearestDistance < 80.0f)
                 {
-                    robot.Attack(nearestEnemy);
+                    Vector3 direction = Vector3.Normalize(nearestEnemy.transform.position - robot.transform.position);
+                    if (Vector3.Dot(direction, robot.transform.forward) > 0)
+                    {
+                        robot.Attack(nearestEnemy);
+                    }
                 }
             };
         }
