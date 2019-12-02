@@ -178,10 +178,13 @@ namespace FIVE.Robot
         private IEnumerator KillAlien(GameObject alien)
         {
             yield return new WaitForSeconds(0.2f);
-            EnemyBehavior enemyBehavior = alien.GetComponent<EnemyBehavior>();
-            if (enemyBehavior != null)
+            if (alien != null)
             {
-                enemyBehavior.OnHit();
+                EnemyBehavior enemyBehavior = alien.GetComponent<EnemyBehavior>();
+                if (enemyBehavior != null)
+                {
+                    enemyBehavior.OnHit();
+                }
             }
         }
 
