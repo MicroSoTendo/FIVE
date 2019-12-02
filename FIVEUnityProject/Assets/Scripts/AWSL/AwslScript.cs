@@ -2,7 +2,6 @@
 using FIVE.Robot;
 using MoonSharp.Interpreter;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIVE.AWSL
@@ -77,7 +76,13 @@ namespace FIVE.AWSL
             return x => robot.GetComponent<RobotSphere>().Move(dir, (int)x, true);
         }
 
-        private Func<GameObject> FuncFindNearestEnemy()
+        [MoonSharpUserData]
+        public class Position
+        {
+            public float X, Y;
+        }
+
+        private Func<Position> FuncFindNearestEnemy()
         {
             return () =>
             {
@@ -94,11 +99,17 @@ namespace FIVE.AWSL
                     }
                 }
 
-                return nearestEnemy;
+                Vector3 d = nearestEnemy.transform.position - robot.transform.position;
+                d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                return new Position
+                {
+                    X = d.x,
+                    Y = d.z,
+                };
             };
         }
 
-        private Func<GameObject> FuncNearestBattery()
+        private Func<Position> FuncNearestBattery()
         {
             return () =>
             {
@@ -115,7 +126,13 @@ namespace FIVE.AWSL
                     }
                 }
 
-                return nearestBattery;
+                Vector3 d = nearestBattery.transform.position - robot.transform.position;
+                d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                return new Position
+                {
+                    X = d.x,
+                    Y = d.z,
+                };
             };
         }
 
