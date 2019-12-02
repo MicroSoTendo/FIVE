@@ -170,7 +170,7 @@ namespace FIVE
             StartCoroutine(ShutGunfire(gunfire));
             GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
-            if (Random.value < 0.25)
+            if (Random.value < 0.025)
             {
                 StartCoroutine(AttackPlayer(target));
             }

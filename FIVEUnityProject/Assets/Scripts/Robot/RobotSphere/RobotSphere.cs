@@ -148,6 +148,7 @@ namespace FIVE.Robot
             if (Input.GetKey(KeyCode.Q))
             {
                 scriptActive = false;
+                movable.enabled = true;
                 movable.ClearSchedule();
             }
 
