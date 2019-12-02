@@ -139,7 +139,7 @@ namespace FIVE
 
         private IEnumerator AttackPlayer(GameObject player)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(1.2f);
             if (player != null)
             {
                 RobotSphere enemyBehavior = player.GetComponent<RobotSphere>();
