@@ -59,7 +59,7 @@ namespace FIVE.AWSL
             {
                 Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward,
                     out RaycastHit hitinfo);
-                script.Globals["DISTANCE"] = hitinfo.collider ? hitinfo.distance : 1e7f;
+                script.Globals["Distance"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
                 DynValue result = coroutine.Coroutine.Resume();
                 return result.Type != DataType.YieldRequest;
