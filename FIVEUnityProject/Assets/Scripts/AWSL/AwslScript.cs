@@ -79,7 +79,7 @@ namespace FIVE.AWSL
         [MoonSharpUserData]
         public class Position
         {
-            public float X, Y;
+            public float X, Z;
         }
 
         private Func<Position> FuncFindNearestEnemy()
@@ -104,7 +104,7 @@ namespace FIVE.AWSL
                 return new Position
                 {
                     X = d.x,
-                    Y = d.z,
+                    Z = d.z,
                 };
             };
         }
@@ -131,7 +131,7 @@ namespace FIVE.AWSL
                 return new Position
                 {
                     X = d.x,
-                    Y = d.z,
+                    Z = d.z,
                 };
             };
         }
