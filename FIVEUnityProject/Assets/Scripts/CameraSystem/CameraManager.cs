@@ -108,6 +108,10 @@ namespace FIVE.CameraSystem
         public static void Remove(Camera camera)
         {
             instance.namedCameras.Remove(camera);
+            if (CurrentActiveCamera == camera)
+            {
+                CurrentActiveCamera = null;
+            }
             Destroy(camera.gameObject);
         }
 
@@ -115,6 +119,10 @@ namespace FIVE.CameraSystem
         {
             Camera camera = instance.namedCameras[name];
             instance.namedCameras.Remove(camera);
+            if (CurrentActiveCamera == camera)
+            {
+                CurrentActiveCamera = null;
+            }
             Destroy(camera.gameObject);
         }
 
