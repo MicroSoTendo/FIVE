@@ -59,6 +59,11 @@ namespace FIVE.UI
                 return null;
             }
             GameObject prefab = Resources.Load<GameObject>(PrefabPath);
+            if (prefab == null)
+            {
+                Debug.LogError($"\"{PrefabPath}\" is not a valid prefab path.");
+                throw new Exception($"\"{PrefabPath}\" is not a valid prefab path.");
+            }
             Transform parent = this[ViewModelRenderMode].transform;
             GameObject go = Object.Instantiate(prefab, parent);
             go.SetActive(false);

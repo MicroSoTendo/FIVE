@@ -15,12 +15,6 @@ namespace FIVE.Interactive
         {
             Items.CollectionChanged += ItemsCollectionChanged;
             Item.LeftClicked += OnItemLeftClicked;
-            Item.ItemUsed += OnItemUsed;
-        }
-
-        private void OnItemUsed(Item item)
-        {
-            Items.Remove(item);
         }
 
         private void Purify(Item item)

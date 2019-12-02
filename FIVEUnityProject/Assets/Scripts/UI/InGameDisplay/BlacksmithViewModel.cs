@@ -35,8 +35,6 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-                    UpdateInventoryCells();
-                    UpdateSynthesisCells();
                 }
                 else
                 {
@@ -81,18 +79,20 @@ namespace FIVE.UI.InGameDisplay
             if (Blacksmith.TrySynthesize(cell2Items.Values, out GameObject newItemPrefab))
             {
                 ObservableCollection<Item> inventory = InventoryManager.Inventory.Items;
+                //Add new item to inventory
                 GameObject newItem = Object.Instantiate(newItemPrefab);
                 Item item = newItem.GetComponent<Item>();
                 inventory.Add(item);
+                //Destory source objects
                 foreach (Cell synthesisCell in synthesisCells)
                 {
                     Item original = copyItems2Items[synthesisCell.Item];
                     inventory.Remove(original);
+                    original.Destroy();
+                    synthesisCell.Destroy();
                 }
                 synthesisCells.Clear();
                 synthesisItems.Clear();
-                UpdateSynthesisCells();
-                UpdateInventoryCells();
             }
         }
 
@@ -102,61 +102,49 @@ namespace FIVE.UI.InGameDisplay
             synthesisCells.Clear();
         }
 
-        private void UpdateInventoryCells()
-        {
-            foreach (Cell inventoryCell in inventoryCells)
-            {
-                inventoryCell.SetUpPosition();
-            }
-        }
-
-        private void UpdateSynthesisCells()
-        {
-            foreach (Cell synthesisCell in synthesisCells)
-            {
-                synthesisCell.SetUpPosition();
-            }
-        }
-
         private IEnumerator UpdateItems()
         {
             ObservableCollection<Item> items = InventoryManager.Inventory.Items;
-            for (int i = 0, j = 0; i < items.Count; i++)
+            int j = 0;
+            foreach (Item originalItem in items)
             {
-                Item originalItem = items[i];
+                //Make copy first if it hasn't
+                Item copyItem;
                 if (!item2CopyItems.ContainsKey(originalItem))
                 {
-                    GameObject copy = Object.Instantiate(originalItem.gameObject);
-                    item2CopyItems.Add(originalItem, copy.GetComponent<Item>());
+                    copyItem = Object.Instantiate(originalItem.gameObject).GetComponent<Item>();
+                    item2CopyItems.Add(originalItem, copyItem);
+                    copyItems2Items.Add(copyItem, originalItem);
                 }
-                if (item2CopyItems.TryGetValue(originalItem, out Item copyItem))
+                else
                 {
-                    //Do not show if it's in synthesis window
-                    if (!synthesisItems.Contains(copyItem))
+                    copyItem = item2CopyItems[originalItem];
+                }
+                //Do not show if it's in synthesis window
+                if (!synthesisItems.Contains(copyItem))
+                {
+                    Cell cell;
+                    if (inventoryCells.Count > j)
                     {
-                        Cell cell;
-                        if (inventoryCells.Count > j)
-                        {
-                            cell = inventoryCells[j];
-                        }
-                        else
-                        {
-                            cell = Object.Instantiate(CellPrefab, InventoryContentTransform).GetComponent<Cell>();
-                            inventoryCells.Add(cell);
-                            inventoryItems.Add(copyItem);
-                        }
-                        cell.Index = j;
-                        cell.SetItem(copyItem);
-                        cell.Clicked = () => OnInventoryCellClicked(cell);
-                        j++;
+                        cell = inventoryCells[j];
                     }
+                    else
+                    {
+                        cell = Object.Instantiate(CellPrefab, InventoryContentTransform).GetComponent<Cell>();
+                        inventoryCells.Add(cell);
+                        inventoryItems.Add(copyItem);
+                    }
+                    cell.gameObject.SetActive(true);
+                    cell.SetItem(copyItem);
+                    cell.Clicked = () => OnInventoryCellClicked(cell);
+                    j++;
                 }
                 yield return new WaitForFixedUpdate();
             }
-
-            if (IsActive)
+            //Hide redundnat cells
+            for (int i = j; i < inventoryCells.Count; i++)
             {
-                UpdateInventoryCells();
+                inventoryCells[i].gameObject.SetActive(false);
             }
         }
 
@@ -167,8 +155,6 @@ namespace FIVE.UI.InGameDisplay
             inventoryItems.Remove(cell.Item);
             synthesisCells.Add(cell);
             synthesisItems.Add(cell.Item);
-            UpdateSynthesisCells();
-            UpdateInventoryCells();
             cell.Clicked = null;
             cell.Clicked = () => OnSynthesisCellClicked(cell);
         }
@@ -180,8 +166,6 @@ namespace FIVE.UI.InGameDisplay
             synthesisItems.Remove(cell.Item);
             inventoryCells.Add(cell);
             inventoryItems.Add(cell.Item);
-            UpdateSynthesisCells();
-            UpdateInventoryCells();
             cell.Clicked = null;
             cell.Clicked = () => OnInventoryCellClicked(cell);
         }

@@ -11,36 +11,11 @@ namespace FIVE.UI.InGameDisplay
     {
         private int index;
 
-        public int Index
-        {
-            get => index;
-            set
-            {
-                index = value;
-                gameObject.name = $"Cell-{index}";
-            }
-        }
-
         public Action Clicked = () => {};
         public Item Item { get; private set; }
         private void Awake()
         {
             gameObject.GetComponentInChildren<Button>().onClick.AddListener(OnClicked);
-        }
-
-        private IEnumerator SetUpPositionRoutine()
-        {
-            yield return new WaitForEndOfFrame();
-            RectTransform rectTransform = gameObject.GetComponentInChildren<RectTransform>();
-            float cellWidth = rectTransform.rect.width;
-            int totalColumns = (int)(gameObject.transform.parent.GetComponent<RectTransform>().rect.width / cellWidth);
-            int x = Index % totalColumns;
-            int y = Index / totalColumns;
-            rectTransform.anchoredPosition = new Vector2(x * cellWidth, -y * cellWidth);
-        }
-        public void SetUpPosition()
-        {
-            StartCoroutine(SetUpPositionRoutine());
         }
 
         private void OnClicked()
@@ -80,6 +55,11 @@ namespace FIVE.UI.InGameDisplay
                 itemTransform.localEulerAngles = info.UIRotation;
                 itemTransform.localPosition = info.UIPosition;
             }
+        }
+
+        public void Destroy()
+        {
+            Destroy(gameObject);
         }
     }
 }

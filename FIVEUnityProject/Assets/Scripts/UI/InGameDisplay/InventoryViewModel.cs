@@ -14,7 +14,7 @@ namespace FIVE.UI.InGameDisplay
     internal class InventoryViewModel : ViewModel
     {
         private readonly ObservableCollection<Cell> cells = new ObservableCollection<Cell>();
-        protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryScrollView";
+        protected override string PrefabPath { get; } = "EntityPrefabs/UI/Inventory/InventoryPanel";
         protected override RenderMode ViewModelRenderMode { get; } = RenderMode.ScreenSpaceCamera;
         private GameObject CellPrefab { get; } = Resources.Load<GameObject>("EntityPrefabs/UI/Inventory/Cell");
         private RectTransform ContentRectTransform { get; }
@@ -30,10 +30,6 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-                    foreach (Cell cell in cells)
-                    {
-                        cell.SetUpPosition();
-                    }
                 }
             }
         }
@@ -62,9 +58,10 @@ namespace FIVE.UI.InGameDisplay
 
         private void OnInventoryCellClicked(Cell cell)
         {
+            InventoryManager.Inventory.Items.Remove(cell.Item);
             cell.Item.Use();
             cells.Remove(cell);
-            ScheduleDestroy(cell.gameObject);
+            cell.Destroy();
         }
 
         private IEnumerator UpdateItems()
@@ -83,18 +80,16 @@ namespace FIVE.UI.InGameDisplay
                     cell = Object.Instantiate(CellPrefab, ContentRectTransform).GetComponent<Cell>();
                     cells.Add(cell);
                 }
-                cell.Index = i;
+                cell.gameObject.SetActive(true);
                 cell.SetItem(item);
                 cell.Clicked = () => OnInventoryCellClicked(cell);
                 yield return new WaitForFixedUpdate();
             }
-
-            if (IsActive)
+            
+            //Hide redundnat cells
+            for (int i = items.Count; i < cells.Count; i++)
             {
-                foreach (Cell cell in cells)
-                {
-                    cell.SetUpPosition();
-                }
+                cells[i].gameObject.SetActive(false);
             }
         }
 

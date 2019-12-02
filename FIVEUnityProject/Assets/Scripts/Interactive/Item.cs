@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-
+using Object = UnityEngine.Object;
 namespace FIVE.Interactive
 {
     public class Item : MonoBehaviour
@@ -51,11 +51,7 @@ namespace FIVE.Interactive
 
         public void Use()
         {
-            if (Collected)
-            {
-                ItemUseAction?.Invoke();
-                ItemUsed?.Invoke(this);
-            }
+            ItemUseAction?.Invoke();
         }
 
         private IEnumerator FlashingSelf()
@@ -133,6 +129,11 @@ namespace FIVE.Interactive
             {
                 transform.localEulerAngles += new Vector3(0, Time.deltaTime * 90f, 0);
             }
+        }
+
+        public void Destroy()
+        {
+            Destroy(gameObject);
         }
     }
 }
