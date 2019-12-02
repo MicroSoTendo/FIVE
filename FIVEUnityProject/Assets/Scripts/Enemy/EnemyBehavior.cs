@@ -93,7 +93,7 @@ namespace FIVE
             health = 100.0f;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (state == State.Idle)
             {
