@@ -130,6 +130,12 @@ namespace FIVE.Robot
 
         private void RobotSphereUpdate()
         {
+            if (Input.GetKey(KeyCode.Q))
+            {
+                scriptActive = false;
+                movable.ClearSchedule();
+            }
+
             //Block user input when editor is up
             if (UIManager.Get<CodeEditorViewModel>()?.IsActive ?? false)
             {
