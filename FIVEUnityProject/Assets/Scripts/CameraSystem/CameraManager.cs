@@ -37,7 +37,6 @@ namespace FIVE.CameraSystem
             instance = this;
             cameraPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/Camera/Camera");
 
-            CurrentActiveCamera = Camera.current != null ? Camera.current : Camera.main;
             Subscribe<OnMultiCameraModeRequested>(SetCameraWall);
         }
 
