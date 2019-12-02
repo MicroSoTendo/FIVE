@@ -224,6 +224,11 @@ namespace FIVE
             {
                 patrolDirection = Random.Range(0, 90);
                 transform.Rotate(0, patrolDirection, 0);
+                int t = 36;
+                while (t-- > 0 && Physics.Raycast(transform.position, transform.forward, 10))
+                {
+                    transform.Rotate(0, 5, 0);
+                }
                 elapsedTime = 0;
             }
             else
@@ -261,7 +266,6 @@ namespace FIVE
         {
             int index = Random.Range(0, DropPickups.Count);
             GameObject p = Instantiate(DropPickups[index], transform.position, Quaternion.identity);
-            Debug.Log(p.name);
             p.transform.localScale = new Vector3(80, 80, 80);
         }
     }
