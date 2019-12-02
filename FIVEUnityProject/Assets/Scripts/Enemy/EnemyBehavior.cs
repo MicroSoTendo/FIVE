@@ -123,19 +123,24 @@ namespace FIVE
                     state = State.Idle;
                     currTarget = null;
                 }
+                else if (distance < visionRange)
+                {
+                    state = State.Idle;
+                    if (elapsedTime > 0.35)
+                    {
+                        Attack(currTarget);
+                    }
+                }
                 else
                 {
+                    state = State.Walk;
                     Vector3 targetDirection = currTarget.transform.position - transform.position;
                     float singleStep = 1.0f * Time.deltaTime;
                     Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
                     transform.rotation = Quaternion.LookRotation(newDirection);
 
-                    if (elapsedTime > 0.35)
-                    {
-                        state = State.Idle;
-                        Attack(currTarget);
-                    }
+                    cc.SimpleMove(Vector3.Normalize(newDirection) * speed * Time.deltaTime);
                 }
             }
             if (elapsedTime > 0.5)
