@@ -12,27 +12,29 @@ namespace FIVE.Enemy
         public GameObject Prefab;
         public static HashSet<GameObject> Enemies => instance.enemies;
         private HashSet<GameObject> enemies = new HashSet<GameObject>();
-        private Queue<Vector3> spawnLocations = new Queue<Vector3>();
+        private List<Vector3> spawnLocations = new List<Vector3>();
 
         private void Awake()
         {
             Assert.IsNull(instance);
             instance = this;
 
-            for (int i = 0; i < transform.childCount; i++)
+            for (int i = -1; i <= 1; i++)
             {
-                spawnLocations.Enqueue(transform.GetChild(i).position);
+                for (int j = -1; j <= 1; j++)
+                {
+                    spawnLocations.Add(transform.localToWorldMatrix.MultiplyPoint(new Vector3(i * 80, 5, j * 80)));
+                }
             }
         }
 
         private void Update()
         {
             elapsedTime += Time.deltaTime;
-            if (elapsedTime >= 2.0f && Enemies.Count < 50)
+            if (elapsedTime >= 2.0f && Random.value < 0.5 && Enemies.Count < 10)
             {
-                Vector3 pos = spawnLocations.Dequeue();
+                Vector3 pos = spawnLocations[Random.Range(0, spawnLocations.Count)];
                 AddEnemy(pos);
-                spawnLocations.Enqueue(pos);
                 elapsedTime = 0;
             }
         }

@@ -199,7 +199,7 @@ namespace FIVE
         private void SearchTarget()
         {
             GameObject nearPlayer = null;
-            float nearDist = 1000;
+            float nearDist = float.MaxValue;
             foreach (GameObject robot in RobotManager.Robots)
             {
                 float distance = Vector3.Distance(robot.transform.position, transform.position);

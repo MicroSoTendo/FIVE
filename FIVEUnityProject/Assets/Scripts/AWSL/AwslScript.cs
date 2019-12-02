@@ -87,7 +87,7 @@ namespace FIVE.AWSL
             return () =>
             {
                 GameObject nearestEnemy = null;
-                float nearestDistance = 10000;
+                float nearestDistance = float.MaxValue;
 
                 foreach (GameObject enemy in EnemyManager.Enemies)
                 {
@@ -157,7 +157,7 @@ namespace FIVE.AWSL
             return () =>
             {
                 GameObject nearestEnemy = null;
-                float nearestDistance = 10000;
+                float nearestDistance = float.MaxValue;
 
                 foreach (GameObject enemy in EnemyManager.Enemies)
                 {
