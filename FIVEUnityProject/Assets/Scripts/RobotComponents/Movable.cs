@@ -30,7 +30,7 @@ namespace FIVE
             RotateSpeed = 30.0f;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (Moves.Count > 0)
             {
