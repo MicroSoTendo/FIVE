@@ -136,7 +136,7 @@ namespace FIVE
                     state = State.Walk;
                     Vector3 targetDirection = currTarget.transform.position - transform.position;
                     float singleStep = 1.0f * Time.deltaTime;
-                    Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+                    var newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
                     transform.rotation = Quaternion.LookRotation(newDirection);
 
@@ -175,7 +175,7 @@ namespace FIVE
             StartCoroutine(ShutGunfire(gunfire));
             GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
-            if (Random.value < 0.25)
+            if (Random.value < 1.0)
             {
                 StartCoroutine(AttackPlayer(target));
             }
