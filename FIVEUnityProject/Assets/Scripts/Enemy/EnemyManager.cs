@@ -8,7 +8,7 @@ namespace FIVE.Enemy
     {
         private static EnemyManager instance;
         private float elapsedTime;
-        
+
         [SerializeField] private GameObject prefab;
         public static HashSet<GameObject> Enemies => instance.enemies;
         private HashSet<GameObject> enemies;
@@ -32,7 +32,7 @@ namespace FIVE.Enemy
         private void Update()
         {
             elapsedTime += Time.deltaTime;
-            if (elapsedTime >= 5.0f && Enemies.Count < 10)
+            if (elapsedTime >= 5.0f && Enemies.Count < 25)
             {
                 Vector3 pos = spawnLocations.Dequeue();
                 AddEnemy(pos);
