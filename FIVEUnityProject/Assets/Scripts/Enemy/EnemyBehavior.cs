@@ -32,7 +32,6 @@ namespace FIVE
         private float visionRange;
         private float attackRange;
         private float speed;
-        private float elapsedTime;
         private float health;
 
         private void Awake()
@@ -89,13 +88,11 @@ namespace FIVE
 
             attackRange = cc.radius + 3.0f;
             speed = 1000.0f;
-            elapsedTime = 0;
             health = 100.0f;
         }
 
         private void Update()
         {
-            elapsedTime += Time.deltaTime;
             if (state == State.Idle)
             {
                 animator.SetTrigger("idle2");
@@ -126,7 +123,7 @@ namespace FIVE
                 else if (distance < visionRange)
                 {
                     state = State.Idle;
-                    if (elapsedTime > 0.5)
+                    if (Time.frameCount % 3 == 0)
                     {
                         Attack(currTarget);
                     }
@@ -142,10 +139,6 @@ namespace FIVE
 
                     cc.SimpleMove(Vector3.Normalize(newDirection) * speed * Time.deltaTime);
                 }
-            }
-            if (elapsedTime > 0.5)
-            {
-                elapsedTime = 0;
             }
         }
 
@@ -216,6 +209,8 @@ namespace FIVE
             }
         }
 
+        private float elapsedTime = 0;
+
         private void Patrol()
         {
             state = State.Walk;
@@ -225,7 +220,7 @@ namespace FIVE
                 patrolDirection = Random.Range(0, 90);
                 transform.Rotate(0, patrolDirection, 0);
                 int t = 36;
-                while (t-- > 0 && Physics.Raycast(transform.position, transform.forward, 10))
+                while (t-- > 0 && Physics.Raycast(transform.position, transform.localToWorldMatrix.MultiplyVector(Vector3.forward), 100))
                 {
                     transform.Rotate(0, 5, 0);
                 }
