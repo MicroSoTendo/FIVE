@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static FIVE.EventSystem.MainThreadDispatcher;
@@ -21,7 +22,7 @@ namespace FIVE.UI.InGameDisplay
         public GameObject InventoryContent { get; }
         private RectTransform InventoryContentTransform { get; }
         public GameObject CompositeContent { get; }
-        private RectTransform CompositeContentTransform { get; }
+        private RectTransform SynthesisContentTransform { get; }
         public GameObject ResultPanel { get; }
         public Button BuildButton { get; }
         public Button BackButton { get; }
@@ -35,15 +36,16 @@ namespace FIVE.UI.InGameDisplay
                 if (value)
                 {
                     this[RenderMode.ScreenSpaceCamera].worldCamera = CameraManager.CurrentActiveCamera;
-                    ScheduleCoroutine(UpdateItems());
                 }
             }
         }
 
-        private readonly List<(GameObject cell, Transform content)> inventoryCells = new List<(GameObject cell, Transform content)>();
-        private readonly List<GameObject> copyItems = new List<GameObject>();
-        private readonly Dictionary<GameObject, GameObject> copyItemsMap = new Dictionary<GameObject, GameObject>();
-        private readonly HashSet<GameObject> compositeCells = new HashSet<GameObject>();
+        private readonly Dictionary<Item, Item> item2CopyItems = new Dictionary<Item, Item>();
+        private readonly Dictionary<Item, Item> copyItems2Items = new Dictionary<Item, Item>();
+        private readonly ObservableCollection<Cell> inventoryCells =  new ObservableCollection<Cell>();
+        private readonly HashSet<Item> inventoryItems =  new HashSet<Item>();
+        private readonly HashSet<Cell> synthesisCells = new HashSet<Cell>();
+        private readonly HashSet<Item> synthesisItems =  new HashSet<Item>();
 
         public BlacksmithViewModel()
         {
@@ -54,44 +56,9 @@ namespace FIVE.UI.InGameDisplay
             InventoryContent = Get(nameof(InventoryContent));
             InventoryContentTransform = InventoryContent.GetComponent<RectTransform>();
             CompositeContent = Get(nameof(CompositeContent));
-            CompositeContentTransform = CompositeContent.GetComponent<RectTransform>();
+            SynthesisContentTransform = CompositeContent.GetComponent<RectTransform>();
             ResultPanel = Get(nameof(ResultPanel));
             EventManager.Subscribe<OnInventoryChanged, NotifyCollectionChangedEventArgs>(OnInventoryChanged);
-        }
-
-        private IEnumerator SetCompositeCells()
-        {
-            yield return new WaitForEndOfFrame();
-            int i = 0;
-            float cellWidth = 180; //TODO: get by call
-            foreach (GameObject cell in compositeCells)
-            {
-                int y = i;
-                cell.GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(0, -y * cellWidth);
-                i++;
-                yield return new WaitForFixedUpdate();
-            }
-        }
-
-        private IEnumerator SetInventoryCells()
-        {
-            yield return new WaitForEndOfFrame();
-            int i = 0;
-            float cellWidth = 180; //TODO: get by call
-            int totalColumns = (int)(InventoryContentTransform.rect.width / cellWidth);
-            foreach ((GameObject cell, Transform content) in inventoryCells)
-            {
-                if (!compositeCells.Contains(cell))
-                {
-                    int x = i % totalColumns;
-                    int y = i / totalColumns;
-                    cell.GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(x * cellWidth, -y * cellWidth);
-                    i++;
-                }
-                yield return new WaitForFixedUpdate();
-            }
         }
 
         private void OnInventoryChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -101,119 +68,110 @@ namespace FIVE.UI.InGameDisplay
 
         private void OnBuildButtonClick()
         {
-            var list = compositeCells.Select(compositeItem => compositeItem.FindChildRecursive("Content").transform.GetChild(0).gameObject).ToList();
+            var cell2Items = synthesisCells.ToDictionary(compositeCell => compositeCell, compositeCell => compositeCell.Item.gameObject);
 
-            if (Blacksmith.TryGenerateItem(list, out GameObject newGoPrefab))
+            if (Blacksmith.TrySynthesize(cell2Items.Values, out GameObject newItemPrefab))
             {
-                GameObject newItem = Object.Instantiate(newGoPrefab);
-                foreach (GameObject item in list)
+                ObservableCollection<Item> inventory = InventoryManager.Inventory.Items;
+                GameObject newItem = Object.Instantiate(newItemPrefab);
+                Item item = newItem.GetComponent<Item>();
+                inventory.Add(item);
+                foreach (Cell compositeCell in synthesisCells)
                 {
-                    GameObject origin = copyItemsMap[item];
-                    //InventoryManager.Inventory.Items.Remove(origin);
+                    Item original = copyItems2Items[compositeCell.Item];
+                    inventory.Remove(original);
                 }
-                compositeCells.Clear();
-                //this.RaiseImmediate<OnDropItemToInventory>(new DropedItemToInventoryEventArgs(null, newItem));
+                synthesisCells.Clear();
+                synthesisItems.Clear();
+                UpdateSynthesisCells();
+                UpdateInventoryCells();
             }
         }
 
         private void OnBackButtonClick()
         {
             IsActive = false;
-            compositeCells.Clear();
+            synthesisCells.Clear();
         }
 
-        private IEnumerator AddCompositeItems(GameObject cell)
+        private void UpdateInventoryCells()
         {
-            yield return new WaitForEndOfFrame();
-            cell.SetParent(CompositeContentTransform);
-            float cellSize = 180; //TODO: get by call
-            cell.GetComponent<RectTransform>().anchoredPosition =
-                new Vector2(0, inventoryCells.Count * cellSize);
-            compositeCells.Add(cell);
-            ScheduleCoroutine(SetInventoryCells());
-            ScheduleCoroutine(SetCompositeCells());
+            foreach (Cell inventoryCell in inventoryCells)
+            {
+                inventoryCell.SetUpPosition();
+            }
+        }
+
+        private void UpdateSynthesisCells()
+        {
+            foreach (Cell synthesisCell in synthesisCells)
+            {
+                synthesisCell.SetUpPosition();
+            }
         }
 
         private IEnumerator UpdateItems()
         {
-            for (int i = 0; i < InventoryManager.Inventory.Items.Count; i++)
+            ObservableCollection<Item> items = InventoryManager.Inventory.Items;
+            for (int i = 0, j = 0; i < items.Count; i++)
             {
-                //TODO:
-                GameObject original = InventoryManager.Inventory.Items[i].gameObject;
-                if (i < copyItems.Count)
+                Item originalItem = items[i];
+                if (!item2CopyItems.ContainsKey(originalItem))
                 {
-                    GameObject copy = copyItems[i];
-                    if (copy.GetComponent<Item>().Info.Name != original.GetComponent<Item>().Info.Name)
+                    GameObject copy = Object.Instantiate(originalItem.gameObject);
+                    item2CopyItems.Add(originalItem, copy.GetComponent<Item>());
+                }
+                if (item2CopyItems.TryGetValue(originalItem, out Item copyItem))
+                {
+                    //Do not show if it's in synthesis window
+                    if (!synthesisItems.Contains(copyItem))
                     {
-                        if (copyItemsMap.ContainsKey(copy))
+                        if (inventoryCells.Count > j)
                         {
-                            copyItemsMap.Remove(copy);
+                            Cell cell = inventoryCells[j];
+                            cell.Index = j;
+                            cell.SetItem(copyItem);
                         }
-                        copyItems[i] = Object.Instantiate(original);
-                        copyItemsMap.Add(copy, original);
-                    }
-                }
-                else
-                {
-                    GameObject copy = Object.Instantiate(original);
-                    copyItems.Add(copy);
-                    copyItemsMap.Add(copy, original);
-                }
-                yield return new WaitForFixedUpdate();
-            }
-            //Ensure size
-            while (copyItems.Count > inventoryCells.Count)
-            {
-                GameObject cell = Object.Instantiate(CellPrefab, InventoryContentTransform);
-                int i = inventoryCells.Count;
-                cell.name = $"Cell-{i}";
-                Transform contenTransform = cell.FindChildRecursive("Content").transform;
-                inventoryCells.Add((cell, contenTransform));
-
-                Button button = cell.GetComponentInChildren<Button>();
-                button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() => OnInventoryItemClicked(cell));
-                yield return new WaitForFixedUpdate();
-            }
-            //
-            for (int i = 0; i < inventoryCells.Count; i++)
-            {
-                (GameObject cell, Transform content) = inventoryCells[i];
-                if (i >= copyItems.Count)
-                {
-                    cell.SetActive(false);
-                }
-                else
-                {
-                    GameObject item = copyItems[i];
-                    if (item.transform.parent == null ||
-                        !item.transform.parent.gameObject.name.Contains("Content"))
-                    {
-                        item.transform.SetParent(content);
-                        item.GetComponent<MeshRenderer>().receiveShadows = false;
-                        ItemInfo info = item.GetComponent<Item>().Info;
-                        item.transform.localScale = info.UIScale;
-                        item.transform.localEulerAngles = info.UIRotation;
-                        item.transform.localPosition = info.UIPosition;
-                    }
-                    else if (content.transform.parent != content)
-                    {
-                        item.transform.SetParent(content);
+                        else
+                        {
+                            GameObject cellGo = Object.Instantiate(CellPrefab, InventoryContentTransform);
+                            Cell newCell = cellGo.GetComponent<Cell>();
+                            inventoryCells.Add(newCell);
+                            newCell.Index = j;
+                            newCell.Clicked += () => OnInventoryCellClicked(newCell);
+                            newCell.SetItem(copyItem);
+                        }
+                        j++;
                     }
                 }
                 yield return new WaitForFixedUpdate();
-            }
-            if (IsActive)
-            {
-                ScheduleCoroutine(SetInventoryCells());
             }
         }
 
-
-        private void OnInventoryItemClicked(GameObject cell)
+        private void OnInventoryCellClicked(Cell cell)
         {
-            ScheduleCoroutine(AddCompositeItems(cell));
+            cell.transform.SetParent(SynthesisContentTransform);
+            inventoryCells.Remove(cell);
+            inventoryItems.Remove(cell.Item);
+            synthesisCells.Add(cell);
+            synthesisItems.Add(cell.Item);
+            UpdateSynthesisCells();
+            UpdateInventoryCells();
+            cell.Clicked = null;
+            cell.Clicked = () => OnSynthesisCellClicked(cell);
         }
 
+        private void OnSynthesisCellClicked(Cell cell)
+        {
+            cell.transform.SetParent(InventoryContentTransform);
+            synthesisCells.Remove(cell);
+            synthesisItems.Remove(cell.Item);
+            inventoryCells.Add(cell);
+            inventoryItems.Add(cell.Item);
+            UpdateSynthesisCells();
+            UpdateInventoryCells();
+            cell.Clicked = null;
+            cell.Clicked = () => OnInventoryCellClicked(cell);
+        }
     }
 }

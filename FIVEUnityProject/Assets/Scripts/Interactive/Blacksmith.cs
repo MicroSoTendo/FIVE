@@ -60,15 +60,15 @@ namespace FIVE.Interactive
 
             return isComp;
         }
-        public static bool TryGenerateItem(IEnumerable<GameObject> inItems, out GameObject outItem)
+        public static bool TrySynthesize(IEnumerable<GameObject> inItems, out GameObject outItemPrefab)
         {
             if (IsCompositeComponents(inItems))
             {
                 string a = PathLists[index];
-                outItem = Resources.Load<GameObject>(PathLists[index]);
+                outItemPrefab = Resources.Load<GameObject>(PathLists[index]);
                 return true;
             }
-            outItem = default;
+            outItemPrefab = default;
             return false;
         }
     }

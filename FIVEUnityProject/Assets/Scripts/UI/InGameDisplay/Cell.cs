@@ -21,8 +21,8 @@ namespace FIVE.UI.InGameDisplay
             }
         }
 
-        public event Action Clicked;
-        private Item item;
+        public Action Clicked = () => {};
+        public Item Item { get; private set; }
         private void Awake()
         {
             gameObject.GetComponentInChildren<Button>().onClick.AddListener(OnClicked);
@@ -43,35 +43,34 @@ namespace FIVE.UI.InGameDisplay
             StartCoroutine(SetUpPositionRoutine());
         }
 
-
         private void OnClicked()
         {
             Clicked?.Invoke();
             Destroy(gameObject);
-            if (item == null)
+            if (Item == null)
             {
                 return;
             }
-            item.Use();
+            Item.Use();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (item == null)
+            if (Item == null)
             {
                 return;
             }
-            item.IsRotating = true;
+            Item.IsRotating = true;
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (item == null)
+            if (Item == null)
             {
                 return;
             }
 
-            item.IsRotating = false;
+            Item.IsRotating = false;
         }
 
         public void SetItem(Item newItem)
@@ -79,24 +78,15 @@ namespace FIVE.UI.InGameDisplay
             Transform contentTransform = gameObject.FindChildRecursive("Content").transform;
             if (newItem.transform.parent != contentTransform)
             {
-                item = newItem;
-                ItemInfo info = item.Info;
-                Transform itemTransform = item.gameObject.transform;
+                Item = newItem;
+                ItemInfo info = Item.Info;
+                Transform itemTransform = Item.gameObject.transform;
                 itemTransform.SetParent(contentTransform);
-                item.GetComponent<Renderer>().receiveShadows = false;
+                Item.GetComponent<Renderer>().receiveShadows = false;
                 itemTransform.localScale = info.UIScale;
                 itemTransform.localEulerAngles = info.UIRotation;
                 itemTransform.localPosition = info.UIPosition;
             }
-        }
-
-        public void DestoryItem()
-        {
-            Transform contentTransform = gameObject.FindChildRecursive("Content").transform;
-            contentTransform.DetachChildren();
-            Destroy(item);
-            item = null;
-            gameObject.SetActive(false);
         }
     }
 }
