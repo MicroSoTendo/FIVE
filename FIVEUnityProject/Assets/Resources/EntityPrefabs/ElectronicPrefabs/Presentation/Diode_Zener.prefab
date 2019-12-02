@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 446070}
   - component: {fileID: 3316132}
   - component: {fileID: 2340494}
+  - component: {fileID: 1800070932454654864}
   m_Layer: 0
   m_Name: Diode_Zener
   m_TagString: Untagged
@@ -80,6 +81,25 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1800070932454654864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 159954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c50ee77147fee49b6d46ffe41d6fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemInfo:
+    Name: 
+    Description: 
+    UIScale: {x: 0, y: 0, z: 0}
+    UIRotation: {x: 0, y: 0, z: 0}
+    UIPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &192584
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,3 +179,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

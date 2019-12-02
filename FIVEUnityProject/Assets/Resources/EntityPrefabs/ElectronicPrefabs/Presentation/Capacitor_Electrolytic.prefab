@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 455052}
   - component: {fileID: 3375394}
   - component: {fileID: 2369042}
+  - component: {fileID: -2700948724505968778}
   m_Layer: 0
   m_Name: Capacitor_Electrolytic
   m_TagString: Untagged
@@ -79,3 +80,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-2700948724505968778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c50ee77147fee49b6d46ffe41d6fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemInfo:
+    Name: 
+    Description: 
+    UIScale: {x: 0, y: 0, z: 0}
+    UIRotation: {x: 0, y: 0, z: 0}
+    UIPosition: {x: 0, y: 0, z: 0}

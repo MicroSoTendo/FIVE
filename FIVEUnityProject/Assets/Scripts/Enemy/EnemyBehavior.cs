@@ -260,7 +260,9 @@ namespace FIVE
         private void GenPickups()
         {
             int index = Random.Range(0, DropPickups.Count);
-            Instantiate(DropPickups[index], transform.position, Quaternion.identity);
+            GameObject p = Instantiate(DropPickups[index], transform.position, Quaternion.identity);
+            Debug.Log(p.name);
+            p.transform.localScale = new Vector3(80, 80, 80);
         }
     }
 }
