@@ -230,7 +230,7 @@ namespace FIVE.Robot
 
         public void OnHit()
         {
-            health -= 10.0f;
+            health -= 5.0f;
             if (health <= 0)
             {
                 if (RobotManager.ID2Robot.Count == 1)

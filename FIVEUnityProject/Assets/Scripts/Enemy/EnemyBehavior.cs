@@ -156,7 +156,7 @@ namespace FIVE
             StartCoroutine(ShutGunfire(gunfire));
             GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
-            if (Random.value < 0.6)
+            if (Random.value < 0.25)
             {
                 StartCoroutine(AttackPlayer(target));
             }
@@ -165,7 +165,7 @@ namespace FIVE
 
         public void OnHit()
         {
-            health -= 10.0f;
+            health -= 5.0f;
             FlashRed();
             GetComponent<AudioSource>().Play();
             if (health <= 0.0f)
