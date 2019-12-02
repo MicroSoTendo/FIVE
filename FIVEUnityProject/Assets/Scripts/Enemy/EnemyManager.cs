@@ -28,7 +28,7 @@ namespace FIVE.Enemy
         private void Update()
         {
             elapsedTime += Time.deltaTime;
-            if (elapsedTime >= 5.0f && Enemies.Count < 25)
+            if (elapsedTime >= 2.0f && Enemies.Count < 50)
             {
                 Vector3 pos = spawnLocations.Dequeue();
                 AddEnemy(pos);
