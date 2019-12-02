@@ -95,6 +95,7 @@ namespace FIVE
 
         private void FixedUpdate()
         {
+            elapsedTime += Time.deltaTime;
             if (state == State.Idle)
             {
                 animator.SetTrigger("idle2");
@@ -124,9 +125,22 @@ namespace FIVE
                 }
                 else
                 {
-                    state = State.Idle;
-                    Attack(currTarget);
+                    Vector3 targetDirection = currTarget.transform.position - transform.position;
+                    float singleStep = 1.0f * Time.deltaTime;
+                    Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+
+                    transform.rotation = Quaternion.LookRotation(newDirection);
+
+                    if (elapsedTime > 0.35)
+                    {
+                        state = State.Idle;
+                        Attack(currTarget);
+                    }
                 }
+            }
+            if (elapsedTime > 0.5)
+            {
+                elapsedTime = 0;
             }
         }
 
@@ -139,7 +153,7 @@ namespace FIVE
 
         private IEnumerator AttackPlayer(GameObject player)
         {
-            yield return new WaitForSeconds(1.2f);
+            yield return new WaitForSeconds(0.2f);
             if (player != null)
             {
                 RobotSphere enemyBehavior = player.GetComponent<RobotSphere>();
