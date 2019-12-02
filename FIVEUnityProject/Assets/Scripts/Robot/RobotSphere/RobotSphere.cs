@@ -280,6 +280,11 @@ namespace FIVE.Robot
 
         private void ExecuteScript()
         {
+            if (movable.Moves.Count > 0)
+            {
+                return;
+            }
+
             scriptActive = !script.Execute();
             if (!scriptActive)
             {
