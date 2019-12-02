@@ -146,6 +146,7 @@ namespace FIVE.AWSL
 
                 if (nearestDistance < 80.0f)
                 {
+                    Debug.Log("Attack");
                     robot.Attack(nearestEnemy);
                 }
             };
