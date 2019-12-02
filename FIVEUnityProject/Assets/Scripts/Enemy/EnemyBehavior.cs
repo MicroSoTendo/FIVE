@@ -67,7 +67,7 @@ namespace FIVE
 
         private void Start()
         {
-            visionRange = 50.0f;
+            visionRange = 80.0f;
 
             red = Resources.Load<Material>("Materials/Red");
             bug = Resources.Load<Material>("Materials/AlienBeetle/skin1");
@@ -88,7 +88,7 @@ namespace FIVE
             state = State.Idle;
 
             attackRange = cc.radius + 3.0f;
-            speed = 20.0f;
+            speed = 80.0f;
             elapsedTime = 0;
             health = 100.0f;
         }
@@ -228,7 +228,7 @@ namespace FIVE
             }
             else
             {
-                cc.SimpleMove(transform.forward * speed);
+                cc.SimpleMove(transform.forward * speed * Time.deltaTime);
             }
         }
 
