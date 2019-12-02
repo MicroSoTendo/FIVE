@@ -72,21 +72,21 @@ namespace FIVE.UI.SplashScreens
         private void Destroy()
         {
             float time = 3.5f;
-            MainThreadDispatcher.Destroy(Wally, time);
-            MainThreadDispatcher.Destroy(Gen, time);
-            MainThreadDispatcher.Destroy(Laurence, time);
-            MainThreadDispatcher.Destroy(Yu, time);
-            MainThreadDispatcher.Destroy(Wen, time);
-            MainThreadDispatcher.Destroy(QuestionMark, time);
-            MainThreadDispatcher.Destroy(ExclamationMark, time);
-            MainThreadDispatcher.Destroy(LaurenceMark, time);
-            MainThreadDispatcher.Destroy(TBoundary, time);
-            MainThreadDispatcher.Destroy(TColor, time);
-            MainThreadDispatcher.Destroy(S1Boundary, time);
-            MainThreadDispatcher.Destroy(S1Color, time);
-            MainThreadDispatcher.Destroy(S2Boundary, time);
-            MainThreadDispatcher.Destroy(S2Color, time);
-            MainThreadDispatcher.Destroy(canvas.gameObject, time);
+            MainThreadDispatcher.ScheduleDestroy(Wally, time);
+            MainThreadDispatcher.ScheduleDestroy(Gen, time);
+            MainThreadDispatcher.ScheduleDestroy(Laurence, time);
+            MainThreadDispatcher.ScheduleDestroy(Yu, time);
+            MainThreadDispatcher.ScheduleDestroy(Wen, time);
+            MainThreadDispatcher.ScheduleDestroy(QuestionMark, time);
+            MainThreadDispatcher.ScheduleDestroy(ExclamationMark, time);
+            MainThreadDispatcher.ScheduleDestroy(LaurenceMark, time);
+            MainThreadDispatcher.ScheduleDestroy(TBoundary, time);
+            MainThreadDispatcher.ScheduleDestroy(TColor, time);
+            MainThreadDispatcher.ScheduleDestroy(S1Boundary, time);
+            MainThreadDispatcher.ScheduleDestroy(S1Color, time);
+            MainThreadDispatcher.ScheduleDestroy(S2Boundary, time);
+            MainThreadDispatcher.ScheduleDestroy(S2Color, time);
+            MainThreadDispatcher.ScheduleDestroy(canvas.gameObject, time);
         }
 
         private void DoFadingOut()

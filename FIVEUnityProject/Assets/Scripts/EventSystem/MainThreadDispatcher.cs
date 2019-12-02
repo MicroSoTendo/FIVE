@@ -54,9 +54,9 @@ namespace FIVE.EventSystem
             ScheduledCoroutine.Enqueue(coroutine);
         }
 
-        public static void Destroy(GameObject gameObject, float time = 0f)
+        public static void ScheduleDestroy(Object obj, float time = 0f)
         {
-            Schedule(() => { Object.Destroy(gameObject, time); });
+            Schedule(() => { Destroy(obj, time); });
         }
     }
 }
