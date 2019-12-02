@@ -54,6 +54,7 @@ namespace FIVE.Robot
         private float health;
 
         private GameObject flashlight;
+
         protected override void Awake()
         {
             ID = RobotManager.NextID;
@@ -97,6 +98,7 @@ namespace FIVE.Robot
 
             base.Start();
         }
+
         public void switchOnLight()
         {
             flashlight.SetActive(true);
@@ -113,6 +115,11 @@ namespace FIVE.Robot
             CameraManager.SetCamera(fpsCamera);
         }
 
+        private void OnDestroy()
+        {
+            EventManager.Unsubscribe<OnCodeEditorSaved, UpdateScriptEventArgs>(OnCodeSaved);
+        }
+
         private void OnCodeSaved(object sender, UpdateScriptEventArgs e)
         {
             if (movable.enabled)
@@ -124,8 +131,16 @@ namespace FIVE.Robot
                 movable.enabled = true;
             }
 
-            script = new AWSLScript(this, e.Code);
-            scriptActive = true;
+            if (e.Code.Trim().Length > 0)
+            {
+                script = new AWSLScript(this, e.Code);
+                scriptActive = true;
+            }
+            else
+            {
+                movable.enabled = RobotManager.ActiveRobot == gameObject;
+                scriptActive = false;
+            }
         }
 
         private void RobotSphereUpdate()
