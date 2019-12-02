@@ -55,6 +55,8 @@ namespace FIVE.Robot
 
         private GameObject flashlight;
 
+        private float time;
+
         protected override void Awake()
         {
             ID = RobotManager.NextID;
@@ -173,7 +175,8 @@ namespace FIVE.Robot
 
             if (CurrentState == RobotSphereState.Walk)
             {
-                fpsCamera.transform.localPosition = new Vector3(Mathf.Sin(Time.time * 8f) * 0.02f, 0.1f + Mathf.Sin(Time.time * 16f) * 0.02f, 0.07f);
+                time += Time.deltaTime;
+                fpsCamera.transform.localPosition = new Vector3(Mathf.Sin(time * 8f) * 0.02f, 0.1f + Mathf.Sin(time * 16f) * 0.02f, 0.07f);
                 if (!Walk.isPlaying)
                 {
                     Walk.Play();
