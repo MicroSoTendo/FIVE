@@ -99,8 +99,16 @@ namespace FIVE.AWSL
                     }
                 }
 
-                Vector3 d = nearestEnemy.transform.position - robot.transform.position;
-                d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                Vector3 d;
+                if (nearestEnemy != null)
+                {
+                    d = nearestEnemy.transform.position - robot.transform.position;
+                    d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                }
+                else
+                {
+                    d = Vector3.forward;
+                }
                 return new Position
                 {
                     X = d.x,
@@ -126,8 +134,16 @@ namespace FIVE.AWSL
                     }
                 }
 
-                Vector3 d = nearestBattery.transform.position - robot.transform.position;
-                d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                Vector3 d;
+                if (nearestBattery != null)
+                {
+                    d = nearestBattery.transform.position - robot.transform.position;
+                    d = robot.transform.worldToLocalMatrix.MultiplyVector(d);
+                }
+                else
+                {
+                    d = Vector3.forward;
+                }
                 return new Position
                 {
                     X = d.x,
@@ -155,7 +171,7 @@ namespace FIVE.AWSL
 
                 if (nearestEnemy != null && nearestDistance < 80.0f)
                 {
-                    Vector3 direction = Vector3.Normalize(nearestEnemy.transform.position - robot.transform.position);
+                    var direction = Vector3.Normalize(nearestEnemy.transform.position - robot.transform.position);
                     if (Vector3.Dot(direction, robot.transform.forward) > 0)
                     {
                         robot.Attack(nearestEnemy);
