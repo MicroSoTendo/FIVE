@@ -24,7 +24,7 @@ namespace FIVE.Robot
             {
                 if (instance.activeRobot)
                 {
-                    instance.activeRobot.GetComponent<Movable>().enabled = false;
+                    instance.activeRobot.GetComponent<Movable>().enabled = instance.activeRobot.GetComponent<RobotSphere>().scriptActive;
                 }
                 instance.activeRobot = value;
                 instance.activeRobot.GetComponent<Movable>().enabled = true;

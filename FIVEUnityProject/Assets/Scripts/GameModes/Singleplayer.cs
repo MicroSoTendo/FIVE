@@ -25,9 +25,9 @@ namespace FIVE.GameModes
 
             yield return null;
 
-            CameraManager.AddCamera("Default Camera 1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
-            CameraManager.AddCamera("Default Camera 2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
-            CameraManager.AddCamera("Default Camera 3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
+            //CameraManager.AddCamera("Default Camera 1", new Vector3(-40, 115, -138), Quaternion.Euler(30, 10, 0));
+            //CameraManager.AddCamera("Default Camera 2", new Vector3(33, 70.5f, -49), Quaternion.Euler(50, -32, 0));
+            //CameraManager.AddCamera("Default Camera 3", new Vector3(36.5f, 180f, 138), Quaternion.Euler(63, 230, -5f));
             CameraManager.Remove("GUI Camera");
 
             NPCInit.Initialize();
@@ -64,11 +64,11 @@ namespace FIVE.GameModes
 
             CameraManager.SetCameraWall();
         }
-        void Update()
+
+        private void Update()
         {
             if (SkyBoxTime.isDayTime())
             {
-
             }
         }
     }

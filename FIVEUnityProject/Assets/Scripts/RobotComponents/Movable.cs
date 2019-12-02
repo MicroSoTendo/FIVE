@@ -97,5 +97,15 @@ namespace FIVE
                 return false;
             }
         }
+
+        private void OnEnable()
+        {
+            //Debug.Log(string.Format("{0} enable", GetComponent<RobotSphere>().ID));
+        }
+
+        private void OnDisable()
+        {
+            //Debug.Log(string.Format("{0} disable", GetComponent<RobotSphere>().ID));
+        }
     }
 }

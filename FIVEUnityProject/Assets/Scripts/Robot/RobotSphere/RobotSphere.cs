@@ -42,7 +42,7 @@ namespace FIVE.Robot
         private Movable movable;
 
         private AWSLScript script;
-        private bool scriptActive;
+        public bool scriptActive;
 
         private Camera thirdPersonCamera;
 
