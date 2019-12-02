@@ -137,6 +137,7 @@ namespace FIVE
             GetComponent<AudioSource>().Play();
             if (health <= 0.0f)
             {
+                Enemy.EnemyManager.Remove(gameObject);
                 gameObject.SetActive(false);
                 GenPickups();
                 Destroy(gameObject);

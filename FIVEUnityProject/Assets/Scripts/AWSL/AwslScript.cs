@@ -125,19 +125,16 @@ namespace FIVE.AWSL
         {
             return () =>
             {
-                Debug.Log("Func");
                 HashSet<GameObject>.Enumerator iter = EnemyManager.Enemies.GetEnumerator();
                 iter.MoveNext();
                 GameObject nearestEnemy = iter.Current;
-                Debug.Log("Second");
                 float nearestDistance = Vector3.Distance(nearestEnemy.transform.position, robot.gameObject.transform.position);
-                Debug.Log("Third");
 
                 while (iter.MoveNext())
                 {
                     GameObject enemy = iter.Current;
                     float distance = Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position);
-                    if (Vector3.Distance(enemy.transform.position, robot.gameObject.transform.position) < distance)
+                    if (distance < nearestDistance)
                     {
                         nearestEnemy = enemy;
                         nearestDistance = distance;
@@ -146,7 +143,6 @@ namespace FIVE.AWSL
 
                 if (nearestDistance < 80.0f)
                 {
-                    Debug.Log("Attack");
                     robot.Attack(nearestEnemy);
                 }
             };
