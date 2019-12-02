@@ -126,7 +126,7 @@ namespace FIVE
                 else if (distance < visionRange)
                 {
                     state = State.Idle;
-                    if (elapsedTime > 0.35)
+                    if (elapsedTime > 0.5)
                     {
                         Attack(currTarget);
                     }
