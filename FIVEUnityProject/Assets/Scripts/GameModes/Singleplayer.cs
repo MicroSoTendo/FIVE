@@ -53,7 +53,7 @@ namespace FIVE.GameModes
             RobotManager.CreateRobot("robotSphere", new Vector3(10, 20, -20), Quaternion.identity);
 
             GameObject enemyManagerPrefab = Resources.Load<GameObject>("InfrastructurePrefabs/EnemyManager");
-            Instantiate(enemyManagerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Instantiate(enemyManagerPrefab);
 
             InventoryManager.Inventory = new Inventory();
             InventoryViewModel inventoryViewModel = UIManager.Create<InventoryViewModel>();

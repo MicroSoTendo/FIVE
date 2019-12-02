@@ -7,26 +7,22 @@ namespace FIVE.Enemy
     public class EnemyManager : MonoBehaviour
     {
         private static EnemyManager instance;
-        private float elapsedTime;
+        private float elapsedTime = 0;
 
-        [SerializeField] private GameObject prefab;
+        public GameObject Prefab;
         public static HashSet<GameObject> Enemies => instance.enemies;
-        private HashSet<GameObject> enemies;
-        private Queue<Vector3> spawnLocations;
+        private HashSet<GameObject> enemies = new HashSet<GameObject>();
+        private Queue<Vector3> spawnLocations = new Queue<Vector3>();
 
         private void Awake()
         {
             Assert.IsNull(instance);
             instance = this;
 
-            spawnLocations = new Queue<Vector3>();
-            spawnLocations.Enqueue(new Vector3(-300, 5, 500));
-            spawnLocations.Enqueue(new Vector3(250, 5, 500));
-            spawnLocations.Enqueue(new Vector3(200, 5, 450));
-            spawnLocations.Enqueue(new Vector3(150, 5, 520));
-
-            enemies = new HashSet<GameObject>();
-            elapsedTime = 0;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                spawnLocations.Enqueue(transform.GetChild(i).position);
+            }
         }
 
         private void Update()
@@ -43,7 +39,7 @@ namespace FIVE.Enemy
 
         public void AddEnemy(Vector3 positition)
         {
-            GameObject enemy = Instantiate(prefab, positition, Quaternion.identity);
+            GameObject enemy = Instantiate(Prefab, positition, Quaternion.identity);
             Enemies.Add(enemy);
         }
 
