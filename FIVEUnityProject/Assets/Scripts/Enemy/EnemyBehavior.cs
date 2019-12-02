@@ -198,13 +198,21 @@ namespace FIVE
 
         private void SearchTarget()
         {
+            GameObject nearPlayer = null;
+            float nearDist = 1000;
             foreach (GameObject robot in RobotManager.Robots)
             {
-                if (Physics.SphereCast(transform.position, 3.0f, robot.transform.position - transform.position,
-                    out RaycastHit hitInfo, visionRange))
+                float distance = Vector3.Distance(robot.transform.position, transform.position);
+                if (distance < nearDist)
                 {
-                    currTarget = robot;
+                    nearDist = distance;
+                    nearPlayer = robot;
                 }
+            }
+
+            if (nearPlayer != null)
+            {
+                currTarget = nearPlayer;
             }
         }
 
