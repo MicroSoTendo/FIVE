@@ -17,7 +17,7 @@ namespace FIVE.Interactive.Items
         private void UseAction()
         {
             Transform textMsg = GameObject.Find("ViewModelsRoot").transform.Find("ScreenSpaceOverlay").transform.Find("HUD(Clone)").transform.Find("BuffText");
-            textMsg.GetComponent<Text>().text = "Flash Light: On \n";
+            textMsg.GetComponent<Text>().text += "Flash Light: On \n";
             foreach (GameObject gameObj in GameObject.FindObjectsOfType<GameObject>())
             {
                 if (gameObj.name.Contains("Sphere"))
