@@ -4,26 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FlashLight: MonoBehaviour
+namespace FIVE.Interactive.Items
 {
-    void Update()
+    public class FlashLight : MonoBehaviour
     {
-
-        if (Input.GetMouseButtonDown(1))
+        private Item item;
+        private void Awake()
         {
-            if (transform.parent.name.Contains("Content"))
+            item = GetComponent<Item>();
+            item.ItemUseAction = UseAction;
+        }
+        private void UseAction()
+        {
+            Transform textMsg = GameObject.Find("ViewModelsRoot").transform.Find("ScreenSpaceOverlay").transform.Find("HUD(Clone)").transform.Find("BuffText");
+            textMsg.GetComponent<Text>().text = "Flash Light: On \n";
+            foreach (GameObject gameObj in GameObject.FindObjectsOfType<GameObject>())
             {
-                foreach (GameObject gameObj in GameObject.FindObjectsOfType<GameObject>())
+                if (gameObj.name.Contains("Sphere"))
                 {
-                    if (gameObj.name.Contains("Sphere"))
-                    {
-                        gameObj.GetComponent<RobotSphere>().switchOnLight();
-                        Transform textMsg = GameObject.Find("ViewModelsRoot").transform.Find("ScreenSpaceOverlay").transform.Find("HUD(Clone)").transform.Find("BuffText");
-                        textMsg.GetComponent<Text>().text = "Flash Light: On \n";
-                    }
+                    gameObj.GetComponent<RobotSphere>().switchOnLight();
+                    
                 }
             }
         }
-            
     }
 }

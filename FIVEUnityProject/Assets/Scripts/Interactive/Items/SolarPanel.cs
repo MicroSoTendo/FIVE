@@ -1,5 +1,6 @@
 ﻿using FIVE.RobotComponents;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FIVE.Interactive.Items
 {
@@ -20,7 +21,10 @@ namespace FIVE.Interactive.Items
             if (SkyBoxTime.isDayTime())
             {
                 SolarSingleton.PowerCharge = 1.0f;
+                
             }
+            Transform textMsg = GameObject.Find("ViewModelsRoot").transform.Find("ScreenSpaceOverlay").transform.Find("HUD(Clone)").transform.Find("BuffText");
+            textMsg.GetComponent<Text>().text += "Solar Panel: On \n";
         }
     }
 }

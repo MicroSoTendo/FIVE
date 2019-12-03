@@ -31,7 +31,7 @@ namespace FIVE.UI.StartupMenu
         private void OnSinglePlayerButtonClicked()
         {
             IsActive = false;
-            UIManager.Create<RobotSelectionViewModel>().IsActive = true;
+            this.RaiseEvent<OnSinglePlayerButtonClicked>();
         }
 
         private void OnMultiplayersButtonClicked()

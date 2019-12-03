@@ -65,7 +65,11 @@ namespace FIVE.Interactive
             if (IsCompositeComponents(inItems))
             {
                 string a = PathLists[index];
-                outItemPrefab = Resources.Load<GameObject>(PathLists[index]);
+                if (a.Contains("\r"))
+                {
+                    a.Remove(a.Length - 3);
+                }
+                outItemPrefab = Resources.Load<GameObject>(a);
                 return true;
             }
             outItemPrefab = default;
