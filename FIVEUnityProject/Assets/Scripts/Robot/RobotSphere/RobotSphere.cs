@@ -39,7 +39,7 @@ namespace FIVE.Robot
         private FpsController fpsController;
 
         // Robot Status
-        private Movable movable;
+        public Movable movable;
 
         private AWSLScript script;
         public bool scriptActive;
@@ -280,11 +280,6 @@ namespace FIVE.Robot
 
         private void ExecuteScript()
         {
-            if (movable.Moves.Count > 0)
-            {
-                return;
-            }
-
             scriptActive = !script.Execute();
             if (!scriptActive)
             {

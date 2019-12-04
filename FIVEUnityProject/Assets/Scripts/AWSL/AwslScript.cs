@@ -54,14 +54,22 @@ namespace FIVE.AWSL
 
         internal bool Execute()
         {
+            if (robot.movable.Moves.Count > 0)
+            {
+                return false;
+            }
+
             try
             {
-                Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward,
-                    out RaycastHit hitinfo);
-                script.Globals["Distance"] = hitinfo.collider ? hitinfo.distance : 1e7f;
+                if (coroutine.Coroutine.State != CoroutineState.Dead)
+                {
+                    Physics.SphereCast(robot.transform.position + Vector3.up * 0.005f, 0.05f, robot.transform.forward,
+                        out RaycastHit hitinfo);
+                    script.Globals["Distance"] = hitinfo.collider ? hitinfo.distance : 1e7f;
 
-                DynValue result = coroutine.Coroutine.Resume();
-                return result.Type != DataType.YieldRequest;
+                    DynValue result = coroutine.Coroutine.Resume();
+                    return result.Type != DataType.YieldRequest && robot.movable.Moves.Count == 0;
+                }
             }
             catch (Exception e)
             {
