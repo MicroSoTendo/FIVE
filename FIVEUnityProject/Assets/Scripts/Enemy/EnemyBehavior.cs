@@ -91,8 +91,12 @@ namespace FIVE
             health = 100.0f;
         }
 
+        private float attacktime = 0;
+
         private void Update()
         {
+            attacktime -= Time.deltaTime;
+
             if (state == State.Idle)
             {
                 animator.SetTrigger("idle2");
@@ -123,9 +127,10 @@ namespace FIVE
                 else if (distance < visionRange)
                 {
                     state = State.Idle;
-                    if (Time.frameCount % 3 == 0)
+                    if (attacktime < 0f)
                     {
                         Attack(currTarget);
+                        attacktime = 0.1f;
                     }
                 }
                 else
@@ -168,7 +173,7 @@ namespace FIVE
             StartCoroutine(ShutGunfire(gunfire));
             GameObject bullet = Instantiate(BulletPrefab, transform.position + transform.forward * 10f + new Vector3(0, 1, 0), Quaternion.identity);
             bullet.GetComponent<Bullet>().Target = target.transform.position;
-            if (Random.value < 1.0)
+            if (Random.value < 0.25)
             {
                 StartCoroutine(AttackPlayer(target));
             }
@@ -209,13 +214,13 @@ namespace FIVE
             }
         }
 
-        private float elapsedTime = 0;
+        private float patroltime = 0;
 
         private void Patrol()
         {
             state = State.Walk;
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime > 3)
+            patroltime += Time.deltaTime;
+            if (patroltime > 3)
             {
                 patrolDirection = Random.Range(0, 90);
                 transform.Rotate(0, patrolDirection, 0);
@@ -224,7 +229,7 @@ namespace FIVE
                 {
                     transform.Rotate(0, 5, 0);
                 }
-                elapsedTime = 0;
+                patroltime = 0;
             }
             else
             {
